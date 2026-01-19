@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marie Kids • Ajedrez • Clase 2: Toca la Casilla</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1976d2">
+
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background: linear-gradient(145deg,#dbeafe,#e0f2fe);
+      padding:18px;
+    }
+
+    .app{
+      background:#fff;
+      width:100%;
+      max-width:520px;
+      padding:18px;
+      border-radius:24px;
+      box-shadow:0 16px 40px rgba(0,0,0,.12);
+      border:3px solid #2563eb;
+    }
+
+    .brand-header-kids{
+      padding:14px;
+      border-radius:22px;
+      margin-bottom:12px;
+      background: linear-gradient(135deg,#93c5fd,#60a5fa,#2563eb);
+      color:#fff;
+      cursor:pointer;
+    }
+    .brand-row{ display:flex; align-items:center; gap:12px; }
+    .kids-badge{
+      width:52px;height:52px;border-radius:18px;
+      display:grid;place-items:center;
+      font-size:1.5rem;
+      background:rgba(255,255,255,.25);
+    }
+    .kids-title{ font-weight:900; font-size:1.5rem; }
+
+    h1{ text-align:center; margin:6px 0 4px; }
+    .subtitle{ text-align:center; font-size:.95rem; color:#6b7280; }
+
+    .status-bar{
+      display:flex; justify-content:space-between;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      font-size:.9rem;
+      margin-bottom:8px;
+    }
+
+    .progress{
+      height:10px;
+      background:#e5e7eb;
+      border-radius:999px;
+      overflow:hidden;
+      margin-bottom:10px;
+    }
+    .progress-inner{
+      height:100%;
+      width:0%;
+      background:#2563eb;
+      transition:.3s;
+    }
+
+    .card{
+      background:#f9fafb;
+      border:1px solid #e5e7eb;
+      border-radius:20px;
+      padding:16px;
+      text-align:center;
+    }
+
+    .target-text{
+      font-size:1.4rem;
+      font-weight:900;
+      color:#1d4ed8;
+      margin-bottom:6px;
+    }
+
+    .board{
+      display:grid;
+      grid-template-columns:repeat(8,1fr);
+      aspect-ratio:1/1;
+      max-width:320px;
+      margin:10px auto;
+      border-radius:18px;
+      overflow:hidden;
+      border:2px solid #bfdbfe;
+    }
+
+    .sq{
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      cursor:pointer;
+      transition:.15s;
+    }
+    .light{ background:#eff6ff; }
+    .dark{ background:#93c5fd; }
+
+    .sq.correct{ background:#22c55e !important; color:#fff; }
+    .sq.wrong{ background:#ef4444 !important; color:#fff; }
+
+    .feedback{
+      font-weight:900;
+      margin-top:8px;
+      min-height:22px;
+    }
+    .good{ color:#16a34a; }
+    .bad{ color:#ef4444; }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .main-btn{
+      flex:1;
+      border:none;
+      padding:10px;
+      border-radius:999px;
+      font-weight:800;
+      background:#2563eb;
+      color:#fff;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="brand-header-kids" onclick="location.href='index.html'">
+    <div class="brand-row">
+      <div class="kids-badge">♟️</div>
+      <div class="kids-title">Academia de Ajedrez Mauro • Clase 2</div>
+    </div>
+  </div>
+
+  <h1>Toca la casilla correcta</h1>
+  <p class="subtitle">Escucha y toca la casilla</p>
+
+  <div class="status-bar">
+    <div>✅ Bien: <b id="ok">0</b></div>
+    <div>🎯 Progreso: <b id="count">0/10</b></div>
+  </div>
+
+  <div class="progress">
+    <div class="progress-inner" id="bar"></div>
+  </div>
+
+  <div class="card">
+    <div class="target-text" id="targetText">e4</div>
+    <button class="main-btn" onclick="speakTarget()">🔊 Escuchar</button>
+
+    <div class="board" id="board"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div class="controls">
+    <button class="main-btn" onclick="next()">Siguiente</button>
+    <button class="main-btn" onclick="shareApp()">📤 Compartir</button>
+  </div>
+
+</div>
+
+<script>
+const files=["a","b","c","d","e","f","g","h"];
+let target="", last="";
+let ok=0, total=0;
+let locked=false;
+
+function speak(t){
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang="es-ES"; u.rate=.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+function speakTarget(){
+  speak(`Busca ${target[0]} ${target[1]}`);
+}
+
+function randomCoord(){
+  let c;
+  do{
+    c = files[Math.floor(Math.random()*8)] + (Math.floor(Math.random()*8)+1);
+  }while(c===last);
+  last=c;
+  return c;
+}
+
+function buildBoard(){
+  const b=document.getElementById("board");
+  b.innerHTML="";
+  for(let r=8;r>=1;r--)
+    for(let f=0;f<8;f++){
+      const c=files[f]+r;
+      const d=document.createElement("div");
+      d.className="sq "+(((f+r)%2)?"dark":"light");
+      d.dataset.c=c;
+      d.onclick=()=>tap(d,c);
+      b.appendChild(d);
+    }
+}
+
+function tap(el,c){
+  if(locked) return;
+  if(c===target){
+    el.classList.add("correct");
+    document.getElementById("feedback").textContent="¡Correcto!";
+    document.getElementById("feedback").className="feedback good";
+    speak("¡Muy bien!");
+    ok++; total++;
+    locked=true;
+  }else{
+    el.classList.add("wrong");
+    document.getElementById("feedback").textContent="Intenta otra vez";
+    document.getElementById("feedback").className="feedback bad";
+    speak("Intenta otra vez");
+  }
+
+  document.getElementById("ok").textContent=ok;
+  document.getElementById("count").textContent=`${total}/10`;
+  document.getElementById("bar").style.width=(total/10*100)+"%";
+
+  if(total===10){
+    setTimeout(()=>{
+      speak("Excelente. Terminaste la clase dos");
+      alert("🎉 Clase 2 completada");
+    },500);
+  }
+}
+
+function next(){
+  locked=false;
+  document.getElementById("feedback").textContent="";
+  document.querySelectorAll(".sq").forEach(s=>s.classList.remove("correct","wrong"));
+  target=randomCoord();
+  document.getElementById("targetText").textContent=target;
+  speakTarget();
+}
+
+function shareApp(){
+  const d={title:"Marie Kids Ajedrez",text:"Clase 2: Toca la casilla correcta",url:location.href};
+  navigator.share?navigator.share(d):(navigator.clipboard.writeText(d.url),alert("Link copiado"));
+}
+
+buildBoard();
+next();
+</script>
+
+</body>
+</html>
