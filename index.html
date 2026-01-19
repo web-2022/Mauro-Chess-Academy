@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mini Cursos • Inglés, Ajedrez, Matemáticas</title>
+
+        <!-- PWA -->
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#1976d2">
+
+        <style>
+            * {
+                box-sizing: border-box;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+                padding: 18px;
+            }
+
+            .app {
+                background: #ffffff;
+                width: 100%;
+                max-width: 520px;
+                padding: 18px;
+                border-radius: 24px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                border: 3px solid #2563eb;
+            }
+
+            /* 🌟 Encabezado infantil */
+            .brand-header-kids {
+                position: relative;
+                overflow: hidden;
+                padding: 14px 14px 12px;
+                border-radius: 22px;
+                margin-bottom: 12px;
+                background: linear-gradient(135deg, #93c5fd, #60a5fa, #2563eb);
+                border: 2px solid rgba(255, 255, 255, .65);
+                box-shadow: 0 14px 28px rgba(37, 99, 235, .25);
+                color: #fff;
+            }
+
+            .brand-row {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .kids-badge {
+                width: 52px;
+                height: 52px;
+                border-radius: 18px;
+                display: grid;
+                place-items: center;
+                font-size: 1.55rem;
+                background: rgba(255, 255, 255, .22);
+                border: 1px solid rgba(255, 255, 255, .35);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35);
+            }
+
+            .kids-title {
+                font-weight: 950;
+                font-size: 1.55rem;
+                letter-spacing: .02em;
+                line-height: 1.05;
+                text-shadow: 0 2px 0 rgba(0, 0, 0, .12);
+            }
+
+            .kids-subtitle {
+                margin-top: 4px;
+                font-size: .9rem;
+                font-weight: 750;
+                opacity: .95;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .kids-pill {
+                background: rgba(255, 255, 255, .22);
+                border: 1px solid rgba(255, 255, 255, .35);
+                padding: 4px 10px;
+                border-radius: 999px;
+                font-size: .82rem;
+                font-weight: 850;
+            }
+
+            /* ⭐ estrellas */
+            .star {
+                position: absolute;
+                z-index: 1;
+                opacity: .9;
+                filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .12));
+                animation: twinkle 2.8s ease-in-out infinite;
+                pointer-events: none;
+            }
+
+            .star.s1 {
+                top: 8px;
+                right: 18px;
+                font-size: 1.15rem;
+                animation-delay: 0s;
+            }
+
+            .star.s2 {
+                top: 40px;
+                right: 60px;
+                font-size: .95rem;
+                animation-delay: .6s;
+            }
+
+            .star.s3 {
+                bottom: 12px;
+                right: 26px;
+                font-size: 1.25rem;
+                animation-delay: 1.1s;
+            }
+
+            @keyframes twinkle {
+
+                0%,
+                100% {
+                    transform: scale(1);
+                    opacity: .9;
+                }
+
+                50% {
+                    transform: scale(1.08);
+                    opacity: 1;
+                }
+            }
+
+            /* Burbujas */
+            .bubble {
+                position: absolute;
+                z-index: 0;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, .22);
+                border: 1px solid rgba(255, 255, 255, .28);
+                box-shadow: inset 0 2px 0 rgba(255, 255, 255, .45);
+                pointer-events: none;
+                -webkit-backdrop-filter: blur(2px);
+                backdrop-filter: blur(2px);
+                animation: floaty 6s ease-in-out infinite;
+            }
+
+            .b1 {
+                left: -16px;
+                top: -18px;
+                width: 84px;
+                height: 84px;
+                animation-delay: 0s;
+                transform: rotate(5deg);
+            }
+
+            .b2 {
+                left: 40px;
+                bottom: -22px;
+                width: 52px;
+                height: 52px;
+                animation-delay: .8s;
+            }
+
+            .b3 {
+                right: -22px;
+                bottom: -26px;
+                width: 76px;
+                height: 76px;
+                animation-delay: 1.3s;
+            }
+
+            @keyframes floaty {
+
+                0%,
+                100% {
+                    transform: translateY(0) scale(1);
+                }
+
+                50% {
+                    transform: translateY(-8px) scale(1.03);
+                }
+            }
+
+            h1 {
+                margin: 0 0 6px 0;
+                text-align: center;
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                text-align: center;
+                font-size: 0.95rem;
+                color: #6b7280;
+                margin: 0 0 14px 0;
+            }
+
+            /* ===== MENU TIPO "TILES" ===== */
+            .menu {
+                display: grid;
+                gap: 12px;
+                margin-top: 10px;
+            }
+
+            .tile {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                padding: 14px;
+                border-radius: 18px;
+                background: #f9fafb;
+                border: 1px solid #e5e7eb;
+                cursor: pointer;
+                transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+            }
+
+            .tile:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, .10);
+                border-color: #bfdbfe;
+                background: #ffffff;
+            }
+
+            .icon {
+                width: 54px;
+                height: 54px;
+                border-radius: 18px;
+                display: grid;
+                place-items: center;
+                font-size: 1.6rem;
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+                flex: 0 0 auto;
+            }
+
+            .tile-title {
+                margin: 0;
+                font-size: 1.05rem;
+                font-weight: 800;
+                color: #111827;
+                line-height: 1.15;
+            }
+
+            .tile-desc {
+                margin: 4px 0 0 0;
+                font-size: 0.9rem;
+                color: #6b7280;
+                line-height: 1.25;
+            }
+
+            .badge {
+                display: inline-block;
+                margin-top: 8px;
+                font-size: 0.78rem;
+                font-weight: 800;
+                padding: 4px 10px;
+                border-radius: 999px;
+                background: #dcfce7;
+                color: #166534;
+                border: 1px solid #bbf7d0;
+            }
+
+            .note {
+                margin-top: 14px;
+                font-size: 0.9rem;
+                color: #6b7280;
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+                border-radius: 16px;
+                padding: 12px 14px;
+                line-height: 1.35;
+            }
+
+            /* ===== BOTONES ===== */
+            .controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 14px;
+            }
+
+            button.main-btn {
+                flex: 1;
+                border: none;
+                padding: 10px 12px;
+                border-radius: 999px;
+                font-size: 0.95rem;
+                cursor: pointer;
+                background: linear-gradient(90deg, #60a5fa, #2563eb);
+                color: #ffffff;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+                min-width: 160px;
+            }
+
+            button.main-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                filter: brightness(1.05);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="app">
+
+            <!-- 🌟 Encabezado infantil -->
+            <div class="brand-header-kids" aria-label="Marie Kids">
+                <div class="bubble b1"></div>
+                <div class="bubble b2"></div>
+                <div class="bubble b3"></div>
+
+                <div class="star s1">⭐</div>
+                <div class="star s2">✨</div>
+                <div class="star s3">🌟</div>
+
+                <div class="brand-row">
+                    <div class="kids-badge" aria-hidden="true">MCA</div>
+                    <div>
+                        <div class="kids-title">Academia de Ajedrez Mauro</div>
+                        <div class="kids-subtitle">
+                            Sigue la ruta de aprendizaje
+                            <span class="kids-pill">👉 Toca</span>
+                            <span class="kids-pill">📚 Aprende</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h1>Menú de cursos</h1>
+            <p class="subtitle">Selecciona un curso para entrar 👇</p>
+
+            <div class="menu">
+                <!-- Cambia el href a tus archivos reales -->
+                
+
+                <div class="tile" onclick="location.href='ruta-chess.html'">
+                    <div class="icon">♟️</div>
+                    <div>
+                        <p class="tile-title">Ajedrez desde cero</p>
+                        <p class="tile-desc">Aprende el ajedrez de una manera interactiva</p>
+                        <span class="badge">Disponible</span>
+                    </div>
+                </div>
+
+                <div class="tile" onclick="location.href='ruta-cuentos.html'">
+                    <div class="icon">📚</div>
+                    <div>
+                        <p class="tile-title">Apertura Nimzo Larsen</p>
+                        <p class="tile-desc">Apertura con las blancas...</p>
+                        <span class="badge">Disponible</span>
+                    </div>
+                </div>
+
+                <!-- <div class="tile" onclick="location.href='#'">
+                    <div class="icon">🌱</div>
+                    <div>
+                        <p class="tile-title">Crece</p>
+                        <p class="tile-desc">Hábitos, motivación y desarrollo personal.</p>
+                        <span class="badge">Disponible</span>
+                    </div>
+                </div> -->
+
+              
+            </div>
+
+            <div class="controls">
+                <button class="main-btn" onclick="shareApp()">📤 Compartir app</button>
+            </div>
+
+            <div class="note">
+                Tip: si alguna página aún no existe, crea el archivo vacío (por ejemplo <b>cuentos.html</b>) para que no
+                dé error.
+            </div>
+        </div>
+
+        <script>
+            // Registrar Service Worker (PWA)
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                    navigator.serviceWorker.register("./service-worker.js").catch(() => { });
+                });
+            }
+        </script>
+
+        <script>
+            function shareApp() {
+                const shareData = {
+                    title: "Mini Cursos",
+                    text: "📚 Aprende inglés, ajedrez y matemáticas con esta app educativa",
+                    url: window.location.href
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData).catch(() => { });
+                } else {
+                    navigator.clipboard.writeText(shareData.url);
+                    alert("🔗 Link copiado para compartir");
+                }
+            }
+        </script>
+
+
+
+    </body>
+
+</html>
