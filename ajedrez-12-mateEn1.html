@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Marie Kids • Ajedrez • Mate en 1 (Arrastra)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1976d2">
+
+  <style>
+    *{ box-sizing:border-box; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+
+    /* =========================
+       ✅ RESPONSIVE BOOST
+       ========================= */
+    :root{
+      --app-max: 540px;
+      --app-pad: clamp(14px, 3.2vw, 24px);
+      --radius: clamp(18px, 4vw, 24px);
+
+      --board-max: min(92vw, 420px);
+      --coords-gap: clamp(16px, 4vw, 22px);
+
+      --h1: clamp(1.2rem, 3.2vw, 1.55rem);
+      --sub: clamp(0.85rem, 2.4vw, 0.95rem);
+      --btn: clamp(0.9rem, 2.6vw, 0.95rem);
+
+      /* 🎨 tablero tipo screenshot */
+      --light:#eee2c4;
+      --dark:#ab8b6b;
+      --last:#c9d38a;
+      --check:#d44b3f;
+      --hintFrom:#6ea8fe;
+      --hintTo:#7dff7d;
+    }
+
+    html{
+      -webkit-text-size-adjust:100%;
+      height:100%;
+      /* ✅ permite scroll real en móviles */
+      overflow-y:auto;
+    }
+
+    /* ✅ FIX SCROLL MOBILE: body NO debe quedar "bloqueado" por el flex centrado */
+    body{
+      margin:0;
+      min-height:100%;
+      /* antes: display:flex + align-items:center (esto suele romper scroll en móvil) */
+      display:flex;
+      justify-content:center;
+      align-items:flex-start; /* ✅ importante */
+      background: linear-gradient(145deg,#dbeafe,#e0f2fe);
+
+      /* ✅ padding con safe area */
+      padding:
+        calc(14px + env(safe-area-inset-top))
+        calc(14px + env(safe-area-inset-right))
+        calc(14px + env(safe-area-inset-bottom))
+        calc(14px + env(safe-area-inset-left));
+
+      /* ✅ fuerza scroll si el contenido excede */
+      overflow-y:auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      touch-action: pan-y; /* ✅ permite deslizar para scroll (el tablero mantiene touch-action:none) */
+    }
+
+    /* ✅ un "wrapper" que no rompe el scroll */
+    .app{
+      background:#fff;
+      width:100%;
+      max-width:var(--app-max);
+      padding:var(--app-pad);
+      border-radius:var(--radius);
+      box-shadow:0 16px 40px rgba(0,0,0,.12);
+      border:3px solid #2563eb;
+
+      /* ✅ separa del borde superior para que no quede pegado */
+      margin-top: 10px;
+      margin-bottom: 18px;
+    }
+
+    /* ======= MENÚ ======= */
+    .nav{
+      display:flex;
+      gap:10px;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      padding:10px;
+      border-radius:18px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .nav-btn{
+      display:inline-block;
+      text-decoration:none;
+      border:1px solid #bfdbfe;
+      background:#fff;
+      border-radius:999px;
+      padding:8px 12px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:var(--btn);
+      transition: transform .1s ease, background .15s ease, border-color .15s ease, opacity .1s ease;
+      min-width: clamp(110px, 30vw, 160px);
+      text-align:center;
+      color:#111827;
+    }
+    .nav-btn:hover{ transform:translateY(-1px); background:#e0f2fe; border-color:#93c5fd; }
+    .nav-btn.active{ background:linear-gradient(90deg,#60a5fa,#2563eb); color:#fff; border-color:transparent; }
+
+    /* 🌟 Encabezado infantil */
+    .brand-header-kids{
+      position:relative;
+      overflow:hidden;
+      padding:14px 14px 12px;
+      border-radius:22px;
+      margin-bottom:12px;
+      background:linear-gradient(135deg,#93c5fd,#60a5fa,#2563eb);
+      border:2px solid rgba(255,255,255,.65);
+      box-shadow:0 14px 28px rgba(37,99,235,.25);
+      color:#fff;
+    }
+
+    /* ✅ Clickable (ir a index.html) */
+    .brand-header-kids.clickable{
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+    }
+    .brand-header-kids.clickable:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+      box-shadow: 0 18px 34px rgba(37,99,235,.28);
+    }
+    .brand-header-kids.clickable:active{
+      transform: translateY(0px) scale(0.995);
+    }
+
+    /* Para que el click funcione aunque toques estrellas/burbujas */
+    .brand-header-kids .bubble,
+    .brand-header-kids .star{
+      pointer-events:none;
+    }
+
+    .brand-row{ display:flex; align-items:center; gap:12px; }
+    .kids-badge{
+      width:52px;height:52px;border-radius:18px;display:grid;place-items:center;
+      font-size:1.55rem;background:rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+    }
+    .kids-title{ font-weight:950; font-size:1.55rem; letter-spacing:.02em; line-height:1.05; text-shadow:0 2px 0 rgba(0,0,0,.12); }
+    .kids-subtitle{
+      margin-top:4px;font-size:.9rem;font-weight:750;opacity:.95;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    }
+    .kids-pill{
+      background:rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.35);
+      padding:4px 10px;border-radius:999px;font-size:.82rem;font-weight:850;
+    }
+    .star{
+      position:absolute;opacity:.9;filter:drop-shadow(0 2px 0 rgba(0,0,0,.12));
+      animation: twinkle 2.8s ease-in-out infinite;pointer-events:none;
+    }
+    .star.s1{ top:8px; right:18px; font-size:1.15rem; animation-delay:0s; }
+    .star.s2{ top:40px; right:60px; font-size:.95rem; animation-delay:.6s; }
+    .star.s3{ bottom:12px; right:26px; font-size:1.25rem; animation-delay:1.1s; }
+    .bubble{
+      position:absolute;width:64px;height:64px;border-radius:999px;
+      background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.28);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.45);
+      backdrop-filter: blur(2px);pointer-events:none;animation: floaty 6s ease-in-out infinite;
+    }
+    .b1{ left:-16px; top:-18px; animation-delay:0s; transform: rotate(5deg); }
+    .b2{ left:40px; bottom:-22px; width:52px;height:52px; animation-delay:.8s; }
+    .b3{ right:-22px; bottom:-26px; width:76px;height:76px; animation-delay:1.3s; }
+    @keyframes floaty{ 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-8px) scale(1.03)} }
+    @keyframes twinkle{ 0%,100%{transform:scale(1) rotate(0deg);opacity:.9} 50%{transform:scale(1.12) rotate(6deg);opacity:1} }
+
+    h1{ margin:0 0 4px 0; text-align:center; font-size:var(--h1); }
+    .subtitle{ text-align:center; font-size:var(--sub); color:#6b7280; margin-bottom:14px; }
+
+    /* Barra estado */
+    .status-bar{
+      display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;
+      padding:8px 12px;border-radius:999px;background:#eff6ff;border:1px solid #bfdbfe;
+      font-size:.9rem;gap:10px;flex-wrap:wrap;
+    }
+    .xp,.hearts{ display:flex;align-items:center;gap:4px;font-weight:900; }
+    .xp span{ color:#16a34a; }
+    .hearts span{ color:#f97316; }
+
+    /* Progreso */
+    .progress-wrapper{ margin-bottom:14px; }
+    .progress-label{ display:flex;justify-content:space-between;font-size:.8rem;color:#6b7280;margin-bottom:4px; }
+    .progress{ width:100%;height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden; }
+    .progress-inner{ height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#60a5fa,#2563eb);transition:width .2s ease; }
+
+    .card{
+      border-radius:20px;padding:18px;background:#f9fafb;border:1px solid #e5e7eb;margin-bottom:16px;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .card.correct{ animation:pulse .4s ease; border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.3); }
+    .card.wrong{ animation:shake .3s ease; border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.3); }
+    @keyframes pulse{ 0%{transform:scale(1)} 50%{transform:scale(1.03)} 100%{transform:scale(1)} }
+    @keyframes shake{
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-4px)} 40%{transform:translateX(4px)}
+      60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+    }
+
+    .goal-row{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;
+    }
+    .goal{ font-weight:900;font-size:1.02rem;color:#111827; }
+    .speak-btn{
+      font-size:1.15rem;cursor:pointer;background:#eff6ff;border-radius:999px;border:1px solid #bfdbfe;
+      padding:6px 10px;transition:transform .1s ease, background .15s ease, border-color .15s ease;
+    }
+    .speak-btn:hover{ transform:scale(1.06); background:#dbeafe; border-color:#93c5fd; }
+
+    /* ======= Ajedrez ======= */
+    .board-section{ margin-top:10px; }
+    .board-wrap{ display:flex; justify-content:center; margin:8px 0 6px; }
+    .board-frame{ position:relative; width:var(--board-max); max-width:100%; margin-inline:auto; }
+
+    .board{
+      width:100%;
+      aspect-ratio:1/1;
+      border-radius:15px;
+      overflow:hidden;
+      border:2px solid #93c5fd;
+      box-shadow:0 10px 22px rgba(0,0,0,.08);
+      display:grid;
+      grid-template-columns:repeat(8,1fr);
+      grid-template-rows:repeat(8,1fr);
+      touch-action:none; /* ✅ dedo para arrastre en tablero */
+      position:relative;
+      background:transparent;
+    }
+
+    .sq{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+      -webkit-user-select:none;
+      overflow:hidden;
+    }
+    .sq.light{ background:var(--light); }
+    .sq.dark{ background:var(--dark); }
+
+    /* last/check/hints */
+    .sq.last{ box-shadow: inset 0 0 0 999px rgba(201,211,138,.75); }
+    .sq.check{ box-shadow: inset 0 0 0 999px rgba(212,75,63,.38); z-index:2; }
+    .sq.hintFrom{ outline:3px solid rgba(110,168,254,.95); outline-offset:-3px; }
+    .sq.hintTo{ outline:3px dashed rgba(125,255,125,.95); outline-offset:-3px; }
+
+    /* Coordenadas */
+    .file-labels{
+      position:absolute; left:0; right:0; bottom: calc(var(--coords-gap) * -1);
+      display:grid; grid-template-columns:repeat(8,1fr);
+      text-align:center; font-size:clamp(.78rem,2.8vw,.95rem); font-weight:900;
+      color:#1f2937; opacity:.85; pointer-events:none;
+    }
+    .rank-labels{
+      position:absolute; top:0; bottom:0; left: calc(var(--coords-gap) * -1);
+      display:grid; grid-template-rows:repeat(8,1fr);
+      align-items:center; justify-items:center;
+      font-size:clamp(.78rem,2.8vw,.95rem); font-weight:900; color:#1f2937; opacity:.85; pointer-events:none;
+    }
+
+    /* ✅ IMPORTANTE:
+       La pista NO debe mostrarse hasta que el usuario presione "Pista" */
+    .hintText{
+      text-align:center;
+      font-size:.92rem;
+      font-weight:750;
+      color:#374151;
+      margin-top:10px;
+      display:none; /* ✅ oculta por defecto */
+    }
+
+    .mini{ margin-top:6px; text-align:center; font-size:.82rem; color:#6b7280; font-weight:700; }
+    code.k{ background:#eef2ff; padding:2px 6px; border-radius:8px; font-weight:900; }
+
+    /* ===== piezas PNG (no alteran el tamaño de casilla) ===== */
+    .piece-wrap{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none;
+    }
+    .piece{
+      pointer-events:auto;
+      width:86%;
+      height:86%;
+      object-fit:contain;
+      cursor:grab;
+      user-select:none;
+      -webkit-user-select:none;
+      -webkit-user-drag:element;
+      touch-action:none;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.15));
+      transform:translateZ(0);
+    }
+    .piece:active{ cursor:grabbing; transform:translateZ(0) scale(1.02); }
+    .ghost{ opacity:.6; }
+
+    /* pieza flotante para dedo */
+    .drag-float{
+      position:fixed; left:0; top:0;
+      width:64px; height:64px;
+      transform:translate(-9999px,-9999px);
+      z-index:9999;
+      pointer-events:none;
+      opacity:.95;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+      display:none;
+    }
+
+    .controls-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+      justify-content:center;
+    }
+    button.main-btn{
+      flex:1;
+      border:none;
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:var(--btn);
+      cursor:pointer;
+      background:linear-gradient(90deg,#60a5fa,#2563eb);
+      color:#fff;
+      font-weight:900;
+      letter-spacing:.02em;
+      transition:transform .1s ease, box-shadow .1s ease, filter .15s ease;
+      min-width:120px;
+    }
+    button.main-btn:hover{ transform:translateY(-1px); box-shadow:0 6px 12px rgba(0,0,0,.15); filter:brightness(1.05); }
+
+    .controls-mini{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;
+    }
+    select, button.small-btn{
+      appearance:none;
+      border:1px solid #bfdbfe;
+      background:#fff;
+      color:#111827;
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:var(--btn);
+      transition:transform .1s ease, background .15s ease, border-color .15s ease;
+      min-width: clamp(120px, 30vw, 180px);
+      text-align:center;
+    }
+    button.small-btn:hover{ transform:translateY(-1px); background:#e0f2fe; border-color:#93c5fd; }
+
+    .feedback{
+      margin-top:10px;
+      font-size:.95rem;
+      text-align:center;
+      min-height:5px;
+      font-weight:900;
+    }
+    .feedback.good{ color:#16a34a; }
+    .feedback.bad{ color:#ef4444; }
+
+    .final-message{
+      display:none;
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      background:linear-gradient(145deg,#ecfeff,#dbeafe);
+      border:2px solid #93c5fd;
+      text-align:center;
+      font-size:1rem;
+      font-weight:900;
+      color:#1e3a8a;
+    }
+    .final-message span{
+      display:block;
+      margin-top:6px;
+      font-size:.9rem;
+      font-weight:800;
+      color:#1f2937;
+    }
+
+    @media (max-width:360px){
+      .nav-btn{ min-width:46%; }
+      .goal-row{ justify-content:center; }
+      .kids-title{ font-size:1.35rem; }
+      .kids-badge{ width:48px; height:48px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- Menú de navegación -->
+    <!-- <div class="nav" role="navigation" aria-label="Cursos">
+      <a class="nav-btn" href="index.html">🇺🇸 Inglés</a>
+      <button class="nav-btn active" onclick="location.href='ajedrez.html'">♟️ Ajedrez</button>
+      <button class="nav-btn" onclick="location.href='ruta-mate.html'">➗ Matemáticas</button>
+    </div> -->
+
+    <!-- 🌟 Encabezado infantil: Marie Kids (CLICK -> index.html) -->
+    <div class="brand-header-kids clickable"
+         aria-label="Marie Kids"
+         role="link"
+         tabindex="0"
+         onclick="goHome()"
+         onkeydown="if(event.key==='Enter' || event.key===' '){ event.preventDefault(); goHome(); }">
+      <div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div>
+      <div class="star s1">⭐</div><div class="star s2">✨</div><div class="star s3">🌟</div>
+
+      <div class="brand-row">
+        <div class="kids-badge" aria-hidden="true">♟️</div>
+        <div>
+          <div class="kids-title">Academia de Ajedrez Mauro</div>
+          <div class="kids-subtitle">
+            Ajedrez divertido
+            <span class="kids-pill">Mate en 1</span>
+            <span class="kids-pill">👉 Arrastra</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1>Ajedrez • Mate en 1</h1>
+    <p class="subtitle">Arrastra la <b>pieza blanca</b> a la casilla correcta para dar mate. 💙</p>
+
+    <!-- Barra de estado -->
+    <div class="status-bar">
+      <div class="xp">✅ Correctas: <span id="xpValue">0</span></div>
+      <div class="hearts">🧠 Intentos: <span id="heartsValue">0</span></div>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-wrapper">
+      <div class="progress-label">
+        <span>Progreso de la sesión</span>
+        <span id="progressText">0/10</span>
+      </div>
+      <div class="progress">
+        <div class="progress-inner" id="progressBar"></div>
+      </div>
+    </div>
+
+    <!-- Tarjeta principal -->
+    <div class="card" id="lessonCard">
+      <div class="goal-row">
+        <div class="goal" id="goalText">Juegan blancas y dan mate en 1</div>
+        <button class="speak-btn" type="button" id="btnSpeak" title="Escuchar pista">🔊</button>
+      </div>
+
+      <div class="board-section">
+        <div class="board-wrap">
+          <div class="board-frame">
+            <div class="rank-labels" id="rankLabels"></div>
+            <div class="board" id="board" aria-label="Tablero"></div>
+            <div class="file-labels" id="fileLabels"></div>
+          </div>
+        </div>
+
+        <div class="controls-mini">
+          <select id="puzzleSel" aria-label="Seleccionar ejercicio"></select>
+          <button class="small-btn" id="btnHint" type="button">Pista</button>
+          <button class="small-btn" id="btnReset" type="button">Reiniciar</button>
+          <button class="small-btn" id="btnShow" type="button">Ver solución</button>
+        </div>
+
+        <!-- ✅ AHORA la pista está oculta hasta que presiones "Pista" -->
+        <div class="hintText" id="hintText"></div>
+
+        <!-- <div class="mini">Consejo: usa <code class="k">Pista</code> cuando lo necesites.</div> -->
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+      <div class="final-message" id="finalMessage"></div>
+    </div>
+
+    <div class="controls-row">
+      <button class="main-btn" type="button" id="btnNext">Next</button>
+      <button class="main-btn" type="button" id="btnShare">📤 Compartir app</button>
+    </div>
+  </div>
+
+  <!-- Floating piece for touch dragging -->
+  <img id="dragFloat" class="drag-float" alt="drag" />
+
+  <script>
+    // ✅ IR A HOME (index.html)
+    function goHome(){
+      location.href = "index.html";
+    }
+  </script>
+
+  <script>
+    /****************************
+     * ✅ FUNCIONALIDAD:
+     * - PC: Drag & Drop HTML5
+     * - Celular: Pointer Events (arrastre con dedo)
+     * - Pista SOLO cuando el usuario presiona el botón "Pista"
+     * - ✅ Movimientos válidos por pieza
+     * - ✅ NUEVO: Movimiento LEGAL (no deja tu rey en jaque)
+     ****************************/
+
+    // Sprites PNG (debes tener /pieces/)
+    const SPRITES = {
+      wK: "pieces/wK.png", wQ: "pieces/wQ.png", wR: "pieces/wR.png",
+      wB: "pieces/wB.png", wN: "pieces/wN.png", wP: "pieces/wP.png",
+      bK: "pieces/bK.png", bQ: "pieces/bQ.png", bR: "pieces/bR.png",
+      bB: "pieces/bB.png", bN: "pieces/bN.png", bP: "pieces/bP.png",
+    };
+
+    // Coordenadas (visual estándar: r=0 es rank 8)
+    const FILES = ["a","b","c","d","e","f","g","h"];
+    const RANKS = ["8","7","6","5","4","3","2","1"];
+
+    const boardEl = document.getElementById("board");
+    const hintEl = document.getElementById("hintText");
+    const feedbackEl = document.getElementById("feedback");
+    const lessonCard = document.getElementById("lessonCard");
+    const puzzleSel = document.getElementById("puzzleSel");
+    const dragFloat = document.getElementById("dragFloat");
+
+    const correctSpan = document.getElementById("xpValue");
+    const attemptsSpan = document.getElementById("heartsValue");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const finalBox = document.getElementById("finalMessage");
+
+    function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
+    function rcToSquare(r,c){ return FILES[c] + RANKS[r]; }
+
+    function squareToRC(sq){
+      const file = sq[0];
+      const rank = sq[1];
+      const c = FILES.indexOf(file);
+      const r = RANKS.indexOf(rank);
+      if(r < 0 || c < 0) return null;
+      return { r, c };
+    }
+
+    function pieceName(code){
+      const t = code[1];
+      if(t==="K") return "Rey";
+      if(t==="Q") return "Dama";
+      if(t==="R") return "Torre";
+      if(t==="B") return "Alfil";
+      if(t==="N") return "Caballo";
+      return "Peón";
+    }
+
+    // ✅ 10 puzzles
+    const PUZZLES = [
+        {
+          name: "Mate #1 — 3 mates posibles",
+          turn: "w",
+          pieces: { f7: "wK", g6: "wQ", h8: "bK" },
+          solutions: [
+            { from: "g6", to: "g7" },
+            { from: "g6", to: "g8" },
+            { from: "g6", to: "h6" },
+          ],
+          checkKing: "h8"
+        },
+        {
+          name: "Mate #2 — 2 mates posibles",
+          turn: "w",
+          pieces: { c7: "wK", b6: "wQ", a8: "bK" },
+          solutions: [
+            { from: "b6", to: "b8" },
+            { from: "b6", to: "b7" },
+          ],
+          checkKing: "a8"
+        },
+        {
+          name: "Mate #3 — 3 mates posibles",
+          turn: "w",
+          pieces: { g6: "wK", h6: "wQ", c5: "wB", g8: "bK" },
+          solutions: [
+            { from: "h6", to: "h7" },
+            { from: "h6", to: "g7" },
+            { from: "h6", to: "f8" },
+          ],
+          checkKing: "g8"
+        },
+        {
+          name: "Mate #4 — 2 mates posibles",
+          turn: "w",
+          pieces: { f7: "wK", g7: "wR", c2: "wB", h8: "bK" },
+          solutions: [
+            { from: "g7", to: "g8" },
+            { from: "g7", to: "h7" },
+          ],
+          checkKing: "h8"
+        },
+        {
+          name: "Mate #5 — mate en una jugada",
+          turn: "w",
+          pieces: { d6: "wK", f6: "wQ", e8: "bK" },
+          solutions: [{ from: "f6", to: "e7" }],
+          checkKing: "e8"
+        },
+        {
+          name: "Mate #6 — (táctico)",
+          turn: "w",
+          pieces: { b7: "wR", c7: "wQ", e5: "wN", g6: "wB", e3: "wP", f4: "wP", g2: "wP", h3: "wP", f1: "bQ", e6: "bP", f5: "bP", g7: "bP", h6: "bP", g8: "bR", h8: "bK"},
+          solutions: [{ from: "e5", to: "f7" }],
+          checkKing: "h8"
+        },
+        {
+          name: "Mate #7 — 2 mates posibles",
+          turn: "w",
+          pieces: { f7: "wK", f6: "wQ", h8: "bK" },
+          solutions: [
+            { from: "f6", to: "g7" },
+            { from: "f6", to: "h6" },
+          ],
+          checkKing: "h8"
+        },
+        {
+          name: "Mate #8 — Qb7#",
+          turn: "w",
+          pieces: { c7: "wK", a6: "wQ", a8: "bK" },
+          solutions: [{ from: "a6", to: "b7" }],
+          checkKing: "a8"
+        },
+        {
+          name: "Mate #9 — Qg7#",
+          turn: "w",
+          pieces: { f6: "wK", f7: "wQ", g8: "bK" },
+          solutions: [{ from: "f7", to: "g7" }],
+          checkKing: "g8"
+        },
+        {
+          name: "Mate #10 — Qh7#",
+          turn: "w",
+          pieces: { g6: "wK", g7: "wQ", h8: "bK" },
+          solutions: [{ from: "g7", to: "h7" }],
+          checkKing: "h8"
+        },
+      ];
+
+    function getSolutions(p){
+      return (p.solutions && Array.isArray(p.solutions)) ? p.solutions : [p.solution];
+    }
+
+    // ===== progreso (sesión) =====
+    let solved = 0;
+    const maxProgress = 10;
+    let correctCount = 0;
+    let attempts = 0;
+    let streak = 0;
+    let bestStreak = 0;
+
+    function updateProgressBar(){
+      const percent = (solved / maxProgress) * 100;
+      progressBar.style.width = percent + "%";
+      progressText.textContent = `${solved}/${maxProgress}`;
+    }
+
+    function setFeedback(text, kind){
+      feedbackEl.textContent = text;
+      feedbackEl.classList.remove("good","bad");
+      if(kind) feedbackEl.classList.add(kind);
+
+      lessonCard.classList.remove("correct","wrong");
+      if(kind==="good") lessonCard.classList.add("correct");
+      if(kind==="bad") lessonCard.classList.add("wrong");
+    }
+
+    function renderCoords(){
+      document.getElementById("fileLabels").innerHTML = FILES.map(f=>`<div>${f}</div>`).join("");
+      document.getElementById("rankLabels").innerHTML = RANKS.map(r=>`<div>${r}</div>`).join("");
+    }
+
+    // ===== tablero / piezas =====
+    let puzzleIndex = 0;
+    let puzzle = null;
+    let pos = {};
+    let lastMove = null;
+    let frozen = false;
+    let hintLevel = 0;
+
+    // ✅ nuevo: bandera para saber si el usuario pidió pista
+    let hintRequested = false;
+
+    // touch drag state
+    let touchDragging = false;
+    let touchFromSq = null;
+    let activePointerId = null;
+
+    function clearHints(){
+      document.querySelectorAll(".sq").forEach(s=>{
+        s.classList.remove("hintFrom","hintTo");
+      });
+    }
+
+    /* ✅ Oculta el texto de pista y limpia resaltados */
+    function hideHint(){
+      hintRequested = false;
+      hintLevel = 0;
+      hintEl.textContent = "";
+      hintEl.style.display = "none";
+      clearHints();
+    }
+
+    /* ==========================================================
+       ✅ VALIDACIÓN:
+       A) Movimiento válido (patrón de pieza + camino libre + no capturar propia)
+       B) Movimiento legal (no deja a tu rey en jaque)
+       ========================================================== */
+
+    function isInside(r,c){
+      return r>=0 && r<8 && c>=0 && c<8;
+    }
+
+    function pieceAtSquare(square, positionObj){
+      return positionObj[square] || null;
+    }
+
+    function isSameColor(pcA, pcB){
+      if(!pcA || !pcB) return false;
+      return pcA[0] === pcB[0];
+    }
+
+    function sign(n){
+      return n===0 ? 0 : (n>0 ? 1 : -1);
+    }
+
+    function pathClear(fromSq, toSq, positionObj){
+      const a = squareToRC(fromSq);
+      const b = squareToRC(toSq);
+      if(!a || !b) return false;
+
+      const dr = b.r - a.r;
+      const dc = b.c - a.c;
+
+      const stepR = sign(dr);
+      const stepC = sign(dc);
+
+      let r = a.r + stepR;
+      let c = a.c + stepC;
+
+      while(!(r === b.r && c === b.c)){
+        if(!isInside(r,c)) return false;
+        const midSq = rcToSquare(r,c);
+        if(pieceAtSquare(midSq, positionObj)) return false;
+        r += stepR;
+        c += stepC;
+      }
+      return true;
+    }
+
+    // ✅ SOLO “patrón” de pieza (sin mirar jaque)
+    function isValidMovePattern(fromSq, toSq, pc, positionObj){
+      if(!fromSq || !toSq) return false;
+      if(fromSq === toSq) return false;
+      if(!pc) return false;
+
+      const a = squareToRC(fromSq);
+      const b = squareToRC(toSq);
+      if(!a || !b) return false;
+
+      const target = pieceAtSquare(toSq, positionObj);
+
+      // ✅ no capturar pieza propia
+      if(target && isSameColor(pc, target)) return false;
+
+      const color = pc[0]; // 'w' o 'b'
+      const type = pc[1];  // K,Q,R,B,N,P
+
+      const dr = b.r - a.r;
+      const dc = b.c - a.c;
+
+      const adr = Math.abs(dr);
+      const adc = Math.abs(dc);
+
+      // ✅ REY
+      if(type === "K"){
+        if(adr <= 1 && adc <= 1) return true;
+        return false;
+      }
+
+      // ✅ CABALLO
+      if(type === "N"){
+        const ok = (adr === 2 && adc === 1) || (adr === 1 && adc === 2);
+        return ok;
+      }
+
+      // ✅ TORRE
+      if(type === "R"){
+        if(dr === 0 && dc !== 0) return pathClear(fromSq, toSq, positionObj);
+        if(dc === 0 && dr !== 0) return pathClear(fromSq, toSq, positionObj);
+        return false;
+      }
+
+      // ✅ ALFIL
+      if(type === "B"){
+        if(adr === adc && adr !== 0) return pathClear(fromSq, toSq, positionObj);
+        return false;
+      }
+
+      // ✅ DAMA
+      if(type === "Q"){
+        const rookLike = (dr === 0 && dc !== 0) || (dc === 0 && dr !== 0);
+        const bishopLike = (adr === adc && adr !== 0);
+        if(rookLike || bishopLike) return pathClear(fromSq, toSq, positionObj);
+        return false;
+      }
+
+      // ✅ PEÓN (simple)
+      if(type === "P"){
+        const dir = (color === "w") ? -1 : +1; // white sube (r disminuye), black baja (r aumenta)
+
+        // avance 1
+        if(dc === 0 && dr === dir && !target){
+          return true;
+        }
+
+        // avance 2 desde fila inicial
+        const startRow = (color === "w") ? 6 : 1; // w desde rank2 (r6), b desde rank7 (r1)
+        if(dc === 0 && a.r === startRow && dr === 2*dir && !target){
+          const midSq = rcToSquare(a.r + dir, a.c);
+          if(!pieceAtSquare(midSq, positionObj) && !pieceAtSquare(toSq, positionObj)) return true;
+          return false;
+        }
+
+        // captura diagonal
+        if(adr === 1 && adc === 1 && dr === dir){
+          if(target && !isSameColor(pc, target)) return true;
+          return false;
+        }
+
+        return false;
+      }
+
+      return false;
+    }
+
+    // ✅ Encuentra el rey del color
+    function findKingSquare(color, positionObj){
+      const kingCode = color + "K";
+      for(const [sq, pc] of Object.entries(positionObj)){
+        if(pc === kingCode) return sq;
+      }
+      return null;
+    }
+
+    // ✅ “Ataques” del oponente al rey
+    function isSquareAttackedBy(attackerColor, targetSq, positionObj){
+      for(const [fromSq, pc] of Object.entries(positionObj)){
+        if(!pc) continue;
+        if(pc[0] !== attackerColor) continue;
+
+        const type = pc[1];
+
+        // Peón: ataca diagonales
+        if(type === "P"){
+          const a = squareToRC(fromSq);
+          const b = squareToRC(targetSq);
+          if(!a || !b) continue;
+
+          const dir = (attackerColor === "w") ? -1 : +1;
+          const dr = b.r - a.r;
+          const dc = b.c - a.c;
+
+          if(dr === dir && Math.abs(dc) === 1){
+            return true;
+          }
+          continue;
+        }
+
+        // Rey: ataca 1 casilla
+        if(type === "K"){
+          const a = squareToRC(fromSq);
+          const b = squareToRC(targetSq);
+          if(!a || !b) continue;
+          const adr = Math.abs(b.r - a.r);
+          const adc = Math.abs(b.c - a.c);
+          if(adr <= 1 && adc <= 1) return true;
+          continue;
+        }
+
+        // Caballo
+        if(type === "N"){
+          const a = squareToRC(fromSq);
+          const b = squareToRC(targetSq);
+          if(!a || !b) continue;
+          const adr = Math.abs(b.r - a.r);
+          const adc = Math.abs(b.c - a.c);
+          if((adr === 2 && adc === 1) || (adr === 1 && adc === 2)) return true;
+          continue;
+        }
+
+        // Piezas deslizantes: torre/alfil/dama
+        if(type === "R" || type === "B" || type === "Q"){
+          if(isValidMovePattern(fromSq, targetSq, pc, positionObj)){
+            return true;
+          }
+          continue;
+        }
+      }
+      return false;
+    }
+
+    // ✅ ¿El rey de "color" está en jaque?
+    function isKingInCheck(color, positionObj){
+      const kingSq = findKingSquare(color, positionObj);
+      if(!kingSq) return false;
+      const attackerColor = (color === "w") ? "b" : "w";
+      return isSquareAttackedBy(attackerColor, kingSq, positionObj);
+    }
+
+    // ✅ Simular movimiento y ver si deja rey en jaque
+    function wouldLeaveKingInCheck(fromSq, toSq, moverColor, positionObj){
+      const tmp = deepClone(positionObj);
+      const movingPiece = tmp[fromSq];
+      if(!movingPiece) return true;
+
+      delete tmp[toSq];
+      tmp[toSq] = movingPiece;
+      delete tmp[fromSq];
+
+      return isKingInCheck(moverColor, tmp);
+    }
+
+    // ✅ Movimiento final: válido + legal
+    function isLegalMove(fromSq, toSq, pc, positionObj){
+      if(!isValidMovePattern(fromSq, toSq, pc, positionObj)) return false;
+      const moverColor = pc[0];
+      if(wouldLeaveKingInCheck(fromSq, toSq, moverColor, positionObj)) return false;
+      return true;
+    }
+
+    /* ✅ Intento de movimiento: si es ilegal NO mueve la pieza */
+    function tryMove(from, to){
+      clearHints();
+
+      if(!from || !to) return;
+      if(from === to){ render(); return; }
+
+      const pc = pos[from];
+      if(!pc){ render(); return; }
+
+      if(pc[0] !== puzzle.turn){
+        setFeedback("⛔ Solo se mueven las piezas blancas en estos ejercicios.", "bad");
+        render();
+        return;
+      }
+
+      const ok = isLegalMove(from, to, pc, pos);
+
+      if(!ok){
+        setFeedback(`⛔ Movimiento inválido / ilegal para ${pieceName(pc)} (o deja tu rey en jaque).`, "bad");
+        render();
+        return;
+      }
+
+      doMove(from, to);
+    }
+
+    function buildBoard(){
+      boardEl.innerHTML = "";
+      for(let r=0;r<8;r++){
+        for(let c=0;c<8;c++){
+          const sq = rcToSquare(r,c);
+          const cell = document.createElement("div");
+          cell.className = "sq " + (((r+c)%2===0) ? "light" : "dark");
+          cell.dataset.square = sq;
+
+          // PC drag & drop
+          cell.addEventListener("dragover", (e)=> e.preventDefault());
+          cell.addEventListener("drop", (e)=>{
+            e.preventDefault();
+            if(frozen) return;
+            const from = e.dataTransfer.getData("from");
+            if(!from || !pos[from]) return;
+            if(pos[from][0] !== puzzle.turn) return;
+
+            tryMove(from, sq);
+          });
+
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+
+    function render(){
+      document.querySelectorAll(".sq").forEach(sqEl=>{
+        sqEl.innerHTML = "";
+        sqEl.classList.remove("last","check");
+      });
+
+      if(lastMove){
+        document.querySelector(`.sq[data-square="${lastMove.from}"]`)?.classList.add("last");
+        document.querySelector(`.sq[data-square="${lastMove.to}"]`)?.classList.add("last");
+      }
+
+      if(frozen && puzzle?.checkKing){
+        document.querySelector(`.sq[data-square="${puzzle.checkKing}"]`)?.classList.add("check");
+      }
+
+      for(const [sq, pc] of Object.entries(pos)){
+        const cell = document.querySelector(`.sq[data-square="${sq}"]`);
+        if(!cell) continue;
+
+        const wrap = document.createElement("div");
+        wrap.className = "piece-wrap";
+
+        const img = document.createElement("img");
+        img.className = "piece";
+        img.src = SPRITES[pc];
+        img.alt = pc;
+
+        const canMove = (!frozen && pc[0] === puzzle.turn);
+        img.draggable = canMove;
+
+        img.onerror = () => console.error("No se encontró:", img.src, "(pieza", pc + ")");
+
+        // PC drag
+        img.addEventListener("dragstart", (e)=>{
+          if(!canMove){ e.preventDefault(); return; }
+          e.dataTransfer.setData("from", sq);
+          img.classList.add("ghost");
+          try{
+            const tiny = new Image();
+            tiny.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3C/svg%3E";
+            e.dataTransfer.setDragImage(tiny,0,0);
+          }catch(_){}
+        });
+        img.addEventListener("dragend", ()=> img.classList.remove("ghost"));
+
+        // Touch pointer
+        img.addEventListener("pointerdown", (e)=>{
+          if(!canMove) return;
+          if(activePointerId !== null) return;
+
+          activePointerId = e.pointerId;
+          img.setPointerCapture?.(e.pointerId);
+
+          touchDragging = true;
+          touchFromSq = sq;
+
+          dragFloat.src = SPRITES[pc];
+          dragFloat.style.display = "block";
+          positionDragFloat(e.clientX, e.clientY);
+
+          img.classList.add("ghost");
+          e.preventDefault();
+        });
+
+        wrap.appendChild(img);
+        cell.appendChild(wrap);
+      }
+    }
+
+    function positionDragFloat(clientX, clientY){
+      const size = (Math.min(window.innerWidth, window.innerHeight) < 520) ? 56 : 64;
+      dragFloat.style.width = size+"px";
+      dragFloat.style.height = size+"px";
+      dragFloat.style.transform = `translate(${clientX - size/2}px, ${clientY - size/2}px)`;
+    }
+
+    function endTouchDrag(){
+      touchDragging = false;
+      touchFromSq = null;
+      activePointerId = null;
+      dragFloat.style.display = "none";
+    }
+
+    function squareFromClientPoint(clientX, clientY){
+      const el = document.elementFromPoint(clientX, clientY);
+      if(!el) return null;
+      const sqEl = el.closest?.(".sq");
+      if(!sqEl) return null;
+      return sqEl.dataset.square || null;
+    }
+
+    function doMove(from, to){
+      clearHints();
+      if(!from || !to) return;
+      if(from === to){ render(); return; }
+
+      delete pos[to];
+      pos[to] = pos[from];
+      delete pos[from];
+
+      lastMove = {from,to};
+      render();
+      validateMove();
+    }
+
+    /* ✅ PISTA: SOLO con click */
+    function showHint(){
+      if(!puzzle || frozen) return;
+
+      hintRequested = true;
+      hintEl.style.display = "block";
+
+      const sol = getSolutions(puzzle)[0];
+      const pc = pos[sol.from];
+
+      if(!pc){
+        hintEl.textContent = "No hay pieza en la casilla de la solución. Revisa el puzzle.";
+        return;
+      }
+
+      hintLevel = Math.min(2, hintLevel+1);
+
+      if(hintLevel === 1){
+        clearHints();
+        hintEl.textContent = `Pista: la jugada ganadora es con ${pieceName(pc)}.`;
+      }else{
+        clearHints();
+        document.querySelector(`.sq[data-square="${sol.from}"]`)?.classList.add("hintFrom");
+        document.querySelector(`.sq[data-square="${sol.to}"]`)?.classList.add("hintTo");
+        hintEl.textContent = "Pista 2: mira origen → destino (resaltado).";
+      }
+    }
+
+    function validateMove(){
+      attempts++;
+      attemptsSpan.textContent = attempts;
+
+      const sols = getSolutions(puzzle);
+      const ok = !!lastMove && sols.some(s => s.from===lastMove.from && s.to===lastMove.to);
+
+      if(ok){
+        correctCount++;
+        correctSpan.textContent = correctCount;
+
+        streak++;
+        bestStreak = Math.max(bestStreak, streak);
+
+        frozen = true;
+        render();
+
+        if(solved < maxProgress) solved++;
+        updateProgressBar();
+
+        setFeedback(`✅ ¡Correcto! Jaque mate en 1. (Racha: ${streak} | Mejor: ${bestStreak})`, "good");
+
+        if(solved >= maxProgress){
+          finalBox.innerHTML = `
+            🎉 ¡Sesión completada!<br>
+            Lograste <strong>${correctCount}</strong> mates correctos.
+            <span>¡Sigue practicando! ♟️✨</span>
+          `;
+          finalBox.style.display = "block";
+        }else{
+          finalBox.style.display = "none";
+          finalBox.innerHTML = "";
+        }
+
+      }else{
+        streak = 0;
+        setFeedback("❌ No es mate. Si quieres ayuda, presiona Pista.", "bad");
+        frozen = false;
+      }
+    }
+
+    function loadPuzzle(i, keepFeedback=false){
+      puzzleIndex = i;
+      puzzle = PUZZLES[puzzleIndex];
+      pos = deepClone(puzzle.pieces);
+      lastMove = null;
+      frozen = false;
+      endTouchDrag();
+
+      hideHint();
+
+      puzzleSel.value = String(puzzleIndex);
+      document.getElementById("goalText").textContent = "Juegan blancas y dan mate en 1";
+
+      if(!keepFeedback){
+        setFeedback("Arrastra la pieza correcta para dar mate.", "");
+      }
+
+      render();
+    }
+
+    // "Ver solución" NO cuenta como intento
+    function showSolution(){
+      if(frozen) return;
+      const sols = getSolutions(puzzle);
+      const {from,to} = sols[0];
+
+      const oldAttempts = attempts;
+
+      tryMove(from,to);
+
+      attempts = oldAttempts;
+      attemptsSpan.textContent = attempts;
+    }
+
+    function nextPuzzle(){
+      const next = (puzzleIndex + 1) % PUZZLES.length;
+      loadPuzzle(next);
+    }
+
+    // ✅ voz
+    function speakText(text){
+      if(!("speechSynthesis" in window)) return;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "es-ES";
+      u.rate = 0.95;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }
+    function speakPrompt(){
+      if(!puzzle) return;
+      speakText("Juegan blancas y dan mate en una.");
+    }
+
+    // ===== touch global handlers =====
+    window.addEventListener("pointermove", (e)=>{
+      if(!touchDragging) return;
+      if(activePointerId !== e.pointerId) return;
+      positionDragFloat(e.clientX, e.clientY);
+      e.preventDefault();
+    }, {passive:false});
+
+    window.addEventListener("pointerup", (e)=>{
+      if(!touchDragging) return;
+      if(activePointerId !== e.pointerId) return;
+
+      const toSq = squareFromClientPoint(e.clientX, e.clientY);
+      const fromSq = touchFromSq;
+
+      endTouchDrag();
+
+      if(frozen){ render(); return; }
+      if(!toSq){ render(); return; }
+      if(!fromSq || !pos[fromSq]){ render(); return; }
+      if(pos[fromSq][0] !== puzzle.turn){ render(); return; }
+
+      tryMove(fromSq, toSq);
+
+      e.preventDefault();
+    }, {passive:false});
+
+    window.addEventListener("pointercancel", ()=>{
+      if(!touchDragging) return;
+      endTouchDrag();
+      render();
+    });
+
+    // ===== init =====
+    function init(){
+      renderCoords();
+      buildBoard();
+
+      puzzleSel.innerHTML = "";
+      PUZZLES.forEach((p,i)=>{
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = p.name;
+        puzzleSel.appendChild(opt);
+      });
+
+      puzzleSel.addEventListener("change", (e)=> loadPuzzle(Number(e.target.value)));
+      document.getElementById("btnHint").addEventListener("click", showHint);
+      document.getElementById("btnReset").addEventListener("click", ()=> loadPuzzle(puzzleIndex));
+      document.getElementById("btnShow").addEventListener("click", showSolution);
+      document.getElementById("btnNext").addEventListener("click", nextPuzzle);
+      document.getElementById("btnSpeak").addEventListener("click", speakPrompt);
+
+      updateProgressBar();
+      loadPuzzle(0);
+    }
+    init();
+
+    // compartir
+    document.getElementById("btnShare").addEventListener("click", ()=>{
+      const shareData = {
+        title:"Marie Kids • Ajedrez",
+        text:"♟️ Practica mate en 1 (arrastrando piezas)",
+        url: window.location.href
+      };
+
+      if(navigator.share){
+        navigator.share(shareData).catch(()=>{});
+      }else{
+        navigator.clipboard.writeText(shareData.url);
+        alert("🔗 Link copiado para compartir");
+      }
+    });
+  </script>
+
+  <script>
+    // Registrar Service Worker (PWA)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(() => { });
+      });
+    }
+  </script>
+</body>
+</html>
