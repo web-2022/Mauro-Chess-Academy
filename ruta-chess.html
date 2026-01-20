@@ -543,39 +543,131 @@
       .hero-link:hover .badge {
         transform: scale(1.05);
       }
+
+      /* ===============================
+   HERO OSCURO ALTO IMPACTO
+   =============================== */
+
+      .hero-dark {
+        background:
+          radial-gradient(900px 400px at 80% 10%, #0f172a, transparent 60%),
+          linear-gradient(135deg, #020617, #020617);
+        border-radius: calc(var(--radius) - 6px);
+        padding: clamp(18px, 4vw, 28px);
+        color: #e5e7eb;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, .35);
+      }
+
+      .hero-impact {
+        display: grid;
+        grid-template-columns: 1.2fr .8fr;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .hero-text h1 {
+        margin: 0 0 10px;
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        line-height: 1.05;
+        font-weight: 1000;
+      }
+
+      .title-main {
+        background: linear-gradient(90deg, #22c55e, #38bdf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .title-sub {
+        display: inline-block;
+        margin-top: 6px;
+        font-size: clamp(1rem, 2.4vw, 1.3rem);
+        font-weight: 400;
+        font-style: italic;
+        line-height: 1.25;
+        letter-spacing: .3px;
+        color: rgba(226, 232, 240, .85);
+      }
+
+      .hero-desc {
+        margin: 10px 0 16px;
+        font-weight: 700;
+        opacity: .95;
+      }
+
+      .hero-card {
+        background: linear-gradient(145deg, rgba(15, 23, 42, .9), rgba(2, 6, 23, .9));
+        border-radius: 18px;
+        padding: 14px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+      }
+
+      .card-title {
+        font-weight: 900;
+        margin-bottom: 8px;
+      }
+
+      .card-list {
+        display: grid;
+        gap: 6px;
+        font-weight: 800;
+        font-size: .9rem;
+      }
+
+      @media(max-width:780px) {
+        .hero-impact {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .cta {
+          justify-content: center;
+        }
+      }
     </style>
   </head>
 
   <body>
     <div class="app">
 
-      <header class="hero hero-link" aria-label="Ruta de Aprendizaje">
-        <a href="index.html" class="hero-click" aria-label="Volver al inicio">
+      <header class="hero hero-dark" aria-label="Academia de Ajedrez Online">
 
-          <div class="hero-row hero-space">
+        <section class="hero-impact">
 
-            <!-- IZQUIERDA -->
-            <div class="hero-left">
-              <div class="badge" aria-hidden="true">MCA</div>
+          <!-- TEXTO -->
+          <div class="hero-text">
+            <h1>
+              Domina el <span class="title-main">Ajedrez</span><br>
+              <span class="title-sub">Apertura, medio campo, finales y más…</span>
+            </h1>
 
-              <div>
-                <h1 class="hero-title">Ruta de Aprendizaje</h1>
-                <div class="hero-sub">
-                  <span class="pill">🔢 1 → 26</span>
-                  <!-- <span class="pill">✅ Guarda progreso</span> -->
-                </div>
-              </div>
-            </div>
+            <!-- <p class="hero-desc">
+              Entrenamiento estructurado, partidas comentadas y táctica real
+              para mejorar tu nivel paso a paso.
+            </p> -->
 
-            <!-- DERECHA -->
-            <div class="hero-course">
-              ♟️ AJEDREZ
-            </div>
-
+            <!-- <div class="cta">
+              
+              <a href="#" class="btn btn-secondary">▶️ Testimonios</a>
+              <button class="btn btn-share" onclick="shareApp()">📤 Compartir</button>
+            </div> -->
           </div>
 
-        </a>
+          <!-- TARJETA -->
+          <div class="hero-card">
+            <!-- <div class="card-title">📚 Ruta de Aprendizaje</div> -->
+            <!-- <div class="card-list">
+              <a href="#" class="btn btn-secondary">▶️ Testimonios</a>
+              <button class="btn btn-share" onclick="shareApp()">📤 Compartir</button> -->
+              <!-- <div class="card-item">✔ Progreso guardado automáticamente</div>
+              <div class="card-item">✔ Ideal para niños y adultos</div> -->
+            <!-- </div> -->
+          </div>
+
+        </section>
+
       </header>
+
 
 
       <div class="toolbar">
@@ -612,10 +704,12 @@
 
     <script>
       const STORAGE_KEY = "mk_learning_path_done_realizado_v3";
+      const UNLOCK_FLAG = "mk_ajedrez_unlocked";
+      const UNLOCK_KEY = "Mauro";
 
-      // ✅ AQUÍ LINKEAS cada uno de tus 25 HTML:
+      const isUnlocked = localStorage.getItem(UNLOCK_FLAG) === "true";
 
-
+      const FREE_LIMIT = 3; // 👈 primeros 3 gratis
 
       const topics = [
         { id: 1, emoji: "🏁", title: "Tablero y coordenadas", desc: "Filas, columnas, diagonales y cómo colocar el tablero.", href: "ajedrez-01.html", category: "" },
@@ -624,161 +718,137 @@
         { id: 4, emoji: "♙", title: "Movimiento del peón", desc: "Avance, captura, doble paso y meta del peón.", href: "ajedrez-04.html", category: "" },
         { id: 5, emoji: "♘", title: "Movimiento del caballo", desc: "La 'L' del caballo y cómo saltar piezas.", href: "ajedrez-05.html", category: "" },
         { id: 6, emoji: "♗", title: "Movimiento del alfil", desc: "Diagonales y colores (alfil claro / oscuro).", href: "ajedrez-06.html", category: "" },
-
         { id: 7, emoji: "♖", title: "Movimiento de la torre", desc: "Filas y columnas: cómo dominar líneas.", href: "ajedrez-06.html", category: "" },
         { id: 8, emoji: "♕", title: "Movimiento de la reina", desc: "Combina torre + alfil (¡la más poderosa!).", href: "ajedrez-07.html", category: "" },
         { id: 9, emoji: "♔", title: "Movimiento del rey", desc: "Cómo se mueve y por qué no puede quedar en jaque.", href: "ajedrez-08.html", category: "" },
         { id: 10, emoji: "🎯", title: "Capturas y reglas básicas", desc: "Turnos, capturas y piezas protegidas.", href: "ajedrez-09.html", category: "" },
         { id: 11, emoji: "🚫", title: "¿Qué es el jaque?", desc: "Detectar jaque y las 3 formas de responder.", href: "ajedrez-10.html", category: "" },
-
         { id: 12, emoji: "🏁", title: "Jaque mate (idea)", desc: "Qué es jaque mate y cómo reconocerlo.", href: "ajedrez-11.html", category: "" },
         { id: 13, emoji: "🧠", title: "Mate en 1", desc: "Encontrar la jugada ganadora en un movimiento.", href: "ajedrez-12-mateEn1.html", category: "" },
         { id: 14, emoji: "🧠", title: "Mate en 2 (suave)", desc: "Planear dos jugadas: amenaza y remate.", href: "ajedrez-13.html", category: "" },
         { id: 15, emoji: "🔄", title: "Enroque", desc: "Cuándo se puede, cuándo no y para qué sirve.", href: "ajedrez-14.html", category: "" },
         { id: 16, emoji: "👑", title: "Promoción del peón", desc: "Llegar a la última fila y elegir pieza (normalmente reina).", href: "ajedrez-15.html", category: "" },
-
         { id: 17, emoji: "🧩", title: "Principios de apertura", desc: "Control del centro, desarrollo y seguridad del rey.", href: "ajedrez-16.html", category: "" },
         { id: 18, emoji: "🎣", title: "Truco: ataque doble", desc: "Una pieza ataca 2 cosas al mismo tiempo.", href: "ajedrez-17.html", category: "" },
         { id: 19, emoji: "📌", title: "Truco: clavada", desc: "Pieza que no se mueve porque perdería algo importante.", href: "ajedrez-18.html", category: "" },
         { id: 20, emoji: "🔍", title: "Truco: descubierto", desc: "Mover una pieza para revelar un ataque oculto.", href: "ajedrez-19.html", category: "" },
         { id: 21, emoji: "🎯", title: "Piezas sin defensa", desc: "Aprender a ver piezas colgadas y ganar material.", href: "ajedrez-20.html", category: "" },
-
         { id: 22, emoji: "🤝", title: "Empates", desc: "Tablas por acuerdo, ahogado y repetición (simple).", href: "ajedrez-21.html", category: "" },
         { id: 23, emoji: "🏰", title: "Final: rey y peones", desc: "Cómo coronar y usar el rey en finales.", href: "ajedrez-22.html", category: "" },
         { id: 24, emoji: "👑", title: "Final: rey + torre", desc: "Idea básica para dar mate con torre y rey (intro).", href: "ajedrez-23.html", category: "" },
-        { id: 25, emoji: "👑", title: "Final: rey + reina", desc: "Mate básico con reina + rey (guía fácil).", href: "ajedrez-24.html", category: "Ajedrez" },
+        { id: 25, emoji: "👑", title: "Final: rey + reina", desc: "Mate básico con reina + rey (guía fácil).", href: "ajedrez-24.html", category: "" },
         { id: 26, emoji: "🏆", title: "Partida guiada", desc: "Jugar una partida completa con checklist de buenas jugadas.", href: "ajedrez-25.html", category: "" },
+
+        // 🔥 NUEVOS TEMAS AGREGADOS 🔥
+        { id: 27, emoji: "🛡️", title: "Seguridad del Rey", desc: "Enroque, debilidades y cómo defender o atacar al rey.", href: "seguridad-del-rey.html", category: "" },
+        { id: 28, emoji: "🌞", title: "Aperturas Abiertas", desc: "Peones centrales abiertos: desarrollo rápido y táctica.", href: "aperturas-abiertas.html", category: "" },
+        { id: 29, emoji: "🌙", title: "Aperturas Cerradas", desc: "Estructuras bloqueadas: planes, maniobras y rupturas.", href: "aperturas-cerradas.html", category: "" },
+        { id: 30, emoji: "🎯", title: "Ataque a Pieza Indefensa", desc: "Castiga piezas sin defensa: ataques dobles y presión.", href: "ataque-a-pieza-indefensa.html", category: "" },
+        { id: 31, emoji: "🔥", title: "Sacrificios Tácticos", desc: "Entrega material por ataque, iniciativa o mate.", href: "sacrificios-tacticos.html", category: "" },
+        { id: 32, emoji: "🔦", title: "Rayos X", desc: "Clavadas ocultas, piezas detrás y presión a distancia.", href: "rayos-x.html", category: "" },
+        { id: 33, emoji: "♟️", title: "Casillas Fuertes y Débiles", desc: "Outposts, casillas críticas y cómo explotarlas.", href: "casillas-fuertes-y-debiles.html", category: "" },
+        { id: 34, emoji: "🏁", title: "Oposición en Finales", desc: "Reyes en finales: oposición y triangulación.", href: "oposicion-en-finales.html", category: "" },
       ];
 
 
-      // Total
       const totalEl = document.getElementById("totalCount");
       totalEl.textContent = topics.length;
 
       function loadDoneSet() {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          const arr = raw ? JSON.parse(raw) : [];
-          return new Set(arr.map(Number));
+          return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
         } catch {
           return new Set();
         }
       }
 
       function saveDoneSet(doneSet) {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify([...doneSet]));
-        } catch { }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...doneSet]));
       }
 
       function updateProgress(doneSet) {
-        const done = doneSet.size;
-        const total = topics.length;
-        document.getElementById("doneCount").textContent = done;
-        const pct = total === 0 ? 0 : (done / total) * 100;
-        document.getElementById("barInner").style.width = pct + "%";
+        document.getElementById("doneCount").textContent = doneSet.size;
+        document.getElementById("barInner").style.width =
+          ((doneSet.size / topics.length) * 100) + "%";
       }
 
-      function cssSafeCat(cat) {
-        return String(cat).replace(/\s+/g, "-");
+      function requestUnlock() {
+        const key = prompt("🔒 Contenido bloqueado\nIngresa la clave de acceso:");
+        if (key === UNLOCK_KEY) {
+          localStorage.setItem(UNLOCK_FLAG, "true");
+          alert("✅ Acceso desbloqueado");
+          location.reload();
+        } else if (key !== null) {
+          alert("❌ Clave incorrecta");
+        }
       }
 
-      function renderGrid(queryText, doneSet) {
+      function renderGrid(query, doneSet) {
         const grid = document.getElementById("grid");
         grid.innerHTML = "";
 
-        const q = String(queryText || "").trim().toLowerCase();
+        const q = (query || "").toLowerCase();
 
-        // ✅ FILTRO SOLO POR BUSCADOR (esta página es "Todos")
-        const filtered = topics.filter(t => {
-          if (!q) return true;
-          const hay = (t.title + " " + t.desc + " " + t.category).toLowerCase();
-          return hay.includes(q);
-        });
+        topics
+          .filter(t => (t.title + t.desc).toLowerCase().includes(q))
+          .forEach(t => {
+            const isDone = doneSet.has(t.id);
+            const locked = t.id > FREE_LIMIT && !isUnlocked;
 
-        // recomendado: primer no hecho dentro del filtrado
-        const nextId = filtered.find(t => !doneSet.has(t.id))?.id ?? null;
+            const card = document.createElement("article");
+            card.className = "topic" + (isDone ? " done" : "") + (locked ? " locked" : "");
 
-        // si no hay resultados
-        if (filtered.length === 0) {
-          const empty = document.createElement("div");
-          empty.style.gridColumn = "1 / -1";
-          empty.style.textAlign = "center";
-          empty.style.padding = "18px";
-          empty.style.fontWeight = "900";
-          empty.style.color = "#6b7280";
-          empty.textContent = "No encontré temas con esa búsqueda 🙂";
-          grid.appendChild(empty);
-          return;
-        }
+            card.innerHTML = `
+          <div class="num">${locked ? "🔒" : t.id}</div>
 
-        filtered.forEach(t => {
-          const isDone = doneSet.has(t.id);
-          const isNext = nextId !== null && t.id === nextId;
-
-          const card = document.createElement("article");
-          card.className =
-            "topic " +
-            "cat-" + cssSafeCat(t.category) +
-            (isNext ? " next" : "") +
-            (isDone ? " done" : "");
-
-          card.innerHTML = `
-          <div class="num" aria-label="Tema ${t.id}">${t.id}</div>
-
-          <a href="${t.href}" aria-label="Abrir ${t.title}">
-
-
-            <div class="topic-tag">${t.emoji} ${t.category}${isNext ? " • ⭐ Recomendado" : ""}</div>
+          <a href="${locked ? "#" : t.href}">
+            <div class="topic-tag">${t.emoji} ${locked ? "Bloqueado" : "Disponible"}</div>
             <div class="title">${t.title}</div>
             <p class="desc">${t.desc}</p>
           </a>
 
           <div class="meta">
             <div class="status ${isDone ? "done" : ""}">
-              ${isDone ? "✅ Realizado" : (isNext ? "👉 Recomendado" : "🔁 Practicar nuevamente")}
+              ${locked ? "🔒 Requiere clave" : isDone ? "✅ Realizado" : "📘 Disponible"}
             </div>
 
-            <button class="mark ${isDone ? "done" : ""}" type="button" data-id="${t.id}">
+            <button class="mark ${isDone ? "done" : ""}" data-id="${t.id}">
               ${isDone ? "Realizado ✅" : "Realizado"}
             </button>
           </div>
         `;
 
-          grid.appendChild(card);
-        });
+            if (locked) {
+              card.querySelector("a").addEventListener("click", e => {
+                e.preventDefault();
+                requestUnlock();
+              });
+            }
+
+            grid.appendChild(card);
+          });
 
         grid.querySelectorAll(".mark").forEach(btn => {
-          btn.addEventListener("click", (e) => {
-            e.preventDefault();
+          btn.onclick = e => {
             e.stopPropagation();
-
             const id = Number(btn.dataset.id);
-            if (!Number.isFinite(id)) return;
-
-            if (doneSet.has(id)) doneSet.delete(id);
-            else doneSet.add(id);
-
+            doneSet.has(id) ? doneSet.delete(id) : doneSet.add(id);
             saveDoneSet(doneSet);
             updateProgress(doneSet);
-
-            const currentQuery = document.getElementById("q").value;
-            renderGrid(currentQuery, doneSet);
-          });
+            renderGrid(document.getElementById("q").value, doneSet);
+          };
         });
       }
 
-      // INIT
       const doneSet = loadDoneSet();
       updateProgress(doneSet);
       renderGrid("", doneSet);
 
-      // ✅ BUSCADOR FUNCIONA AQUÍ
-      const input = document.getElementById("q");
-      input.addEventListener("input", () => {
-        renderGrid(input.value, doneSet);
+      document.getElementById("q").addEventListener("input", e => {
+        renderGrid(e.target.value, doneSet);
       });
     </script>
+
 
     <script>
       // Registrar Service Worker (PWA)
@@ -788,6 +858,24 @@
         });
       }
     </script>
+
+    <script>
+      function shareApp() {
+        const data = {
+          title: "Academia de Ajedrez Online",
+          text: "♟️ Aprende ajedrez paso a paso con una ruta guiada",
+          url: window.location.href
+        };
+
+        if (navigator.share) {
+          navigator.share(data);
+        } else {
+          navigator.clipboard.writeText(data.url);
+          alert("📋 Enlace copiado para compartir");
+        }
+      }
+    </script>
+
   </body>
 
 </html>
