@@ -1,20 +1,21 @@
-{  
+{
+  "id": "/Mauro-Chess-Academy/",
   "name": "Academia de Ajedrez Mauro",
   "short_name": "AjedrezMauro",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/Mauro-Chess-Academy/index.html",
+  "scope": "/Mauro-Chess-Academy/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1976d2",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "/Mauro-Chess-Academy/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "/Mauro-Chess-Academy/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
