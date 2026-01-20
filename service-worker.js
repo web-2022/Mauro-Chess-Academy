@@ -25,8 +25,13 @@ self.addEventListener("activate", event => {
       )
     )
   );
+
   self.clients.claim();
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => client.navigate(client.url));
+  });
 });
+
 
 // Fetch: cache-first + validación
 self.addEventListener("fetch", event => {
