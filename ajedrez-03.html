@@ -320,6 +320,16 @@
             next();
         </script>
 
+        <script>
+            // Registrar Service Worker (PWA)
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                    navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+                });
+            }
+
+        </script>
+
     </body>
 
 </html>
