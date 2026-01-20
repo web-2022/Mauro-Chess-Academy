@@ -1,268 +1,313 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ajedrez • Clase 4: Movimientos del Rey</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajedrez • Clase 4: Movimientos del Rey</title>
 
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1976d2">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1976d2">
 
-  <style>
-    *{ box-sizing:border-box; font-family:system-ui,-apple-system,"Segoe UI",sans-serif }
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif
+      }
 
-    body{
-      margin:0;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background:linear-gradient(145deg,#dbeafe,#e0f2fe);
-      padding:18px;
-    }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+        padding: 18px;
+      }
 
-    .app{
-      background:#fff;
-      width:100%;
-      max-width:520px;
-      padding:18px;
-      border-radius:24px;
-      box-shadow:0 16px 40px rgba(0,0,0,.12);
-      border:3px solid #2563eb;
-    }
+      .app {
+        background: #fff;
+        width: 100%;
+        max-width: 520px;
+        padding: 18px;
+        border-radius: 24px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
+        border: 3px solid #2563eb;
+      }
 
-    .header{
-      padding:14px;
-      border-radius:22px;
-      margin-bottom:10px;
-      background:linear-gradient(135deg,#93c5fd,#60a5fa,#2563eb);
-      color:#fff;
-      font-weight:900;
-      text-align:center;
-      cursor:pointer;
-    }
+      .header {
+        padding: 14px;
+        border-radius: 22px;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #93c5fd, #60a5fa, #2563eb);
+        color: #fff;
+        font-weight: 900;
+        text-align: center;
+        cursor: pointer;
+      }
 
-    h1{ text-align:center; margin:6px 0 }
-    .subtitle{ text-align:center; color:#6b7280; font-size:.95rem }
+      h1 {
+        text-align: center;
+        margin: 6px 0
+      }
 
-    .status{
-      display:flex; justify-content:space-between;
-      padding:8px 12px;
-      background:#eff6ff;
-      border-radius:999px;
-      border:1px solid #bfdbfe;
-      font-size:.9rem;
-      margin:8px 0;
-    }
+      .subtitle {
+        text-align: center;
+        color: #6b7280;
+        font-size: .95rem
+      }
 
-    .progress{
-      height:10px;
-      background:#e5e7eb;
-      border-radius:999px;
-      overflow:hidden;
-      margin-bottom:10px;
-    }
-    .progress-inner{
-      height:100%;
-      width:0%;
-      background:#2563eb;
-      transition:.3s;
-    }
+      .status {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: #eff6ff;
+        border-radius: 999px;
+        border: 1px solid #bfdbfe;
+        font-size: .9rem;
+        margin: 8px 0;
+      }
 
-    .card{
-      background:#f9fafb;
-      border:1px solid #e5e7eb;
-      border-radius:20px;
-      padding:14px;
-      text-align:center;
-    }
+      .progress {
+        height: 10px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
 
-    .instruction{
-      font-weight:900;
-      font-size:1.1rem;
-      color:#1d4ed8;
-      margin-bottom:6px;
-    }
+      .progress-inner {
+        height: 100%;
+        width: 0%;
+        background: #2563eb;
+        transition: .3s;
+      }
 
-    .board{
-      display:grid;
-      grid-template-columns:repeat(8,1fr);
-      aspect-ratio:1/1;
-      max-width:300px;
-      margin:10px auto;
-      border-radius:18px;
-      overflow:hidden;
-      border:2px solid #bfdbfe;
-    }
+      .card {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 14px;
+        text-align: center;
+      }
 
-    .sq{
-      aspect-ratio:1/1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:1.8rem;
-      line-height:1;
-      font-weight:900;
-      cursor:pointer;
-    }
-    .light{ background:#eff6ff }
-    .dark{ background:#93c5fd }
+      .instruction {
+        font-weight: 900;
+        font-size: 1.1rem;
+        color: #1d4ed8;
+        margin-bottom: 6px;
+      }
 
-    .legal{ background:#22c55e !important; color:#fff }
-    .illegal{ background:#ef4444 !important; color:#fff }
+      .board {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        aspect-ratio: 1/1;
+        max-width: 300px;
+        margin: 10px auto;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 2px solid #bfdbfe;
+      }
 
-    .feedback{
-      min-height:22px;
-      font-weight:900;
-      margin-top:6px;
-    }
-    .good{ color:#16a34a }
-    .bad{ color:#ef4444 }
+      .sq {
+        aspect-ratio: 1/1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        line-height: 1;
+        font-weight: 900;
+        cursor: pointer;
+      }
 
-    .controls{
-      display:flex;
-      gap:10px;
-      margin-top:10px;
-    }
+      .light {
+        background: #eff6ff
+      }
 
-    .btn{
-      flex:1;
-      padding:10px;
-      border-radius:999px;
-      border:none;
-      font-weight:900;
-      background:#2563eb;
-      color:#fff;
-      cursor:pointer;
-    }
-  </style>
-</head>
+      .dark {
+        background: #93c5fd
+      }
 
-<body>
-<div class="app">
+      .legal {
+        background: #22c55e !important;
+        color: #fff
+      }
 
-  <div class="header" onclick="location.href='index.html'">
-    ♟️ Academia de Ajedrez Mauro • Clase 4
-  </div>
+      .illegal {
+        background: #ef4444 !important;
+        color: #fff
+      }
 
-  <h1>¿A dónde puede moverse?</h1>
-  <p class="subtitle">Aprendemos cómo se mueve el rey</p>
+      .feedback {
+        min-height: 22px;
+        font-weight: 900;
+        margin-top: 6px;
+      }
 
-  <div class="status">
-    <div>✅ Bien: <b id="ok">0</b></div>
-    <div>📊 <b id="count">0/10</b></div>
-  </div>
+      .good {
+        color: #16a34a
+      }
 
-  <div class="progress"><div class="progress-inner" id="bar"></div></div>
+      .bad {
+        color: #ef4444
+      }
 
-  <div class="card">
-    <div class="instruction">¿A dónde puede moverse el rey?</div>
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
 
-    <div class="board" id="board"></div>
-    <div class="feedback" id="feedback"></div>
-  </div>
+      .btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 999px;
+        border: none;
+        font-weight: 900;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+      }
+    </style>
+  </head>
 
-  <div class="controls">
-    <button class="btn" onclick="next()">Siguiente</button>
-    <button class="btn" onclick="share()">📤 Compartir</button>
-  </div>
+  <body>
+    <div class="app">
 
-</div>
+      <div class="header" onclick="location.href='index.html'">
+        ♟️ Academia de Ajedrez Mauro • Clase 4
+      </div>
 
-<script>
-const files=["a","b","c","d","e","f","g","h"];
-let king="", ok=0, total=0, locked=false;
-let legalSquares=[];
+      <h1>¿A dónde puede moverse?</h1>
+      <p class="subtitle">Aprendemos cómo se mueve el rey</p>
 
-function speak(t){
-  const u=new SpeechSynthesisUtterance(t);
-  u.lang="es-ES"; u.rate=.9;
-  speechSynthesis.cancel(); speechSynthesis.speak(u);
-}
+      <div class="status">
+        <div>✅ Bien: <b id="ok">0</b></div>
+        <div>📊 <b id="count">0/10</b></div>
+      </div>
 
-function randomCoord(){
-  return files[Math.floor(Math.random()*8)] + (Math.floor(Math.random()*8)+1);
-}
+      <div class="progress">
+        <div class="progress-inner" id="bar"></div>
+      </div>
 
-function buildBoard(){
-  const b=document.getElementById("board");
-  b.innerHTML="";
-  for(let r=8;r>=1;r--)
-    for(let f=0;f<8;f++){
-      const c=files[f]+r;
-      const d=document.createElement("div");
-      d.className="sq "+(((f+r)%2)?"dark":"light");
-      d.dataset.c=c;
-      d.onclick=()=>tap(d,c);
-      b.appendChild(d);
-    }
-}
+      <div class="card">
+        <div class="instruction">¿A dónde puede moverse el rey?</div>
 
-function getKingMoves(c){
-  const f=files.indexOf(c[0]);
-  const r=parseInt(c[1]);
-  const moves=[];
-  for(let df=-1;df<=1;df++)
-    for(let dr=-1;dr<=1;dr++){
-      if(df===0 && dr===0) continue;
-      const nf=f+df, nr=r+dr;
-      if(nf>=0 && nf<8 && nr>=1 && nr<=8)
-        moves.push(files[nf]+nr);
-    }
-  return moves;
-}
+        <div class="board" id="board"></div>
+        <div class="feedback" id="feedback"></div>
+      </div>
 
-function next(){
-  locked=false;
-  buildBoard();
-  document.getElementById("feedback").textContent="";
-  king=randomCoord();
-  legalSquares=getKingMoves(king);
+      <div class="controls">
+        <button class="btn" onclick="next()">Siguiente</button>
+        <button class="btn" onclick="share()">📤 Compartir</button>
+      </div>
 
-  document.querySelectorAll(".sq").forEach(s=>{
-    if(s.dataset.c===king) s.textContent="♔";
-  });
+    </div>
 
-  speak("¿A dónde puede moverse el rey?");
-}
+    <script>
+      const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+      let king = "", ok = 0, total = 0, locked = false;
+      let legalSquares = [];
 
-function tap(el,c){
-  if(locked || c===king) return;
+      function speak(t) {
+        const u = new SpeechSynthesisUtterance(t);
+        u.lang = "es-ES"; u.rate = .9;
+        speechSynthesis.cancel(); speechSynthesis.speak(u);
+      }
 
-  if(legalSquares.includes(c)){
-    el.classList.add("legal");
-    document.getElementById("feedback").textContent="Movimiento correcto";
-    document.getElementById("feedback").className="feedback good";
-    speak("Muy bien");
-    locked=true;
-    ok++; total++;
-  }else{
-    el.classList.add("illegal");
-    document.getElementById("feedback").textContent="Movimiento incorrecto";
-    document.getElementById("feedback").className="feedback bad";
-    speak("Movimiento incorrecto");
-  }
+      function randomCoord() {
+        return files[Math.floor(Math.random() * 8)] + (Math.floor(Math.random() * 8) + 1);
+      }
 
-  document.getElementById("ok").textContent=ok;
-  document.getElementById("count").textContent=`${total}/10`;
-  document.getElementById("bar").style.width=(total/10*100)+"%";
+      function buildBoard() {
+        const b = document.getElementById("board");
+        b.innerHTML = "";
+        for (let r = 8; r >= 1; r--)
+          for (let f = 0; f < 8; f++) {
+            const c = files[f] + r;
+            const d = document.createElement("div");
+            d.className = "sq " + (((f + r) % 2) ? "dark" : "light");
+            d.dataset.c = c;
+            d.onclick = () => tap(d, c);
+            b.appendChild(d);
+          }
+      }
 
-  if(total===10){
-    setTimeout(()=>{
-      speak("Excelente. Terminaste la clase cuatro");
-      alert("🎉 Clase 4 completada");
-    },400);
-  }
-}
+      function getKingMoves(c) {
+        const f = files.indexOf(c[0]);
+        const r = parseInt(c[1]);
+        const moves = [];
+        for (let df = -1; df <= 1; df++)
+          for (let dr = -1; dr <= 1; dr++) {
+            if (df === 0 && dr === 0) continue;
+            const nf = f + df, nr = r + dr;
+            if (nf >= 0 && nf < 8 && nr >= 1 && nr <= 8)
+              moves.push(files[nf] + nr);
+          }
+        return moves;
+      }
 
-function share(){
-  const d={title:"Marie Kids Ajedrez",text:"Clase 4: Movimientos del Rey",url:location.href};
-  navigator.share?navigator.share(d):(navigator.clipboard.writeText(d.url),alert("Link copiado"));
-}
+      function next() {
+        locked = false;
+        buildBoard();
+        document.getElementById("feedback").textContent = "";
+        king = randomCoord();
+        legalSquares = getKingMoves(king);
 
-next();
-</script>
+        document.querySelectorAll(".sq").forEach(s => {
+          if (s.dataset.c === king) s.textContent = "♔";
+        });
 
-</body>
+        speak("¿A dónde puede moverse el rey?");
+      }
+
+      function tap(el, c) {
+        if (locked || c === king) return;
+
+        if (legalSquares.includes(c)) {
+          el.classList.add("legal");
+          document.getElementById("feedback").textContent = "Movimiento correcto";
+          document.getElementById("feedback").className = "feedback good";
+          speak("Muy bien");
+          locked = true;
+          ok++; total++;
+        } else {
+          el.classList.add("illegal");
+          document.getElementById("feedback").textContent = "Movimiento incorrecto";
+          document.getElementById("feedback").className = "feedback bad";
+          speak("Movimiento incorrecto");
+        }
+
+        document.getElementById("ok").textContent = ok;
+        document.getElementById("count").textContent = `${total}/10`;
+        document.getElementById("bar").style.width = (total / 10 * 100) + "%";
+
+        if (total === 10) {
+          setTimeout(() => {
+            speak("Excelente. Terminaste la clase cuatro");
+            alert("🎉 Clase 4 completada");
+          }, 400);
+        }
+      }
+
+      function share() {
+        const d = { title: "Marie Kids Ajedrez", text: "Clase 4: Movimientos del Rey", url: location.href };
+        navigator.share ? navigator.share(d) : (navigator.clipboard.writeText(d.url), alert("Link copiado"));
+      }
+
+      next();
+    </script>
+
+    <script>
+      // Registrar Service Worker (PWA)
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+        });
+      }
+
+    </script>
+
+  </body>
+
 </html>
