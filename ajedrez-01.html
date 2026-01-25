@@ -33,7 +33,7 @@
         padding: 18px;
         border-radius: 24px;
         box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
-        border: 3px solid #2563eb;
+
       }
 
       .brand-header-kids {
@@ -48,9 +48,12 @@
 
       .brand-row {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 12px;
       }
+
+
+
 
       .kids-badge {
         width: 52px;
@@ -68,12 +71,17 @@
       }
 
       .kids-subtitle {
-        font-size: .9rem;
-        font-weight: 700;
+        margin-left: auto;
+        /* empuja a la derecha */
+        margin-top: 4px;
         display: flex;
         gap: 8px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        justify-content: flex-end;
       }
+
+
 
       .kids-pill {
         background: rgba(255, 255, 255, .25);
@@ -129,7 +137,9 @@
         display: grid;
         grid-template-columns: repeat(8, 1fr);
         aspect-ratio: 1/1;
-        max-width: 320px;
+        width: 100%;
+        max-width: 360px;
+        min-width: 220px;
         margin: auto;
         border-radius: 18px;
         overflow: hidden;
@@ -168,7 +178,7 @@
       .options {
         display: flex;
         gap: 8px;
-        margin-top: 10px;
+        margin-top: 4px;
       }
 
       .option-btn {
@@ -188,7 +198,7 @@
       .feedback {
         text-align: center;
         font-weight: 800;
-        margin-top: 8px;
+        margin-top: 2px;
         min-height: 22px;
       }
 
@@ -215,7 +225,7 @@
       .controls {
         display: flex;
         gap: 10px;
-        margin-top: 10px;
+        margin-top: 4px;
       }
 
       .listen-btn {
@@ -274,6 +284,37 @@
       .kids-pill {
         pointer-events: auto;
       }
+
+      @media (min-width: 900px) {
+        .app {
+          max-width: 720px;
+          padding: 28px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .subtitle {
+          font-size: 1.1rem;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .controls {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .kids-title {
+          font-size: 1rem;
+        }
+
+        .kids-subtitle {
+          font-size: .7rem;
+        }
+      }
     </style>
   </head>
 
@@ -286,7 +327,6 @@
           <div>
             <div class="kids-title">Academia de Ajedrez Mauro</div>
             <div class="kids-subtitle">
-              <span class="kids-pill">Clase 1</span>
               <span class="kids-pill nav " onclick="location.href='index.html'">Inicio</span>
               <span class="kids-pill nav" onclick="location.href='ruta-chess.html'">Ruta de aprendizaje</span>
 
@@ -334,7 +374,7 @@
       }
 
       function speakHint() {
-        speakText("El tablero de ajedrez está formado por muchas casillas organizadas como una cuadrícula.Estas casillas se ordenan usando columnas y filas.Las columnas van de izquierda a derecha y se identifican con letras. Las letras de las columnas son: a, b, c, d, e, f, g y h. La letra nos dice en qué columna está una casilla. Las filas van de abajo hacia arriba y se identifican con números.Los números de las filas son: 1, 2, 3, 4, 5, 6, 7 y 8. El número nos dice en qué fila está una casilla. Para nombrar una casilla del tablero, primero se dice la letra de la columna y luego el número de la fila. Por ejemplo: a1, e4 o h8.");
+        speakText("El tablero de ajedrez está formado por 64 casillas organizadas como una cuadrícula.Estas casillas se ordenan usando columnas y filas.Las columnas van de izquierda a derecha y se identifican con letras. Las letras de las columnas son: a, b, c, d, e, f, g y h. La letra nos dice en qué columna está una casilla. Las filas van de abajo hacia arriba y se identifican con números.Los números de las filas son: 1, 2, 3, 4, 5, 6, 7 y 8. El número nos dice en qué fila está una casilla. Para nombrar una casilla del tablero, primero se dice la letra de la columna y luego el número de la fila. Por ejemplo: a1, e4 o h8.");
       }
 
       function speakCoord(c) {
