@@ -91,8 +91,8 @@
 
       h1 {
         text-align: center;
-        margin: 6px 0 4px;
-        font-size: 1.5rem;
+        margin: 1px 0 1px;
+        font-size: 1.2rem;
       }
 
       .subtitle {
@@ -165,7 +165,23 @@
       .target {
         outline: 3px solid #f59e0b;
         outline-offset: -3px;
+        animation: pulse 1s infinite;
       }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(245, 158, 11, .6);
+        }
+
+        70% {
+          box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+        }
+
+        100% {
+          box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+        }
+      }
+
 
       .mini {
         position: absolute;
@@ -199,7 +215,7 @@
         text-align: center;
         font-weight: 800;
         margin-top: 2px;
-        min-height: 22px;
+        min-height: 2px;
       }
 
       .good {
@@ -274,9 +290,6 @@
         transform: translateY(-1px);
       }
 
-
-
-
       .brand-header-kids {
         pointer-events: none;
       }
@@ -288,11 +301,11 @@
       @media (min-width: 900px) {
         .app {
           max-width: 720px;
-          padding: 28px;
+          padding: 5px;
         }
 
         h1 {
-          font-size: 1.8rem;
+          font-size: 1.5rem;
         }
 
         .subtitle {
@@ -360,6 +373,17 @@
         <button class="main-btn" onclick="shareApp()">📤 Compartir</button>
       </div>
 
+      <div class="card" id="endPanel" style="display:none; text-align:center; margin-top:10px;">
+        <h3>🎉 ¡Clase completada!</h3>
+        <p>¿Qué deseas hacer ahora?</p>
+
+        <div class="controls">
+          <button class="main-btn" onclick="goNext()">➡️ Siguiente tema</button>
+          <button class="main-btn" onclick="restart()">🔁 Repetir</button>
+        </div>
+      </div>
+
+
     </div>
 
     <script>
@@ -369,7 +393,7 @@
 
       function speakText(t) {
         const u = new SpeechSynthesisUtterance(t);
-        u.lang = "es-ES"; u.rate = .9;
+        u.lang = "es-PE"; u.rate = .9;
         speechSynthesis.cancel(); speechSynthesis.speak(u);
       }
 
@@ -405,6 +429,7 @@
       }
 
       function next() {
+        document.getElementById("feedback").textContent = "";
         document.querySelectorAll(".sq").forEach(s => s.classList.remove("target"));
         current = randomCoord();
         document.querySelector(`[data-c="${current}"]`).classList.add("target");
@@ -430,6 +455,9 @@
         const f = document.getElementById("feedback");
         if (c === current) {
           ok++; total++;
+          localStorage.setItem("clase1_ok", ok); // 👈 guarda progreso
+
+
           f.textContent = "¡Muy bien!";
           f.className = "feedback good";
           speakText("¡Muy bien!");
@@ -449,9 +477,12 @@
         if (total === 10) {
           setTimeout(() => {
             speakText("¡Excelente! Completaste la clase uno");
-            alert("🎉 Clase completada");
+            document.getElementById("endPanel").style.display = "block";
+            document.querySelector(".controls").style.display = "none";
           }, 500);
         }
+
+
       }
 
       function shareApp() {
@@ -469,6 +500,22 @@
 
       buildBoard();
       next();
+
+      function goNext() {
+        location.href = "clase-2.html"; // cambia por tu siguiente lección
+      }
+
+      function restart() {
+        ok = 0; tries = 0; total = 0;
+        document.getElementById("xp").textContent = 0;
+        document.getElementById("tries").textContent = 0;
+        document.getElementById("bar").style.width = "0%";
+        document.getElementById("endPanel").style.display = "none";
+        document.querySelector(".controls").style.display = "flex";
+
+        next();
+      }
+
     </script>
 
     <script>
