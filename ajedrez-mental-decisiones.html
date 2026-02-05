@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajedrez • Entrenamiento Mental</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1976d2">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+      padding: 18px;
+    }
+
+    .app {
+      background: #fff;
+      width: 100%;
+      max-width: 720px;
+      padding: 18px;
+      border-radius: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
+    }
+
+    .brand-header-kids {
+      padding: 14px;
+      border-radius: 22px;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+      color: #020617;
+      cursor: default;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .kids-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .kids-title {
+      font-weight: 900;
+      font-size: 1.5rem;
+    }
+
+    .kids-subtitle {
+      margin-left: auto;
+      margin-top: 4px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      justify-content: flex-end;
+    }
+
+    .kids-pill {
+      background: rgba(255, 255, 255, .25);
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .kids-pill:hover {
+      background: rgba(255, 255, 255, .45);
+      transform: translateY(-1px);
+    }
+
+    .brand-header-kids {
+      pointer-events: none;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 6px 0 4px;
+      font-size: 1.35rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: .98rem;
+      color: #6b7280;
+      margin: 0 0 10px;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      font-size: .9rem;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .progress {
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: #2563eb;
+      transition: .3s;
+    }
+
+    .card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .listen-btn {
+      width: auto;
+      display: block;
+      margin: 0 auto 10px;
+      padding: 8px 18px;
+      font-size: .9rem;
+      border: none;
+      border-radius: 999px;
+      font-weight: 800;
+      background: #1d4ed8;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .step {
+      display: none;
+      line-height: 1.55;
+      font-size: 1rem;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .step h3 {
+      margin: 0 0 8px;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: .95rem;
+    }
+
+    .callout {
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      margin: 10px 0;
+      font-weight: 700;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 8px 18px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .main-btn {
+      width: 30%;
+      min-width: 140px;
+      border: none;
+      padding: 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      background: #2563eb;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .main-btn.secondary {
+      background: #64748b;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      margin-top: 10px;
+      font-size: .95rem;
+    }
+
+    .table th,
+    .table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    .table th {
+      background: #eff6ff;
+      border-bottom: 1px solid #bfdbfe;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .endPanel {
+      display: none;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .kids-title {
+        font-size: 1.05rem;
+        white-space: nowrap;
+      }
+
+      .kids-badge {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+      }
+
+      .kids-subtitle {
+        font-size: .75rem;
+        gap: 6px;
+      }
+
+      .brand-header-kids {
+        padding: 10px;
+      }
+
+      .main-btn {
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .app {
+        max-width: 820px;
+        padding: 18px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <div class="brand-header-kids">
+      <div class="brand-row">
+        <div class="kids-badge">♟️</div>
+        <div style="width:100%">
+          <div class="kids-title">Academia de Ajedrez Mauro</div>
+          <div class="kids-subtitle">
+            <span class="kids-pill nav" onclick="location.href='index.html'">Inicio</span>
+            <span class="kids-pill nav" onclick="location.href='ruta-chess.html'">Ruta de aprendizaje</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1>🧠 Entrenamiento Mental</h1>
+    <p class="subtitle">Para mejorar la toma de decisiones antes de mover</p>
+
+    <div class="status-bar">
+      <div>📌 Sección: <b id="sec">1</b>/<span id="secTotal">8</span></div>
+      <div>📊 Progreso: <b id="prog">0</b>%</div>
+    </div>
+
+    <div class="progress">
+      <div class="progress-inner" id="bar"></div>
+    </div>
+
+    <div class="card">
+      <button class="listen-btn" onclick="speakStep()">🔊 Escuchar esta sección</button>
+
+      <!-- 1 -->
+      <div class="step active" data-title="Entrenamiento Mental">
+        <h3>🧠 ENTRENAMIENTO MENTAL PARA MEJORAR LA TOMA DE DECISIONES</h3>
+        <div class="callout">
+          <b>Objetivo:</b> Elegir la mejor jugada práctica bajo presión, con claridad,
+          constancia y menos errores graves.
+        </div>
+        <p class="muted">
+          Este plan entrena tu proceso mental: evaluación → candidatos → cálculo → plan → decisión → revisión.
+        </p>
+      </div>
+
+      <!-- 2 -->
+      <div class="step" data-title="Principio Central">
+        <h3>🔑 PRINCIPIO CENTRAL (regla de oro)</h3>
+        <div class="callout">
+          No busques la mejor jugada primero.<br>
+          <b>Busca entender la posición.</b>
+        </div>
+        <p>Todo el entrenamiento gira alrededor de esto.</p>
+      </div>
+
+      <!-- 3 -->
+      <div class="step" data-title="Bloque 1">
+        <h3>🧩 BLOQUE 1 — Entrenar la evaluación (10–15 min diarios)</h3>
+
+        <h4>Ejercicio A: Evaluación sin mover piezas</h4>
+        <ol>
+          <li>Coloca una posición (medio juego o final).</li>
+          <li><b>NO</b> calcules variantes.</li>
+          <li>Responde por escrito (o mentalmente):</li>
+        </ol>
+        <ul>
+          <li>¿Quién está mejor?</li>
+          <li>¿Por qué?</li>
+          <li>¿Cuál es el plan correcto para cada bando?</li>
+          <li>¿Qué pieza es la peor colocada?</li>
+        </ul>
+
+        <div class="callout">⛔ Prohibido pensar jugadas concretas.</div>
+        <p>✔️ Esto entrena el pensamiento estratégico previo.</p>
+
+        <h4>Ejercicio B: Etiquetar la posición</h4>
+        <p>Di en voz baja una sola frase:</p>
+        <ul>
+          <li>“Ventaja estable de blancas”</li>
+          <li>“Igualada pero dinámica”</li>
+          <li>“Negro debe defender”</li>
+          <li>“Posición técnica ganadora”</li>
+        </ul>
+        <p>👉 Los GM siempre etiquetan la posición antes de mover.</p>
+      </div>
+
+      <!-- 4 -->
+      <div class="step" data-title="Bloque 2">
+        <h3>🎯 BLOQUE 2 — Candidatos correctos (10 min)</h3>
+
+        <h4>Ejercicio C: Regla de los 3 candidatos</h4>
+        <ol>
+          <li>Para cada posición, elige <b>máximo 3 jugadas</b>.</li>
+          <li>Descarta todo lo demás.</li>
+        </ol>
+        <p>Luego pregúntate:</p>
+        <ul>
+          <li>¿Qué plan representa cada jugada?</li>
+          <li>¿Cuál limita más al rival?</li>
+        </ul>
+
+        <div class="callout">⛔ Si tienes más de 3 → no entendiste la posición.</div>
+
+        <h4>Ejercicio D: Eliminar jugadas bonitas</h4>
+        <p>Entrena a rechazar:</p>
+        <ul>
+          <li>Sacrificios “tentadores”</li>
+          <li>Ataques sin base</li>
+          <li>Movimientos automáticos</li>
+        </ul>
+
+        <div class="callout">Pregunta clave: “¿Esta jugada mejora mi posición aunque no funcione tácticamente?”</div>
+      </div>
+
+      <!-- 5 -->
+      <div class="step" data-title="Bloque 3">
+        <h3>🔍 BLOQUE 3 — Cálculo selectivo (15–20 min)</h3>
+
+        <h4>Ejercicio E: Solo jugadas forzadas</h4>
+        <p>Calcula solo:</p>
+        <ul>
+          <li>Jaques</li>
+          <li>Capturas</li>
+          <li>Amenazas directas</li>
+        </ul>
+        <div class="callout">Si no hay jugadas forzadas → vuelve al plan, no al cálculo.</div>
+
+        <h4>Ejercicio F: Variante crítica única</h4>
+        <p>En lugar de 5 líneas superficiales:</p>
+        <ul>
+          <li>Elige <b>una variante crítica</b></li>
+          <li>Calcúlala bien, hasta el final</li>
+        </ul>
+        <p>Esto mejora la precisión real, no la fantasía.</p>
+      </div>
+
+      <!-- 6 -->
+      <div class="step" data-title="Bloque 4">
+        <h3>♟️ BLOQUE 4 — Pensar en planes, no en jugadas (10 min)</h3>
+
+        <h4>Ejercicio G: Plan en 3 pasos</h4>
+        <p>Para cada candidato responde:</p>
+        <ul>
+          <li>¿Qué quiero mejorar?</li>
+          <li>¿Qué quiero restringir?</li>
+          <li>¿Qué final me conviene?</li>
+        </ul>
+
+        <div class="callout">Ejemplo: “Cambio piezas → entro a final → peón débil en d6”</div>
+      </div>
+
+      <!-- 7 -->
+      <div class="step" data-title="Bloque 5">
+        <h3>⏱️ BLOQUE 5 — Decidir bajo presión (5–10 min)</h3>
+
+        <h4>Ejercicio H: Decisión con reloj</h4>
+        <ul>
+          <li>Pon 3–5 minutos por posición</li>
+          <li>Decide sin volver atrás</li>
+          <li>Juega la jugada y sigue</li>
+        </ul>
+
+        <p>Entrena:</p>
+        <ul>
+          <li>Confianza</li>
+          <li>Compromiso</li>
+          <li>Claridad mental</li>
+        </ul>
+
+        <div class="callout">👉 Los errores graves vienen más de duda que de ignorancia.</div>
+      </div>
+
+      <!-- 8 -->
+      <div class="step" data-title="Bloque 6 + Rutina">
+        <h3>🧠 BLOQUE 6 — Revisión inteligente (post-partida)</h3>
+
+        <p>Después de cada partida:</p>
+        <ol>
+          <li>Marca una sola jugada: <b>❌ “Aquí decidí mal”</b></li>
+          <li>Pregunta:</li>
+        </ol>
+        <ul>
+          <li>¿Falló mi evaluación?</li>
+          <li>¿Elegí mal el plan?</li>
+          <li>¿Calculé lo incorrecto?</li>
+        </ul>
+
+        <div class="callout">⛔ No revises 20 jugadas. ✔️ Corrige el proceso, no el resultado.</div>
+
+        <h3 style="margin-top:14px;">📅 RUTINA DIARIA (45–60 min)</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Bloque</th>
+              <th>Tiempo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Evaluación</td>
+              <td>10–15 min</td>
+            </tr>
+            <tr>
+              <td>Candidatos</td>
+              <td>10 min</td>
+            </tr>
+            <tr>
+              <td>Cálculo selectivo</td>
+              <td>15–20 min</td>
+            </tr>
+            <tr>
+              <td>Planificación</td>
+              <td>10 min</td>
+            </tr>
+            <tr>
+              <td>Decisión rápida</td>
+              <td>5 min</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:12px;">
+          ✅ Si aplicas esto diario, tu toma de decisiones se vuelve más rápida, más clara y más confiable.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="controls">
+      <button class="main-btn secondary" onclick="prev()">⬅️ Anterior</button>
+      <button class="main-btn" onclick="next()">Siguiente ➡️</button>
+      <button class="main-btn" onclick="shareApp()">📤 Compartir</button>
+    </div>
+
+    <div class="card endPanel" id="endPanel">
+      <h3>🎉 ¡Lección completada!</h3>
+      <p>¿Qué deseas hacer ahora?</p>
+      <div class="controls">
+        <button class="main-btn" onclick="goNext()">➡️ Siguiente tema</button>
+        <button class="main-btn secondary" onclick="restart()">🔁 Repetir</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const steps = [...document.querySelectorAll(".step")];
+    const sec = document.getElementById("sec");
+    const secTotal = document.getElementById("secTotal");
+    const prog = document.getElementById("prog");
+    const bar = document.getElementById("bar");
+    const endPanel = document.getElementById("endPanel");
+
+    secTotal.textContent = steps.length;
+
+    let i = parseInt(localStorage.getItem("mental_step") || "0", 10);
+    if (i < 0) i = 0;
+    if (i > steps.length - 1) i = steps.length - 1;
+
+    function update() {
+      steps.forEach(s => s.classList.remove("active"));
+      steps[i].classList.add("active");
+
+      const percent = Math.round(((i) / (steps.length - 1)) * 100);
+      bar.style.width = percent + "%";
+      prog.textContent = percent;
+      sec.textContent = (i + 1);
+
+      localStorage.setItem("mental_step", String(i));
+
+      // mostrar panel final cuando llegue al último
+      if (i === steps.length - 1) {
+        endPanel.style.display = "block";
+      } else {
+        endPanel.style.display = "none";
+      }
+    }
+
+    function next() {
+      if (i < steps.length - 1) {
+        i++;
+        update();
+      } else {
+        // ya está al final
+        update();
+      }
+    }
+
+    function prev() {
+      if (i > 0) {
+        i--;
+        update();
+      }
+    }
+
+    function speakText(t) {
+      const u = new SpeechSynthesisUtterance(t);
+      u.lang = "es-PE";
+      u.rate = 0.9;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }
+
+    function speakStep() {
+      // lee el texto visible de la sección actual (sin HTML)
+      const text = steps[i].innerText.replace(/\s+\n/g, "\n").trim();
+      speakText(text);
+    }
+
+    function shareApp() {
+      const data = {
+        title: "Academia de Ajedrez Mauro • Entrenamiento Mental",
+        text: "Plan de entrenamiento mental para mejorar la toma de decisiones.",
+        url: location.href
+      };
+      if (navigator.share) navigator.share(data);
+      else {
+        navigator.clipboard.writeText(data.url);
+        alert("Link copiado");
+      }
+    }
+
+    function goNext() {
+      // cambia por tu siguiente lección:
+      location.href = "ajedrez-mental-practica.html";
+    }
+
+    function restart() {
+      i = 0;
+      localStorage.setItem("mental_step", "0");
+      speechSynthesis.cancel();
+      update();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    update();
+  </script>
+
+  <script>
+    // Registrar Service Worker (PWA)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+      });
+    }
+  </script>
+
+</body>
+
+</html>
