@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Testimonios • Academia de Ajedrez Mauro</title>
+
+        <!-- PWA -->
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#1976d2">
+
+        <style>
+            :root {
+                --bg1: #020617;
+                --bg2: #020617;
+                --accent: #22c55e;
+                --accent2: #38bdf8;
+                --text: #e5e7eb;
+                --muted: #94a3b8;
+                --radius: 22px;
+            }
+
+            * {
+                box-sizing: border-box;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                background:
+                    radial-gradient(1200px 600px at 80% 10%, #0f172a, transparent 60%),
+                    radial-gradient(900px 600px at 10% 90%, #020617, transparent 55%),
+                    linear-gradient(180deg, #020617, #020617);
+                color: var(--text);
+            }
+
+            /* ===============================
+       HEADER / BRAND (IGUAL QUE HOME)
+       =============================== */
+            header {
+                padding: 100px 20px 40px;
+                text-align: center;
+                position: relative;
+            }
+
+            .brand {
+                position: absolute;
+                top: 24px;
+                left: 28px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-size: .95rem;
+                font-weight: 600;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+                color: rgba(226, 232, 240, .85);
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .brand:hover {
+                opacity: 0.9;
+            }
+
+            .brand::before {
+                content: "";
+                width: 36px;
+                height: 2px;
+                background: linear-gradient(90deg, var(--accent), var(--accent2));
+                border-radius: 999px;
+            }
+
+            @media (max-width: 900px) {
+                .brand {
+                    left: 50%;
+                    transform: translateX(-50%);
+                    top: 12px;
+                    white-space: nowrap;
+                    font-size: .8rem;
+                    letter-spacing: .06em;
+                }
+            }
+
+            h1 {
+                font-size: clamp(2.2rem, 4vw, 3.4rem);
+                margin-bottom: 14px;
+            }
+
+            h1 span {
+                background: linear-gradient(90deg, var(--accent), var(--accent2));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            header p {
+                max-width: 620px;
+                margin: 0 auto;
+                color: var(--muted);
+                font-size: 1.1rem;
+            }
+
+            /* ===============================
+       TESTIMONIOS
+       =============================== */
+            main {
+                max-width: 1200px;
+                margin: auto;
+                padding: 40px 20px 80px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 28px;
+            }
+
+            .testimonial {
+                background: linear-gradient(145deg, rgba(15, 23, 42, .9), rgba(2, 6, 23, .9));
+                border-radius: var(--radius);
+                padding: 26px;
+                box-shadow: 0 30px 60px rgba(0, 0, 0, .55);
+                position: relative;
+                transition: transform .25s ease, box-shadow .25s ease;
+            }
+
+            .testimonial:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 40px 80px rgba(0, 0, 0, .7);
+            }
+
+            .quote {
+                font-size: 2.8rem;
+                color: var(--accent2);
+                opacity: .25;
+                position: absolute;
+                top: 14px;
+                right: 18px;
+            }
+
+            .testimonial p {
+                font-size: .95rem;
+                line-height: 1.6;
+                margin-bottom: 18px;
+            }
+
+            .author {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .author strong {
+                font-size: .95rem;
+            }
+
+            .meta {
+                font-size: .8rem;
+                color: var(--muted);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            /* SVG bandera */
+            .flag-svg {
+                width: 22px;
+                height: 14px;
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .rating {
+                margin-top: 10px;
+                color: #facc15;
+                font-size: 1.1rem;
+            }
+
+            /* ===============================
+       CTA FINAL
+       =============================== */
+            .cta {
+                text-align: center;
+                padding: 60px 20px;
+            }
+
+            .cta h2 {
+                font-size: clamp(1.6rem, 3vw, 2.2rem);
+                margin-bottom: 14px;
+            }
+
+            .cta p {
+                color: var(--muted);
+                margin-bottom: 28px;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 14px 28px;
+                border-radius: 14px;
+                font-weight: 600;
+                text-decoration: none;
+                background: linear-gradient(135deg, var(--accent), var(--accent2));
+                color: #020617;
+                box-shadow: 0 12px 30px rgba(56, 189, 248, .35);
+                transition: transform .25s ease, box-shadow .25s ease;
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 18px 40px rgba(56, 189, 248, .45);
+            }
+
+            .btn-whatsapp {
+                background: linear-gradient(135deg, #25D366, #1ebe5d);
+                color: #020617;
+                box-shadow: 0 12px 30px rgba(37, 211, 102, .35);
+            }
+
+            .btn-whatsapp:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 18px 40px rgba(37, 211, 102, .45);
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <header>
+            <a href="index.html" class="brand">Academia de Ajedrez Mauro</a>
+
+
+            <h1>Lo que dicen nuestros <span>alumnos</span></h1>
+            <p>Progreso real, opiniones reales de jugadores de distintos países.</p>
+        </header>
+
+        <main>
+
+            <!-- TESTIMONIO PERÚ -->
+            <div class="testimonial">
+                <div class="quote">“</div>
+                <p>
+                    “Antes jugaba sin calcular, solo movía y capturaba piezas. Mi ELO estaba entre 1630 y 1670 en
+                    Lichess.
+                    Tras 7 meses de entrenamiento estructurado alcancé los 1900 de ELO.
+                    Mauro analiza tu juego, detecta tus errores y te guía con una ruta de aprendizaje personalizada.
+                    Lo recomiendo sin dudar.”
+                </p>
+                <div class="author">
+                    <strong>Victor Gamarra</strong>
+                    <div class="meta">
+                        <svg class="flag-svg" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg"
+                            aria-label="Bandera del Perú">
+                            <rect x="0" y="0" width="24" height="16" fill="#D91023" />
+                            <rect x="8" y="0" width="8" height="16" fill="#FFFFFF" />
+                            <rect x="16" y="0" width="8" height="16" fill="#D91023" />
+                        </svg>
+                        Perú • Online 10+0
+                    </div>
+                </div>
+                <div class="rating">★★★★★</div>
+            </div>
+
+            <!-- TESTIMONIO ADICIONAL -->
+            <!-- <div class="testimonial">
+                <div class="quote">“</div>
+                <p>
+                    Las partidas comentadas explican el porqué de cada jugada.
+                    Es como tener un entrenador personal.
+                </p>
+                <div class="author">
+                    <strong>Ana R.</strong>
+                    <div class="meta">
+                        ♟️ España • Club local
+                    </div>
+                </div>
+                <div class="rating">★★★★★</div>
+            </div> -->
+
+        </main>
+
+        <section class="cta">
+            <h2>¿Listo para mejorar tu ajedrez?</h2>
+            <p>Entrena desde cualquier lugar con un método probado.</p>
+            <a href="https://wa.me/5491126202806?text=Hola%20quiero%20empezar%20en%20la%20Academia%20de%20Ajedrez%20Mauro%20♟️"
+                class="btn btn-whatsapp" target="_blank" rel="noopener">
+
+                <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true">
+                    <path fill="#020617"
+                        d="M19.11 17.41c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.15-.42-2.19-1.34-.81-.72-1.36-1.6-1.52-1.87-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27 0 1.34.98 2.63 1.11 2.81.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.55.58.65.21 1.24.18 1.7.11.52-.08 1.6-.65 1.83-1.27.23-.61.23-1.14.16-1.27-.07-.13-.25-.2-.52-.34z" />
+                    <path fill="#020617"
+                        d="M16.04 3C9.4 3 4 8.4 4 15.04c0 2.65.87 5.1 2.34 7.07L5 29l7.1-1.86c1.89 1.04 4.06 1.63 6.32 1.63 6.64 0 12.04-5.4 12.04-12.04C30.46 8.4 23.68 3 16.04 3z" />
+                </svg>
+
+                WhatsApp • Empezar ahora
+            </a>
+
+
+
+        </section>
+
+        <!-- PWA -->
+        <script>
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                    navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+                });
+            }
+        </script>
+
+    </body>
+
+</html>
