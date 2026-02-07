@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ajedrez • Clase 3: ¿Dónde está la pieza?</title>
+
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#1976d2">
+
+        <style>
+            * {
+                box-sizing: border-box;
+                font-family: system-ui, -apple-system, "Segoe UI", sans-serif
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+                padding: 16px;
+            }
+
+            /* APP */
+            .app {
+                background: #fff;
+                width: 100%;
+                max-width: 540px;
+                padding: 16px;
+                border-radius: 24px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
+                border: 3px solid #2563eb;
+            }
+
+            /* HEADER */
+            .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 12px;
+                border-radius: 20px;
+                margin-bottom: 12px;
+                background: linear-gradient(135deg, #93c5fd, #60a5fa, #2563eb);
+                color: #fff;
+                font-weight: 900;
+            }
+
+            .header-title {
+                font-size: 1rem;
+                line-height: 1.2;
+            }
+
+            .header-actions {
+                display: flex;
+                gap: 8px;
+            }
+
+            .header-btn {
+                padding: 8px 12px;
+                border-radius: 999px;
+                border: none;
+                font-weight: 900;
+                background: #ffffff;
+                color: #2563eb;
+                cursor: pointer;
+                font-size: .85rem;
+            }
+
+            /* Responsive header */
+            @media (max-width:480px) {
+                .header {
+                    flex-direction: column;
+                    align-items: stretch;
+                    text-align: center;
+                }
+
+                .header-actions {
+                    justify-content: center;
+                }
+            }
+
+            /* TEXT */
+            h1 {
+                text-align: center;
+                margin: 6px 0
+            }
+
+            .subtitle {
+                text-align: center;
+                color: #6b7280;
+                font-size: .95rem
+            }
+
+            /* STATUS */
+            .status {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 12px;
+                background: #eff6ff;
+                border-radius: 999px;
+                border: 1px solid #bfdbfe;
+                font-size: .9rem;
+                margin: 8px 0;
+            }
+
+            /* PROGRESS */
+            .progress {
+                height: 10px;
+                background: #e5e7eb;
+                border-radius: 999px;
+                overflow: hidden;
+                margin-bottom: 10px;
+            }
+
+            .progress-inner {
+                height: 100%;
+                width: 0%;
+                background: #2563eb;
+                transition: .3s;
+            }
+
+            /* CARD */
+            .card {
+                background: #f9fafb;
+                border: 1px solid #e5e7eb;
+                border-radius: 20px;
+                padding: 14px;
+            }
+
+            .piece-question {
+                text-align: center;
+                font-weight: 900;
+                font-size: 1.2rem;
+                margin-bottom: 6px;
+                color: #1d4ed8;
+            }
+
+            /* BOARD */
+            .board {
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                aspect-ratio: 1/1;
+                max-width: 300px;
+                margin: 8px auto;
+                border-radius: 18px;
+                overflow: hidden;
+                border: 2px solid #bfdbfe;
+            }
+
+            .sq {
+                aspect-ratio: 1/1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: clamp(1.3rem, 5vw, 1.8rem);
+                font-weight: 900;
+            }
+
+            .light {
+                background: #eff6ff
+            }
+
+            .dark {
+                background: #93c5fd
+            }
+
+            /* OPTIONS */
+            .options {
+                display: flex;
+                gap: 8px;
+                margin-top: 10px;
+            }
+
+            .option {
+                flex: 1;
+                padding: 10px;
+                border-radius: 14px;
+                border: 1px solid #d1d5db;
+                background: #fff;
+                font-weight: 900;
+                cursor: pointer;
+            }
+
+            .option:disabled {
+                opacity: .6
+            }
+
+            /* FEEDBACK */
+            .feedback {
+                text-align: center;
+                font-weight: 900;
+                min-height: 22px;
+                margin-top: 6px;
+            }
+
+            .good {
+                color: #16a34a
+            }
+
+            .bad {
+                color: #ef4444
+            }
+
+            /* CONTROLS */
+            .controls {
+                display: flex;
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 10px;
+                border-radius: 999px;
+                border: none;
+                font-weight: 900;
+                background: #2563eb;
+                color: #fff;
+                cursor: pointer;
+            }
+
+            /* ===== HEADER KIDS (REUTILIZABLE) ===== */
+            .brand-header-kids {
+                padding: 14px;
+                border-radius: 22px;
+                margin-bottom: 12px;
+                background: linear-gradient(90deg, #22c55e, #38bdf8);
+                color: #020617;
+            }
+
+            /* Evita que todo el header sea clickeable */
+            .brand-header-kids {
+                pointer-events: none;
+            }
+
+            .brand-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .kids-badge {
+                width: 52px;
+                height: 52px;
+                border-radius: 18px;
+                display: grid;
+                place-items: center;
+                font-size: 1.6rem;
+                background: rgba(255, 255, 255, .25);
+            }
+
+            .kids-title {
+                font-weight: 900;
+                font-size: 1.35rem;
+            }
+
+            .kids-subtitle {
+                margin-left: auto;
+                margin-top: 4px;
+                display: flex;
+                gap: 8px;
+                white-space: nowrap;
+                pointer-events: auto;
+                /* 🔑 permite click solo en botones */
+            }
+
+            .kids-pill {
+                background: rgba(255, 255, 255, .25);
+                padding: 4px 10px;
+                border-radius: 999px;
+                font-size: .8rem;
+            }
+
+            .kids-pill.nav {
+                cursor: pointer;
+            }
+
+            .kids-pill.nav:hover {
+                background: rgba(255, 255, 255, .45);
+                transform: translateY(-1px);
+            }
+
+            /* ===== RESPONSIVE ===== */
+            @media (max-width: 420px) {
+                .kids-title {
+                    font-size: 1.15rem;
+                }
+
+                .kids-subtitle {
+                    width: 100%;
+                    justify-content: center;
+                    margin-left: 0;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="app">
+
+            <!-- HEADER -->
+            <div class="brand-header-kids">
+                <div class="brand-row">
+                    <div class="kids-badge">♟️</div>
+
+                    <div>
+                        <div class="kids-title">Academia de Ajedrez Mauro</div>
+
+                        <div class="kids-subtitle">
+                            <span class="kids-pill nav" onclick="location.href='index.html'">
+                                Inicio
+                            </span>
+
+                            <span class="kids-pill nav" onclick="location.href='ruta-chess.html'">
+                                Ruta de aprendizaje
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <h1>¿Dónde está la pieza?</h1>
+            <p class="subtitle">Observa el tablero y elige la coordenada correcta</p>
+
+            <div class="status">
+                <div>✅ Bien: <b id="ok">0</b></div>
+                <div>📊 <b id="count">0/10</b></div>
+            </div>
+
+            <div class="progress">
+                <div class="progress-inner" id="bar"></div>
+            </div>
+
+            <div class="card">
+                <div class="piece-question" id="question"></div>
+                <div class="board" id="board"></div>
+                <div class="options" id="options"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" onclick="next()">Siguiente</button>
+                <button class="btn" onclick="share()">📤 Compartir</button>
+            </div>
+
+        </div>
+
+        <script>
+            const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+            const pieces = [
+                { n: "rey", s: "♔" },
+                { n: "dama", s: "♕" },
+                { n: "torre", s: "♖" },
+                { n: "alfil", s: "♗" },
+                { n: "caballo", s: "♘" },
+                { n: "peón", s: "♙" }
+            ];
+
+            let target = "", piece = {}, ok = 0, total = 0, locked = false;
+
+            function speak(t) {
+                const u = new SpeechSynthesisUtterance(t);
+                u.lang = "es-PE"; u.rate = .9;
+                speechSynthesis.cancel(); speechSynthesis.speak(u);
+            }
+
+            function randomCoord() {
+                return files[Math.floor(Math.random() * 8)] + (Math.floor(Math.random() * 8) + 1);
+            }
+
+            function buildBoard() {
+                const b = document.getElementById("board");
+                b.innerHTML = "";
+                for (let r = 8; r >= 1; r--)
+                    for (let f = 0; f < 8; f++) {
+                        const sq = document.createElement("div");
+                        sq.className = "sq " + (((f + r) % 2) ? "dark" : "light");
+                        b.appendChild(sq);
+                    }
+            }
+
+            function generateOptions(correct) {
+                const set = new Set([correct]);
+                while (set.size < 3) set.add(randomCoord());
+                return [...set].sort(() => Math.random() - .5);
+            }
+
+            function next() {
+                locked = false;
+                buildBoard();
+                document.getElementById("feedback").textContent = "";
+
+                target = randomCoord();
+                piece = pieces[Math.floor(Math.random() * pieces.length)];
+
+                const idx = (8 - (+target[1])) * 8 + files.indexOf(target[0]);
+                document.querySelectorAll(".sq")[idx].textContent = piece.s;
+
+                document.getElementById("question").textContent =
+                    `¿En qué casilla está el ${piece.n}?`;
+                speak(`¿En qué casilla está el ${piece.n}?`);
+
+                renderOptions();
+            }
+
+            function renderOptions() {
+                const o = document.getElementById("options");
+                o.innerHTML = "";
+                generateOptions(target).forEach(c => {
+                    const b = document.createElement("button");
+                    b.className = "option";
+                    b.textContent = c;
+                    b.onclick = () => check(c, b);
+                    o.appendChild(b);
+                });
+            }
+
+            function check(c, b) {
+                if (locked) return;
+                const f = document.getElementById("feedback");
+
+                if (c === target) {
+                    ok++; total++; locked = true;
+                    f.textContent = "¡Correcto!";
+                    f.className = "feedback good";
+                    speak("¡Muy bien!");
+                    document.querySelectorAll(".option").forEach(x => x.disabled = true);
+                } else {
+                    f.textContent = "Intenta otra vez";
+                    f.className = "feedback bad";
+                    speak("Intenta otra vez");
+                    b.disabled = true;
+                }
+
+                document.getElementById("ok").textContent = ok;
+                document.getElementById("count").textContent = `${total}/10`;
+                document.getElementById("bar").style.width = (total / 10 * 100) + "%";
+
+                if (total === 10) {
+                    setTimeout(() => {
+                        speak("Excelente. Terminaste la clase tres");
+                        alert("🎉 Clase 3 completada");
+                    }, 400);
+                }
+            }
+
+            function share() {
+                const d = { title: "Marie Kids Ajedrez", text: "Clase 3: ¿Dónde está la pieza?", url: location.href };
+                navigator.share ? navigator.share(d) : (navigator.clipboard.writeText(d.url), alert("Link copiado"));
+            }
+
+            next();
+        </script>
+
+        <script>
+            // Registrar Service Worker (PWA)
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                      navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+                });
+            }
+
+        </script>
+
+    </body>
+
+</html>
