@@ -1,1 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
 
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajedrez • Movimiento del Caballo</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1976d2">
+
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+        padding: 18px;
+        padding: clamp(12px, 4vw, 18px);
+      }
+
+      .app {
+        background: #fff;
+        width: 100%;
+        max-width: 520px;
+        padding: 18px;
+        border-radius: 24px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
+      }
+
+      .kids-subtitle {
+        margin-left: auto;
+        /* empuja a la derecha */
+        margin-top: 4px;
+        display: flex;
+        gap: 8px;
+        white-space: nowrap;
+      }
+
+      .kids-pill {
+        background: rgba(255, 255, 255, .25);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: .8rem;
+      }
+
+      .kids-pill.nav {
+        cursor: pointer;
+      }
+
+      .kids-pill.nav:hover {
+        background: rgba(255, 255, 255, .45);
+        transform: translateY(-1px);
+      }
+
+      /* Evita que todo el header sea clickeable */
+      .brand-header-kids {
+        pointer-events: none;
+      }
+
+      .kids-pill {
+        pointer-events: auto;
+      }
+
+
+      /* ===== HEADER ===== */
+      .brand-header-kids {
+        padding: 14px;
+        border-radius: 22px;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, #22c55e, #38bdf8);
+        color: #020617;
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .kids-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font-size: 1.6rem;
+        background: rgba(255, 255, 255, .25);
+      }
+
+      .kids-title {
+        font-weight: 900;
+        font-size: 1.4rem;
+      }
+
+      h1 {
+        text-align: center;
+        margin: 6px 0 2px;
+        font-size: 1.2rem;
+      }
+
+      .subtitle {
+        text-align: center;
+        font-size: .95rem;
+        color: #6b7280;
+      }
+
+      /* ===== STATUS ===== */
+      .status-bar {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        font-size: .9rem;
+        margin-bottom: 8px;
+      }
+
+      .progress {
+        height: 10px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+
+      .progress-inner {
+        height: 100%;
+        width: 0%;
+        background: #2563eb;
+        transition: .3s;
+      }
+
+      /* ===== CARD ===== */
+      .card {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 16px;
+        text-align: center;
+      }
+
+      /* ===== TABLERO (CORREGIDO) ===== */
+      .board {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        /* 🔥 CLAVE */
+        max-width: 360px;
+
+        margin: auto;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 3px solid #60a5fa;
+        background: #60a5fa;
+      }
+
+
+
+      .sq {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: clamp(1.4rem, 4vw, 1.8rem);
+        /* 🔥 responsive texto */
+        font-weight: 800;
+        line-height: 1;
+
+        user-select: none;
+        touch-action: manipulation;
+      }
+
+
+      .light {
+        background: #f8fbff;
+      }
+
+      .dark {
+        background: #9ec5fe;
+      }
+
+      .target {
+        box-shadow: inset 0 0 0 4px #f59e0b;
+        animation: glow-bg 1.4s ease-in-out infinite;
+      }
+
+
+      @keyframes glow-bg {
+        0% {
+          background-color: rgba(245, 158, 11, 0.25);
+        }
+
+        50% {
+          background-color: rgba(245, 158, 11, 0.45);
+        }
+
+        100% {
+          background-color: rgba(245, 158, 11, 0.25);
+        }
+      }
+
+      .move {
+        position: relative;
+        box-shadow: inset 0 0 0 3px #22c55e;
+      }
+
+      .move::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(34, 197, 94, 0.25);
+        pointer-events: none;
+      }
+
+
+
+
+
+      /* ===== OPCIONES ===== */
+      .options {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .option-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 14px;
+        border: 1px solid #d1d5db;
+        background: #fff;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .option-btn:disabled {
+        opacity: .6;
+      }
+
+      .feedback {
+        margin-top: 6px;
+        font-weight: 800;
+        min-height: 24px;
+      }
+
+      .good {
+        color: #16a34a;
+      }
+
+      .bad {
+        color: #ef4444;
+      }
+
+      .main-btn {
+        flex: 1;
+        min-width: 140px;
+
+        max-width: 220px;
+        border: none;
+        padding: 12px;
+        border-radius: 999px;
+        font-weight: 800;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+      }
+
+
+      .main-btn:hover {
+        transform: translateY(-1px);
+      }
+
+
+
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        /* 🔥 CLAVE */
+        width: 100%;
+        /* 👈 ESTA ES LA CLAVE */
+        margin-top: 10px;
+      }
+
+
+
+      @media (max-width: 380px) {
+        h1 {
+          font-size: 1.05rem;
+        }
+
+        .subtitle {
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+
+      <div class="brand-header-kids">
+        <div class="brand-row">
+          <div class="kids-badge">♘</div>
+
+          <div>
+            <div class="kids-title">Academia de Ajedrez Mauro</div>
+
+            <div class="kids-subtitle">
+              <span class="kids-pill nav" onclick="location.href='index.html'">
+                Inicio
+              </span>
+
+              <span class="kids-pill nav" onclick="location.href='ruta-chess.html'">
+                Ruta de aprendizaje
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <h1>5. Movimiento del Caballo</h1>
+      <p class="subtitle">¿A qué casilla puede moverse el caballo?</p>
+
+      <div class="status-bar">
+        <div>✅ <b id="ok">0</b></div>
+        <div>❌ <b id="bad">0</b></div>
+        <div>📊 <b id="prog">0</b>/10</div>
+      </div>
+
+      <div class="progress">
+        <div class="progress-inner" id="bar"></div>
+      </div>
+
+      <div class="card">
+        <div class="board" id="board"></div>
+
+        <div class="feedback" id="feedback"></div>
+      </div>
+
+
+      <div class="controls" style="gap:12px;">
+        <button class="main-btn" id="nextBtn" onclick="next()">Siguiente</button>
+        <button class="main-btn" id="shareBtn" style="background:#0ea5e9;" onclick="shareApp()">
+          📤 Compartir
+        </button>
+
+        <button class="main-btn" id="nextTopicBtn" style="display:none; background:#16a34a;" onclick="goNextTopic()">
+          Siguiente tema
+        </button>
+      </div>
+
+
+
+
+    </div>
+
+    <script>
+      const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+      let knightPos = null;
+      let possibleMoves = [];
+      let helpShown = false;
+      let ok = 0;
+      let bad = 0;
+      const TOTAL = 10;
+      let failedThisTurn = false;
+      let attempts = 0;
+      let countedThisTurn = false;
+
+
+
+
+
+
+      function speak(t) {
+        const u = new SpeechSynthesisUtterance(t);
+        u.lang = "es-PE";
+        u.rate = .9;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      }
+
+      function updateStatus() {
+        document.getElementById("ok").textContent = ok;
+        document.getElementById("bad").textContent = bad;
+        document.getElementById("prog").textContent = attempts;
+
+        const percent = (attempts / TOTAL) * 100;
+        document.getElementById("bar").style.width = percent + "%";
+      }
+
+
+
+      function knightMoves(c) {
+        const f = files.indexOf(c[0]);
+        const r = parseInt(c[1]) - 1;
+        const deltas = [
+          [1, 2], [2, 1], [-1, 2], [-2, 1],
+          [1, -2], [2, -1], [-1, -2], [-2, -1]
+        ];
+        return deltas
+          .map(d => [f + d[0], r + d[1]])
+          .filter(x => x[0] >= 0 && x[0] < 8 && x[1] >= 0 && x[1] < 8)
+          .map(x => files[x[0]] + (x[1] + 1));
+      }
+
+      function buildBoard() {
+        const b = document.getElementById("board");
+        b.innerHTML = "";
+
+        for (let r = 8; r >= 1; r--) {
+          for (let f = 0; f < 8; f++) {
+            const c = files[f] + r;
+            const d = document.createElement("div");
+            d.className = "sq " + (((f + r) % 2) ? "dark" : "light");
+            d.dataset.c = c;
+
+            d.addEventListener("click", () => onSquareClick(c));
+            d.addEventListener("touchstart", (e) => {
+              e.preventDefault();
+              onSquareClick(c);
+            });
+
+
+            b.appendChild(d);
+          }
+        }
+      }
+
+      function placeKnight(c) {
+        document.querySelectorAll(".sq").forEach(s => {
+          s.textContent = "";
+          s.classList.remove("move");
+        });
+
+        knightPos = c;
+        const sq = document.querySelector(`[data-c="${c}"]`);
+        sq.textContent = "♘";
+      }
+
+      function showMoves() {
+        document.querySelectorAll(".sq").forEach(s =>
+          s.classList.remove("move")
+        );
+
+        possibleMoves = knightMoves(knightPos);
+        possibleMoves.forEach(c => {
+          document.querySelector(`[data-c="${c}"]`).classList.add("move");
+        });
+      }
+
+
+      function onSquareClick(c) {
+        if (!knightPos || (helpShown && countedThisTurn)) return;
+
+
+        const validMoves = knightMoves(knightPos);
+
+        // ✅ MOVIMIENTO CORRECTO
+        if (validMoves.includes(c)) {
+
+          // 👉 PRIMER acierto: cuenta y muestra ayuda
+          if (!helpShown) {
+            ok++;
+            attempts++;
+            countedThisTurn = true;
+            helpShown = true;
+
+            showMoves();
+            updateStatus();
+
+            const btn = document.getElementById("nextBtn");
+            btn.disabled = false;
+            btn.style.opacity = "1";
+
+            document.getElementById("feedback").textContent =
+              "¡Correcto! Mira todas las casillas a las que también puede ir el caballo.";
+            document.getElementById("feedback").className = "feedback good";
+
+            speak("Excelente, ahora mira todas las opciones");
+            checkEnd();
+            return;
+          }
+
+
+
+          // 👉 Segundo click: solo mover el caballo (sin contar)
+          placeKnight(c);
+
+          document.querySelectorAll(".sq").forEach(s =>
+            s.classList.remove("move")
+          );
+
+          document.getElementById("feedback").textContent = "¡Muy bien!";
+          document.getElementById("feedback").className = "feedback good";
+          speak("Muy bien");
+          return;
+        }
+
+        // ❌ MOVIMIENTO INCORRECTO (solo una vez por turno)
+        // ❌ MOVIMIENTO INCORRECTO (puede intentar de nuevo)
+        bad++;
+        updateStatus();
+
+        document.getElementById("feedback").textContent =
+          "❌ Incorrecto. Intenta otra vez.";
+        document.getElementById("feedback").className = "feedback bad";
+        speak("Incorrecto, intenta otra vez");
+
+      }
+
+
+      function next() {
+        if (attempts >= TOTAL) return;
+
+        const btn = document.getElementById("nextBtn");
+        btn.disabled = true;
+        btn.style.opacity = "0.6";
+
+
+
+
+        countedThisTurn = false;
+        helpShown = false;
+
+        const feedback = document.getElementById("feedback");
+        feedback.textContent = "";
+        feedback.className = "feedback";
+
+        document.querySelectorAll(".sq").forEach(s => {
+          s.classList.remove("move");
+        });
+
+        const random =
+          files[Math.floor(Math.random() * 8)] +
+          (Math.floor(Math.random() * 8) + 1);
+
+        buildBoard();
+        placeKnight(random);
+
+        speak("Nuevo intento");
+      }
+
+
+
+
+
+      // INIT
+      // INIT
+      buildBoard();
+      placeKnight("e4");
+      document.getElementById("feedback").textContent =
+        "Toca una casilla donde creas que puede ir el caballo";
+
+      updateStatus();
+      const btn = document.getElementById("nextBtn");
+      btn.disabled = true;
+      btn.style.opacity = "0.6";
+
+
+
+      function resetExercise() {
+        const random =
+          files[Math.floor(Math.random() * 8)] +
+          (Math.floor(Math.random() * 8) + 1);
+
+        buildBoard();
+        placeKnight(random);
+        showMoves();
+        speak("Nuevo intento");
+      }
+
+      function checkEnd() {
+        if (ok >= TOTAL) {
+          document.getElementById("feedback").textContent =
+            "🎉 ¡Clase completada!";
+          document.getElementById("feedback").className = "feedback good";
+          speak("Excelente. Completaste la clase.");
+
+          // bloquear tablero
+          document.querySelectorAll(".sq").forEach(s => {
+            s.style.pointerEvents = "none";
+          });
+
+          // bloquear botón Siguiente
+          const btn = document.getElementById("nextBtn");
+          btn.disabled = true;
+          btn.style.opacity = "0.6";
+
+          // ✅ MOSTRAR SIGUIENTE TEMA
+          document.getElementById("nextTopicBtn").style.display = "inline-block";
+        }
+      }
+
+
+      function goNextTopic() {
+        // 👉 cambia la ruta si deseas otro archivo
+        location.href = "ajedrez-06.html";
+      }
+
+      function shareApp() {
+        const text = "Estoy aprendiendo el movimiento del caballo en ajedrez 🐎♘";
+        const url = window.location.href;
+
+        if (navigator.share) {
+          navigator.share({
+            title: "Ajedrez • Movimiento del Caballo",
+            text: text,
+            url: url
+          });
+        } else {
+          // respaldo para PC
+          navigator.clipboard.writeText(text + " " + url);
+          alert("📋 Enlace copiado. ¡Compártelo donde quieras!");
+        }
+      }
+
+
+
+
+
+
+
+
+    </script>
+
+
+
+    <script>
+      // Registrar Service Worker (PWA)
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          //  navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+        });
+      }
+
+    </script>
+
+
+
+
+  </body>
+
+</html>
