@@ -1,335 +1,357 @@
 <!DOCTYPE html>
 <html lang="es">
 
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ajedrez • Clase 3: ¿Dónde está la pieza?</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajedrez • Las piezas del ajedrez</title>
 
-        <link rel="manifest" href="manifest.json">
-        <meta name="theme-color" content="#1976d2">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1976d2">
 
-        <style>
-            * {
-                box-sizing: border-box;
-                font-family: system-ui, -apple-system, "Segoe UI", sans-serif
-            }
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
 
-            body {
-                margin: 0;
-                min-height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background: linear-gradient(145deg, #dbeafe, #e0f2fe);
-                padding: 18px;
-            }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+        padding: clamp(12px, 4vw, 18px);
+      }
 
-            .app {
-                background: #fff;
-                width: 100%;
-                max-width: 520px;
-                padding: 18px;
-                border-radius: 24px;
-                box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
-                border: 3px solid #2563eb;
-            }
+      .app {
+        background: #fff;
+        width: 100%;
+        max-width: 520px;
+        padding: 18px;
+        border-radius: 24px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
+      }
 
-            .header {
-                padding: 14px;
-                border-radius: 22px;
-                margin-bottom: 10px;
-                background: linear-gradient(135deg, #93c5fd, #60a5fa, #2563eb);
-                color: #fff;
-                font-weight: 900;
-                text-align: center;
-                cursor: pointer;
-            }
+      /* ===== HEADER ===== */
+      .brand-header-kids {
+        padding: 14px;
+        border-radius: 22px;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, #22c55e, #38bdf8);
+        color: #020617;
+        pointer-events: none;
+      }
 
-            h1 {
-                text-align: center;
-                margin: 6px 0
-            }
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
 
-            .subtitle {
-                text-align: center;
-                color: #6b7280;
-                font-size: .95rem
-            }
+      .kids-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font-size: 1.6rem;
+        background: rgba(255, 255, 255, .25);
+      }
 
-            .status {
-                display: flex;
-                justify-content: space-between;
-                padding: 8px 12px;
-                background: #eff6ff;
-                border-radius: 999px;
-                border: 1px solid #bfdbfe;
-                font-size: .9rem;
-                margin: 8px 0;
-            }
+      .kids-title {
+        font-weight: 900;
+        font-size: 1.35rem;
+      }
 
-            .progress {
-                height: 10px;
-                background: #e5e7eb;
-                border-radius: 999px;
-                overflow: hidden;
-                margin-bottom: 10px;
-            }
+      .kids-subtitle {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+        pointer-events: auto;
+      }
 
-            .progress-inner {
-                height: 100%;
-                width: 0%;
-                background: #2563eb;
-                transition: .3s;
-            }
+      .kids-pill {
+        background: rgba(255, 255, 255, .25);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
 
-            .card {
-                background: #f9fafb;
-                border: 1px solid #e5e7eb;
-                border-radius: 20px;
-                padding: 14px;
-            }
+      .kids-pill:hover {
+        background: rgba(255, 255, 255, .45);
+        transform: translateY(-1px);
+      }
 
-            .piece-question {
-                text-align: center;
-                font-weight: 900;
-                font-size: 1.2rem;
-                margin-bottom: 6px;
-                color: #1d4ed8;
-            }
+      h1 {
+        text-align: center;
+        margin: 6px 0 2px;
+        font-size: 1.2rem;
+      }
 
-            .board {
-                display: grid;
-                grid-template-columns: repeat(8, 1fr);
-                aspect-ratio: 1/1;
-                max-width: 300px;
-                margin: 8px auto;
-                border-radius: 18px;
-                overflow: hidden;
-                border: 2px solid #bfdbfe;
-            }
+      .subtitle {
+        text-align: center;
+        font-size: .95rem;
+        color: #6b7280;
+      }
 
-            .sq {
-                aspect-ratio: 1 / 1;
-                /* 🔑 fuerza cuadrado */
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.8rem;
-                line-height: 1;
-                /* 🔑 evita que el emoji estire */
-                cursor: pointer;
-                font-weight: 900;
-            }
+      /* ===== STATUS ===== */
+      .status-bar {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        font-size: .9rem;
+        margin-bottom: 8px;
+      }
 
-            .light {
-                background: #eff6ff
-            }
+      .progress {
+        height: 10px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
 
-            .dark {
-                background: #93c5fd
-            }
+      .progress-inner {
+        height: 100%;
+        width: 0%;
+        background: #2563eb;
+        transition: .3s;
+      }
 
-            .options {
-                display: flex;
-                gap: 8px;
-                margin-top: 10px;
-            }
+      /* ===== CARD ===== */
+      .card {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+      }
 
-            .option {
-                flex: 1;
-                padding: 10px;
-                border-radius: 14px;
-                border: 1px solid #d1d5db;
-                background: #fff;
-                font-weight: 900;
-                cursor: pointer;
-            }
+      .piece {
+        font-size: clamp(3rem, 10vw, 4.5rem);
+        margin: 10px 0;
+      }
 
-            .option:disabled {
-                opacity: .6
-            }
+      .options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+      }
 
-            .feedback {
-                text-align: center;
-                font-weight: 900;
-                min-height: 22px;
-                margin-top: 6px;
-            }
+      .option-btn {
+        padding: 12px;
+        border-radius: 14px;
+        border: 2px solid #d1d5db;
+        background: #fff;
+        font-weight: 800;
+        cursor: pointer;
+      }
 
-            .good {
-                color: #16a34a
-            }
+      .option-btn:hover {
+        background: #f0f9ff;
+      }
 
-            .bad {
-                color: #ef4444
-            }
+      .feedback {
+        margin-top: 10px;
+        font-weight: 800;
+        min-height: 24px;
+      }
 
-            .controls {
-                display: flex;
-                gap: 10px;
-                margin-top: 10px;
-            }
+      .good {
+        color: #16a34a;
+      }
 
-            .btn {
-                flex: 1;
-                padding: 10px;
-                border-radius: 999px;
-                border: none;
-                font-weight: 900;
-                background: #2563eb;
-                color: #fff;
-                cursor: pointer;
-            }
-        </style>
-    </head>
+      .bad {
+        color: #ef4444;
+      }
 
-    <body>
-        <div class="app">
+      /* ===== CONTROLS ===== */
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
 
-            <div class="header" onclick="location.href='index.html'">
-                ♟️ Academia de Ajedrez Mauro • Clase 3
+      .main-btn {
+        flex: 1;
+        min-width: 140px;
+        max-width: 220px;
+        padding: 12px;
+        border-radius: 999px;
+        border: none;
+        font-weight: 800;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+        min-height: 44px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+
+      <!-- HEADER -->
+      <div class="brand-header-kids">
+        <div class="brand-row">
+          <div class="kids-badge">♟️</div>
+          <div>
+            <div class="kids-title">Academia de Ajedrez Mauro</div>
+            <div class="kids-subtitle">
+              <span class="kids-pill" onclick="location.href='index.html'">Inicio</span>
+              <span class="kids-pill" onclick="location.href='ruta-chess.html'">Ruta de aprendizaje</span>
             </div>
-
-            <h1>¿Dónde está la pieza?</h1>
-            <p class="subtitle">Observa la pieza y responde su coordenada</p>
-
-            <div class="status">
-                <div>✅ Bien: <b id="ok">0</b></div>
-                <div>📊 <b id="count">0/10</b></div>
-            </div>
-
-            <div class="progress">
-                <div class="progress-inner" id="bar"></div>
-            </div>
-
-            <div class="card">
-                <div class="piece-question" id="question"></div>
-
-                <div class="board" id="board"></div>
-
-                <div class="options" id="options"></div>
-                <div class="feedback" id="feedback"></div>
-            </div>
-
-            <div class="controls">
-                <button class="btn" onclick="next()">Siguiente</button>
-                <button class="btn" onclick="share()">📤 Compartir</button>
-            </div>
-
+          </div>
         </div>
+      </div>
 
-        <script>
-            const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
-            const pieces = [
-                { n: "rey", s: "♔" },
-                { n: "dama", s: "♕" },
-                { n: "torre", s: "♖" },
-                { n: "alfil", s: "♗" },
-                { n: "caballo", s: "♘" },
-                { n: "peón", s: "♙" }
-            ];
+      <h1>3. Las piezas del ajedrez</h1>
+      <p class="subtitle">¿Qué pieza es esta?</p>
 
-            let target = "", piece = {}, ok = 0, total = 0, locked = false;
+      <div class="status-bar">
+        <div>✅ <b id="ok">0</b></div>
+        <div>❌ <b id="bad">0</b></div>
+        <div>📊 <b id="prog">0</b>/10</div>
+      </div>
 
-            function speak(t) {
-                const u = new SpeechSynthesisUtterance(t);
-                u.lang = "es-ES"; u.rate = .9;
-                speechSynthesis.cancel(); speechSynthesis.speak(u);
-            }
+      <div class="progress">
+        <div class="progress-inner" id="bar"></div>
+      </div>
 
-            function randomCoord() {
-                return files[Math.floor(Math.random() * 8)] + (Math.floor(Math.random() * 8) + 1);
-            }
+      <div class="card">
+        <div class="piece" id="piece">♘</div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+      </div>
 
-            function buildBoard() {
-                const b = document.getElementById("board");
-                b.innerHTML = "";
-                for (let r = 8; r >= 1; r--)
-                    for (let f = 0; f < 8; f++) {
-                        const d = document.createElement("div");
-                        d.className = "sq " + (((f + r) % 2) ? "dark" : "light");
-                        b.appendChild(d);
-                    }
-            }
+      <div class="controls">
+        <button class="main-btn" onclick="next()">Siguiente</button>
+        <button class="main-btn" style="background:#0ea5e9" onclick="shareApp()">📤 Compartir</button>
+        <button class="main-btn" id="nextTopicBtn" style="display:none;background:#16a34a"
+          onclick="goNextTopic()">Siguiente tema</button>
+      </div>
 
-            function next() {
-                locked = false;
-                buildBoard();
-                document.getElementById("feedback").textContent = "";
+    </div>
 
-                target = randomCoord();
-                piece = pieces[Math.floor(Math.random() * pieces.length)];
+    <script>
+      const pieces = [
+        { name: "Rey", icon: "♔" },
+        { name: "Dama", icon: "♕" },
+        { name: "Torre", icon: "♖" },
+        { name: "Alfil", icon: "♗" },
+        { name: "Caballo", icon: "♘" },
+        { name: "Peón", icon: "♙" }
+      ];
 
-                const idx = (8 - (+target[1])) * 8 + files.indexOf(target[0]);
-                document.querySelectorAll(".sq")[idx].textContent = piece.s;
+      let current, ok = 0, bad = 0, attempts = 0;
+      const TOTAL = 10;
 
-                document.getElementById("question").textContent = `¿En qué casilla está el ${piece.n}?`;
-                speak(`¿En qué casilla está el ${piece.n}?`);
+      function speak(t) {
+        const u = new SpeechSynthesisUtterance(t);
+        u.lang = "es-PE";
+        u.rate = .9;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      }
 
-                renderOptions();
-            }
+      function loadExercise() {
+        current = pieces[Math.floor(Math.random() * pieces.length)];
+        document.getElementById("piece").textContent = current.icon;
+        document.getElementById("feedback").textContent = "";
 
-            function renderOptions() {
-                const o = document.getElementById("options");
-                o.innerHTML = "";
-                const set = new Set([target]);
-                while (set.size < 3) set.add(randomCoord());
-                [...set].sort(() => Math.random() - .5).forEach(c => {
-                    const b = document.createElement("button");
-                    b.className = "option";
-                    b.textContent = c;
-                    b.onclick = () => check(c, b);
-                    o.appendChild(b);
-                });
-            }
+        const opts = [...pieces].sort(() => Math.random() - .5).slice(0, 4);
+        if (!opts.some(o => o.name === current.name)) opts[0] = current;
 
-            function check(c, b) {
-                if (locked) return;
-                const f = document.getElementById("feedback");
-                if (c === target) {
-                    ok++; total++; locked = true;
-                    f.textContent = "¡Correcto!";
-                    f.className = "feedback good";
-                    speak("¡Muy bien!");
-                    document.querySelectorAll(".option").forEach(x => x.disabled = true);
-                } else {
-                    f.textContent = "Intenta otra vez";
-                    f.className = "feedback bad";
-                    speak("Intenta otra vez");
-                    b.disabled = true;
-                }
+        const cont = document.getElementById("options");
+        cont.innerHTML = "";
+        opts.forEach(o => {
+          const b = document.createElement("button");
+          b.className = "option-btn";
+          b.textContent = o.name;
+          b.onclick = () => check(o.name);
+          cont.appendChild(b);
+        });
+      }
 
-                document.getElementById("ok").textContent = ok;
-                document.getElementById("count").textContent = `${total}/10`;
-                document.getElementById("bar").style.width = (total / 10 * 100) + "%";
+      function check(ans) {
+        if (attempts >= TOTAL) return;
+        attempts++;
+        if (ans === current.name) {
+          ok++;
+          feedback.textContent = "¡Correcto!";
+          feedback.className = "feedback good";
+          speak("Correcto");
+        } else {
+          bad++;
+          feedback.textContent = "Incorrecto";
+          feedback.className = "feedback bad";
+          speak("Incorrecto");
+        }
+        update();
+        if (attempts >= TOTAL) finish();
+      }
 
-                if (total === 10) {
-                    setTimeout(() => {
-                        speak("Excelente. Terminaste la clase tres");
-                        alert("🎉 Clase 3 completada");
-                    }, 400);
-                }
-            }
+      function update() {
+        okEl.textContent = ok;
+        badEl.textContent = bad;
+        progEl.textContent = attempts;
+        bar.style.width = (attempts / TOTAL * 100) + "%";
+      }
 
-            function share() {
-                const d = { title: "Marie Kids Ajedrez", text: "Clase 3: ¿Dónde está la pieza?", url: location.href };
-                navigator.share ? navigator.share(d) : (navigator.clipboard.writeText(d.url), alert("Link copiado"));
-            }
+      function finish() {
+        feedback.textContent = "🎉 ¡Clase completada!";
+        feedback.className = "feedback good";
+        speak("Excelente, completaste la clase");
+        document.getElementById("nextTopicBtn").style.display = "inline-block";
+      }
 
-            next();
-        </script>
+      function next() {
+        if (attempts < TOTAL) loadExercise();
+      }
 
-        <script>
-            // Registrar Service Worker (PWA)
-            if ("serviceWorker" in navigator) {
-                window.addEventListener("load", () => {
-                    navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
-                });
-            }
+      function shareApp() {
+        navigator.share?.({
+          title: "Las piezas del ajedrez",
+          text: "Estoy aprendiendo las piezas del ajedrez ♟️",
+          url: location.href
+        });
+      }
 
-        </script>
+      function goNextTopic() {
+        location.href = "ajedrez-04.html";
+      }
 
-    </body>
+      const okEl = document.getElementById("ok");
+      const badEl = document.getElementById("bad");
+      const progEl = document.getElementById("prog");
+      const bar = document.getElementById("bar");
+      const feedback = document.getElementById("feedback");
+
+      loadExercise();
+    </script>
+
+    <script>
+      // Registrar Service Worker (PWA)
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+        });
+      }
+
+    </script>
+
+  </body>
 
 </html>
