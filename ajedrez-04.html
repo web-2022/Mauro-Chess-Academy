@@ -4,15 +4,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajedrez • Clase 4: Movimientos del Rey</title>
+    <title>Ajedrez • Movimiento del Peón</title>
 
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1976d2">
 
     <style>
       * {
         box-sizing: border-box;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       body {
@@ -22,7 +23,7 @@
         justify-content: center;
         align-items: center;
         background: linear-gradient(145deg, #dbeafe, #e0f2fe);
-        padding: 18px;
+        padding: clamp(12px, 4vw, 18px);
       }
 
       .app {
@@ -32,40 +33,97 @@
         padding: 18px;
         border-radius: 24px;
         box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
-        border: 3px solid #2563eb;
       }
 
-      .header {
+      @media (min-width: 768px) {
+        .app {
+          max-width: 600px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .app {
+          max-width: 680px;
+        }
+      }
+
+      /* ===== HEADER ===== */
+      .brand-header-kids {
         padding: 14px;
         border-radius: 22px;
-        margin-bottom: 10px;
-        background: linear-gradient(135deg, #93c5fd, #60a5fa, #2563eb);
-        color: #fff;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, #22c55e, #38bdf8);
+        color: #020617;
+        pointer-events: none;
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .kids-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font-size: 1.6rem;
+        background: rgba(255, 255, 255, .25);
+      }
+
+      .kids-title {
         font-weight: 900;
-        text-align: center;
+        font-size: 1.4rem;
+      }
+
+      .kids-subtitle {
+        margin-left: auto;
+        margin-top: 4px;
+        display: flex;
+        gap: 8px;
+        white-space: nowrap;
+      }
+
+      .kids-pill {
+        background: rgba(255, 255, 255, .25);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 700;
         cursor: pointer;
+        transition: .2s;
+        pointer-events: auto;
+      }
+
+      .kids-pill:hover {
+        background: rgba(255, 255, 255, .45);
+        transform: translateY(-1px);
       }
 
       h1 {
         text-align: center;
-        margin: 6px 0
+        margin: 6px 0 2px;
+        font-size: 1.2rem;
       }
 
       .subtitle {
         text-align: center;
+        font-size: .95rem;
         color: #6b7280;
-        font-size: .95rem
       }
 
-      .status {
+      /* ===== STATUS ===== */
+      .status-bar {
         display: flex;
         justify-content: space-between;
         padding: 8px 12px;
-        background: #eff6ff;
         border-radius: 999px;
+        background: #eff6ff;
         border: 1px solid #bfdbfe;
         font-size: .9rem;
-        margin: 8px 0;
+        margin-bottom: 8px;
       }
 
       .progress {
@@ -73,7 +131,7 @@
         background: #e5e7eb;
         border-radius: 999px;
         overflow: hidden;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
 
       .progress-inner {
@@ -83,90 +141,96 @@
         transition: .3s;
       }
 
+      /* ===== CARD ===== */
       .card {
         background: #f9fafb;
         border: 1px solid #e5e7eb;
         border-radius: 20px;
-        padding: 14px;
+        padding: 16px;
         text-align: center;
       }
 
-      .instruction {
-        font-weight: 900;
-        font-size: 1.1rem;
-        color: #1d4ed8;
-        margin-bottom: 6px;
-      }
-
+      /* ===== BOARD ===== */
       .board {
         display: grid;
         grid-template-columns: repeat(8, 1fr);
-        aspect-ratio: 1/1;
-        max-width: 300px;
-        margin: 10px auto;
+        grid-template-rows: repeat(8, 1fr);
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        margin: auto;
         border-radius: 18px;
         overflow: hidden;
-        border: 2px solid #bfdbfe;
+        border: 3px solid #60a5fa;
+        background: #60a5fa;
+        max-width: min(360px, 90vw);
       }
 
       .sq {
-        aspect-ratio: 1/1;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
-        line-height: 1;
-        font-weight: 900;
-        cursor: pointer;
+        font-size: clamp(1.4rem, 4vw, 1.8rem);
+        font-weight: 800;
+        user-select: none;
+        touch-action: manipulation;
       }
 
       .light {
-        background: #eff6ff
+        background: #f8fbff;
       }
 
       .dark {
-        background: #93c5fd
+        background: #9ec5fe;
       }
 
-      .legal {
-        background: #22c55e !important;
-        color: #fff
+      .move {
+        position: relative;
+        box-shadow: inset 0 0 0 3px #22c55e;
       }
 
-      .illegal {
-        background: #ef4444 !important;
-        color: #fff
+      .move::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(34, 197, 94, .25);
+        pointer-events: none;
       }
 
       .feedback {
-        min-height: 22px;
-        font-weight: 900;
         margin-top: 6px;
+        font-weight: 800;
+        min-height: 24px;
       }
 
       .good {
-        color: #16a34a
+        color: #16a34a;
       }
 
       .bad {
-        color: #ef4444
+        color: #ef4444;
       }
 
+      /* ===== CONTROLS ===== */
       .controls {
         display: flex;
-        gap: 10px;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
         margin-top: 10px;
       }
 
-      .btn {
+      .main-btn {
         flex: 1;
-        padding: 10px;
+        min-width: 140px;
+        max-width: 220px;
+        padding: 12px;
         border-radius: 999px;
         border: none;
-        font-weight: 900;
+        font-weight: 800;
         background: #2563eb;
         color: #fff;
         cursor: pointer;
+        min-height: 44px;
       }
     </style>
   </head>
@@ -174,16 +238,27 @@
   <body>
     <div class="app">
 
-      <div class="header" onclick="location.href='index.html'">
-        ♟️ Academia de Ajedrez Mauro • Clase 4
+      <!-- HEADER -->
+      <div class="brand-header-kids">
+        <div class="brand-row">
+          <div class="kids-badge">♙</div>
+          <div>
+            <div class="kids-title">Academia de Ajedrez Mauro</div>
+            <div class="kids-subtitle">
+              <span class="kids-pill" onclick="location.href='index.html'">Inicio</span>
+              <span class="kids-pill" onclick="location.href='ruta-chess.html'">Ruta de aprendizaje</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <h1>¿A dónde puede moverse?</h1>
-      <p class="subtitle">Aprendemos cómo se mueve el rey</p>
+      <h1>8. Movimiento del Peón</h1>
+      <p class="subtitle">¿A qué casilla puede moverse el peón?</p>
 
-      <div class="status">
-        <div>✅ Bien: <b id="ok">0</b></div>
-        <div>📊 <b id="count">0/10</b></div>
+      <div class="status-bar">
+        <div>✅ <b id="ok">0</b></div>
+        <div>❌ <b id="bad">0</b></div>
+        <div>📊 <b id="prog">0</b>/10</div>
       </div>
 
       <div class="progress">
@@ -191,118 +266,178 @@
       </div>
 
       <div class="card">
-        <div class="instruction">¿A dónde puede moverse el rey?</div>
-
         <div class="board" id="board"></div>
         <div class="feedback" id="feedback"></div>
       </div>
 
       <div class="controls">
-        <button class="btn" onclick="next()">Siguiente</button>
-        <button class="btn" onclick="share()">📤 Compartir</button>
+        <button class="main-btn" id="nextBtn" onclick="next()">Siguiente</button>
+        <button class="main-btn" style="background:#0ea5e9" onclick="shareApp()">📤 Compartir</button>
+        <button class="main-btn" id="nextTopicBtn" style="display:none; background:#16a34a"
+          onclick="goNextTopic()">Siguiente tema</button>
       </div>
 
     </div>
 
     <script>
       const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
-      let king = "", ok = 0, total = 0, locked = false;
-      let legalSquares = [];
+      let pawnPos = null, ok = 0, bad = 0, attempts = 0;
+      const TOTAL = 10;
+      let helpShown = false, failedThisTurn = false;
 
       function speak(t) {
         const u = new SpeechSynthesisUtterance(t);
-        u.lang = "es-ES"; u.rate = .9;
+        u.lang = "es-PE"; u.rate = .9;
         speechSynthesis.cancel(); speechSynthesis.speak(u);
       }
 
-      function randomCoord() {
-        return files[Math.floor(Math.random() * 8)] + (Math.floor(Math.random() * 8) + 1);
+      function pawnMoves(c) {
+        const file = c[0];
+        const rank = parseInt(c[1]);
+        const moves = [];
+
+        // avance simple (si no está en la 7)
+        if (rank >= 2 && rank <= 6) {
+          moves.push(file + (rank + 1));
+        }
+
+        // doble avance SOLO desde fila 2
+        if (rank === 2) {
+          moves.push(file + 4);
+        }
+
+        return moves;
       }
+
 
       function buildBoard() {
         const b = document.getElementById("board");
         b.innerHTML = "";
-        for (let r = 8; r >= 1; r--)
+        for (let r = 8; r >= 1; r--) {
           for (let f = 0; f < 8; f++) {
             const c = files[f] + r;
             const d = document.createElement("div");
             d.className = "sq " + (((f + r) % 2) ? "dark" : "light");
-            d.dataset.c = c;
-            d.onclick = () => tap(d, c);
+            d.onclick = () => onClick(c);
             b.appendChild(d);
           }
+        }
       }
 
-      function getKingMoves(c) {
-        const f = files.indexOf(c[0]);
-        const r = parseInt(c[1]);
-        const moves = [];
-        for (let df = -1; df <= 1; df++)
-          for (let dr = -1; dr <= 1; dr++) {
-            if (df === 0 && dr === 0) continue;
-            const nf = f + df, nr = r + dr;
-            if (nf >= 0 && nf < 8 && nr >= 1 && nr <= 8)
-              moves.push(files[nf] + nr);
+      function placePawn(c) {
+        document.querySelectorAll(".sq").forEach(s => {
+          s.textContent = ""; s.classList.remove("move");
+        });
+        pawnPos = c;
+        document.querySelectorAll(".sq")[files.indexOf(c[0]) + (8 - c[1]) * 8].textContent = "♙";
+      }
+
+      function showMoves() {
+        pawnMoves(pawnPos).forEach(c => {
+          const i = files.indexOf(c[0]) + (8 - c[1]) * 8;
+          document.querySelectorAll(".sq")[i].classList.add("move");
+        });
+      }
+
+      function update() {
+        okEl.textContent = ok;
+        badEl.textContent = bad;
+        progEl.textContent = attempts;
+        bar.style.width = (attempts / TOTAL * 100) + "%";
+      }
+
+      function updateInstruction(rank) {
+        if (rank === 2) {
+          feedback.textContent =
+            "El peón está en su primera fila. Puede avanzar una o dos casillas.";
+        } else {
+          feedback.textContent =
+            "El peón ya avanzó. Solo puede moverse una casilla hacia adelante.";
+        }
+      }
+
+
+      function checkEnd() {
+        if (attempts >= TOTAL) {
+          feedback.textContent = "🎉 ¡Clase completada!";
+          feedback.className = "feedback good";
+          speak("Excelente. Completaste la clase del peón.");
+          document.querySelectorAll(".sq").forEach(s => s.style.pointerEvents = "none");
+          nextBtn.disabled = true; nextBtn.style.opacity = "0.6";
+          nextTopicBtn.style.display = "inline-block";
+        }
+      }
+
+      function onClick(c) {
+        if (!pawnPos) return;
+        if (pawnMoves(pawnPos).includes(c)) {
+          if (!helpShown) {
+            ok++; attempts++; helpShown = true;
+            showMoves(); update(); checkEnd();
+            feedback.textContent = "¡Correcto! El peón avanza hacia adelante.";
+            feedback.className = "feedback good";
+            speak("Correcto, el peón avanza hacia adelante");
           }
-        return moves;
+        } else {
+          if (!failedThisTurn) {
+            bad++; attempts++; failedThisTurn = true;
+            update(); checkEnd();
+          }
+          feedback.textContent = "Incorrecto, intenta otra vez.";
+          feedback.className = "feedback bad";
+          speak("Incorrecto");
+        }
       }
 
       function next() {
-        locked = false;
+        helpShown = false;
+        failedThisTurn = false;
+        feedback.textContent = "";
+
         buildBoard();
-        document.getElementById("feedback").textContent = "";
-        king = randomCoord();
-        legalSquares = getKingMoves(king);
 
-        document.querySelectorAll(".sq").forEach(s => {
-          if (s.dataset.c === king) s.textContent = "♔";
+        const file = files[Math.floor(Math.random() * 8)];
+        const rank = Math.floor(Math.random() * 5) + 2; // 2,3,4,5,6
+
+        placePawn(file + rank);
+        updateInstruction(rank);
+
+        speak("Nuevo intento");
+      }
+
+
+      function shareApp() {
+        navigator.share?.({
+          title: "Movimiento del Peón",
+          text: "Aprendiendo el movimiento del peón ♙",
+          url: location.href
         });
-
-        speak("¿A dónde puede moverse el rey?");
       }
 
-      function tap(el, c) {
-        if (locked || c === king) return;
-
-        if (legalSquares.includes(c)) {
-          el.classList.add("legal");
-          document.getElementById("feedback").textContent = "Movimiento correcto";
-          document.getElementById("feedback").className = "feedback good";
-          speak("Muy bien");
-          locked = true;
-          ok++; total++;
-        } else {
-          el.classList.add("illegal");
-          document.getElementById("feedback").textContent = "Movimiento incorrecto";
-          document.getElementById("feedback").className = "feedback bad";
-          speak("Movimiento incorrecto");
-        }
-
-        document.getElementById("ok").textContent = ok;
-        document.getElementById("count").textContent = `${total}/10`;
-        document.getElementById("bar").style.width = (total / 10 * 100) + "%";
-
-        if (total === 10) {
-          setTimeout(() => {
-            speak("Excelente. Terminaste la clase cuatro");
-            alert("🎉 Clase 4 completada");
-          }, 400);
-        }
+      function goNextTopic() {
+        location.href = "ajedrez-05.html";
       }
 
-      function share() {
-        const d = { title: "Marie Kids Ajedrez", text: "Clase 4: Movimientos del Rey", url: location.href };
-        navigator.share ? navigator.share(d) : (navigator.clipboard.writeText(d.url), alert("Link copiado"));
-      }
+      const okEl = document.getElementById("ok");
+      const badEl = document.getElementById("bad");
+      const progEl = document.getElementById("prog");
+      const bar = document.getElementById("bar");
+      const feedback = document.getElementById("feedback");
+      const nextBtn = document.getElementById("nextBtn");
+      const nextTopicBtn = document.getElementById("nextTopicBtn");
 
-      next();
+      buildBoard();
+      placePawn("e2");
+      updateInstruction(2);
+
+
     </script>
 
     <script>
       // Registrar Service Worker (PWA)
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-          navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+            navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
         });
       }
 
