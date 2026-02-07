@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajedrez • Clase 2: Toca la Casilla</title>
+    <title>Ajedrez • Buscar la casilla</title>
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
@@ -13,7 +13,7 @@
     <style>
       * {
         box-sizing: border-box;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       body {
@@ -23,7 +23,7 @@
         justify-content: center;
         align-items: center;
         background: linear-gradient(145deg, #dbeafe, #e0f2fe);
-        padding: 18px;
+        padding: clamp(12px, 4vw, 18px);
       }
 
       .app {
@@ -33,22 +33,23 @@
         padding: 18px;
         border-radius: 24px;
         box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
-        border: 3px solid #2563eb;
       }
 
+      /* ===== HEADER ===== */
       .brand-header-kids {
         padding: 14px;
         border-radius: 22px;
         margin-bottom: 12px;
-        background: linear-gradient(135deg, #93c5fd, #60a5fa, #2563eb);
-        color: #fff;
-        cursor: pointer;
+        background: linear-gradient(90deg, #22c55e, #38bdf8);
+        color: #020617;
+        pointer-events: none;
       }
 
       .brand-row {
         display: flex;
         align-items: center;
         gap: 12px;
+        flex-wrap: wrap;
       }
 
       .kids-badge {
@@ -57,18 +58,40 @@
         border-radius: 18px;
         display: grid;
         place-items: center;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         background: rgba(255, 255, 255, .25);
       }
 
       .kids-title {
         font-weight: 900;
-        font-size: 1.5rem;
+        font-size: 1.35rem;
+      }
+
+      .kids-subtitle {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+        pointer-events: auto;
+      }
+
+      .kids-pill {
+        background: rgba(255, 255, 255, .25);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .kids-pill:hover {
+        background: rgba(255, 255, 255, .45);
+        transform: translateY(-1px);
       }
 
       h1 {
         text-align: center;
-        margin: 6px 0 4px;
+        margin: 6px 0 2px;
+        font-size: 1.2rem;
       }
 
       .subtitle {
@@ -77,6 +100,7 @@
         color: #6b7280;
       }
 
+      /* ===== STATUS ===== */
       .status-bar {
         display: flex;
         justify-content: space-between;
@@ -93,7 +117,7 @@
         background: #e5e7eb;
         border-radius: 999px;
         overflow: hidden;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
 
       .progress-inner {
@@ -103,6 +127,7 @@
         transition: .3s;
       }
 
+      /* ===== CARD ===== */
       .card {
         background: #f9fafb;
         border: 1px solid #e5e7eb;
@@ -111,54 +136,53 @@
         text-align: center;
       }
 
-      .target-text {
-        font-size: 1.4rem;
-        font-weight: 900;
-        color: #1d4ed8;
-        margin-bottom: 6px;
-      }
-
+      /* ===== BOARD ===== */
       .board {
         display: grid;
         grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+        width: 100%;
         aspect-ratio: 1/1;
-        max-width: 320px;
-        margin: 10px auto;
+        max-width: min(360px, 90vw);
+        margin: auto;
         border-radius: 18px;
         overflow: hidden;
-        border: 2px solid #bfdbfe;
+        border: 3px solid #60a5fa;
+        background: #60a5fa;
       }
 
       .sq {
-        display: grid;
-        place-items: center;
-        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .75rem;
+        font-weight: 700;
+        user-select: none;
         cursor: pointer;
-        transition: .15s;
       }
 
       .light {
-        background: #eff6ff;
+        background: #f8fbff;
       }
 
       .dark {
-        background: #93c5fd;
+        background: #9ec5fe;
       }
 
-      .sq.correct {
-        background: #22c55e !important;
-        color: #fff;
+      .correct {
+        box-shadow: inset 0 0 0 4px #22c55e;
+        background: rgba(34, 197, 94, .35) !important;
       }
 
-      .sq.wrong {
-        background: #ef4444 !important;
-        color: #fff;
+      .wrong {
+        box-shadow: inset 0 0 0 4px #ef4444;
+        background: rgba(239, 68, 68, .35) !important;
       }
 
       .feedback {
-        font-weight: 900;
         margin-top: 8px;
-        min-height: 22px;
+        font-weight: 800;
+        min-height: 24px;
       }
 
       .good {
@@ -169,21 +193,27 @@
         color: #ef4444;
       }
 
+      /* ===== CONTROLS ===== */
       .controls {
         display: flex;
-        gap: 10px;
-        margin-top: 10px;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
       }
 
       .main-btn {
         flex: 1;
-        border: none;
-        padding: 10px;
+        min-width: 140px;
+        max-width: 220px;
+        padding: 12px;
         border-radius: 999px;
+        border: none;
         font-weight: 800;
         background: #2563eb;
         color: #fff;
         cursor: pointer;
+        min-height: 44px;
       }
     </style>
   </head>
@@ -191,19 +221,27 @@
   <body>
     <div class="app">
 
-      <div class="brand-header-kids" onclick="location.href='index.html'">
+      <!-- HEADER -->
+      <div class="brand-header-kids">
         <div class="brand-row">
-          <div class="kids-badge">♟️</div>
-          <div class="kids-title">Academia de Ajedrez Mauro • Clase 2</div>
+          <div class="kids-badge">📍</div>
+          <div>
+            <div class="kids-title">Academia de Ajedrez Mauro</div>
+            <div class="kids-subtitle">
+              <span class="kids-pill" onclick="location.href='index.html'">Inicio</span>
+              <span class="kids-pill" onclick="location.href='ruta-chess.html'">Ruta de aprendizaje</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <h1>Toca la casilla correcta</h1>
-      <p class="subtitle">Escucha y toca la casilla</p>
+      <h1>Buscar la casilla</h1>
+      <p class="subtitle" id="instruction">Escucha y toca la casilla correcta</p>
 
       <div class="status-bar">
-        <div>✅ Bien: <b id="ok">0</b></div>
-        <div>🎯 Progreso: <b id="count">0/10</b></div>
+        <div>✅ <b id="ok">0</b></div>
+        <div>❌ <b id="bad">0</b></div>
+        <div>📊 <b id="prog">0</b>/10</div>
       </div>
 
       <div class="progress">
@@ -211,111 +249,120 @@
       </div>
 
       <div class="card">
-        <div class="target-text" id="targetText">e4</div>
-        <button class="main-btn" onclick="speakTarget()">🔊 Escuchar</button>
-
         <div class="board" id="board"></div>
         <div class="feedback" id="feedback"></div>
       </div>
 
       <div class="controls">
+        <button class="main-btn" onclick="repeatVoice()">🔊 Repetir</button>
         <button class="main-btn" onclick="next()">Siguiente</button>
-        <button class="main-btn" onclick="shareApp()">📤 Compartir</button>
+        <button class="main-btn" id="nextTopicBtn" style="display:none;background:#16a34a"
+          onclick="goNextTopic()">Siguiente tema</button>
       </div>
 
     </div>
 
     <script>
       const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
-      let target = "", last = "";
-      let ok = 0, total = 0;
-      let locked = false;
+      let target = "";
+      let ok = 0, bad = 0, attempts = 0;
+      const TOTAL = 10;
 
-      function speak(t) {
-        const u = new SpeechSynthesisUtterance(t);
-        u.lang = "es-ES"; u.rate = .9;
+      function speak(text) {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "es-PE";
+        u.rate = .9;
         speechSynthesis.cancel();
         speechSynthesis.speak(u);
-      }
-
-      function speakTarget() {
-        speak(`Busca ${target[0]} ${target[1]}`);
-      }
-
-      function randomCoord() {
-        let c;
-        do {
-          c = files[Math.floor(Math.random() * 8)] + (Math.floor(Math.random() * 8) + 1);
-        } while (c === last);
-        last = c;
-        return c;
       }
 
       function buildBoard() {
         const b = document.getElementById("board");
         b.innerHTML = "";
-        for (let r = 8; r >= 1; r--)
+        for (let r = 8; r >= 1; r--) {
           for (let f = 0; f < 8; f++) {
             const c = files[f] + r;
             const d = document.createElement("div");
             d.className = "sq " + (((f + r) % 2) ? "dark" : "light");
-            d.dataset.c = c;
-            d.onclick = () => tap(d, c);
+            d.textContent = c;
+            d.onclick = () => check(c, d);
             b.appendChild(d);
           }
+        }
       }
 
-      function tap(el, c) {
-        if (locked) return;
+      function newTarget() {
+        const file = files[Math.floor(Math.random() * 8)];
+        const rank = Math.floor(Math.random() * 8) + 1;
+        target = file + rank;
+        speak(`Busca la casilla ${target}`);
+      }
+
+      function check(c, el) {
+        if (attempts >= TOTAL) return;
+        document.querySelectorAll(".sq").forEach(s => s.classList.remove("correct", "wrong"));
+
         if (c === target) {
+          ok++; attempts++;
           el.classList.add("correct");
-          document.getElementById("feedback").textContent = "¡Correcto!";
-          document.getElementById("feedback").className = "feedback good";
-          speak("¡Muy bien!");
-          ok++; total++;
-          locked = true;
+          feedback.textContent = "¡Correcto!";
+          feedback.className = "feedback good";
+          speak("Muy bien");
         } else {
+          bad++; attempts++;
           el.classList.add("wrong");
-          document.getElementById("feedback").textContent = "Intenta otra vez";
-          document.getElementById("feedback").className = "feedback bad";
-          speak("Intenta otra vez");
+          feedback.textContent = "Incorrecto, intenta otra vez";
+          feedback.className = "feedback bad";
+          speak("Incorrecto");
         }
+        update();
+        if (attempts >= TOTAL) finish();
+      }
 
-        document.getElementById("ok").textContent = ok;
-        document.getElementById("count").textContent = `${total}/10`;
-        document.getElementById("bar").style.width = (total / 10 * 100) + "%";
-
-        if (total === 10) {
-          setTimeout(() => {
-            speak("Excelente. Terminaste la clase dos");
-            alert("🎉 Clase 2 completada");
-          }, 500);
-        }
+      function update() {
+        okEl.textContent = ok;
+        badEl.textContent = bad;
+        progEl.textContent = attempts;
+        bar.style.width = (attempts / TOTAL * 100) + "%";
       }
 
       function next() {
-        locked = false;
-        document.getElementById("feedback").textContent = "";
-        document.querySelectorAll(".sq").forEach(s => s.classList.remove("correct", "wrong"));
-        target = randomCoord();
-        document.getElementById("targetText").textContent = target;
-        speakTarget();
+        if (attempts < TOTAL) {
+          feedback.textContent = "";
+          newTarget();
+        }
       }
 
-      function shareApp() {
-        const d = { title: "Marie Kids Ajedrez", text: "Clase 2: Toca la casilla correcta", url: location.href };
-        navigator.share ? navigator.share(d) : (navigator.clipboard.writeText(d.url), alert("Link copiado"));
+      function repeatVoice() {
+        speak(`Busca la casilla ${target}`);
       }
+
+      function finish() {
+        feedback.textContent = "🎉 ¡Clase completada!";
+        feedback.className = "feedback good";
+        speak("Excelente, completaste la clase");
+        document.getElementById("nextTopicBtn").style.display = "inline-block";
+      }
+
+      function goNextTopic() {
+        location.href = "ajedrez-03.html";
+      }
+
+      const okEl = document.getElementById("ok");
+      const badEl = document.getElementById("bad");
+      const progEl = document.getElementById("prog");
+      const bar = document.getElementById("bar");
+      const feedback = document.getElementById("feedback");
 
       buildBoard();
-      next();
+      newTarget();
     </script>
 
     <script>
       // Registrar Service Worker (PWA)
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-          navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+          //  navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
         });
       }
 
