@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago aprobado - Marie Kids</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      padding: 16px;
+    }
+
+    .box {
+      background: white;
+      border: 3px solid #2563eb;
+      border-radius: 24px;
+      padding: 24px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 18px 45px rgba(0,0,0,.16);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #166534;
+    }
+
+    .code {
+      margin: 16px 0;
+      padding: 16px;
+      border-radius: 18px;
+      background: #f0fdf4;
+      border: 2px dashed #22c55e;
+      font-size: 1.5rem;
+      font-weight: 1000;
+      color: #166534;
+      letter-spacing: .08em;
+      word-break: break-word;
+    }
+
+    button, a {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      color: white;
+      font-weight: 1000;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .msg {
+      font-weight: 800;
+      color: #374151;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <h1>🎉 Pago aprobado</h1>
+    <p class="msg" id="msg">Confirmando tu pago...</p>
+
+    <div class="code" id="codeBox" style="display:none;"></div>
+
+    <button id="copyBtn" style="display:none;" onclick="copiarCodigo()">Copiar código</button>
+    <br>
+    <a href="index.html">Volver a Marie Kids</a>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzeDbOOONWxW-K6TfVzOzImxX4vobCTwMuOB8Lehd4DS_NfwrInxcN8XpynzjuIPRaXaQ/exec";
+    let generatedCode = "";
+
+    async function confirmarPago() {
+      const params = new URLSearchParams(window.location.search);
+      const paymentId = params.get("payment_id");
+
+      const msg = document.getElementById("msg");
+      const codeBox = document.getElementById("codeBox");
+      const copyBtn = document.getElementById("copyBtn");
+
+      if (!paymentId) {
+        msg.textContent = "No se encontró el ID del pago. Contáctanos para ayudarte.";
+        return;
+      }
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "mp_confirm_payment",
+            payment_id: paymentId
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.ok) {
+          generatedCode = data.code;
+
+          msg.textContent = "Tu código Premium es:";
+          codeBox.textContent = generatedCode;
+          codeBox.style.display = "block";
+          copyBtn.style.display = "inline-block";
+        } else {
+          msg.textContent = "No se pudo confirmar el pago: " + (data.msg || "Intenta nuevamente.");
+          console.log(data);
+        }
+
+      } catch (error) {
+        msg.textContent = "Error de conexión. Contáctanos para recuperar tu código.";
+        console.error(error);
+      }
+    }
+
+    function copiarCodigo() {
+      navigator.clipboard.writeText(generatedCode);
+      alert("Código copiado: " + generatedCode);
+    }
+
+    confirmarPago();
+  </script>
+</body>
+</html>
