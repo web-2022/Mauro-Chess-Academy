@@ -50,25 +50,20 @@
       /* ✅ FIX SCROLL MOBILE: body NO debe quedar "bloqueado" por el flex centrado */
       body {
         margin: 0;
-        min-height: 100%;
-        /* antes: display:flex + align-items:center (esto suele romper scroll en móvil) */
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        /* ✅ importante */
+        min-height: 100vh;
         background: linear-gradient(145deg, #dbeafe, #e0f2fe);
 
-        /* ✅ padding con safe area */
+        /* ✅ scroll natural del navegador */
+        overflow-x: hidden;
+
+        /* ❌ quitar flex */
+        display: block;
+
+        /* padding safe area */
         padding:
           calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
-
-        /* ✅ fuerza scroll si el contenido excede */
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
-        touch-action: pan-y;
-        /* ✅ permite deslizar para scroll (el tablero mantiene touch-action:none) */
       }
+
 
       /* ✅ un "wrapper" que no rompe el scroll */
       .app {
@@ -80,10 +75,10 @@
         box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
         border: 3px solid #2563eb;
 
-        /* ✅ separa del borde superior para que no quede pegado */
-        margin-top: 10px;
-        margin-bottom: 18px;
+        margin: 12px auto 18px;
+        /* 🔥 centra y permite scroll perfecto */
       }
+
 
       /* ======= MENÚ ======= */
       .nav {
@@ -490,7 +485,7 @@
         display: grid;
         grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(8, 1fr);
-        touch-action: none;
+        touch-action: pan-y;
         /* ✅ dedo para arrastre en tablero */
         position: relative;
         background: transparent;
@@ -671,28 +666,32 @@
       }
 
       .controls-mini {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 20px;
       }
+
 
       select,
       button.small-btn {
+        flex: 1;
+        /* 🔥 todos ocupan el mismo espacio */
+        min-width: 0;
+        /* 🔥 permite encoger en móvil */
         appearance: none;
         border: 1px solid #bfdbfe;
         background: #fff;
         color: #111827;
-        padding: 10px 12px;
+        padding: 10px 8px;
         border-radius: 14px;
         cursor: pointer;
         font-weight: 900;
-        font-size: var(--btn);
+        font-size: clamp(.8rem, 2.4vw, .9rem);
         transition: transform .1s ease, background .15s ease, border-color .15s ease;
-        min-width: clamp(120px, 30vw, 180px);
         text-align: center;
       }
+
 
       button.small-btn:hover {
         transform: translateY(-1px);
@@ -827,7 +826,7 @@
           </div>
 
           <div class="controls-mini">
-            <select id="puzzleSel" aria-label="Seleccionar ejercicio"></select>
+
             <button class="small-btn" id="btnHint" type="button">Pista</button>
             <button class="small-btn" id="btnReset" type="button">Reiniciar</button>
             <button class="small-btn" id="btnShow" type="button">Ver solución</button>
@@ -885,7 +884,7 @@
       const hintEl = document.getElementById("hintText");
       const feedbackEl = document.getElementById("feedback");
       const lessonCard = document.getElementById("lessonCard");
-      const puzzleSel = document.getElementById("puzzleSel");
+
       const dragFloat = document.getElementById("dragFloat");
 
       const correctSpan = document.getElementById("xpValue");
@@ -895,6 +894,62 @@
       const finalBox = document.getElementById("finalMessage");
 
       function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
+      /* =============================
+   🔊 SONIDOS SIN ARCHIVOS
+   ============================= */
+
+      let audioCtx = null;
+
+      function getAudioCtx() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioCtx;
+      }
+
+      // ✅ sonido correcto (campana suave)
+      function playSuccessSound() {
+        const ctx = getAudioCtx();
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0.001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      }
+
+      // ❌ sonido error (tono bajo suave)
+      function playErrorSound() {
+        const ctx = getAudioCtx();
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+
+        gain.gain.setValueAtTime(0.001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.25);
+      }
+
       function rcToSquare(r, c) { return FILES[c] + RANKS[r]; }
 
       function squareToRC(sq) {
@@ -905,6 +960,30 @@
         if (r < 0 || c < 0) return null;
         return { r, c };
       }
+
+      function saveProgress() {
+        localStorage.setItem("mate1Progress", JSON.stringify({
+          solved,
+          correctCount,
+          attempts,
+          bestStreak
+        }));
+      }
+
+      function loadProgress() {
+        const data = localStorage.getItem("mate1Progress");
+        if (!data) return;
+        const d = JSON.parse(data);
+        solved = d.solved || 0;
+        correctCount = d.correctCount || 0;
+        attempts = d.attempts || 0;
+        bestStreak = d.bestStreak || 0;
+
+        correctSpan.textContent = correctCount;
+        attemptsSpan.textContent = attempts;
+        updateProgressBar();
+      }
+
 
       function pieceName(code) {
         const t = code[1];
@@ -928,6 +1007,47 @@
             { from: "g6", to: "h6" },
           ],
           checkKing: "h8"
+        },
+
+        {
+          name: "Posición imagen — revisar mate",
+          turn: "w",
+          pieces: {
+            a8: "bR",
+            c8: "bB",
+            f8: "bR",
+            g8: "bK",
+
+            a7: "bB",
+            b7: "bP",
+            d7: "bP",
+            f7: "bP",
+            g7: "bB",
+
+            b6: "bQ",
+            d6: "bP",
+            g6: "wB",
+
+            a5: "bN",
+            c5: "bQ",
+            d5: "wQ",
+            g5: "bP",
+
+            f3: "wN",
+
+            a2: "wB",
+            e2: "wR",
+            f2: "wB",
+            g2: "wP",
+            h2: "wR",
+
+            e1: "wR",
+            g1: "wK"
+          },
+          solutions: [
+            // Aquí irían las jugadas ganadoras o de mate
+          ],
+          checkKing: "g8"
         },
         {
           name: "Mate #2 — 2 mates posibles",
@@ -1390,9 +1510,11 @@
             e.dataTransfer.setData("from", sq);
             img.classList.add("ghost");
             try {
-              const tiny = new Image();
-              tiny.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3C/svg%3E";
+              const tiny = document.createElement("canvas");
+              tiny.width = 1;
+              tiny.height = 1;
               e.dataTransfer.setDragImage(tiny, 0, 0);
+
             } catch (_) { }
           });
           img.addEventListener("dragend", () => img.classList.remove("ghost"));
@@ -1486,6 +1608,8 @@
       }
 
       function validateMove() {
+
+
         attempts++;
         attemptsSpan.textContent = attempts;
 
@@ -1493,6 +1617,7 @@
         const ok = !!lastMove && sols.some(s => s.from === lastMove.from && s.to === lastMove.to);
 
         if (ok) {
+          playSuccessSound();
           correctCount++;
           correctSpan.textContent = correctCount;
 
@@ -1501,6 +1626,8 @@
 
           frozen = true;
           render();
+          saveProgress();
+
 
           if (solved < maxProgress) solved++;
           updateProgressBar();
@@ -1509,17 +1636,22 @@
 
           if (solved >= maxProgress) {
             finalBox.innerHTML = `
-            🎉 ¡Sesión completada!<br>
-            Lograste <strong>${correctCount}</strong> mates correctos.
-            <span>¡Sigue practicando! ♟️✨</span>
-          `;
+🏆 ¡Sesión completada!<br>
+Lograste <strong>${correctCount}</strong> mates correctos.
+<span>🔥 Mejor racha: ${bestStreak}</span>
+<span>¡Eres un cazador de mates! ♟️✨</span>
+`;
+
             finalBox.style.display = "block";
           } else {
+
+
             finalBox.style.display = "none";
             finalBox.innerHTML = "";
           }
 
         } else {
+          playErrorSound();
           streak = 0;
           setFeedback("❌ No es mate. Si quieres ayuda, presiona Pista.", "bad");
           frozen = false;
@@ -1536,7 +1668,7 @@
 
         hideHint();
 
-        puzzleSel.value = String(puzzleIndex);
+
         document.getElementById("goalText").textContent = "Juegan blancas y dan mate en 1";
 
         if (!keepFeedback) {
@@ -1562,14 +1694,17 @@
 
       function nextPuzzle() {
         const next = (puzzleIndex + 1) % PUZZLES.length;
+        setFeedback("", "");
+        lessonCard.classList.remove("correct", "wrong");
         loadPuzzle(next);
       }
+
 
       // ✅ voz
       function speakText(text) {
         if (!("speechSynthesis" in window)) return;
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = "es-ES";
+        u.lang = "es-PE";
         u.rate = 0.95;
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(u);
@@ -1616,18 +1751,17 @@
       function init() {
         renderCoords();
         buildBoard();
+        loadProgress();
 
-        puzzleSel.innerHTML = "";
-        PUZZLES.forEach((p, i) => {
-          const opt = document.createElement("option");
-          opt.value = String(i);
-          opt.textContent = p.name;
-          puzzleSel.appendChild(opt);
+
+
+        document.getElementById("btnHint").addEventListener("click", showHint);
+        document.getElementById("btnReset").addEventListener("click", () => {
+          setFeedback("", "");
+          lessonCard.classList.remove("correct", "wrong");
+          loadPuzzle(puzzleIndex);
         });
 
-        puzzleSel.addEventListener("change", (e) => loadPuzzle(Number(e.target.value)));
-        document.getElementById("btnHint").addEventListener("click", showHint);
-        document.getElementById("btnReset").addEventListener("click", () => loadPuzzle(puzzleIndex));
         document.getElementById("btnShow").addEventListener("click", showSolution);
         document.getElementById("btnNext").addEventListener("click", nextPuzzle);
         document.getElementById("btnSpeak").addEventListener("click", speakPrompt);
@@ -1658,7 +1792,7 @@
       // Registrar Service Worker (PWA)
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-          navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+          //  navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
         });
       }
 
