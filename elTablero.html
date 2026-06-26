@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ajedrez • Clase 2: Filas, Columnas y Diagonales</title>
+
+        <!-- PWA -->
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#1976d2">
+
+        <style>
+            * {
+                box-sizing: border-box;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+                padding: 18px;
+            }
+
+            .app {
+                background: #fff;
+                width: 100%;
+                max-width: 520px;
+                padding: 18px;
+                border-radius: 24px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
+            }
+
+            .brand-header-kids {
+                padding: 14px;
+                border-radius: 22px;
+                margin-bottom: 12px;
+                background: linear-gradient(90deg, #22c55e, #38bdf8);
+                color: #020617;
+                cursor: default;
+            }
+
+            .brand-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .kids-badge {
+                width: 52px;
+                height: 52px;
+                border-radius: 18px;
+                display: grid;
+                place-items: center;
+                font-size: 1.5rem;
+                background: rgba(255, 255, 255, .25);
+            }
+
+            .kids-title {
+                font-weight: 900;
+                font-size: 1.5rem;
+            }
+
+            .kids-subtitle {
+                margin-left: auto;
+                margin-top: 4px;
+                display: flex;
+                gap: 8px;
+                flex-wrap: nowrap;
+                white-space: nowrap;
+                justify-content: flex-end;
+            }
+
+            .kids-pill {
+                background: rgba(255, 255, 255, .25);
+                padding: 4px 10px;
+                border-radius: 999px;
+                pointer-events: auto;
+            }
+
+            h1 {
+                text-align: center;
+                margin: 1px 0 1px;
+                font-size: clamp(1.1rem, 4vw, 1.5rem);
+            }
+
+            .subtitle {
+                text-align: center;
+                font-size: clamp(.85rem, 3.5vw, 1.05rem);
+                color: #6b7280;
+                margin: 4px 0 10px;
+            }
+
+            .status-bar {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 12px;
+                border-radius: 999px;
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+                font-size: clamp(.8rem, 3vw, .95rem);
+                margin-bottom: 8px;
+            }
+
+            .progress {
+                height: 10px;
+                background: #e5e7eb;
+                border-radius: 999px;
+                overflow: hidden;
+            }
+
+            .progress-inner {
+                height: 100%;
+                width: 0%;
+                background: #2563eb;
+                transition: .3s;
+            }
+
+            .card {
+                background: #f9fafb;
+                border: 1px solid #e5e7eb;
+                border-radius: 20px;
+                padding: 16px;
+                margin-top: 10px;
+            }
+
+            /* === TABLERO CON BORDES (a-h y 1-8) === */
+
+
+            .ranks {
+                display: grid;
+                grid-template-rows: repeat(8, 1fr);
+                gap: 0;
+                font-weight: 900;
+                color: #334155;
+                opacity: .85;
+            }
+
+            .rank {
+                display: grid;
+                place-items: center;
+                font-size: .85rem;
+                user-select: none;
+            }
+
+            .files {
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                font-weight: 900;
+                color: #334155;
+                opacity: .85;
+            }
+
+            .file {
+                display: grid;
+                place-items: center;
+                font-size: .85rem;
+                user-select: none;
+            }
+
+            .board {
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                aspect-ratio: 1/1;
+                width: 100%;
+                border-radius: 18px;
+                overflow: hidden;
+                border: 2px solid #bfdbfe;
+            }
+
+            .sq {
+                display: grid;
+                place-items: center;
+                position: relative;
+                font-weight: 800;
+                cursor: pointer;
+            }
+
+            .light {
+                background: #eff6ff;
+            }
+
+            .dark {
+                background: #93c5fd;
+            }
+
+            .mini {
+                position: absolute;
+                bottom: 4px;
+                right: 6px;
+                font-size: .7rem;
+                opacity: .7;
+                user-select: none;
+            }
+
+            .hl {
+                outline: 3px solid #f59e0b;
+                outline-offset: -3px;
+                animation: pulse 1s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(245, 158, 11, .6);
+                }
+
+                70% {
+                    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+                }
+
+                100% {
+                    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+                }
+            }
+
+            .options {
+                display: flex;
+                gap: 8px;
+                margin-top: 10px;
+                flex-wrap: wrap;
+            }
+
+            .option-btn {
+                flex: 1 1 30%;
+                min-width: 90px;
+                padding: 10px;
+                border-radius: 14px;
+                border: 1px solid #d1d5db;
+                background: #fff;
+                font-weight: 900;
+                cursor: pointer;
+            }
+
+            .option-btn:disabled {
+                opacity: .6;
+            }
+
+            .feedback {
+                text-align: center;
+                font-weight: 800;
+                margin-top: 8px;
+                min-height: 24px;
+            }
+
+            .good {
+                color: #16a34a;
+            }
+
+            .bad {
+                color: #ef4444;
+            }
+
+            .controls {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            .main-btn {
+                width: auto;
+                border: none;
+                min-width: 120px;
+                padding: 10px 16px;
+                border-radius: 999px;
+                font-weight: 800;
+                background: #2563eb;
+                color: #fff;
+                cursor: pointer;
+            }
+
+            .listen-btn {
+                width: auto;
+                display: block;
+                margin: 0 auto 10px;
+                padding: 8px 18px;
+                font-size: .9rem;
+                background: #1d4ed8;
+            }
+
+            /* Navegación como en tu HTML */
+            .kids-pill.nav {
+                cursor: pointer;
+            }
+
+            .kids-pill.nav:hover {
+                background: rgba(255, 255, 255, .45);
+                transform: translateY(-1px);
+            }
+
+            .brand-header-kids {
+                pointer-events: none;
+            }
+
+            .kids-pill {
+                pointer-events: auto;
+            }
+
+            /* Responsive header (igual estilo base) */
+            @media (max-width: 480px) {
+                .kids-title {
+                    font-size: 1.05rem;
+                    white-space: nowrap;
+                }
+
+                .kids-badge {
+                    width: 38px;
+                    height: 38px;
+                    font-size: 1.2rem;
+                }
+
+                .kids-subtitle {
+                    font-size: .75rem;
+                    gap: 6px;
+                }
+
+                .brand-header-kids {
+                    padding: 10px;
+                }
+            }
+
+            @media (min-width: 900px) {
+                .app {
+                    max-width: 720px;
+                    padding: 18px;
+                }
+
+                h1 {
+                    font-size: 1.5rem;
+                }
+
+                .subtitle {
+                    font-size: 1.1rem;
+                }
+            }
+
+            @media (max-width: 360px) {
+                .controls {
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                .main-btn {
+                    width: 100%;
+                }
+            }
+
+            /* ===== TABLERO RESPONSIVE REAL ===== */
+            .board-wrap {
+                width: 100%;
+                max-width: min(360px, 90vw);
+                margin: 0 auto;
+            }
+
+            .board-grid {
+                display: grid;
+                grid-template-columns: clamp(20px, 6vw, 26px) 1fr;
+                grid-template-rows: 1fr clamp(20px, 6vw, 26px);
+                gap: clamp(4px, 1.5vw, 6px);
+            }
+
+            .board {
+                width: 100%;
+                aspect-ratio: 1 / 1;
+            }
+
+            /* ===== HEADER RESPONSIVE ===== */
+            .brand-header-kids {
+                padding: clamp(10px, 3vw, 14px);
+            }
+
+            .kids-title {
+                font-size: clamp(1rem, 4vw, 1.5rem);
+            }
+
+            .kids-badge {
+                width: clamp(38px, 10vw, 52px);
+                height: clamp(38px, 10vw, 52px);
+                font-size: clamp(1.2rem, 4vw, 1.5rem);
+            }
+
+            .kids-subtitle {
+                font-size: clamp(.7rem, 2.5vw, .85rem);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="app">
+
+            <div class="brand-header-kids">
+                <div class="brand-row">
+                    <div class="kids-badge">♟️</div>
+                    <div style="width:100%">
+                        <div class="kids-title">Academia de Ajedrez Mauro</div>
+                        <div class="kids-subtitle">
+                            <span class="kids-pill nav" onclick="location.href='index.html'">Inicio</span>
+                            <span class="kids-pill nav" onclick="location.href='ruta-chess.html'">Ruta de
+                                aprendizaje</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h1>Filas, Columnas y Diagonales</h1>
+            <p class="subtitle" id="question">¿Qué se está marcando en el tablero?</p>
+
+            <!-- BARRA ESTADO (IGUAL FORMATO) -->
+            <div class="status-bar">
+                <div>✅ Correctas: <b id="ok">0</b></div>
+                <div>❌ Incorrectas: <b id="bad">0</b></div>
+                <div>📊 Progreso: <b id="prog">0</b>/10</div>
+            </div>
+
+            <div class="progress">
+                <div class="progress-inner" id="bar"></div>
+            </div>
+
+            <div class="card">
+                <button class="main-btn listen-btn" onclick="speakHint()">🔊 Escuchar explicación</button>
+
+                <!-- TABLERO + BORDES -->
+                <div class="board-wrap">
+                    <div class="board-grid">
+                        <div class="ranks" id="ranks"></div>
+                        <div class="board" id="board"></div>
+                        <div></div>
+                        <div class="files" id="files"></div>
+                    </div>
+                </div>
+
+                <div class="options" id="options"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="controls">
+                <button class="main-btn" id="nextBtn" onclick="next()" disabled>Siguiente</button>
+                <button class="main-btn" onclick="shareApp()">📤 Compartir</button>
+            </div>
+
+            <div class="card" id="endPanel" style="display:none; text-align:center; margin-top:10px;">
+                <h3>🎉 ¡Clase completada!</h3>
+                <p>¿Qué deseas hacer ahora?</p>
+
+                <div class="controls">
+                    <button class="main-btn" onclick="goNext()">➡️ Siguiente tema</button>
+                    <button class="main-btn" onclick="restart()">🔁 Repetir</button>
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+            // ======= CONFIG =======
+            const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+            const types = ["fila", "columna", "diagonal"];
+            const TOTAL = 10;
+
+            // ======= ESTADO =======
+            let current = null; // {type, label, spoken}
+            let ok = 0, bad = 0, total = 0;
+            let lastKey = "";
+
+            // Guardado (por clase 2)
+            const saved = localStorage.getItem("clase2_ok");
+            if (saved !== null) {
+                ok = parseInt(saved, 10) || 0;
+                total = ok;
+                document.getElementById("ok").textContent = ok;
+                document.getElementById("prog").textContent = total;
+                document.getElementById("bar").style.width = (total / TOTAL * 100) + "%";
+            }
+
+            // ======= AUDIO =======
+            function speakText(t) {
+                const u = new SpeechSynthesisUtterance(t);
+                u.lang = "es-PE";
+                u.rate = .9;
+                speechSynthesis.cancel();
+                speechSynthesis.speak(u);
+            }
+
+            function speakHint() {
+                speakText(
+                    "En ajedrez usamos filas, columnas y diagonales. " +
+                    "Las filas son líneas horizontales y se nombran con números del 1 al 8. " +
+                    "Las columnas son líneas verticales y se nombran con letras de la a a la h. " +
+                    "Las diagonales son líneas inclinadas, y todas las casillas de una diagonal tienen el mismo color."
+                );
+            }
+
+            function speakQuestion() {
+                speakText(
+                    `Observa el tablero. ¿Se está marcando una fila, una columna o una diagonal?`
+                );
+            }
+
+            function speakWhy(type, label) {
+                if (type === "fila") {
+                    speakText(`Correcto. Es la fila ${label}. Las filas son horizontales y usan números.`);
+                } else if (type === "columna") {
+                    speakText(`Correcto. Es la columna ${label}. Las columnas son verticales y usan letras.`);
+                } else {
+                    speakText(`Correcto. Es una diagonal. Las diagonales siempre mantienen el mismo color.`);
+                }
+            }
+
+            // ======= TABLERO + BORDES =======
+            function buildBorders() {
+                const ranksEl = document.getElementById("ranks");
+                const filesEl = document.getElementById("files");
+                ranksEl.innerHTML = "";
+                filesEl.innerHTML = "";
+
+                // Ranks 8..1 (arriba a abajo)
+                for (let r = 8; r >= 1; r--) {
+                    const d = document.createElement("div");
+                    d.className = "rank";
+                    d.textContent = r;
+                    ranksEl.appendChild(d);
+                }
+
+                // Files a..h (izq a der)
+                for (let f = 0; f < 8; f++) {
+                    const d = document.createElement("div");
+                    d.className = "file";
+                    d.textContent = files[f];
+                    filesEl.appendChild(d);
+                }
+            }
+
+            function buildBoard() {
+                const b = document.getElementById("board");
+                b.innerHTML = "";
+                for (let r = 8; r >= 1; r--) {
+                    for (let f = 0; f < 8; f++) {
+                        const c = files[f] + r;
+                        const d = document.createElement("div");
+                        d.className = "sq " + (((f + r) % 2) ? "dark" : "light");
+                        d.dataset.c = c;
+                        d.dataset.file = files[f];
+                        d.dataset.rank = r;
+                        d.innerHTML = `<div class="mini">${c}</div>`;
+                        b.appendChild(d);
+                    }
+                }
+            }
+
+            function clearHL() {
+                document.querySelectorAll(".sq").forEach(s => s.classList.remove("hl"));
+            }
+
+            // ======= GENERAR EJERCICIO (fila/col/diag) =======
+            function randInt(a, b) { // inclusive
+                return Math.floor(Math.random() * (b - a + 1)) + a;
+            }
+
+            function makeKey(type, label) {
+                return `${type}:${label}`;
+            }
+
+            function genExercise() {
+                let type, label, key;
+
+                do {
+                    type = types[Math.floor(Math.random() * types.length)];
+
+                    if (type === "fila") {
+                        label = String(randInt(1, 8));
+                    } else if (type === "columna") {
+                        label = files[Math.floor(Math.random() * 8)];
+                    } else {
+                        // diagonal: escogemos una diagonal válida (NE) con longitud >=4 para que se vea clara
+                        // representamos por un punto de inicio (fileIndex, rank)
+                        // label = "diag" + startCoord
+                        const starts = [];
+                        // inicios en fila 1 (a..e) y en columna a (2..5) para diagonales largas
+                        for (let fi = 0; fi <= 4; fi++) starts.push({ fi, r: 1 });
+                        for (let rr = 2; rr <= 5; rr++) starts.push({ fi: 0, r: rr });
+
+                        const s = starts[Math.floor(Math.random() * starts.length)];
+                        label = files[s.fi] + s.r; // ej "c1"
+                    }
+
+                    key = makeKey(type, label);
+                } while (key === lastKey);
+
+                lastKey = key;
+                return { type, label };
+            }
+
+            function paintExercise(ex) {
+                clearHL();
+
+                if (ex.type === "fila") {
+                    const r = ex.label;
+                    document.querySelectorAll(`.sq[data-rank="${r}"]`).forEach(s => s.classList.add("hl"));
+                } else if (ex.type === "columna") {
+                    const f = ex.label;
+                    document.querySelectorAll(`.sq[data-file="${f}"]`).forEach(s => s.classList.add("hl"));
+                } else {
+                    // diagonal desde label (start coord) hacia NE
+                    const startFile = ex.label[0];
+                    const startRank = parseInt(ex.label[1], 10);
+                    let fi = files.indexOf(startFile);
+                    let r = startRank;
+                    for (let i = 0; i < 8; i++) {
+                        const f = files[fi + i];
+                        const rr = r + i;
+                        if (!f || rr > 8) break;
+                        document.querySelector(`.sq[data-file="${f}"][data-rank="${rr}"]`)?.classList.add("hl");
+                    }
+                }
+            }
+
+            // ======= OPCIONES =======
+            function renderOptions() {
+                const o = document.getElementById("options");
+                o.innerHTML = "";
+
+                const opts = ["Fila", "Columna", "Diagonal"];
+                opts.sort(() => Math.random() - 0.5).forEach(txt => {
+                    const b = document.createElement("button");
+                    b.className = "option-btn";
+                    b.textContent = txt;
+                    b.onclick = () => check(txt.toLowerCase(), b);
+                    o.appendChild(b);
+                });
+            }
+
+            // ======= CHECK =======
+            function check(answer, btn) {
+                const f = document.getElementById("feedback");
+
+                const map = {
+                    "fila": "fila",
+                    "columna": "columna",
+                    "diagonal": "diagonal"
+                };
+
+                const ans = map[answer] || answer;
+                if (ans === current.type) {
+                    ok++; total++;
+                    localStorage.setItem("clase2_ok", ok);
+
+                    document.getElementById("ok").textContent = ok;
+                    document.getElementById("prog").textContent = total;
+                    document.getElementById("bar").style.width = (total / TOTAL * 100) + "%";
+
+                    f.textContent = "¡Muy bien!";
+                    f.className = "feedback good";
+                    speakWhy(current.type, current.label);
+
+                    document.querySelectorAll(".option-btn").forEach(x => x.disabled = true);
+                    document.getElementById("nextBtn").disabled = false;
+
+                } else {
+                    bad++;
+                    document.getElementById("bad").textContent = bad;
+
+                    f.textContent = "Inténtalo otra vez";
+                    f.className = "feedback bad";
+                    speakText("Casi, inténtalo otra vez");
+                    btn.disabled = true;
+                }
+
+                // FIN
+                if (total === TOTAL) {
+                    setTimeout(() => {
+                        speakText("¡Excelente! Completaste la clase dos");
+                        document.getElementById("endPanel").style.display = "block";
+                        document.querySelector(".controls").style.display = "none";
+                        document.getElementById("nextBtn").disabled = true;
+                    }, 500);
+                }
+            }
+
+            // ======= NEXT =======
+            function next() {
+                document.getElementById("nextBtn").disabled = true;
+                document.getElementById("feedback").textContent = "";
+                document.querySelectorAll(".option-btn").forEach(x => x.disabled = false);
+
+                current = genExercise();
+                paintExercise(current);
+
+                // Texto pregunta (muestra el "label" para que aprenda visualmente)
+                const q = document.getElementById("question");
+                if (current.type === "fila") q.textContent = `¿Qué se está marcando? (fila ${current.label})`;
+                if (current.type === "columna") q.textContent = `¿Qué se está marcando? (columna ${current.label})`;
+                if (current.type === "diagonal") q.textContent = `¿Qué se está marcando? (diagonal desde ${current.label})`;
+
+                speakQuestion();
+                renderOptions();
+            }
+
+            // ======= COMPARTIR =======
+            function shareApp() {
+                const data = {
+                    title: "Academia de Ajedrez Mauro",
+                    text: "Clase 2: Filas, Columnas y Diagonales",
+                    url: location.href
+                };
+                if (navigator.share) navigator.share(data);
+                else {
+                    navigator.clipboard.writeText(data.url);
+                    alert("Link copiado");
+                }
+            }
+
+            // ======= FIN / REINICIO =======
+            function goNext() {
+                location.href = "ajedrez-03.html"; // siguiente tema
+            }
+
+            function restart() {
+                ok = 0; bad = 0; total = 0;
+                lastKey = "";
+                localStorage.removeItem("clase2_ok");
+
+                document.getElementById("ok").textContent = 0;
+                document.getElementById("bad").textContent = 0;
+                document.getElementById("prog").textContent = 0;
+                document.getElementById("bar").style.width = "0%";
+
+                document.getElementById("endPanel").style.display = "none";
+                document.querySelector(".controls").style.display = "flex";
+
+                next();
+            }
+
+            // ======= INIT =======
+            buildBorders();
+            buildBoard();
+            renderOptions();
+            next();
+        </script>
+
+        <script>
+            // Registrar Service Worker (PWA)
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                    // navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+                });
+            }
+        </script>
+
+    </body>
+
+</html>
