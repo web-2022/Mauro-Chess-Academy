@@ -45,23 +45,6 @@
         --shadow: rgba(0, 0, 0, .14);
       }
 
-      /* ===============================
-       SLOGAN SUPERIOR IZQUIERDO
-       =============================== */
-      .brand {
-        position: absolute;
-        top: 5px;
-        left: 28px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: .95rem;
-        font-weight: 600;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        color: #86efac;
-      }
-
       .app {
         width: 100%;
         max-width: var(--app-max);
@@ -422,6 +405,24 @@
         color: #166534
       }
 
+      /* ===============================
+       SLOGAN SUPERIOR IZQUIERDO
+       =============================== */
+      .brand {
+        position: absolute;
+        top: 5px;
+        left: 28px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: .95rem;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #86efac;
+      }
+
+
       /* BOTON */
       .mark {
         border: none;
@@ -561,107 +562,6 @@
         transform: scale(1.05);
       }
 
-
-
-      /* ===============================
-   PREMIUM / ACTIVACIÓN POR CÓDIGO
-   =============================== */
-      .premium-activate {
-        margin-top: 12px;
-        background: #fff7ed;
-        border: 2px dashed #fb923c;
-        border-radius: 18px;
-        padding: 14px;
-        text-align: center;
-      }
-
-      .premium-activate h2 {
-        margin: 0 0 6px;
-        color: #9a3412;
-        font-size: clamp(1rem, 3vw, 1.25rem);
-        font-weight: 1000;
-      }
-
-      .premium-activate p {
-        margin: 6px 0;
-        color: #7c2d12;
-        font-weight: 850;
-      }
-
-      .premium-form {
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 10px;
-      }
-
-      .premium-form input {
-        min-width: min(100%, 280px);
-        border: 1px solid #fdba74;
-        border-radius: 999px;
-        padding: 11px 14px;
-        outline: none;
-        font-weight: 900;
-        text-transform: uppercase;
-      }
-
-      .premium-form button,
-      .premium-buy {
-        border: none;
-        border-radius: 999px;
-        padding: 11px 16px;
-        background: linear-gradient(90deg, #f97316, #ea580c);
-        color: white;
-        font-weight: 1000;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-      }
-
-      .premium-activate.premium-ok {
-        background: #f0fdf4;
-        border-color: #86efac;
-      }
-
-      .premium-activate.premium-ok h2,
-      .premium-activate.premium-ok p {
-        color: #166534;
-      }
-
-      .lock {
-        position: absolute;
-        top: 56px;
-        right: 10px;
-        background: #f97316;
-        color: #fff;
-        border-radius: 999px;
-        padding: 6px 10px;
-        font-weight: 1000;
-        font-size: .78rem;
-        box-shadow: 0 10px 18px rgba(249, 115, 22, .25);
-        z-index: 2;
-      }
-
-      .topic.locked {
-        filter: grayscale(1);
-        opacity: .62;
-      }
-
-      .topic.locked:hover {
-        transform: none;
-        border-color: #e5e7eb;
-        box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
-      }
-
-      .topic.locked .mark {
-        pointer-events: none;
-        opacity: .6;
-      }
-
       /* ===============================
    HERO OSCURO ALTO IMPACTO
    =============================== */
@@ -749,6 +649,7 @@
     <div class="app">
 
 
+
       <header class="hero hero-dark" aria-label="Academia de Ajedrez Online">
 
         <!-- SLOGAN -->
@@ -795,7 +696,7 @@
 
       <div class="toolbar">
         <div class="search" role="search" aria-label="Buscar temas">
-          🔎 <input id="q" type="text" placeholder="Tema a buscar" />
+          🔎 <input id="q" type="text" placeholder="Buscar: ecuaciones, fracciones, ajedrez..." />
         </div>
 
         <!-- ✅ Estos son los links a tus HTML por materia -->
@@ -819,19 +720,6 @@
         </div>
       </section>
 
-      <section class="premium-activate" id="premiumBox" aria-label="Activar acceso Premium">
-        <h2 id="premiumTitle">🔓 Activar acceso Premium</h2>
-        <p id="premiumText">Los 3 primeros temas son gratis. Ingresa tu código para desbloquear toda la ruta.</p>
-
-        <div class="premium-form" id="premiumForm">
-          <input id="codeInput" placeholder="Ej: MK-ABCD-1234" autocomplete="off">
-          <button type="button" onclick="activarCodigo()">Activar código</button>
-          <button type="button" class="premium-buy" onclick="comprarPremium()">💳 Comprar Premium S/ 25</button>
-        </div>
-
-        <p id="msg"></p>
-      </section>
-
       <main class="grid" id="grid" aria-label="Lista de temas"></main>
 
       <p class="note">Usa el buscador arriba para filtrar. Haz click en “Realizado” para marcar o desmarcar un
@@ -840,184 +728,185 @@
 
     <script>
       const STORAGE_KEY = "mk_learning_path_done_realizado_v3";
+      const UNLOCK_FLAG = "mk_ajedrez_unlocked";
+      const UNLOCK_KEY = "Mauro";
 
-      // 👇 PEGA AQUÍ TU URL REAL DE GOOGLE APPS SCRIPT (/exec)
-      const API_URL = "https://script.google.com/macros/s/AKfycbzeDbOOONWxW-K6TfVzOzImxX4vobCTwMuOB8Lehd4DS_NfwrInxcN8XpynzjuIPRaXaQ/exec";
+      const isUnlocked = localStorage.getItem(UNLOCK_FLAG) === "true";
 
-      const PREMIUM_FLAG = "mk_ajedrez_premium";
       const FREE_LIMIT = 3; // 👈 primeros 3 gratis
-      const isPremium = localStorage.getItem(PREMIUM_FLAG) === "true";
 
       const topics = [
 
         // ===== FUNDAMENTOS =====
-        { id: 1, emoji: "🏁", title: "El Tablero", desc: "Filas, columnas y diagonales", href: "eltablero.html", category: "fundamentos" },
-        { id: 2, emoji: "🏁", title: "Tablero y coordenadas", desc: "Cómo ubicar casillas", href: "tableroycoordenadas.html", category: "fundamentos" },
-        { id: 3, emoji: "🏁", title: "Practiquemos coordenadas", desc: "Ejercicios de ubicación", href: "practiquemoseltableroycoordenadas.html", category: "fundamentos" },
-        { id: 4, emoji: "🏁", title: "¿Dónde está la pieza?", desc: "Reconocimiento visual", href: "dondeEstaLaPieza.html", category: "fundamentos" },
+        { id: 1, emoji: "🏁", title: "El ajedrez", desc: "Qué es el ajedrez", href: "queeselajedrez", category: "fundamentos" },
+        { id: 2, emoji: "🏁", title: "El Tablero", desc: "Filas, columnas y diagonales", href: "eltablero.html", category: "fundamentos" },
+        { id: 3, emoji: "🏁", title: "Tablero y coordenadas", desc: "Cómo ubicar casillas", href: "tableroycoordenadas.html", category: "fundamentos" },
+        { id: 4, emoji: "🏁", title: "Practiquemos coordenadas", desc: "Ejercicios de ubicación", href: "practiquemoseltableroycoordenadas.html", category: "fundamentos" },
+        { id: 5, emoji: "🏁", title: "¿Dónde está la pieza?", desc: "Reconocimiento visual", href: "dondeEstaLaPieza.html", category: "fundamentos" },
 
         // ===== PIEZAS =====
-        { id: 5, emoji: "♙", title: "Las piezas del ajedrez", desc: "Funciones básicas", href: "laspiezasdelajedrez.html", category: "fundamentos" },
-        { id: 6, emoji: "♙", title: "Valor de las piezas", desc: "Concepto de material", href: "elValorDeLasPiezas.html", category: "fundamentos" },
+        { id: 6, emoji: "♙", title: "Las piezas del ajedrez", desc: "Funciones básicas", href: "laspiezasdelajedrez.html", category: "fundamentos" },
+        { id: 7, emoji: "♙", title: "Valor de las piezas", desc: "Concepto de material", href: "elValorDeLasPiezas.html", category: "fundamentos" },
 
         // ===== MOVIMIENTOS =====
-        { id: 7, emoji: "♙", title: "Movimiento del peón", desc: "Reglas del peón", href: "movimientodelpeon.html", category: "movimientos" },
-        { id: 8, emoji: "♘", title: "Movimiento del caballo", desc: "Movimiento en L", href: "movimientodelcaballo.html", category: "movimientos" },
-        { id: 9, emoji: "♗", title: "Movimiento del alfil", desc: "Diagonales", href: "movimientodelalfil.html", category: "movimientos" },
-        { id: 10, emoji: "♖", title: "Movimiento de la torre", desc: "Líneas rectas", href: "movimientodelatorre.html", category: "movimientos" },
-        { id: 11, emoji: "♕", title: "Movimiento de la reina", desc: "Combinación torre + alfil", href: "movimientodelareina.html", category: "movimientos" },
-        { id: 12, emoji: "♔", title: "Movimiento del rey", desc: "Reglas del rey", href: "movimientodelrey.html", category: "movimientos" },
-        { id: 13, emoji: "♙", title: "Peón al paso", desc: "Captura especial", href: "peonalpaso.html", category: "movimientos" },
-        { id: 14, emoji: "🔄", title: "Enroque", desc: "Movimiento especial", href: "enroque.html", category: "movimientos" },
-        { id: 15, emoji: "👑", title: "Promoción del peón", desc: "Coronación", href: "promociondelpeon.html", category: "movimientos" },
+        { id: 8, emoji: "♙", title: "Movimiento del peón", desc: "Reglas del peón", href: "movimientodelpeon.html", category: "movimientos" },
+        { id: 9, emoji: "♘", title: "Movimiento del caballo", desc: "Movimiento en L", href: "movimientodelcaballo.html", category: "movimientos" },
+        { id: 10, emoji: "♗", title: "Movimiento del alfil", desc: "Diagonales", href: "movimientodelalfil.html", category: "movimientos" },
+        { id: 11, emoji: "♖", title: "Movimiento de la torre", desc: "Líneas rectas", href: "movimientodelatorre.html", category: "movimientos" },
+        { id: 12, emoji: "♕", title: "Movimiento de la reina", desc: "Combinación torre + alfil", href: "movimientodelareina.html", category: "movimientos" },
+        { id: 13, emoji: "♔", title: "Movimiento del rey", desc: "Reglas del rey", href: "movimientodelrey.html", category: "movimientos" },
+        { id: 14, emoji: "♙", title: "Peón al paso", desc: "Captura especial", href: "peonalpaso.html", category: "movimientos" },
+        { id: 15, emoji: "🔄", title: "Enroque", desc: "Movimiento especial", href: "enroque.html", category: "movimientos" },
+        { id: 16, emoji: "👑", title: "Promoción del peón", desc: "Coronación", href: "promociondelpeon.html", category: "movimientos" },
 
         // ===== REGLAS =====
-        { id: 16, emoji: "🎯", title: "Capturas y reglas básicas", desc: "Turnos y capturas", href: "capturasyreglasbasicas.html", category: "reglas" },
-        { id: 17, emoji: "🚫", title: "¿Qué es el jaque?", desc: "Concepto de jaque", href: "queeseljaque.html", category: "reglas" },
-        { id: 18, emoji: "🏁", title: "Jaque mate", desc: "Concepto de mate", href: "jaquemateidea.html", category: "reglas" },
+        { id: 17, emoji: "🎯", title: "Capturas y reglas básicas", desc: "Turnos y capturas", href: "capturasyreglasbasicas.html", category: "reglas" },
+        { id: 18, emoji: "🚫", title: "¿Qué es el jaque?", desc: "Concepto de jaque", href: "queeseljaque.html", category: "reglas" },
+        { id: 19, emoji: "🏁", title: "Jaque mate", desc: "Concepto de mate", href: "jaquemateidea.html", category: "reglas" },
 
         // ===== TÁCTICA =====
-        { id: 19, emoji: "🎣", title: "Ataque doble", desc: "Fork", href: "trucoataquedoble.html", category: "tactica" },
-        { id: 20, emoji: "📌", title: "Clavada", desc: "Pin", href: "trucoclavada.html", category: "tactica" },
-        { id: 21, emoji: "🔍", title: "Ataque descubierto", desc: "Ataque oculto", href: "trucodescubierto.html", category: "tactica" },
-        { id: 22, emoji: "⚡", title: "Jaque a la descubierta", desc: "Mover una pieza para descubrir un jaque al rey rival", href: "jaquealadescubierta.html", category: "tactica" },
-        { id: 23, emoji: "🎯", title: "Piezas sin defensa", desc: "Piezas colgadas", href: "piezassindefensa.html", category: "tactica" },
+        { id: 20, emoji: "🎣", title: "Ataque doble", desc: "Fork", href: "trucoataquedoble.html", category: "tactica" },
+        { id: 21, emoji: "📌", title: "Clavada", desc: "Pin", href: "trucoclavada.html", category: "tactica" },
+        { id: 22, emoji: "🔍", title: "Ataque descubierto", desc: "Ataque oculto", href: "trucodescubierto.html", category: "tactica" },
+        { id: 23, emoji: "⚡", title: "Jaque a la descubierta", desc: "Mover una pieza para descubrir un jaque al rey rival", href: "jaquealadescubierta.html", category: "tactica" },
+        { id: 24, emoji: "🎯", title: "Piezas sin defensa", desc: "Piezas colgadas", href: "piezassindefensa.html", category: "tactica" },
 
         // ===== APERTURA =====
-        { id: 24, emoji: "🌞", title: "Aperturas abiertas", desc: "Centro abierto", href: "aperturasabiertas.html", category: "apertura" },
-        { id: 25, emoji: "🌙", title: "Aperturas cerradas", desc: "Centro cerrado", href: "aperturascerradas.html", category: "apertura" },
-        { id: 26, emoji: "🧩", title: "Principios de apertura", desc: "Desarrollo", href: "principiosdeapertura.html", category: "apertura" },
+        { id: 25, emoji: "🌞", title: "Aperturas abiertas", desc: "Centro abierto", href: "aperturasabiertas.html", category: "apertura" },
+        { id: 26, emoji: "🌙", title: "Aperturas cerradas", desc: "Centro cerrado", href: "aperturascerradas.html", category: "apertura" },
+        { id: 27, emoji: "🧩", title: "Principios de apertura", desc: "Desarrollo", href: "principiosdeapertura.html", category: "apertura" },
 
 
         // ===== MATES =====
-        { id: 27, emoji: "🧠", title: "Mates básicos", desc: "Mate en 1", href: "matesbasicos.html", category: "tactica" },
-        { id: 28, emoji: "🧠", title: "Mate con patrones", desc: "Patrones clásicos", href: "mateconpatrones.html", category: "tactica" },
-        { id: 29, emoji: "🧠", title: "Mate intermedio", desc: "Mate en 2", href: "matenivelintermedio.html", category: "tactica" },
-        { id: 30, emoji: "🧠", title: "Mate táctico", desc: "Cálculo", href: "mateniveltactico.html", category: "tactica" },
+        { id: 28, emoji: "🧠", title: "Mates básicos", desc: "Mate en 1", href: "matesbasicos.html", category: "tactica" },
+        { id: 29, emoji: "🧠", title: "Mate con patrones", desc: "Patrones clásicos", href: "mateconpatrones.html", category: "tactica" },
+        { id: 30, emoji: "🧠", title: "Mate intermedio", desc: "Mate en 2", href: "matenivelintermedio.html", category: "tactica" },
+        { id: 31, emoji: "🧠", title: "Mate táctico", desc: "Cálculo", href: "mateniveltactico.html", category: "tactica" },
 
         // ===== ESTRATEGIA =====
-        { id: 31, emoji: "🛡️", title: "Seguridad del rey", desc: "Ataque y defensa", href: "seguridaddelrey.html", category: "estrategia" },
-        { id: 32, emoji: "♟️", title: "Casillas fuertes", desc: "Outposts", href: "casillasfuertesydebiles.html", category: "estrategia" },
-        { id: 33, emoji: "🔥", title: "Sacrificios tácticos", desc: "Entrega material", href: "sacrificiostacticos.html", category: "estrategia" },
-        { id: 34, emoji: "🔦", title: "Rayos X", desc: "Presión", href: "rayosx.html", category: "estrategia" },
+        { id: 32, emoji: "🛡️", title: "Seguridad del rey", desc: "Ataque y defensa", href: "seguridaddelrey.html", category: "estrategia" },
+        { id: 33, emoji: "♟️", title: "Casillas fuertes", desc: "Outposts", href: "casillasfuertesydebiles.html", category: "estrategia" },
+        { id: 34, emoji: "🔥", title: "Sacrificios tácticos", desc: "Entrega material", href: "sacrificiostacticos.html", category: "estrategia" },
+        { id: 35, emoji: "🔦", title: "Rayos X", desc: "Presión", href: "rayosx.html", category: "estrategia" },
         // ===== ESTRATEGIA =====
-        { id: 35, emoji: "⚖️", title: "Cuándo capturar y cuándo mantener tensión", desc: "Evaluar cambios y activación", href: "mantenertension.html", category: "estrategia" },
+        { id: 36, emoji: "⚖️", title: "Cuándo capturar y cuándo mantener tensión", desc: "Evaluar cambios y activación", href: "mantenertension.html", category: "estrategia" },
 
 
         // ===== FINALES =====
-        { id: 36, emoji: "🏰", title: "Final rey y peones", desc: "Conceptos básicos", href: "finalreypeones.html", category: "finales" },
-        { id: 37, emoji: "🏁", title: "Oposición", desc: "Técnica básica", href: "oposicionenfinales.html", category: "finales" },
-        { id: 38, emoji: "👑", title: "Final torre", desc: "Mate con torre", href: "finalreytorre.html", category: "finales" },
-        { id: 39, emoji: "👑", title: "Final reina", desc: "Mate con reina", href: "finalreyreina.html", category: "finales" },
+        { id: 37, emoji: "🏰", title: "Final rey y peones", desc: "Conceptos básicos", href: "finalreypeones.html", category: "finales" },
+        { id: 38, emoji: "🏁", title: "Oposición", desc: "Técnica básica", href: "oposicionenfinales.html", category: "finales" },
+        { id: 39, emoji: "👑", title: "Final torre", desc: "Mate con torre", href: "finalreytorre.html", category: "finales" },
+        { id: 40, emoji: "👑", title: "Final reina", desc: "Mate con reina", href: "finalreyreina.html", category: "finales" },
 
         // ===== PRÁCTICA =====
-        { id: 40, emoji: "🤝", title: "Empates", desc: "Tablas", href: "empates.html", category: "reglas" },
-        { id: 41, emoji: "🏆", title: "Partida guiada", desc: "Checklist", href: "partidaguiada.html", category: "practica" },
-        { id: 42, emoji: "🏁", title: "Cómo jugar una partida", desc: "Proceso mental", href: "comojugarunapartida.html", category: "practica" },
+        { id: 41, emoji: "🤝", title: "Empates", desc: "Tablas", href: "empates.html", category: "reglas" },
+        { id: 42, emoji: "🏆", title: "Partida guiada", desc: "Checklist", href: "partidaguiada.html", category: "practica" },
+        { id: 43, emoji: "🏁", title: "Cómo jugar una partida", desc: "Proceso mental", href: "comojugarunapartida.html", category: "practica" },
 
         // ===== COMPETITIVO =====
-        { id: 43, emoji: "🧠", title: "Cálculo de variantes", desc: "Cómo calcular correctamente", href: "calculodevariantes.html", category: "avanzado" },
-        { id: 44, emoji: "🎯", title: "Método de candidatos", desc: "Elegir jugadas", href: "metododecandidatos.html", category: "avanzado" },
-        { id: 45, emoji: "👁️", title: "Visualización", desc: "Pensar sin mover piezas", href: "visualizacion.html", category: "avanzado" },
-        { id: 46, emoji: "👁️", title: "Cálculo profundo", desc: "Cálculo profundo", href: "calculoprofundo.html", category: "avanzado" },
-        { id: 47, emoji: "👁️", title: "Táctica compleja", desc: "Táctica compleja", href: "tacticacompleja.html", category: "avanzado" },
-        { id: 48, emoji: "🧩", title: "Estructuras de peones", desc: "Tipos y planes", href: "estructurasdepeones.html", category: "avanzado" },
-        { id: 49, emoji: "⚙️", title: "Planes típicos", desc: "Planes estratégicos", href: "planesestrategicos.html", category: "avanzado" },
-        { id: 50, emoji: "🛑", title: "Profilaxis", desc: "Evitar ideas del rival", href: "profilaxis.html", category: "avanzado" },
-        { id: 51, emoji: "🛑", title: "Maniobras", desc: "Maniobras", href: "maniobras.html", category: "avanzado" },
-        { id: 52, emoji: "🛑", title: "Dominio de casillas", desc: "Dominio de casillas", href: "dominiodecasillas.html", category: "avanzado" },
+        { id: 44, emoji: "🧠", title: "Cálculo de variantes", desc: "Cómo calcular correctamente", href: "calculodevariantes.html", category: "avanzado" },
+        { id: 45, emoji: "🎯", title: "Método de candidatos", desc: "Elegir jugadas", href: "metododecandidatos.html", category: "avanzado" },
+        { id: 46, emoji: "👁️", title: "Visualización", desc: "Pensar sin mover piezas", href: "visualizacion.html", category: "avanzado" },
+        { id: 47, emoji: "👁️", title: "Cálculo profundo", desc: "Cálculo profundo", href: "calculoprofundo.html", category: "avanzado" },
+        { id: 48, emoji: "👁️", title: "Táctica compleja", desc: "Táctica compleja", href: "tacticacompleja.html", category: "avanzado" },
+        { id: 49, emoji: "🧩", title: "Estructuras de peones", desc: "Tipos y planes", href: "estructurasdepeones.html", category: "avanzado" },
+        { id: 50, emoji: "⚙️", title: "Planes típicos", desc: "Planes estratégicos", href: "planesestrategicos.html", category: "avanzado" },
+        { id: 51, emoji: "🛑", title: "Profilaxis", desc: "Evitar ideas del rival", href: "profilaxis.html", category: "avanzado" },
+        { id: 52, emoji: "🛑", title: "Maniobras", desc: "Maniobras", href: "maniobras.html", category: "avanzado" },
+        { id: 53, emoji: "🛑", title: "Dominio de casillas", desc: "Dominio de casillas", href: "dominiodecasillas.html", category:  "avanzado" },
 
         // ===== MAESTRO =====
-        { id: 53, emoji: "🏹", title: "Ataque al rey avanzado", desc: "Métodos de ataque", href: "ataquealreyavanzado.html", category: "maestro" },
-        { id: 54, emoji: "♟️", title: "Conversión de ventaja", desc: "Cómo ganar posiciones", href: "conversiondeventaja.html", category: "maestro" },
-        { id: 55, emoji: "🧱", title: "Defensa activa", desc: "Cómo defender posiciones", href: "defensaactiva.html", category: "maestro" },
-        { id: 56, emoji: "⚙️", title: "Juego posicional", desc: "Juego posicional", href: "juegoposicional.html", category: "maestro" },
-        { id: 57, emoji: "🏰", title: "Finales de torre avanzados", desc: "Finales de torre avanzados", href: "finalestorreavanzados.html", category: "maestro" },
-        { id: 58, emoji: "🏰", title: "Finales de peones teóricos", desc: "Finales de peones teóricos", href: "finalespeones.html", category: "maestro" },
-        { id: 59, emoji: "🏰", title: "Finales de alfiles", desc: "Finales de alfiles", href: "finalesalfiles.html", category: "maestro" },
-        { id: 60, emoji: "🏰", title: "Técnica de conversión", desc: "Técnica de conversión", href: "tecnicadeconversion.html", category: "maestro" },
-        { id: 61, emoji: "📚", title: "Construcción de repertorio", desc: "Construir repertorio", href: "repertoriodeaperturas.html", category: "maestro" },
-        { id: 62, emoji: "📚", title: "Cómo estudiar aperturas", desc: "Métodos de estudio", href: "comoestudiaraperturas.html", category: "maestro" },
-        { id: 63, emoji: "📚", title: "Ideas típicas de apertura", desc: "Ideas típicas", href: "ideastipicas.html", category: "maestro" },
-        { id: 64, emoji: "🧪", title: "Preparación competitiva", desc: "Preparación", href: "preparaciondepartidas.html", category: "maestro" },
+        { id: 54, emoji: "🏹", title: "Ataque al rey avanzado", desc: "Métodos de ataque", href: "ataquealreyavanzado.html", category: "maestro" },
+        { id: 55, emoji: "♟️", title: "Conversión de ventaja", desc: "Cómo ganar posiciones", href: "conversiondeventaja.html", category: "maestro" },
+        { id: 56, emoji: "🧱", title: "Defensa activa", desc: "Cómo defender posiciones", href: "defensaactiva.html", category: "maestro" },
+        { id: 57, emoji: "⚙️", title: "Juego posicional", desc: "Juego posicional", href: "juegoposicional.html", category: "maestro" },
+        { id: 58, emoji: "🏰", title: "Finales de torre avanzados", desc: "Finales de torre avanzados", href: "finalestorreavanzados.html", category: "maestro" },
+        { id: 59, emoji: "🏰", title: "Finales de peones teóricos", desc: "Finales de peones teóricos", href: "finalespeones.html", category: "maestro" },
+        { id: 60, emoji: "🏰", title: "Finales de alfiles", desc: "Finales de alfiles", href: "finalesalfiles.html", category: "maestro" },
+        { id: 61, emoji: "🏰", title: "Técnica de conversión", desc: "Técnica de conversión", href: "tecnicadeconversion.html", category: "maestro" },
+        { id: 62, emoji: "📚", title: "Construcción de repertorio", desc: "Construir repertorio", href: "repertoriodeaperturas.html", category: "maestro" },
+        { id: 63, emoji: "📚", title: "Cómo estudiar aperturas", desc: "Métodos de estudio", href: "comoestudiaraperturas.html", category: "maestro" },
+        { id: 64, emoji: "📚", title: "Ideas típicas de apertura", desc: "Ideas típicas", href: "ideastipicas.html", category: "maestro" },
+        { id: 65, emoji: "🧪", title: "Preparación competitiva", desc: "Preparación", href: "preparaciondepartidas.html", category: "maestro" },
 
         // ===== ALTO RENDIMIENTO =====
-        { id: 65, emoji: "🧠", title: "Árbol de variantes", desc: "Cómo estructurar el cálculo profundo", href: "arboldevariantes.html", category: "elite" },
-        { id: 66, emoji: "🎯", title: "Cálculo forzado", desc: "Secuencias críticas", href: "calculoforzado.html", category: "elite" },
-        { id: 67, emoji: "⚖️", title: "Evaluación dinámica", desc: "Factores dinámicos vs estáticos", href: "evaluaciondinamica.html", category: "elite" },
-        { id: 68, emoji: "🧩", title: "Intuición vs cálculo", desc: "Cuándo calcular y cuándo evaluar", href: "intuicionvscalculo.html", category: "elite" },
-        { id: 69, emoji: "🧠", title: "Eliminación de candidatos", desc: "Filtrado profesional", href: "eliminaciondecandidatos.html", category: "elite" },
+        { id: 66, emoji: "🧠", title: "Árbol de variantes", desc: "Cómo estructurar el cálculo profundo", href: "arboldevariantes.html", category: "elite" },
+        { id: 67, emoji: "🎯", title: "Cálculo forzado", desc: "Secuencias críticas", href: "calculoforzado.html", category: "elite" },
+        { id: 68, emoji: "⚖️", title: "Evaluación dinámica", desc: "Factores dinámicos vs estáticos", href: "evaluaciondinamica.html", category: "elite" },
+        { id: 69, emoji: "🧩", title: "Intuición vs cálculo", desc: "Cuándo calcular y cuándo evaluar", href: "intuicionvscalculo.html", category: "elite" },
+        { id: 70, emoji: "🧠", title: "Eliminación de candidatos", desc: "Filtrado profesional", href: "eliminaciondecandidatos.html", category: "elite" },
 
         // ===== ESTRATEGIA PROFUNDA =====
-        { id: 70, emoji: "♟️", title: "Transformación de ventajas", desc: "Convertir ventajas", href: "transformaciondeventajas.html", category: "elite" },
-        { id: 71, emoji: "🧱", title: "Juego en posiciones iguales", desc: "Crear desequilibrios", href: "posicionesiguales.html", category: "elite" },
-        { id: 72, emoji: "🛡️", title: "Defensa técnica", desc: "Salvar posiciones inferiores", href: "defensatecnica.html", category: "elite" },
-        { id: 73, emoji: "⚙️", title: "Restricción", desc: "Limitar el juego rival", href: "restriccion.html", category: "elite" },
-        { id: 74, emoji: "🔺", title: "Mejora de piezas", desc: "Optimización progresiva", href: "mejoradepiezas.html", category: "elite" },
+        { id: 71, emoji: "♟️", title: "Transformación de ventajas", desc: "Convertir ventajas", href: "transformaciondeventajas.html", category: "elite" },
+        { id: 72, emoji: "🧱", title: "Juego en posiciones iguales", desc: "Crear desequilibrios", href: "posicionesiguales.html", category: "elite" },
+        { id: 73, emoji: "🛡️", title: "Defensa técnica", desc: "Salvar posiciones inferiores", href: "defensatecnica.html", category: "elite" },
+        { id: 74, emoji: "⚙️", title: "Restricción", desc: "Limitar el juego rival", href: "restriccion.html", category: "elite" },
+        { id: 75, emoji: "🔺", title: "Mejora de piezas", desc: "Optimización progresiva", href: "mejoradepiezas.html", category: "elite" },
         // ===== FINALES ELITE =====
-        { id: 75, emoji: "🏰", title: "Lucena y Philidor avanzados", desc: "Finales de torre avanzados", href: "lucenayphilidor.html", category: "elite" },
-        { id: 76, emoji: "👑", title: "Finales de dama complejos", desc: "Técnica avanzada", href: "finalesdedama.html", category: "elite" },
-        { id: 77, emoji: "♝", title: "Finales de piezas menores", desc: "Alfiles y caballos", href: "finalespiezasmenores.html", category: "elite" },
-        { id: 78, emoji: "📐", title: "Finales técnicos", desc: "Precisión técnica", href: "finalestecnicos.html", category: "elite" },
-        { id: 79, emoji: "🎯", title: "Finales prácticos de torneo", desc: "Decisiones prácticas", href: "finalespracticos.html", category: "elite" },
+        { id: 76, emoji: "🏰", title: "Lucena y Philidor avanzados", desc: "Finales de torre avanzados", href: "lucenayphilidor.html", category: "elite" },
+        { id: 77, emoji: "👑", title: "Finales de dama complejos", desc: "Técnica avanzada", href: "finalesdedama.html", category: "elite" },
+        { id: 78, emoji: "♝", title: "Finales de piezas menores", desc: "Alfiles y caballos", href: "finalespiezasmenores.html", category: "elite" },
+        { id: 79, emoji: "📐", title: "Finales técnicos", desc: "Precisión técnica", href: "finalestecnicos.html", category: "elite" },
+        { id: 80, emoji: "🎯", title: "Finales prácticos de torneo", desc: "Decisiones prácticas", href: "finalespracticos.html", category: "elite" },
 
         // ===== PSICOLOGÍA COMPETITIVA =====
-        { id: 80, emoji: "🧠", title: "Control emocional", desc: "Gestión psicológica", href: "controlemocional.html", category: "elite" },
-        { id: 81, emoji: "⏳", title: "Gestión del tiempo", desc: "Uso del reloj", href: "gestiondeltiempo.html", category: "elite" },
-        { id: 82, emoji: "🔥", title: "Manejo de presión", desc: "Juego bajo presión", href: "manejodepresion.html", category: "elite" },
-        { id: 83, emoji: "🔄", title: "Recuperación tras derrota", desc: "Mentalidad resiliente", href: "recuperaciontrasderrota.html", category: "elite" },
-        { id: 84, emoji: "🏆", title: "Rutinas de torneo", desc: "Preparación mental", href: "rutinasdetorneo.html", category: "elite" },
+        { id: 81, emoji: "🧠", title: "Control emocional", desc: "Gestión psicológica", href: "controlemocional.html", category: "elite" },
+        { id: 82, emoji: "⏳", title: "Gestión del tiempo", desc: "Uso del reloj", href: "gestiondeltiempo.html", category: "elite" },
+        { id: 83, emoji: "🔥", title: "Manejo de presión", desc: "Juego bajo presión", href: "manejodepresion.html", category: "elite" },
+        { id: 84, emoji: "🔄", title: "Recuperación tras derrota", desc: "Mentalidad resiliente", href: "recuperaciontrasderrota.html", category: "elite" },
+        { id: 85, emoji: "🏆", title: "Rutinas de torneo", desc: "Preparación mental", href: "rutinasdetorneo.html", category: "elite" },
 
         // ===== PREPARACIÓN PROFESIONAL =====
-        { id: 85, emoji: "💻", title: "Uso correcto de engines", desc: "Cómo entrenar con engine", href: "usoengines.html", category: "elite" },
-        { id: 86, emoji: "📊", title: "Preparación contra rival", desc: "Análisis previo", href: "preparacioncontrarival.html", category: "elite" },
-        { id: 87, emoji: "📚", title: "Repertorio profundo", desc: "Construcción avanzada", href: "repertorioprofundo.html", category: "elite" },
-        { id: 88, emoji: "🎯", title: "Estrategia de torneo", desc: "Planificación competitiva", href: "estrategiadetorneo.html", category: "elite" },
-        { id: 89, emoji: "🔍", title: "Análisis post partida", desc: "Método profesional", href: "analisispostpartida.html", category: "elite" },
+        { id: 86, emoji: "💻", title: "Uso correcto de engines", desc: "Cómo entrenar con engine", href: "usoengines.html", category: "elite" },
+        { id: 87, emoji: "📊", title: "Preparación contra rival", desc: "Análisis previo", href: "preparacioncontrarival.html", category: "elite" },
+        { id: 88, emoji: "📚", title: "Repertorio profundo", desc: "Construcción avanzada", href: "repertorioprofundo.html", category: "elite" },
+        { id: 89, emoji: "🎯", title: "Estrategia de torneo", desc: "Planificación competitiva", href: "estrategiadetorneo.html", category: "elite" },
+        { id: 90, emoji: "🔍", title: "Análisis post partida", desc: "Método profesional", href: "analisispostpartida.html", category: "elite" },
 
         // ===== PARTIDAS MODELO =====
-        { id: 90, emoji: "♟️", title: "Partidas clásicas inmortales", desc: "Aprender de partidas históricas", href: "partidasclasicas.html", category: "elite" },
-        { id: 91, emoji: "📖", title: "Partidas modelo por estructura", desc: "Ejemplos típicos de planes", href: "partidasmodelo.html", category: "elite" },
-        { id: 92, emoji: "🔥", title: "Ataques clásicos al rey", desc: "Patrones históricos", href: "ataquesclasicos.html", category: "elite" },
-        { id: 93, emoji: "🧠", title: "Partidas estratégicas modelo", desc: "Dominio posicional", href: "partidasestrategicas.html", category: "elite" },
-        { id: 94, emoji: "⚔️", title: "Partidas modernas de élite", desc: "Ajedrez contemporáneo", href: "partidasmodernas.html", category: "elite" },
+        { id: 91, emoji: "♟️", title: "Partidas clásicas inmortales", desc: "Aprender de partidas históricas", href: "partidasclasicas.html", category: "elite" },
+        { id: 92, emoji: "📖", title: "Partidas modelo por estructura", desc: "Ejemplos típicos de planes", href: "partidasmodelo.html", category: "elite" },
+        { id: 93, emoji: "🔥", title: "Ataques clásicos al rey", desc: "Patrones históricos", href: "ataquesclasicos.html", category: "elite" },
+        { id: 94, emoji: "🧠", title: "Partidas estratégicas modelo", desc: "Dominio posicional", href: "partidasestrategicas.html", category:"elite" },
         { id: 95, emoji: "🔍", title: "Cómo analizar una partida", desc: "Método profesional", href: "comoanalizar.html", category: "elite" },
+        { id: 96, emoji: "⚔️", title: "Partidas modernas de élite", desc: "Ajedrez contemporáneo", href: "partidasmodernas.html", category: "elite" },
+        { id: 97, emoji: "🔍", title: "Cómo analizar una partida", desc: "Método profesional", href: "comoanalizar.html", category: "elite" },
 
         // ===== ENTRENAMIENTO PRÁCTICO =====
-        { id: 96, emoji: "🎯", title: "Entrenamiento de cálculo diario", desc: "Rutina de cálculo", href: "calculodiario.html", category: "elite" },
-        { id: 97, emoji: "👁️", title: "Visualización avanzada", desc: "Pensar sin tablero", href: "visualizacionavanzada.html", category: "elite" },
-        { id: 98, emoji: "♟️", title: "Evaluación sin mover piezas", desc: "Pensamiento estratégico", href: "evaluacionsinmover.html", category: "elite" },
-        { id: 99, emoji: "⏱️", title: "Simulación de torneo", desc: "Partidas bajo presión", href: "simulaciontorneo.html", category: "elite" },
-        { id: 100, emoji: "🧩", title: "Entrenamiento por posiciones", desc: "Entrenamiento dirigido", href: "entrenamientoposiciones.html", category: "elite" },
-        { id: 101, emoji: "👓", title: "Detección de errores típicos", desc: "Eliminar fallos", href: "errorestipicos.html", category: "elite" },
+        { id: 98, emoji: "🎯", title: "Entrenamiento de cálculo diario", desc: "Rutina de cálculo", href: "calculodiario.html", category: "elite" },
+        { id: 99, emoji: "👁️", title: "Visualización avanzada", desc: "Pensar sin tablero", href: "visualizacionavanzada.html", category: "elite" },
+        { id: 100, emoji: "♟️", title: "Evaluación sin mover piezas", desc: "Pensamiento estratégico", href: "evaluacionsinmover.html", category: "elite" },
+        { id: 101, emoji: "⏱️", title: "Simulación de torneo", desc: "Partidas bajo presión", href: "simulaciontorneo.html", category: "elite" },
+        { id: 102, emoji: "🧩", title: "Entrenamiento por posiciones", desc: "Entrenamiento dirigido", href: "entrenamientoposiciones.html", category: "elite" },
+        { id: 103, emoji: "👓", title: "Detección de errores típicos", desc: "Eliminar fallos", href: "errorestipicos.html", category: "elite" },
 
 
         // ===== PLANIFICACIÓN DE CARRERA =====
-        { id: 102, emoji: "📈", title: "Cómo subir Elo", desc: "Estrategia de progreso", href: "subirelo.html", category: "elite" },
-        { id: 103, emoji: "🗺️", title: "Plan anual de entrenamiento", desc: "Planificación profesional", href: "plananual.html", category: "elite" },
-        { id: 104, emoji: "🏟️", title: "Cómo elegir torneos", desc: "Selección estratégica", href: "elegirtorneos.html", category: "elite" },
-        { id: 105, emoji: "⚖️", title: "Gestión de rating", desc: "Maximizar rendimiento", href: "gestionrating.html", category: "elite" },
-        { id: 106, emoji: "🧠", title: "Mentalidad de alto rendimiento", desc: "Psicología competitiva avanzada", href: "mentalidadgm.html", category: "elite" },
-        { id: 107, emoji: "🏆", title: "Camino a Maestro Internacional", desc: "Ruta realista", href: "caminoaim.html", category: "elite" },
-        { id: 108, emoji: "🌟", title: "Camino a Gran Maestro", desc: "Requisitos y preparación", href: "caminoagm.html", category: "elite" },
+        { id: 104, emoji: "📈", title: "Cómo subir Elo", desc: "Estrategia de progreso", href: "subirelo.html", category: "elite" },
+        { id: 105, emoji: "🗺️", title: "Plan anual de entrenamiento", desc: "Planificación profesional", href: "plananual.html", category: "elite" },
+        { id: 106, emoji: "🏟️", title: "Cómo elegir torneos", desc: "Selección estratégica", href: "elegirtorneos.html", category: "elite" },
+        { id: 107, emoji: "⚖️", title: "Gestión de rating", desc: "Maximizar rendimiento", href: "gestionrating.html", category: "elite" },
+        { id: 108, emoji: "🧠", title: "Mentalidad de alto rendimiento", desc: "Psicología competitiva avanzada", href: "mentalidadgm.html", category: "elite" },
+        { id: 109, emoji: "🏆", title: "Camino a Maestro Internacional", desc: "Ruta realista", href: "caminoaim.html", category: "elite" },
+        { id: 110, emoji: "🌟", title: "Camino a Gran Maestro", desc: "Requisitos y preparación", href: "caminoagm.html", category: "elite" },
 
         // ===== MÉTODO DE ESTUDIO =====
-        { id: 109, emoji: "📚", title: "Cómo estudiar ajedrez correctamente", desc: "Principios del entrenamiento eficiente", href: "comoestudiarajedrez.html", category: "metodologia" },
-        { id: 110, emoji: "🧠", title: "Método de entrenamiento semanal", desc: "Cómo organizar la semana de estudio", href: "metodosemanal.html", category: "metodologia" },
-        { id: 111, emoji: "🎯", title: "Equilibrio entre táctica, estrategia y finales", desc: "Distribución del entrenamiento", href: "equilibrioentrenamiento.html", category: "metodologia" },
-        { id: 112, emoji: "📊", title: "Cómo medir el progreso real", desc: "Indicadores de mejora", href: "medirprogreso.html", category: "metodologia" },
-        { id: 113, emoji: "🔁", title: "Ciclo de mejora continua", desc: "Entrenar → jugar → analizar → ajustar", href: "ciclomejora.html", category: "metodologia" },
-        { id: 114, emoji: "🧩", title: "Errores comunes en el entrenamiento", desc: "Qué evitar para no estancarse", href: "erroresentrenamiento.html", category: "metodologia" },
+        { id: 111, emoji: "📚", title: "Cómo estudiar ajedrez correctamente", desc: "Principios del entrenamiento eficiente", href: "comoestudiarajedrez.html", category: "metodologia" },
+        { id: 112, emoji: "🧠", title: "Método de entrenamiento semanal", desc: "Cómo organizar la semana de estudio", href: "metodosemanal.html", category: "metodologia" },
+        { id: 113, emoji: "🎯", title: "Equilibrio entre táctica, estrategia y finales", desc: "Distribución del entrenamiento", href: "equilibrioentrenamiento.html", category: "metodologia" },
+        { id: 114, emoji: "📊", title: "Cómo medir el progreso real", desc: "Indicadores de mejora", href: "medirprogreso.html", category: "metodologia" },
+        { id: 115, emoji: "🔁", title: "Ciclo de mejora continua", desc: "Entrenar → jugar → analizar → ajustar", href: "ciclomejora.html", category: "metodologia" },
+        { id: 116, emoji: "🧩", title: "Errores comunes en el entrenamiento", desc: "Qué evitar para no estancarse", href: "erroresentrenamiento.html", category: "metodologia" },
 
         // ===== CIENCIA DEL RENDIMIENTO =====
-        { id: 115, emoji: "🧠", title: "Neurociencia del cálculo", desc: "Cómo funciona el cerebro al calcular variantes", href: "neurocienciacalculo.html", category: "rendimiento" },
-        { id: 116, emoji: "⚡", title: "Entrenamiento cognitivo", desc: "Mejorar memoria de trabajo y enfoque", href: "entrenamientocognitivo.html", category: "rendimiento" },
-        { id: 117, emoji: "💪", title: "Preparación física para ajedrez", desc: "Resistencia mental y energía en torneos", href: "preparacionfisica.html", category: "rendimiento" },
-        { id: 118, emoji: "🥗", title: "Nutrición para torneos", desc: "Alimentación para rendimiento cognitivo", href: "nutricionajedrez.html", category: "rendimiento" },
-        { id: 119, emoji: "😴", title: "Sueño y rendimiento mental", desc: "Optimizar descanso para cálculo", href: "suenorendimiento.html", category: "rendimiento" },
-        { id: 120, emoji: "🔥", title: "Resistencia mental en partidas largas", desc: "Evitar fatiga cognitiva", href: "resistenciamental.html", category: "rendimiento" },
-        { id: 121, emoji: "🎯", title: "Entrenamiento de concentración profunda", desc: "Mantener foco durante horas", href: "concentracionprofunda.html", category: "rendimiento" },
-        { id: 122, emoji: "🧘", title: "Gestión del estrés competitivo", desc: "Control fisiológico en torneos", href: "estrescompetitivo.html", category: "rendimiento" }
+        { id: 117, emoji: "🧠", title: "Neurociencia del cálculo", desc: "Cómo funciona el cerebro al calcular variantes", href: "neurocienciacalculo.html", category: "rendimiento" },
+        { id: 118, emoji: "⚡", title: "Entrenamiento cognitivo", desc: "Mejorar memoria de trabajo y enfoque", href: "entrenamientocognitivo.html", category: "rendimiento" },
+        { id: 119, emoji: "💪", title: "Preparación física para ajedrez", desc: "Resistencia mental y energía en torneos", href: "preparacionfisica.html", category: "rendimiento" },
+        { id: 120, emoji: "🥗", title: "Nutrición para torneos", desc: "Alimentación para rendimiento cognitivo", href: "nutricionajedrez.html", category: "rendimiento" },
+        { id: 121, emoji: "😴", title: "Sueño y rendimiento mental", desc: "Optimizar descanso para cálculo", href: "suenorendimiento.html", category: "rendimiento" },
+        { id: 122, emoji: "🔥", title: "Resistencia mental en partidas largas", desc: "Evitar fatiga cognitiva", href: "resistenciamental.html", category: "rendimiento" },
+        { id: 123, emoji: "🎯", title: "Entrenamiento de concentración profunda", desc: "Mantener foco durante horas", href: "concentracionprofunda.html", category: "rendimiento" },
+        { id: 124, emoji: "🧘", title: "Gestión del estrés competitivo", desc: "Control fisiológico en torneos", href: "estrescompetitivo.html", category: "rendimiento" }
       ];
 
       const totalEl = document.getElementById("totalCount");
@@ -1041,101 +930,14 @@
           ((doneSet.size / topics.length) * 100) + "%";
       }
 
-      function actualizarCajaPremium() {
-        const premiumBox = document.getElementById("premiumBox");
-        const premiumTitle = document.getElementById("premiumTitle");
-        const premiumText = document.getElementById("premiumText");
-        const premiumForm = document.getElementById("premiumForm");
-        const msg = document.getElementById("msg");
-
-        if (!premiumBox) return;
-
-        if (isPremium) {
-          premiumBox.classList.add("premium-ok");
-          premiumTitle.textContent = "✅ Acceso Premium activo";
-          premiumText.textContent = "Ya tienes desbloqueada toda la ruta de ajedrez en este dispositivo.";
-          premiumForm.style.display = "none";
-          msg.textContent = "";
-        }
-      }
-
-      async function activarCodigo() {
-        const codeInput = document.getElementById("codeInput");
-        const msg = document.getElementById("msg");
-        const code = codeInput.value.trim().toUpperCase();
-
-        if (!code) {
-          msg.textContent = "Ingresa un código Premium";
-          codeInput.focus();
-          return;
-        }
-
-        if (API_URL === "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT") {
-          msg.textContent = "⚠️ Falta pegar tu API_URL de Apps Script en el HTML.";
-          return;
-        }
-
-        msg.textContent = "Validando código...";
-
-        try {
-          const res = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "validate",
-              code: code
-            })
-          });
-
-          const data = await res.json();
-
-          if (data.ok) {
-            localStorage.setItem(PREMIUM_FLAG, "true");
-            msg.textContent = "✅ Acceso Premium activado correctamente";
-            setTimeout(() => location.reload(), 900);
-          } else {
-            msg.textContent = "❌ " + (data.msg || "Código inválido");
-          }
-
-        } catch (error) {
-          msg.textContent = "Error de conexión. Intenta nuevamente.";
-        }
-      }
-
-      async function comprarPremium() {
-        const msg = document.getElementById("msg");
-
-        msg.textContent = "Creando enlace de pago...";
-
-        try {
-          const res = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "mp_create_preference"
-            })
-          });
-
-          const data = await res.json();
-
-          if (data.ok && data.init_point) {
-            window.location.href = data.init_point;
-          } else {
-            msg.textContent = "❌ No se pudo crear el pago.";
-            console.log(data);
-          }
-
-        } catch (error) {
-          msg.textContent = "Error de conexión con Mercado Pago.";
-          console.error(error);
-        }
-      }
-
-      function mostrarAvisoPremium() {
-        const codeInput = document.getElementById("codeInput");
-        const msg = document.getElementById("msg");
-
-        if (codeInput) codeInput.focus();
-        if (msg) {
-          msg.textContent = "🔒 Este tema es Premium. Ingresa tu código para desbloquearlo.";
+      function requestUnlock() {
+        const key = prompt("🔒 Contenido bloqueado\nIngresa la clave de acceso:");
+        if (key === UNLOCK_KEY) {
+          localStorage.setItem(UNLOCK_FLAG, "true");
+          alert("✅ Acceso desbloqueado");
+          location.reload();
+        } else if (key !== null) {
+          alert("❌ Clave incorrecta");
         }
       }
 
@@ -1149,24 +951,23 @@
           .filter(t => (t.title + t.desc).toLowerCase().includes(q))
           .forEach(t => {
             const isDone = doneSet.has(t.id);
-            const locked = t.id > FREE_LIMIT && !isPremium;
+            const locked = t.id > FREE_LIMIT && !isUnlocked;
 
             const card = document.createElement("article");
             card.className = "topic" + (isDone ? " done" : "") + (locked ? " locked" : "");
 
             card.innerHTML = `
-          <div class="num">${t.id}</div>
-          ${locked ? `<div class="lock">🔒 Premium</div>` : ""}
+          <div class="num">${locked ? "🔒" : t.id}</div>
 
-          <a href="${locked ? "#" : t.href}" class="${locked ? "locked-link" : ""}">
-            <div class="topic-tag">${t.emoji} ${locked ? "Premium" : t.category}</div>
+          <a href="${locked ? "#" : t.href}">
+            <div class="topic-tag">${t.emoji} ${locked ? "Bloqueado" : "Pendiente"}</div>
             <div class="title">${t.title}</div>
             <p class="desc">${t.desc}</p>
           </a>
 
           <div class="meta">
             <div class="status ${isDone ? "done" : ""}">
-              ${locked ? "🔒 Premium" : isDone ? "✅ Realizado" : "📘 No realizado aún"}
+              ${locked ? "🔒 Requiere clave" : isDone ? "✅ Realizado" : "📘 No realizado aún"}
             </div>
 
             <button class="mark ${isDone ? "done" : ""}" data-id="${t.id}">
@@ -1178,7 +979,7 @@
             if (locked) {
               card.querySelector("a").addEventListener("click", e => {
                 e.preventDefault();
-                mostrarAvisoPremium();
+                requestUnlock();
               });
             }
 
@@ -1189,10 +990,6 @@
           btn.onclick = e => {
             e.stopPropagation();
             const id = Number(btn.dataset.id);
-            if (id > FREE_LIMIT && !isPremium) {
-              mostrarAvisoPremium();
-              return;
-            }
             doneSet.has(id) ? doneSet.delete(id) : doneSet.add(id);
             saveDoneSet(doneSet);
             updateProgress(doneSet);
@@ -1200,8 +997,6 @@
           };
         });
       }
-
-      actualizarCajaPremium();
 
       const doneSet = loadDoneSet();
       updateProgress(doneSet);
