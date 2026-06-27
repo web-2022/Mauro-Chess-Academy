@@ -1,4 +1,4 @@
-const CACHE_NAME = "ajedrez-mauro-v17";
+const CACHE_NAME = "ajedrez-mauro-v18";
 
 // Núcleo mínimo
 const CORE_ASSETS = [
