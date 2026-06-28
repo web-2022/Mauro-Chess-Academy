@@ -1,335 +1,374 @@
 <!DOCTYPE html>
 <html lang="es">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Academia de Ajedrez Online</title>
-
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academia de Ajedrez Online</title>
     <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1976d2">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1976d2">
 
-    <style>
-      :root {
-        --bg1: #020617;
-        --bg2: #020617;
-        --accent: #22c55e;
-        --accent2: #38bdf8;
-        --text: #e5e7eb;
-        --muted: #94a3b8;
-        --radius: 22px;
+  <style>
+    :root {
+      --accent: #22c55e;
+      --accent2: #38bdf8;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1200px 600px at 80% 10%, #0f172a, transparent 60%),
+        radial-gradient(900px 600px at 10% 90%, #020617, transparent 55%),
+        linear-gradient(180deg, #020617, #020617);
+      color: var(--text);
+    }
+
+    header {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    .brand {
+      position: absolute;
+      top: 24px;
+      left: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: .95rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(226, 232, 240, .85);
+    }
+
+    .brand::before {
+      content: "";
+      width: 36px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+    }
+
+    .hero {
+      max-width: 1200px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero-text h1 {
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      line-height: 1.05;
+      margin: 0 0 18px;
+    }
+
+    .title-main {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .title-sub {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.4;
+      color: rgba(226, 232, 240, .85);
+    }
+
+    .hero-text p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 32px;
+    }
+
+    .cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all .25s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #020617;
+      box-shadow: 0 10px 30px rgba(56, 189, 248, .35);
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(148, 163, 184, .35);
+      color: var(--text);
+      background: rgba(15, 23, 42, .45);
+    }
+
+    .btn-share {
+      border: 1px dashed rgba(56, 189, 248, .5);
+      color: #38bdf8;
+      background: rgba(15, 23, 42, .6);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, .9), rgba(2, 6, 23, .9));
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, .55);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "♟";
+      position: absolute;
+      font-size: 180px;
+      opacity: .05;
+      right: -20px;
+      bottom: -40px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .card-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .card-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: .95rem;
+      color: var(--muted);
+    }
+
+    .icon {
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .whatsapp-float {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #25D366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #fff;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
+      z-index: 9999;
+      transition: .25s;
+      animation: pulseWhatsapp 2s infinite;
+    }
+
+    .whatsapp-icon {
+      width: 36px;
+      height: 36px;
+      display: block;
+    }
+
+    .whatsapp-float:hover {
+      transform: scale(1.12);
+      box-shadow: 0 18px 45px rgba(37, 211, 102, .45);
+    }
+
+    .whatsapp-text {
+      position: absolute;
+      right: 80px;
+      white-space: nowrap;
+      background: #fff;
+      color: #111827;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: .95rem;
+      opacity: 0;
+      transform: translateX(10px);
+      transition: .25s;
+      pointer-events: none;
+    }
+
+    .whatsapp-float:hover .whatsapp-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    @keyframes pulseWhatsapp {
+      0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, .55);
       }
 
-      * {
-        box-sizing: border-box;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      70% {
+        box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
       }
 
-      body {
-        margin: 0;
-        background:
-          radial-gradient(1200px 600px at 80% 10%, #0f172a, transparent 60%),
-          radial-gradient(900px 600px at 10% 90%, #020617, transparent 55%),
-          linear-gradient(180deg, #020617, #020617);
-        color: var(--text);
+      100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
       }
+    }
 
-      header {
-        min-height: 100dvh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        position: relative;
-      }
-
-      /* ===============================
-       SLOGAN SUPERIOR IZQUIERDO
-       =============================== */
+    @media(max-width:900px) {
       .brand {
-        position: absolute;
-        top: 24px;
-        left: 28px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: .95rem;
-        font-weight: 600;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        color: rgba(226, 232, 240, .85);
+        left: 50%;
+        transform: translateX(-50%);
+        top: 12px;
+        white-space: nowrap;
+        font-size: .8rem;
       }
-
-      .brand::before {
-        content: "";
-        width: 36px;
-        height: 2px;
-        background: linear-gradient(90deg, var(--accent), var(--accent2));
-        border-radius: 999px;
-      }
-
-      /* Responsive slogan */
-      @media(max-width:900px) {
-        .brand {
-          left: 50%;
-          transform: translateX(-50%);
-          top: 12px;
-          /* ⬅️ baja o sube según prefieras */
-          white-space: nowrap;
-          font-size: .8rem;
-          /* ⬅️ reduce tamaño en móvil */
-          letter-spacing: .06em;
-        }
-      }
-
 
       .hero {
-        max-width: 1200px;
-        width: 100%;
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 40px;
-        align-items: center;
-      }
-
-      /* Texto principal */
-      .hero-text h1 {
-        font-size: clamp(2.2rem, 4vw, 3.8rem);
-        line-height: 1.05;
-        margin: 0 0 18px;
-        letter-spacing: -0.5px;
-      }
-
-      .hero-text h1 span {
-        background: linear-gradient(90deg, var(--accent), var(--accent2));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        grid-template-columns: 1fr;
+        text-align: center;
+        margin-top: 40px;
       }
 
       .hero-text p {
-        font-size: 1.15rem;
-        color: var(--muted);
-        max-width: 520px;
-        margin-bottom: 32px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .cta {
-        display: flex;
-        gap: 16px;
-        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    @media(max-width:700px) {
+      .whatsapp-float {
+        width: 60px;
+        height: 60px;
+        right: 16px;
+        bottom: 16px;
       }
 
-      .btn {
-        padding: 14px 22px;
-        border-radius: 14px;
-        font-weight: 600;
-        font-size: 1rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        border: none;
-        cursor: pointer;
-        transition: all .25s ease;
+      .whatsapp-icon {
+        width: 32px;
+        height: 32px;
       }
 
-      .btn-primary {
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        color: #020617;
-        box-shadow: 0 10px 30px rgba(56, 189, 248, .35);
+      .whatsapp-text {
+        display: none;
       }
+    }
+  </style>
+</head>
 
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 14px 40px rgba(56, 189, 248, .45);
-      }
+<body>
 
-      .btn-secondary {
-        border: 1px solid rgba(148, 163, 184, .35);
-        color: var(--text);
-        background: rgba(15, 23, 42, .45);
-        backdrop-filter: blur(6px);
-      }
+  <header>
+    <div class="brand">Academia de Ajedrez Mauro</div>
 
-      .btn-secondary:hover {
-        background: rgba(30, 41, 59, .7);
-      }
+    <section class="hero">
+      <div class="hero-text">
+        <h1>
+          Domina el <span class="title-main">Ajedrez</span><br>
+          <span class="title-sub">Apertura, medio campo, finales y más...</span>
+        </h1>
 
-      .btn-share {
-        border: 1px dashed rgba(56, 189, 248, .5);
-        color: #38bdf8;
-        background: rgba(15, 23, 42, .6);
-      }
+        <p>
+          Academia online con entrenamiento progresivo, partidas comentadas,
+          táctica real y estrategia moderna para subir tu nivel de verdad.
+        </p>
 
-      .btn-share:hover {
-        background: rgba(30, 41, 59, .85);
-        transform: translateY(-2px);
-      }
-
-      /* Tarjeta lateral */
-      .hero-card {
-        background: linear-gradient(145deg, rgba(15, 23, 42, .9), rgba(2, 6, 23, .9));
-        border-radius: var(--radius);
-        padding: 26px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, .55);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .hero-card::after {
-        content: "♟";
-        position: absolute;
-        font-size: 180px;
-        opacity: .05;
-        right: -20px;
-        bottom: -40px;
-      }
-
-      .card-title {
-        font-weight: 700;
-        margin-bottom: 12px;
-        font-size: 1.2rem;
-      }
-
-      .card-list {
-        display: grid;
-        gap: 14px;
-        margin-top: 16px;
-      }
-
-      .card-item {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        font-size: .95rem;
-        color: var(--muted);
-      }
-
-      .icon {
-        color: var(--accent);
-        font-size: 1.1rem;
-      }
-
-      .title-main {
-        background: linear-gradient(90deg, var(--accent), var(--accent2));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      .title-sub {
-        display: inline-block;
-        margin-top: 10px;
-        font-size: clamp(1.1rem, 2.2vw, 1.5rem);
-        font-weight: 400;
-        font-style: italic;
-        line-height: 1.4;
-        transform: scaleY(0.95);
-        letter-spacing: .3px;
-        color: rgba(226, 232, 240, .85);
-      }
-
-      @media(max-width:900px) {
-        .hero {
-          grid-template-columns: 1fr;
-          text-align: center;
-          margin-top: 20px; /* ⬅️ espacio para que no choque con el slogan */
-        }
-
-        .hero-text p {
-          margin-left: auto;
-          margin-right: auto;
-        }
-
-        .cta {
-          justify-content: center;
-        }
-      }
-
-      @media (max-width: 420px) {
-  .brand {
-    top: 8px;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-  }
-
-  .hero {
-    margin-top: 36px; /* espacio extra para el slogan */
-  }
-}
-
-    </style>
-  </head>
-
-  <body>
-
-    <header>
-
-      <!-- SLOGAN -->
-      <div class="brand">Academia de Ajedrez Mauro</div>
-
-      <section class="hero">
-
-        <!-- Texto -->
-        <div class="hero-text">
-          <h1>
-            Domina el <span class="title-main">Ajedrez</span><br>
-            <span class="title-sub">Apertura, medio campo, finales y más...</span>
-          </h1>
-
-          <p>
-            Academia online con entrenamiento progresivo, partidas comentadas,
-            táctica real y estrategia moderna para subir tu nivel de verdad.
-          </p>
-
-          <div class="cta">
-            <a href="ruta-chess.html" class="btn btn-primary">🚀 Programa integral de formación ajedrecística</a>
-            <a href="testimonios.html" class="btn btn-secondary">▶️ Testimonios</a>
-            <button class="btn btn-share" onclick="shareApp()">📤 Compartir app</button>
-          </div>
+        <div class="cta">
+          <a href="ruta-chess.html" class="btn btn-primary">🚀 Programa integral de formación ajedrecística</a>
+          <a href="testimonios.html" class="btn btn-secondary">▶️ Testimonios</a>
+          <button class="btn btn-share" onclick="shareApp()">📤 Compartir app</button>
         </div>
+      </div>
 
-        <!-- Tarjeta -->
-        <div class="hero-card">
-          <div class="card-title">¿Qué incluye la academia?</div>
+      <div class="hero-card">
+        <div class="card-title">¿Qué incluye la academia?</div>
 
-          <div class="card-list">
-            <div class="card-item"><span class="icon">✔</span>Clases estructuradas de principiante a avanzado</div>
-            <div class="card-item"><span class="icon">✔</span>Partidas comentadas paso a paso</div>
-            <div class="card-item"><span class="icon">✔</span>Táctica diaria y finales esenciales</div>
-            <div class="card-item"><span class="icon">✔</span>Entrenamiento para subir ELO real</div>
-          </div>
+        <div class="card-list">
+          <div class="card-item"><span class="icon">✔</span>Clases estructuradas de principiante a avanzado</div>
+          <div class="card-item"><span class="icon">✔</span>Partidas comentadas paso a paso</div>
+          <div class="card-item"><span class="icon">✔</span>Táctica diaria y finales esenciales</div>
+          <div class="card-item"><span class="icon">✔</span>Entrenamiento para subir ELO real</div>
         </div>
+      </div>
+    </section>
+  </header>
 
-      </section>
-    </header>
+  <a class="whatsapp-float"
+    href="https://wa.me/5491126202806?text=Hola,%20quiero%20información%20sobre%20la%20Academia%20de%20Ajedrez."
+    target="_blank">
+    <span class="whatsapp-text">Contáctanos</span>
 
-    <script>
-      function shareApp() {
-        const shareData = {
-          title: 'Academia de Ajedrez Mauro',
-          text: '♟️ Entrena ajedrez online y sube tu nivel',
-          url: window.location.href
-        };
+    <svg class="whatsapp-icon" viewBox="0 0 32 32" aria-hidden="true">
+      <path fill="currentColor"
+        d="M16.01 3.2A12.76 12.76 0 0 0 5.1 22.55L3.2 29l6.6-1.73A12.76 12.76 0 1 0 16.01 3.2Zm0 23.2c-2.05 0-4.05-.6-5.75-1.73l-.41-.27-3.92 1.03 1.05-3.82-.27-.43a10.4 10.4 0 1 1 9.3 5.22Zm5.7-7.78c-.31-.16-1.84-.91-2.13-1.01-.29-.11-.5-.16-.71.16-.21.31-.82 1.01-1 1.22-.18.21-.37.24-.68.08-.31-.16-1.32-.49-2.52-1.56-.93-.83-1.56-1.86-1.74-2.17-.18-.31-.02-.48.14-.64.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.71-1.71-.97-2.34-.26-.62-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.08-1.1 2.63s1.13 3.05 1.29 3.26c.16.21 2.23 3.4 5.4 4.77.75.32 1.34.52 1.8.66.76.24 1.45.21 2 .13.61-.09 1.84-.75 2.1-1.48.26-.73.26-1.35.18-1.48-.08-.13-.29-.21-.6-.37Z" />
+    </svg>
+  </a>
 
-        if (navigator.share) {
-          navigator.share(shareData);
-        } else {
-          navigator.clipboard.writeText(shareData.url)
-            .then(() => alert("📋 Enlace copiado. ¡Compártelo!"));
-        }
+  <script>
+    function shareApp() {
+      const shareData = {
+        title: 'Academia de Ajedrez Mauro',
+        text: '♟️ Entrena ajedrez online y sube tu nivel',
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData);
+      } else {
+        navigator.clipboard.writeText(shareData.url)
+          .then(() => alert("📋 Enlace copiado. ¡Compártelo!"));
       }
-    </script>
-    
-    <!-- PWA -->
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
-        });
-      }
-    </script>
+    }
+  </script>
 
-  </body>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        // navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+      });
+    }
+  </script>
+
+</body>
 
 </html>
