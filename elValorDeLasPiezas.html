@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ajedrez • Valor de las piezas</title>
+
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#1976d2">
+
+        <style>
+            * {
+                box-sizing: border-box;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+                padding: clamp(12px, 4vw, 18px);
+            }
+
+            .app {
+                background: #fff;
+                width: 100%;
+                max-width: 540px;
+                padding: 18px;
+                border-radius: 24px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, .12);
+            }
+
+            .brand-header-kids {
+                padding: 14px;
+                border-radius: 22px;
+                margin-bottom: 12px;
+                background: linear-gradient(90deg, #22c55e, #38bdf8);
+                color: #020617;
+                pointer-events: none;
+            }
+
+            .brand-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .kids-badge {
+                width: 52px;
+                height: 52px;
+                border-radius: 18px;
+                display: grid;
+                place-items: center;
+                font-size: 1.6rem;
+                background: rgba(255, 255, 255, .25);
+            }
+
+            .kids-title {
+                font-weight: 900;
+                font-size: 1.35rem;
+            }
+
+            .kids-subtitle {
+                margin-left: auto;
+                display: flex;
+                gap: 8px;
+                pointer-events: auto;
+            }
+
+            .kids-pill {
+                background: rgba(255, 255, 255, .25);
+                padding: 4px 10px;
+                border-radius: 999px;
+                font-size: .8rem;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            h1 {
+                text-align: center;
+                margin: 6px 0 2px;
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                text-align: center;
+                font-size: .95rem;
+                color: #6b7280;
+            }
+
+            .status-bar {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 12px;
+                border-radius: 999px;
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+                font-size: .9rem;
+                margin-bottom: 8px;
+            }
+
+            .progress {
+                height: 10px;
+                background: #e5e7eb;
+                border-radius: 999px;
+                overflow: hidden;
+                margin-bottom: 8px;
+            }
+
+            .progress-inner {
+                height: 100%;
+                width: 0%;
+                background: #2563eb;
+                transition: .3s;
+            }
+
+            .card {
+                background: #f9fafb;
+                border: 1px solid #e5e7eb;
+                border-radius: 20px;
+                padding: 18px;
+                text-align: center;
+            }
+
+            .piece {
+                font-size: clamp(3.5rem, 12vw, 5rem);
+                margin: 8px 0;
+                line-height: 1;
+                color: #020617;
+                text-shadow: 0 2px 3px rgba(0, 0, 0, .25);
+            }
+
+            .theory {
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+                border-radius: 16px;
+                padding: 12px;
+                margin-bottom: 12px;
+                text-align: left;
+                font-size: .92rem;
+                color: #1f2937;
+                font-weight: 700;
+                line-height: 1.4;
+            }
+
+            .value-box {
+                display: inline-block;
+                background: #dcfce7;
+                color: #166534;
+                font-weight: 900;
+                padding: 8px 14px;
+                border-radius: 999px;
+                margin-bottom: 10px;
+            }
+
+            .question {
+                font-weight: 900;
+                color: #1d4ed8;
+                margin: 10px 0;
+                font-size: 1.05rem;
+            }
+
+            .options {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-top: 12px;
+            }
+
+            .option-btn {
+                padding: 12px;
+                border-radius: 14px;
+                border: 2px solid #d1d5db;
+                background: #fff;
+                font-weight: 800;
+                cursor: pointer;
+            }
+
+            .option-btn:hover {
+                background: #f0f9ff;
+            }
+
+            .feedback {
+                margin-top: 10px;
+                font-weight: 800;
+                min-height: 24px;
+            }
+
+            .good {
+                color: #16a34a;
+            }
+
+            .bad {
+                color: #2a90af;
+            }
+
+            .controls {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-top: 12px;
+            }
+
+            .main-btn {
+                flex: 1;
+                min-width: 140px;
+                max-width: 220px;
+                padding: 12px;
+                border-radius: 999px;
+                border: none;
+                font-weight: 800;
+                background: #2563eb;
+                color: #fff;
+                cursor: pointer;
+                min-height: 44px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="app">
+
+            <div class="brand-header-kids">
+                <div class="brand-row">
+                    <div class="kids-badge">♟️</div>
+                    <div>
+                        <div class="kids-title">Academia de Ajedrez Mauro</div>
+                        <div class="kids-subtitle">
+                            <span class="kids-pill" onclick="location.href='index.html'">Inicio</span>
+                            <span class="kids-pill" onclick="location.href='ruta-chess.html'">Ruta de aprendizaje</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h1>4. El valor de las piezas</h1>
+            <p class="subtitle">Aprende cuánto vale cada pieza en ajedrez</p>
+
+            <div class="status-bar">
+                <div>✅ <b id="ok">0</b></div>
+                <div>❌ <b id="bad">0</b></div>
+                <div>📊 <b id="prog">0</b>/10</div>
+            </div>
+
+            <div class="progress">
+                <div class="progress-inner" id="bar"></div>
+            </div>
+
+            <div class="card">
+                <div class="theory">
+                    En ajedrez, cada pieza tiene un valor aproximado.
+                    El peón vale 1 punto, el caballo 3, el alfil 3, la torre 5, la dama 9 y el rey no tiene precio
+                    porque si cae en mate, la partida termina.
+                </div>
+
+                <button class="main-btn" style="background:#f97316;margin:8px auto;display:block"
+                    onclick="playTheoryAudio()">🔊 Escuchar teoría</button>
+
+                <div class="piece" id="piece">♕</div>
+                <div class="value-box" id="valueBox">Valor: ?</div>
+                <div class="question" id="question">¿Cuánto vale esta pieza?</div>
+
+
+                <div class="options" id="options"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="controls">
+                <button class="main-btn" onclick="next()">Siguiente</button>
+                <button class="main-btn" style="background:#0ea5e9" onclick="shareApp()">📤 Compartir</button>
+                <button class="main-btn" id="nextTopicBtn" style="display:none;background:#16a34a"
+                    onclick="goNextTopic()">Siguiente tema</button>
+            </div>
+
+        </div>
+
+        <script>
+
+            function playTheoryAudio() {
+                speak(
+                    "En ajedrez, cada pieza tiene un valor aproximado. " +
+                    "El peón vale 1 punto. " +
+                    "El caballo vale 3 puntos. " +
+                    "El alfil vale 3 puntos. " +
+                    "La torre vale 5 puntos. " +
+                    "La dama vale 9 puntos. " +
+                    "El rey no tiene precio, porque si recibe jaque mate, la partida termina."
+                );
+            }
+            const pieces = [
+                { name: "Peón", icon: "♙", value: "1 punto", speak: "El peón vale 1 punto" },
+                { name: "Caballo", icon: "♘", value: "3 puntos", speak: "El caballo vale 3 puntos" },
+                { name: "Alfil", icon: "♗", value: "3 puntos", speak: "El alfil vale 3 puntos" },
+                { name: "Torre", icon: "♖", value: "5 puntos", speak: "La torre vale 5 puntos" },
+                { name: "Dama", icon: "♕", value: "9 puntos", speak: "La dama vale 9 puntos" },
+                { name: "Rey", icon: "♔", value: "No tiene precio", speak: "El rey no tiene precio porque no se captura" }
+            ];
+
+            let current, ok = 0, bad = 0, attempts = 0;
+            const TOTAL = 10;
+
+            const okEl = document.getElementById("ok");
+            const badEl = document.getElementById("bad");
+            const progEl = document.getElementById("prog");
+            const bar = document.getElementById("bar");
+            const feedback = document.getElementById("feedback");
+
+            function speak(t) {
+                const u = new SpeechSynthesisUtterance(t);
+                u.lang = "es-PE";
+                u.rate = .9;
+                speechSynthesis.cancel();
+                speechSynthesis.speak(u);
+            }
+
+            function loadExercise() {
+                current = pieces[Math.floor(Math.random() * pieces.length)];
+
+                document.getElementById("piece").textContent = current.icon;
+                document.getElementById("valueBox").textContent = "Valor: ?";
+                feedback.textContent = "";
+                feedback.className = "feedback";
+
+                const values = ["1 punto", "3 puntos", "5 puntos", "9 puntos", "No tiene precio"];
+                let opts = [...values].sort(() => Math.random() - .5).slice(0, 4);
+
+                if (!opts.includes(current.value)) {
+                    opts[0] = current.value;
+                }
+
+                opts = [...new Set(opts)].sort(() => Math.random() - .5);
+
+                const cont = document.getElementById("options");
+                cont.innerHTML = "";
+
+                opts.forEach(v => {
+                    const b = document.createElement("button");
+                    b.className = "option-btn";
+                    b.textContent = v;
+                    b.onclick = () => check(v);
+                    cont.appendChild(b);
+                });
+
+                speak(`¿Cuánto vale ${current.name === "Dama" || current.name === "Torre" ? "la" : "el"} ${current.name}?`);
+            }
+
+            function check(ans) {
+                if (attempts >= TOTAL) return;
+
+                attempts++;
+
+                if (ans === current.value) {
+                    ok++;
+                    feedback.textContent = "¡Correcto! " + current.speak;
+                    feedback.className = "feedback good";
+                    document.getElementById("valueBox").textContent = "Valor: " + current.value;
+                    speak("Correcto. " + current.speak);
+                } else {
+                    bad++;
+                    feedback.textContent = "Incorrecto. La respuesta era: " + current.value;
+                    feedback.className = "feedback bad";
+                    document.getElementById("valueBox").textContent = "Valor: " + current.value;
+                    speak("Incorrecto. " + current.speak);
+                }
+
+                update();
+
+                if (attempts >= TOTAL) finish();
+            }
+
+            function update() {
+                okEl.textContent = ok;
+                badEl.textContent = bad;
+                progEl.textContent = attempts;
+                bar.style.width = (attempts / TOTAL * 100) + "%";
+            }
+
+            function finish() {
+                feedback.textContent = "🎉 ¡Clase completada! Ya conoces el valor de las piezas.";
+                feedback.className = "feedback good";
+                speak("Excelente. Completaste la clase del valor de las piezas.");
+                document.getElementById("nextTopicBtn").style.display = "inline-block";
+            }
+
+            function next() {
+                if (attempts < TOTAL) loadExercise();
+            }
+
+            function shareApp() {
+                navigator.share?.({
+                    title: "Valor de las piezas del ajedrez",
+                    text: "Estoy aprendiendo el valor de las piezas del ajedrez ♟️",
+                    url: location.href
+                });
+            }
+
+            function goNextTopic() {
+                location.href = "movimientodelpeon.html";
+            }
+
+            loadExercise();
+        </script>
+
+        <script>
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                    // navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+                });
+            }
+        </script>
+
+    </body>
+
+</html>
