@@ -45,6 +45,23 @@
         --shadow: rgba(0, 0, 0, .14);
       }
 
+      /* ===============================
+       SLOGAN SUPERIOR IZQUIERDO
+       =============================== */
+      .brand {
+        position: absolute;
+        top: 5px;
+        left: 28px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: .95rem;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #86efac;
+      }
+
       .app {
         width: 100%;
         max-width: var(--app-max);
@@ -405,24 +422,6 @@
         color: #166534
       }
 
-      /* ===============================
-       SLOGAN SUPERIOR IZQUIERDO
-       =============================== */
-      .brand {
-        position: absolute;
-        top: 5px;
-        left: 28px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: .95rem;
-        font-weight: 600;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        color: #86efac;
-      }
-
-
       /* BOTON */
       .mark {
         border: none;
@@ -562,6 +561,107 @@
         transform: scale(1.05);
       }
 
+
+
+      /* ===============================
+   PREMIUM / ACTIVACIÓN POR CÓDIGO
+   =============================== */
+      .premium-activate {
+        margin-top: 12px;
+        background: #fff7ed;
+        border: 2px dashed #fb923c;
+        border-radius: 18px;
+        padding: 14px;
+        text-align: center;
+      }
+
+      .premium-activate h2 {
+        margin: 0 0 6px;
+        color: #9a3412;
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        font-weight: 1000;
+      }
+
+      .premium-activate p {
+        margin: 6px 0;
+        color: #7c2d12;
+        font-weight: 850;
+      }
+
+      .premium-form {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      .premium-form input {
+        min-width: min(100%, 280px);
+        border: 1px solid #fdba74;
+        border-radius: 999px;
+        padding: 11px 14px;
+        outline: none;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .premium-form button,
+      .premium-buy {
+        border: none;
+        border-radius: 999px;
+        padding: 11px 16px;
+        background: linear-gradient(90deg, #f97316, #ea580c);
+        color: white;
+        font-weight: 1000;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .premium-activate.premium-ok {
+        background: #f0fdf4;
+        border-color: #86efac;
+      }
+
+      .premium-activate.premium-ok h2,
+      .premium-activate.premium-ok p {
+        color: #166534;
+      }
+
+      .lock {
+        position: absolute;
+        top: 56px;
+        right: 10px;
+        background: #f97316;
+        color: #fff;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-weight: 1000;
+        font-size: .78rem;
+        box-shadow: 0 10px 18px rgba(249, 115, 22, .25);
+        z-index: 2;
+      }
+
+      .topic.locked {
+        filter: grayscale(1);
+        opacity: .62;
+      }
+
+      .topic.locked:hover {
+        transform: none;
+        border-color: #e5e7eb;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+      }
+
+      .topic.locked .mark {
+        pointer-events: none;
+        opacity: .6;
+      }
+
       /* ===============================
    HERO OSCURO ALTO IMPACTO
    =============================== */
@@ -649,7 +749,6 @@
     <div class="app">
 
 
-
       <header class="hero hero-dark" aria-label="Academia de Ajedrez Online">
 
         <!-- SLOGAN -->
@@ -696,7 +795,7 @@
 
       <div class="toolbar">
         <div class="search" role="search" aria-label="Buscar temas">
-          🔎 <input id="q" type="text" placeholder="Buscar: ecuaciones, fracciones, ajedrez..." />
+          🔎 <input id="q" type="text" placeholder="Tema a buscar" />
         </div>
 
         <!-- ✅ Estos son los links a tus HTML por materia -->
@@ -720,6 +819,19 @@
         </div>
       </section>
 
+      <section class="premium-activate" id="premiumBox" aria-label="Activar acceso Premium">
+        <h2 id="premiumTitle">🔓 Activar acceso Premium</h2>
+        <p id="premiumText">Los 3 primeros temas son gratis. Ingresa tu código para desbloquear toda la ruta.</p>
+
+        <div class="premium-form" id="premiumForm">
+          <input id="codeInput" placeholder="Ej: MK-ABCD-1234" autocomplete="off">
+          <button type="button" onclick="activarCodigo()">Activar código</button>
+          <button type="button" class="premium-buy" onclick="comprarPremium()">💳 Comprar Premium S/ 25</button>
+        </div>
+
+        <p id="msg"></p>
+      </section>
+
       <main class="grid" id="grid" aria-label="Lista de temas"></main>
 
       <p class="note">Usa el buscador arriba para filtrar. Haz click en “Realizado” para marcar o desmarcar un
@@ -728,12 +840,13 @@
 
     <script>
       const STORAGE_KEY = "mk_learning_path_done_realizado_v3";
-      const UNLOCK_FLAG = "mk_ajedrez_unlocked";
-      const UNLOCK_KEY = "Mauro";
 
-      const isUnlocked = localStorage.getItem(UNLOCK_FLAG) === "true";
+      // 👇 PEGA AQUÍ TU URL REAL DE GOOGLE APPS SCRIPT (/exec)
+      const API_URL = "https://script.google.com/macros/s/AKfycbzeDbOOONWxW-K6TfVzOzImxX4vobCTwMuOB8Lehd4DS_NfwrInxcN8XpynzjuIPRaXaQ/exec";
 
+      const PREMIUM_FLAG = "mk_ajedrez_premium";
       const FREE_LIMIT = 3; // 👈 primeros 3 gratis
+      const isPremium = localStorage.getItem(PREMIUM_FLAG) === "true";
 
       const topics = [
 
@@ -930,14 +1043,101 @@
           ((doneSet.size / topics.length) * 100) + "%";
       }
 
-      function requestUnlock() {
-        const key = prompt("🔒 Contenido bloqueado\nIngresa la clave de acceso:");
-        if (key === UNLOCK_KEY) {
-          localStorage.setItem(UNLOCK_FLAG, "true");
-          alert("✅ Acceso desbloqueado");
-          location.reload();
-        } else if (key !== null) {
-          alert("❌ Clave incorrecta");
+      function actualizarCajaPremium() {
+        const premiumBox = document.getElementById("premiumBox");
+        const premiumTitle = document.getElementById("premiumTitle");
+        const premiumText = document.getElementById("premiumText");
+        const premiumForm = document.getElementById("premiumForm");
+        const msg = document.getElementById("msg");
+
+        if (!premiumBox) return;
+
+        if (isPremium) {
+          premiumBox.classList.add("premium-ok");
+          premiumTitle.textContent = "✅ Acceso Premium activo";
+          premiumText.textContent = "Ya tienes desbloqueada toda la ruta de ajedrez en este dispositivo.";
+          premiumForm.style.display = "none";
+          msg.textContent = "";
+        }
+      }
+
+      async function activarCodigo() {
+        const codeInput = document.getElementById("codeInput");
+        const msg = document.getElementById("msg");
+        const code = codeInput.value.trim().toUpperCase();
+
+        if (!code) {
+          msg.textContent = "Ingresa un código Premium";
+          codeInput.focus();
+          return;
+        }
+
+        if (API_URL === "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT") {
+          msg.textContent = "⚠️ Falta pegar tu API_URL de Apps Script en el HTML.";
+          return;
+        }
+
+        msg.textContent = "Validando código...";
+
+        try {
+          const res = await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "validate",
+              code: code
+            })
+          });
+
+          const data = await res.json();
+
+          if (data.ok) {
+            localStorage.setItem(PREMIUM_FLAG, "true");
+            msg.textContent = "✅ Acceso Premium activado correctamente";
+            setTimeout(() => location.reload(), 900);
+          } else {
+            msg.textContent = "❌ " + (data.msg || "Código inválido");
+          }
+
+        } catch (error) {
+          msg.textContent = "Error de conexión. Intenta nuevamente.";
+        }
+      }
+
+      async function comprarPremium() {
+        const msg = document.getElementById("msg");
+
+        msg.textContent = "Creando enlace de pago...";
+
+        try {
+          const res = await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "mp_create_preference"
+            })
+          });
+
+          const data = await res.json();
+
+          if (data.ok && data.init_point) {
+            window.location.href = data.init_point;
+          } else {
+            msg.textContent = "❌ No se pudo crear el pago.";
+            console.log(data);
+          }
+
+        } catch (error) {
+          msg.textContent = "Error de conexión con Mercado Pago.";
+          console.error(error);
+        }
+      }
+
+      function mostrarAvisoPremium() {
+        const codeInput = document.getElementById("codeInput");
+        const msg = document.getElementById("msg");
+
+        if (codeInput) codeInput.focus();
+        if (msg) {
+          msg.textContent = "🔒 Este tema es Premium. Ingresa tu código para desbloquearlo.";
         }
       }
 
@@ -951,23 +1151,24 @@
           .filter(t => (t.title + t.desc).toLowerCase().includes(q))
           .forEach(t => {
             const isDone = doneSet.has(t.id);
-            const locked = t.id > FREE_LIMIT && !isUnlocked;
+            const locked = t.id > FREE_LIMIT && !isPremium;
 
             const card = document.createElement("article");
             card.className = "topic" + (isDone ? " done" : "") + (locked ? " locked" : "");
 
             card.innerHTML = `
-          <div class="num">${locked ? "🔒" : t.id}</div>
+          <div class="num">${t.id}</div>
+          ${locked ? `<div class="lock">🔒 Premium</div>` : ""}
 
-          <a href="${locked ? "#" : t.href}">
-            <div class="topic-tag">${t.emoji} ${locked ? "Bloqueado" : "Pendiente"}</div>
+          <a href="${locked ? "#" : t.href}" class="${locked ? "locked-link" : ""}">
+            <div class="topic-tag">${t.emoji} ${locked ? "Premium" : t.category}</div>
             <div class="title">${t.title}</div>
             <p class="desc">${t.desc}</p>
           </a>
 
           <div class="meta">
             <div class="status ${isDone ? "done" : ""}">
-              ${locked ? "🔒 Requiere clave" : isDone ? "✅ Realizado" : "📘 No realizado aún"}
+              ${locked ? "🔒 Premium" : isDone ? "✅ Realizado" : "📘 No realizado aún"}
             </div>
 
             <button class="mark ${isDone ? "done" : ""}" data-id="${t.id}">
@@ -979,7 +1180,7 @@
             if (locked) {
               card.querySelector("a").addEventListener("click", e => {
                 e.preventDefault();
-                requestUnlock();
+                mostrarAvisoPremium();
               });
             }
 
@@ -990,6 +1191,10 @@
           btn.onclick = e => {
             e.stopPropagation();
             const id = Number(btn.dataset.id);
+            if (id > FREE_LIMIT && !isPremium) {
+              mostrarAvisoPremium();
+              return;
+            }
             doneSet.has(id) ? doneSet.delete(id) : doneSet.add(id);
             saveDoneSet(doneSet);
             updateProgress(doneSet);
@@ -997,6 +1202,8 @@
           };
         });
       }
+
+      actualizarCajaPremium();
 
       const doneSet = loadDoneSet();
       updateProgress(doneSet);
