@@ -6,8 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description"
       content="Academia de Ajedrez Mauro: formación por niveles, clases grupales, torneos, plataforma y seguimiento personalizado." />
-    <meta name="theme-color" content="#070b16" />
+
     <title>Academia de Ajedrez Mauro | Forma tu mejor jugada</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1976d2">
+    <!-- <meta name="theme-color" content="#070b16" /> -->
+
 
     <style>
       :root {
@@ -2181,7 +2187,7 @@
 
         <div class="copyright">
           <span>© <span id="year"></span> Academia de Ajedrez Mauro.</span>
-          <span>Diseñado para inspirar mejores decisiones.</span>
+          <span>Piensa, proyectate y actúa...</span>
         </div>
       </div>
     </footer>
@@ -2191,7 +2197,7 @@
     <script>
       // ===== CONFIGURACIÓN RÁPIDA =====
       // Reemplaza con tu número, incluyendo código de país, sin + ni espacios.
-      const WHATSAPP_NUMBER = "51999999999";
+      const WHATSAPP_NUMBER = "5491126202806";
 
       // Crear tablero.
       const board = document.getElementById("board");
@@ -2276,6 +2282,17 @@ Objetivo: ${data.get("message") || "No especificado"}`;
 
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
+
+    <!-- PWA -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          // navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+        });
+      }
+    </script>
+
+
   </body>
 
 </html>
