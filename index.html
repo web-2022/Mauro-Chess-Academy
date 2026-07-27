@@ -1,374 +1,2281 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Academia de Ajedrez Online</title>
-    <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1976d2">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+      content="Academia de Ajedrez Mauro: formación por niveles, clases grupales, torneos, plataforma y seguimiento personalizado." />
+    <meta name="theme-color" content="#070b16" />
+    <title>Academia de Ajedrez Mauro | Forma tu mejor jugada</title>
 
-  <style>
-    :root {
-      --accent: #22c55e;
-      --accent2: #38bdf8;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-      --radius: 22px;
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background:
-        radial-gradient(1200px 600px at 80% 10%, #0f172a, transparent 60%),
-        radial-gradient(900px 600px at 10% 90%, #020617, transparent 55%),
-        linear-gradient(180deg, #020617, #020617);
-      color: var(--text);
-    }
-
-    header {
-      min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      position: relative;
-    }
-
-    .brand {
-      position: absolute;
-      top: 24px;
-      left: 28px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: .95rem;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: rgba(226, 232, 240, .85);
-    }
-
-    .brand::before {
-      content: "";
-      width: 36px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 999px;
-    }
-
-    .hero {
-      max-width: 1200px;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 40px;
-      align-items: center;
-    }
-
-    .hero-text h1 {
-      font-size: clamp(2.2rem, 4vw, 3.8rem);
-      line-height: 1.05;
-      margin: 0 0 18px;
-    }
-
-    .title-main {
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .title-sub {
-      display: inline-block;
-      margin-top: 10px;
-      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
-      font-weight: 400;
-      font-style: italic;
-      line-height: 1.4;
-      color: rgba(226, 232, 240, .85);
-    }
-
-    .hero-text p {
-      font-size: 1.15rem;
-      color: var(--muted);
-      max-width: 520px;
-      margin-bottom: 32px;
-    }
-
-    .cta {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 14px 22px;
-      border-radius: 14px;
-      font-weight: 600;
-      font-size: 1rem;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      border: none;
-      cursor: pointer;
-      transition: all .25s ease;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #020617;
-      box-shadow: 0 10px 30px rgba(56, 189, 248, .35);
-    }
-
-    .btn-secondary {
-      border: 1px solid rgba(148, 163, 184, .35);
-      color: var(--text);
-      background: rgba(15, 23, 42, .45);
-    }
-
-    .btn-share {
-      border: 1px dashed rgba(56, 189, 248, .5);
-      color: #38bdf8;
-      background: rgba(15, 23, 42, .6);
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .hero-card {
-      background: linear-gradient(145deg, rgba(15, 23, 42, .9), rgba(2, 6, 23, .9));
-      border-radius: var(--radius);
-      padding: 26px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, .55);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-card::after {
-      content: "♟";
-      position: absolute;
-      font-size: 180px;
-      opacity: .05;
-      right: -20px;
-      bottom: -40px;
-    }
-
-    .card-title {
-      font-weight: 700;
-      margin-bottom: 12px;
-      font-size: 1.2rem;
-    }
-
-    .card-list {
-      display: grid;
-      gap: 14px;
-      margin-top: 16px;
-    }
-
-    .card-item {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      font-size: .95rem;
-      color: var(--muted);
-    }
-
-    .icon {
-      color: var(--accent);
-      font-size: 1.1rem;
-    }
-
-    .whatsapp-float {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      background: #25D366;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      color: #fff;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
-      z-index: 9999;
-      transition: .25s;
-      animation: pulseWhatsapp 2s infinite;
-    }
-
-    .whatsapp-icon {
-      width: 36px;
-      height: 36px;
-      display: block;
-    }
-
-    .whatsapp-float:hover {
-      transform: scale(1.12);
-      box-shadow: 0 18px 45px rgba(37, 211, 102, .45);
-    }
-
-    .whatsapp-text {
-      position: absolute;
-      right: 80px;
-      white-space: nowrap;
-      background: #fff;
-      color: #111827;
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: .95rem;
-      opacity: 0;
-      transform: translateX(10px);
-      transition: .25s;
-      pointer-events: none;
-    }
-
-    .whatsapp-float:hover .whatsapp-text {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    @keyframes pulseWhatsapp {
-      0% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, .55);
+    <style>
+      :root {
+        --bg: #020617;
+        --bg-soft: #0f172a;
+        --card: rgba(15, 23, 42, .72);
+        --card-strong: rgba(30, 41, 59, .86);
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --accent: #22c55e;
+        --accent2: #38bdf8;
+        --gold: #22c55e;
+        --gold-2: #38bdf8;
+        --cyan: #38bdf8;
+        --purple: #22c55e;
+        --green: #22c55e;
+        --danger: #ff6b8a;
+        --line: rgba(255, 255, 255, .13);
+        --shadow: 0 24px 80px rgba(0, 0, 0, .35);
+        --radius: 26px;
+        --container: 1180px;
       }
 
-      70% {
-        box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0
       }
 
-      100% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+      html {
+        scroll-behavior: smooth
       }
-    }
 
-    @media(max-width:900px) {
+      body {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 10% 10%, rgba(70, 217, 255, .13), transparent 26%),
+          radial-gradient(circle at 90% 12%, rgba(34, 197, 94, .14), transparent 28%),
+          radial-gradient(circle at 50% 100%, rgba(34, 197, 94, .08), transparent 30%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: .16;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: linear-gradient(to bottom, black, transparent 85%);
+        z-index: -1;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none
+      }
+
+      img {
+        max-width: 100%;
+        display: block
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit
+      }
+
+      button {
+        cursor: pointer
+      }
+
+      .container {
+        width: min(var(--container), calc(100% - 36px));
+        margin-inline: auto
+      }
+
+      .section {
+        padding: 110px 0;
+        position: relative
+      }
+
+      .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--cyan);
+        font-size: .82rem;
+        font-weight: 800;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+      }
+
+      .section-label::before {
+        content: "";
+        width: 34px;
+        height: 1px;
+        background: linear-gradient(90deg, var(--cyan), transparent);
+      }
+
+      .section-title {
+        font-size: clamp(2rem, 4vw, 4rem);
+        line-height: 1.04;
+        letter-spacing: -.04em;
+        max-width: 850px;
+      }
+
+      .section-copy {
+        margin-top: 18px;
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 1.08rem;
+      }
+
+      .gradient-text {
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      /* NAV */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        backdrop-filter: blur(16px);
+        background: rgba(7, 11, 22, .62);
+        border-bottom: 1px solid transparent;
+        transition: .3s ease;
+      }
+
+      .nav.scrolled {
+        border-color: var(--line);
+        background: rgba(7, 11, 22, .87)
+      }
+
+      .nav-inner {
+        min-height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
       .brand {
-        left: 50%;
-        transform: translateX(-50%);
-        top: 12px;
-        white-space: nowrap;
-        font-size: .8rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 900;
+        letter-spacing: -.02em
       }
 
-      .hero {
-        grid-template-columns: 1fr;
-        text-align: center;
-        margin-top: 40px;
+      .brand-mark {
+        width: 44px;
+        height: 44px;
+        border-radius: 15px;
+        display: grid;
+        place-items: center;
+        color: #020617;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        box-shadow: 0 12px 35px rgba(34, 197, 94, .25);
+        font-size: 1.55rem;
       }
 
-      .hero-text p {
-        margin-left: auto;
-        margin-right: auto;
+      .brand small {
+        display: block;
+        color: var(--muted);
+        font-size: .67rem;
+        letter-spacing: .16em;
+        text-transform: uppercase
       }
 
-      .cta {
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        color: #dfe6f7;
+        font-size: .94rem
+      }
+
+      .nav-links a {
+        transition: .2s
+      }
+
+      .nav-links a:hover {
+        color: var(--gold)
+      }
+
+      .nav-cta {
+        display: flex;
+        align-items: center;
+        gap: 12px
+      }
+
+      .menu-btn {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: white;
+      }
+
+      /* BUTTONS */
+      .btn {
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
+        gap: 10px;
+        min-height: 50px;
+        padding: 0 20px;
+        border-radius: 15px;
+        border: 1px solid transparent;
+        font-weight: 800;
+        transition: .24s ease;
+        position: relative;
+        overflow: hidden;
       }
-    }
 
-    @media(max-width:700px) {
-      .whatsapp-float {
+      .btn::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .22), transparent);
+        transform: translateX(-120%);
+        transition: .5s;
+      }
+
+      .btn:hover::after {
+        transform: translateX(120%)
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #020617;
+        box-shadow: 0 15px 40px rgba(56, 189, 248, .25);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 50px rgba(56, 189, 248, .38)
+      }
+
+      .btn-secondary {
+        color: white;
+        border-color: var(--line);
+        background: rgba(255, 255, 255, .04);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, .09);
+        transform: translateY(-2px)
+      }
+
+      .btn-sm {
+        min-height: 42px;
+        padding: 0 16px;
+        font-size: .9rem
+      }
+
+      /* HERO */
+      .hero {
+        min-height: 100vh;
+        display: grid;
+        align-items: center;
+        padding: 130px 0 80px;
+        position: relative;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.07fr .93fr;
+        align-items: center;
+        gap: 58px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 13px;
+        border: 1px solid rgba(34, 197, 94, .28);
+        background: rgba(34, 197, 94, .08);
+        border-radius: 999px;
+        color: var(--gold-2);
+        font-size: .85rem;
+        font-weight: 800;
+        margin-bottom: 22px;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 0 rgba(102, 230, 168, .5);
+        animation: pulse 1.7s infinite;
+      }
+
+      @keyframes pulse {
+        70% {
+          box-shadow: 0 0 0 12px rgba(102, 230, 168, 0)
+        }
+
+        100% {
+          box-shadow: 0 0 0 0 rgba(102, 230, 168, 0)
+        }
+      }
+
+      h1 {
+        font-size: clamp(3.2rem, 7vw, 6.8rem);
+        line-height: .91;
+        letter-spacing: -.065em;
+        max-width: 820px;
+      }
+
+      .hero p {
+        color: var(--muted);
+        font-size: 1.17rem;
+        max-width: 650px;
+        margin: 26px 0 32px;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px
+      }
+
+      .hero-proof {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        color: var(--muted);
+        font-size: .93rem;
+      }
+
+      .avatars {
+        display: flex
+      }
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        margin-left: -9px;
+        border: 2px solid var(--bg);
+        font-weight: 900;
+        color: #0b0f1b;
+        background: linear-gradient(135deg, var(--cyan), #fff);
+      }
+
+      .avatar:first-child {
+        margin-left: 0
+      }
+
+      .rating {
+        color: var(--gold);
+        letter-spacing: .08em
+      }
+
+      .chess-visual {
+        position: relative;
+        min-height: 580px;
+        display: grid;
+        place-items: center;
+        perspective: 1200px;
+      }
+
+      .orb {
+        position: absolute;
+        width: 440px;
+        height: 440px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 30% 25%, rgba(255, 255, 255, .28), transparent 22%),
+          radial-gradient(circle at 50% 50%, rgba(70, 217, 255, .24), rgba(143, 107, 255, .13) 45%, transparent 70%);
+        filter: blur(2px);
+        animation: orbFloat 7s ease-in-out infinite;
+      }
+
+      @keyframes orbFloat {
+        50% {
+          transform: translateY(-18px) scale(1.03)
+        }
+      }
+
+      .board-wrap {
+        width: min(500px, 92vw);
+        aspect-ratio: 1;
+        transform: rotateX(55deg) rotateZ(-34deg);
+        transform-style: preserve-3d;
+        animation: boardFloat 7s ease-in-out infinite;
+        position: relative;
+      }
+
+      @keyframes boardFloat {
+        50% {
+          transform: rotateX(52deg) rotateZ(-30deg) translateY(-10px)
+        }
+      }
+
+      .board {
+        width: 100%;
+        height: 100%;
+        border-radius: 24px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+        box-shadow: 0 40px 90px rgba(0, 0, 0, .5);
+        border: 8px solid rgba(255, 255, 255, .13);
+        background: #151b2d;
+        position: relative;
+      }
+
+      .sq.light {
+        background: #dfe7ef
+      }
+
+      .sq.dark {
+        background: #42526b
+      }
+
+      .piece {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 12.5%;
+        height: 12.5%;
+        font-size: clamp(2rem, 5vw, 4.1rem);
+        filter: drop-shadow(0 12px 8px rgba(0, 0, 0, .35));
+        transform: translateZ(46px) rotateZ(34deg) rotateX(-55deg);
+        animation: pieceHover 3.5s ease-in-out infinite;
+      }
+
+      @keyframes pieceHover {
+        50% {
+          translate: 0 -7px
+        }
+      }
+
+      .piece.king {
+        left: 43.75%;
+        top: 43.75%;
+        color: var(--gold-2);
+        font-size: clamp(3.4rem, 7vw, 6rem)
+      }
+
+      .piece.queen {
+        left: 18.75%;
+        top: 18.75%;
+        color: #fff;
+        animation-delay: .4s
+      }
+
+      .piece.knight {
+        left: 68.75%;
+        top: 56.25%;
+        color: var(--cyan);
+        animation-delay: .8s
+      }
+
+      .floating-card {
+        position: absolute;
+        padding: 15px 17px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(13, 19, 36, .72);
+        backdrop-filter: blur(16px);
+        box-shadow: var(--shadow);
+        color: white;
+      }
+
+      .floating-card strong {
+        display: block;
+        font-size: 1.25rem
+      }
+
+      .floating-card span {
+        font-size: .79rem;
+        color: var(--muted)
+      }
+
+      .card-1 {
+        top: 11%;
+        right: -2%;
+        animation: floatCard 5s ease-in-out infinite
+      }
+
+      .card-2 {
+        left: -7%;
+        bottom: 10%;
+        animation: floatCard 6s ease-in-out infinite reverse
+      }
+
+      @keyframes floatCard {
+        50% {
+          transform: translateY(-14px)
+        }
+      }
+
+      /* TRUST */
+      .trust {
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, .025);
+      }
+
+      .trust-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 30px 0;
+        gap: 25px;
+      }
+
+      .stat {
+        text-align: center
+      }
+
+      .stat strong {
+        display: block;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        line-height: 1;
+        color: white
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: .9rem
+      }
+
+      /* CARDS */
+      .cards-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        margin-top: 48px
+      }
+
+      .feature-card,
+      .program-card,
+      .plan,
+      .testimonial,
+      .faq-item,
+      .form-card {
+        border: 1px solid var(--line);
+        background: var(--card);
+        box-shadow: var(--shadow);
+        border-radius: var(--radius);
+      }
+
+      .feature-card {
+        padding: 30px;
+        transition: .3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        right: -80px;
+        top: -90px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(70, 217, 255, .22), transparent 65%);
+      }
+
+      .feature-card:hover {
+        transform: translateY(-8px);
+        background: var(--card-strong)
+      }
+
+      .icon-box {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, rgba(70, 217, 255, .18), rgba(143, 107, 255, .2));
+        border: 1px solid rgba(255, 255, 255, .12);
+        font-size: 1.5rem;
+        margin-bottom: 22px;
+      }
+
+      .feature-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 8px
+      }
+
+      .feature-card p {
+        color: var(--muted)
+      }
+
+      /* PATH */
+      .path {
+        margin-top: 55px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        position: relative;
+      }
+
+      .path::before {
+        content: "";
+        position: absolute;
+        left: 9%;
+        right: 9%;
+        top: 43px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        opacity: .45;
+      }
+
+      .path-step {
+        text-align: center;
+        position: relative;
+        z-index: 1
+      }
+
+      .path-node {
+        width: 86px;
+        height: 86px;
+        margin: auto;
+        border-radius: 28px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(145deg, #121a31, #0a0f1e);
+        border: 1px solid rgba(255, 255, 255, .15);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, .35);
+        font-size: 2rem;
+        transition: .3s;
+      }
+
+      .path-step:hover .path-node {
+        transform: translateY(-8px) rotate(-3deg);
+        border-color: var(--gold)
+      }
+
+      .path-step h3 {
+        font-size: 1rem;
+        margin-top: 15px
+      }
+
+      .path-step span {
+        font-size: .8rem;
+        color: var(--muted)
+      }
+
+      /* PROGRAMS */
+      .program-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+        margin-top: 50px;
+      }
+
+      .program-card {
+        padding: 30px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 22px;
+        transition: .3s;
+      }
+
+      .program-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(56, 189, 248, .4)
+      }
+
+      .program-card .badge {
+        width: 66px;
+        height: 66px;
+        border-radius: 22px;
+        display: grid;
+        place-items: center;
+        font-size: 2rem;
+        background: linear-gradient(135deg, rgba(34, 197, 94, .16), rgba(143, 107, 255, .18));
+      }
+
+      .program-card h3 {
+        font-size: 1.35rem
+      }
+
+      .program-card p {
+        color: var(--muted);
+        margin: 5px 0 14px
+      }
+
+      .tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap
+      }
+
+      .tag {
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: #dbe5fb;
+        font-size: .76rem;
+        background: rgba(255, 255, 255, .03);
+      }
+
+
+      /* RUTA DE APRENDIZAJE */
+      .learning-route {
+        background:
+          radial-gradient(900px 420px at 90% 10%, rgba(56, 189, 248, .11), transparent 65%),
+          radial-gradient(700px 400px at 10% 90%, rgba(34, 197, 94, .09), transparent 62%);
+      }
+
+      .route-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        margin-top: 32px;
+        padding: 20px 22px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: rgba(15, 23, 42, .62);
+        backdrop-filter: blur(12px);
+      }
+
+      .route-summary strong {
+        font-size: 1.12rem
+      }
+
+      .route-summary span {
+        display: block;
+        color: var(--muted);
+        font-size: .9rem
+      }
+
+      .route-grid {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+
+      .level-card {
+        position: relative;
+        min-height: 265px;
+        padding: 25px;
+        border-radius: 24px;
+        overflow: hidden;
+        background: linear-gradient(145deg, rgba(15, 23, 42, .94), rgba(2, 6, 23, .94));
+        border: 1px solid rgba(148, 163, 184, .18);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, .28);
+        transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease;
+      }
+
+      .level-card:hover {
+        transform: translateY(-7px);
+        border-color: rgba(56, 189, 248, .55);
+        box-shadow: 0 24px 65px rgba(0, 0, 0, .38)
+      }
+
+      .level-card::after {
+        content: attr(data-piece);
+        position: absolute;
+        right: -8px;
+        bottom: -35px;
+        font-size: 9rem;
+        color: rgba(229, 231, 235, .035);
+        line-height: 1;
+      }
+
+      .level-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px
+      }
+
+      .level-number {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #020617;
+        font-weight: 950;
+        box-shadow: 0 12px 28px rgba(56, 189, 248, .22);
+      }
+
+      .level-range {
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(56, 189, 248, .25);
+        background: rgba(56, 189, 248, .08);
+        color: #7dd3fc;
+        font-size: .76rem;
+        font-weight: 850;
+      }
+
+      .level-card h3 {
+        font-size: 1.28rem;
+        margin-bottom: 4px
+      }
+
+      .level-subtitle {
+        color: var(--accent);
+        font-size: .83rem;
+        font-weight: 850;
+        text-transform: uppercase;
+        letter-spacing: .08em
+      }
+
+      .level-card p {
+        color: var(--muted);
+        font-size: .93rem;
+        margin: 13px 0 18px;
+        min-height: 68px
+      }
+
+      .level-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: #cbd5e1;
+        font-size: .82rem
+      }
+
+      .level-arrow {
+        color: var(--accent2);
+        font-size: 1.25rem;
+        font-weight: 900
+      }
+
+      .route-cycle {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+      }
+
+      .cycle-step {
+        text-align: center;
+        padding: 13px 8px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(15, 23, 42, .55);
+        font-size: .78rem;
+        color: var(--muted);
+      }
+
+      .cycle-step b {
+        display: block;
+        color: var(--text);
+        font-size: 1rem;
+        margin-bottom: 3px
+      }
+
+      @media(max-width:980px) {
+        .route-grid {
+          grid-template-columns: repeat(2, 1fr)
+        }
+
+        .route-cycle {
+          grid-template-columns: repeat(3, 1fr)
+        }
+      }
+
+      @media(max-width:680px) {
+        .route-grid {
+          grid-template-columns: 1fr
+        }
+
+        .route-summary {
+          align-items: flex-start;
+          flex-direction: column
+        }
+
+        .route-cycle {
+          grid-template-columns: repeat(2, 1fr)
+        }
+      }
+
+      /* PLATFORM */
+      .platform-grid {
+        display: grid;
+        grid-template-columns: .9fr 1.1fr;
+        gap: 60px;
+        align-items: center
+      }
+
+      .dashboard {
+        padding: 18px;
+        border: 1px solid var(--line);
+        background: #0b1120;
+        border-radius: 34px;
+        box-shadow: 0 30px 100px rgba(0, 0, 0, .45);
+        transform: rotateY(-7deg) rotateX(3deg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .dashboard::before {
+        content: "";
+        position: absolute;
+        inset: -30% 40% auto -20%;
+        height: 230px;
+        background: radial-gradient(circle, rgba(70, 217, 255, .18), transparent 70%);
+      }
+
+      .dash-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 8px 20px
+      }
+
+      .dash-window {
+        display: flex;
+        gap: 7px
+      }
+
+      .dash-window i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #ff6b8a
+      }
+
+      .dash-window i:nth-child(2) {
+        background: #ffd166
+      }
+
+      .dash-window i:nth-child(3) {
+        background: #66e6a8
+      }
+
+      .dash-grid {
+        display: grid;
+        grid-template-columns: 1fr .9fr;
+        gap: 14px
+      }
+
+      .dash-card {
+        background: rgba(255, 255, 255, .055);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 18px
+      }
+
+      .progress-ring {
+        width: 125px;
+        height: 125px;
+        margin: 18px auto;
+        border-radius: 50%;
+        background: conic-gradient(var(--cyan) 0 78%, rgba(255, 255, 255, .09) 78% 100%);
+        display: grid;
+        place-items: center;
+      }
+
+      .progress-ring::after {
+        content: "78%";
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: #0d1425;
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        font-size: 1.5rem;
+      }
+
+      .mini-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px
+      }
+
+      .mini-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px;
+        border-radius: 13px;
+        background: rgba(255, 255, 255, .045);
+        font-size: .83rem
+      }
+
+      .bar {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, .08);
+        overflow: hidden;
+        margin-top: 8px
+      }
+
+      .bar i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        width: 84%;
+        border-radius: inherit
+      }
+
+      .platform-list {
+        display: grid;
+        gap: 14px;
+        margin: 28px 0
+      }
+
+      .platform-item {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start
+      }
+
+      .check {
+        flex: 0 0 auto;
+        width: 27px;
+        height: 27px;
+        border-radius: 9px;
+        display: grid;
+        place-items: center;
+        background: rgba(102, 230, 168, .14);
+        color: var(--green);
+        border: 1px solid rgba(102, 230, 168, .25);
+        font-weight: 900;
+      }
+
+      .platform-item strong {
+        display: block
+      }
+
+      .platform-item span {
+        color: var(--muted);
+        font-size: .93rem
+      }
+
+      /* PLANS */
+      .plans {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        margin-top: 50px;
+        align-items: stretch
+      }
+
+      .plan {
+        padding: 32px;
+        position: relative;
+        overflow: hidden
+      }
+
+      .plan.popular {
+        border-color: rgba(34, 197, 94, .5);
+        background: linear-gradient(180deg, rgba(247, 201, 72, .11), rgba(255, 255, 255, .055));
+        transform: scale(1.035);
+      }
+
+      .popular-ribbon {
+        position: absolute;
+        right: 18px;
+        top: 18px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #020617;
+        font-size: .72rem;
+        font-weight: 900;
+      }
+
+      .plan h3 {
+        font-size: 1.5rem
+      }
+
+      .plan .plan-sub {
+        color: var(--muted);
+        font-size: .92rem;
+        margin: 6px 0 20px
+      }
+
+      .price {
+        font-size: 2.75rem;
+        font-weight: 950;
+        letter-spacing: -.04em
+      }
+
+      .price small {
+        font-size: .9rem;
+        color: var(--muted);
+        font-weight: 600
+      }
+
+      .plan-list {
+        list-style: none;
+        display: grid;
+        gap: 12px;
+        margin: 24px 0 28px;
+        color: #dbe4f7
+      }
+
+      .plan-list li {
+        display: flex;
+        gap: 10px
+      }
+
+      .plan-list li::before {
+        content: "✓";
+        color: var(--green);
+        font-weight: 900
+      }
+
+      /* TESTIMONIALS */
+      .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        margin-top: 50px
+      }
+
+      .testimonial {
+        padding: 28px
+      }
+
+      .quote {
+        font-size: 1.04rem;
+        color: #e8edf9;
+        min-height: 150px
+      }
+
+      .student {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin-top: 20px
+      }
+
+      .student-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        font-weight: 900;
+      }
+
+      .student span {
+        display: block;
+        color: var(--muted);
+        font-size: .82rem
+      }
+
+      /* FAQ */
+      .faq {
+        display: grid;
+        gap: 14px;
+        margin-top: 45px;
+        max-width: 900px
+      }
+
+      .faq-item {
+        overflow: hidden
+      }
+
+      .faq-question {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: white;
+        text-align: left;
+        padding: 22px 24px;
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        font-weight: 850;
+      }
+
+      .faq-question span:last-child {
+        color: var(--gold);
+        font-size: 1.3rem;
+        transition: .25s
+      }
+
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .35s ease
+      }
+
+      .faq-answer p {
+        padding: 0 24px 22px;
+        color: var(--muted)
+      }
+
+      .faq-item.open .faq-answer {
+        max-height: 220px
+      }
+
+      .faq-item.open .faq-question span:last-child {
+        transform: rotate(45deg)
+      }
+
+      /* CONTACT */
+      .contact-wrap {
+        display: grid;
+        grid-template-columns: .9fr 1.1fr;
+        gap: 36px;
+        align-items: stretch;
+        border: 1px solid var(--line);
+        background:
+          radial-gradient(circle at 15% 20%, rgba(70, 217, 255, .13), transparent 30%),
+          rgba(255, 255, 255, .04);
+        border-radius: 36px;
+        padding: 36px;
+        box-shadow: var(--shadow);
+      }
+
+      .contact-panel {
+        padding: 18px
+      }
+
+      .contact-points {
+        display: grid;
+        gap: 16px;
+        margin-top: 30px
+      }
+
+      .contact-point {
+        display: flex;
+        gap: 13px;
+        color: var(--muted)
+      }
+
+      .form-card {
+        padding: 26px;
+        background: rgba(7, 11, 22, .64)
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px
+      }
+
+      .field {
+        display: grid;
+        gap: 7px
+      }
+
+      .field.full {
+        grid-column: 1/-1
+      }
+
+      label {
+        font-size: .82rem;
+        color: #dbe4f7;
+        font-weight: 700
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, .055);
+        color: white;
+        border-radius: 14px;
+        padding: 14px;
+        outline: none;
+        transition: .2s;
+      }
+
+      select option {
+        color: #111
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--cyan);
+        box-shadow: 0 0 0 4px rgba(70, 217, 255, .08)
+      }
+
+      textarea {
+        min-height: 112px;
+        resize: vertical
+      }
+
+      .form-note {
+        font-size: .75rem;
+        color: var(--muted);
+        margin-top: 11px
+      }
+
+      .success {
+        display: none;
+        margin-top: 14px;
+        padding: 12px;
+        border-radius: 12px;
+        background: rgba(102, 230, 168, .12);
+        border: 1px solid rgba(102, 230, 168, .25);
+        color: var(--green);
+      }
+
+      /* CTA */
+      .cta-strip {
+        padding: 35px 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(90deg, rgba(70, 217, 255, .08), rgba(143, 107, 255, .08), rgba(34, 197, 94, .08));
+      }
+
+      .cta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px
+      }
+
+      .cta-row h3 {
+        font-size: clamp(1.4rem, 3vw, 2.2rem);
+        line-height: 1.15
+      }
+
+      .cta-row p {
+        color: var(--muted)
+      }
+
+      /* FOOTER */
+      footer {
+        padding: 55px 0 25px
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 1.4fr repeat(3, 1fr);
+        gap: 30px
+      }
+
+      .footer-brand p {
+        color: var(--muted);
+        max-width: 380px;
+        margin-top: 15px
+      }
+
+      .footer-col h4 {
+        margin-bottom: 14px
+      }
+
+      .footer-col a {
+        display: block;
+        color: var(--muted);
+        margin: 8px 0
+      }
+
+      .footer-col a:hover {
+        color: var(--gold)
+      }
+
+      .copyright {
+        margin-top: 38px;
+        padding-top: 22px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: .83rem;
+      }
+
+      /* FLOATING WHATSAPP */
+      .whatsapp {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
         width: 60px;
         height: 60px;
-        right: 16px;
-        bottom: 16px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: #25d366;
+        color: white;
+        font-size: 1.7rem;
+        box-shadow: 0 18px 45px rgba(37, 211, 102, .35);
+        z-index: 40;
+        animation: whats 2.2s infinite;
       }
 
-      .whatsapp-icon {
-        width: 32px;
-        height: 32px;
+      @keyframes whats {
+        50% {
+          transform: translateY(-7px)
+        }
       }
 
-      .whatsapp-text {
-        display: none;
+      /* REVEAL */
+      .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: .7s ease
       }
-    }
-  </style>
-</head>
 
-<body>
+      .reveal.visible {
+        opacity: 1;
+        transform: none
+      }
 
-  <header>
-    <div class="brand">Academia de Ajedrez Mauro</div>
+      @media(max-width:980px) {
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 76px;
+          left: 18px;
+          right: 18px;
+          padding: 18px;
+          background: #0d1425;
+          border: 1px solid var(--line);
+          border-radius: 18px;
+          flex-direction: column;
+          align-items: flex-start
+        }
 
-    <section class="hero">
-      <div class="hero-text">
-        <h1>
-          Domina el <span class="title-main">Ajedrez</span><br>
-          <span class="title-sub">Apertura, medio campo, finales y más...</span>
-        </h1>
+        .nav-links.open {
+          display: flex
+        }
 
-        <p>
-          Academia online con entrenamiento progresivo, partidas comentadas,
-          táctica real y estrategia moderna para subir tu nivel de verdad.
-        </p>
+        .menu-btn {
+          display: grid;
+          place-items: center
+        }
 
-        <div class="cta">
-          <a href="ruta-chess.html" class="btn btn-primary">🚀 Programa integral de formación ajedrecística</a>
-          <a href="testimonios.html" class="btn btn-secondary">▶️ Testimonios</a>
-          <button class="btn btn-share" onclick="shareApp()">📤 Compartir app</button>
+        .nav-cta .btn {
+          display: none
+        }
+
+        .hero-grid,
+        .platform-grid,
+        .contact-wrap {
+          grid-template-columns: 1fr
+        }
+
+        .hero {
+          padding-top: 125px
+        }
+
+        .chess-visual {
+          min-height: 500px
+        }
+
+        .cards-3,
+        .plans,
+        .testimonial-grid {
+          grid-template-columns: 1fr 1fr
+        }
+
+        .path {
+          grid-template-columns: repeat(3, 1fr)
+        }
+
+        .path::before {
+          display: none
+        }
+
+        .program-grid {
+          grid-template-columns: 1fr
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr 1fr
+        }
+      }
+
+      @media(max-width:680px) {
+        .section {
+          padding: 78px 0
+        }
+
+        .hero {
+          min-height: auto
+        }
+
+        .hero-actions {
+          display: grid
+        }
+
+        .hero-actions .btn {
+          width: 100%
+        }
+
+        .cards-3,
+        .plans,
+        .testimonial-grid,
+        .trust-grid,
+        .path,
+        .footer-grid {
+          grid-template-columns: 1fr
+        }
+
+        .trust-grid {
+          grid-template-columns: 1fr 1fr
+        }
+
+        .plan.popular {
+          transform: none
+        }
+
+        .chess-visual {
+          min-height: 390px
+        }
+
+        .floating-card {
+          display: none
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr
+        }
+
+        .field.full {
+          grid-column: auto
+        }
+
+        .contact-wrap {
+          padding: 18px
+        }
+
+        .cta-row {
+          align-items: flex-start;
+          flex-direction: column
+        }
+
+        h1 {
+          font-size: clamp(3rem, 16vw, 4.8rem)
+        }
+
+        .board-wrap {
+          width: 88vw
+        }
+
+        .dashboard {
+          transform: none
+        }
+
+        .dash-grid {
+          grid-template-columns: 1fr
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="nav" id="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="#inicio" aria-label="Academia de Ajedrez Mauro">
+          <span class="brand-mark">♞</span>
+          <span>Academia Mauro<small>Ajedrez & estrategia</small></span>
+        </a>
+
+        <div class="nav-links" id="navLinks">
+          <a href="#ruta-aprendizaje">Ruta</a>
+          <a href="#metodologia">Metodología</a>
+          <a href="#programas">Programas</a>
+          <a href="#plataforma">Plataforma</a>
+          <a href="#planes">Planes</a>
+          <a href="#contacto">Contacto</a>
+        </div>
+
+        <div class="nav-cta">
+          <a class="btn btn-primary btn-sm"
+            href="https://wa.me/5491126202806?text=Hola,%20quiero%20información%20sobre%20la%20Academia%20de%20Ajedrez.">Clase
+            gratuita</a>
+          <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">☰</button>
         </div>
       </div>
+    </nav>
 
-      <div class="hero-card">
-        <div class="card-title">¿Qué incluye la academia?</div>
+    <header class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow"><span class="pulse-dot"></span> Matrículas abiertas</div>
+          <h1>Piensa mejor.<br><span class="gradient-text">Juega con propósito.</span></h1>
+          <p>
+            Academia online con entrenamiento progresivo, clases grupales, partidas comentadas, táctica real y
+            estrategia moderna. Avanza mediante una ruta de 9 niveles y 124 temas.
+          </p>
 
-        <div class="card-list">
-          <div class="card-item"><span class="icon">✔</span>Clases estructuradas de principiante a avanzado</div>
-          <div class="card-item"><span class="icon">✔</span>Partidas comentadas paso a paso</div>
-          <div class="card-item"><span class="icon">✔</span>Táctica diaria y finales esenciales</div>
-          <div class="card-item"><span class="icon">✔</span>Entrenamiento para subir ELO real</div>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#contacto">Reservar clase gratuita <span>→</span></a>
+            <a class="btn btn-secondary" href="#ruta-aprendizaje">Ver ruta completa <span>♟</span></a>
+          </div>
+
+          <div class="hero-proof">
+            <div class="avatars" aria-hidden="true">
+              <div class="avatar">A</div>
+              <div class="avatar">M</div>
+              <div class="avatar">S</div>
+              <div class="avatar">+</div>
+            </div>
+            <div><span class="rating">★★★★★</span><br>Formación cercana y personalizada</div>
+          </div>
+        </div>
+
+        <div class="chess-visual" aria-label="Tablero de ajedrez decorativo">
+          <div class="orb"></div>
+          <div class="board-wrap">
+            <div class="board" id="board"></div>
+            <div class="piece king">♛</div>
+            <div class="piece queen">♜</div>
+            <div class="piece knight">♞</div>
+          </div>
+          <div class="floating-card card-1"><strong>+100</strong><span>retos por nivel</span></div>
+          <div class="floating-card card-2"><strong>Ruta completa</strong><span>de principiante a competencia</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="trust">
+      <div class="container trust-grid">
+        <div class="stat"><strong data-count="9">0</strong><span>Niveles progresivos</span></div>
+        <div class="stat"><strong data-count="124">0</strong><span>Temas estructurados</span></div>
+        <div class="stat"><strong data-count="3">0</strong><span>Temas gratuitos</span></div>
+        <div class="stat"><strong data-count="1">0</strong><span>Ruta integral</span></div>
+      </div>
+    </section>
+
+
+    <section class="section learning-route" id="ruta-aprendizaje">
+      <div class="container">
+        <div class="section-label">Programa integral</div>
+        <h2 class="section-title reveal">Una ruta clara de <span class="gradient-text">9 niveles y 124 temas.</span>
+        </h2>
+        <p class="section-copy reveal">
+          El alumno no toma un curso aislado: avanza desde las reglas fundamentales hasta el entrenamiento competitivo,
+          la metodología de estudio y la ciencia del rendimiento.
+        </p>
+
+        <div class="route-summary reveal">
+          <div><strong>Evaluación inicial → nivel adecuado → progreso medible</strong><span>Los primeros 3 temas pueden
+              ofrecerse gratis y el resto desbloquearse con la matrícula.</span></div>
+          <a class="btn btn-primary btn-sm" href="ruta-chess.html">Explorar los 124 temas →</a>
+        </div>
+
+        <div class="route-grid">
+          <a class="level-card reveal" data-piece="♙" href="ruta-chess.html?nivel=1">
+            <div class="level-top"><span class="level-number">01</span><span class="level-range">Temas 1–19</span></div>
+            <div class="level-subtitle">Fundamentos</div>
+            <h3>Peón Inicial</h3>
+            <p>Tablero, coordenadas, piezas, movimientos especiales, capturas, jaque y jaque mate.</p>
+            <div class="level-meta"><span>19 temas · Principiante</span><span class="level-arrow">→</span></div>
+          </a>
+          <a class="level-card reveal" data-piece="♘" href="ruta-chess.html?nivel=2">
+            <div class="level-top"><span class="level-number">02</span><span class="level-range">Temas 20–31</span>
+            </div>
+            <div class="level-subtitle">Táctica básica</div>
+            <h3>Caballo Táctico</h3>
+            <p>Ataques dobles, clavadas, descubiertas, aperturas, principios de desarrollo y patrones de mate.</p>
+            <div class="level-meta"><span>12 temas · Básico</span><span class="level-arrow">→</span></div>
+          </a>
+          <a class="level-card reveal" data-piece="♗" href="ruta-chess.html?nivel=3">
+            <div class="level-top"><span class="level-number">03</span><span class="level-range">Temas 32–43</span>
+            </div>
+            <div class="level-subtitle">Estrategia y finales</div>
+            <h3>Alfil Estratégico</h3>
+            <p>Seguridad del rey, casillas fuertes, tensión, finales básicos y proceso mental de una partida.</p>
+            <div class="level-meta"><span>12 temas · Intermedio I</span><span class="level-arrow">→</span></div>
+          </a>
+          <a class="level-card reveal" data-piece="♖" href="ruta-chess.html?nivel=4">
+            <div class="level-top"><span class="level-number">04</span><span class="level-range">Temas 44–53</span>
+            </div>
+            <div class="level-subtitle">Cálculo</div>
+            <h3>Torre Calculadora</h3>
+            <p>Variantes, candidatos, visualización, estructuras de peones, profilaxis y dominio de casillas.</p>
+            <div class="level-meta"><span>10 temas · Intermedio II</span><span class="level-arrow">→</span></div>
+          </a>
+          <a class="level-card reveal" data-piece="♔" href="ruta-chess.html?nivel=5">
+            <div class="level-top"><span class="level-number">05</span><span class="level-range">Temas 54–65</span>
+            </div>
+            <div class="level-subtitle">Competencia</div>
+            <h3>Rey Competidor</h3>
+            <p>Ataque avanzado, conversión de ventajas, finales, repertorio y preparación de partidas.</p>
+            <div class="level-meta"><span>12 temas · Avanzado</span><span class="level-arrow">→</span></div>
+          </a>
+          <a class="level-card reveal" data-piece="♕" href="ruta-chess.html?nivel=6">
+            <div class="level-top"><span class="level-number">06</span><span class="level-range">Temas 66–90</span>
+            </div>
+            <div class="level-subtitle">Alto rendimiento</div>
+            <h3>Dama de Élite</h3>
+            <p>Cálculo profesional, estrategia profunda, finales élite, psicología y preparación contra rivales.</p>
+            <div class="level-meta"><span>25 temas · Competitivo</span><span class="level-arrow">→</span></div>
+          </a>
+          <a class="level-card reveal" data-piece="♜" href="ruta-chess.html?nivel=7">
+            <div class="level-top"><span class="level-number">07</span><span class="level-range">Temas 91–103</span>
+            </div>
+            <div class="level-subtitle">Aprendizaje por modelos</div>
+            <h3>Maestro de Partidas</h3>
+            <p>Partidas clásicas y modernas, análisis profesional, cálculo diario y simulaciones de torneo.</p>
+            <div class="level-meta"><span>13 temas · Práctico</span><span class="level-arrow">→</span></div>
+          </a>
+          <a class="level-card reveal" data-piece="♚" href="ruta-chess.html?nivel=8">
+            <div class="level-top"><span class="level-number">08</span><span class="level-range">Temas 104–116</span>
+            </div>
+            <div class="level-subtitle">Carrera y estudio</div>
+            <h3>Ruta del Maestro</h3>
+            <p>Plan anual, rating, elección de torneos, método semanal y ciclo de mejora continua.</p>
+            <div class="level-meta"><span>13 temas · Especialización</span><span class="level-arrow">→</span></div>
+          </a>
+          <a class="level-card reveal" data-piece="♛" href="ruta-chess.html?nivel=9">
+            <div class="level-top"><span class="level-number">09</span><span class="level-range">Temas 117–124</span>
+            </div>
+            <div class="level-subtitle">Ciencia del rendimiento</div>
+            <h3>Élite Integral</h3>
+            <p>Neurociencia, preparación física, sueño, nutrición, concentración y control del estrés.</p>
+            <div class="level-meta"><span>8 temas · Rendimiento</span><span class="level-arrow">→</span></div>
+          </a>
+        </div>
+
+        <div class="route-cycle reveal" aria-label="Ciclo de avance del alumno">
+          <div class="cycle-step"><b>1. Evaluar</b>Nivel inicial</div>
+          <div class="cycle-step"><b>2. Aprender</b>Clase guiada</div>
+          <div class="cycle-step"><b>3. Practicar</b>Retos y partidas</div>
+          <div class="cycle-step"><b>4. Analizar</b>Errores y logros</div>
+          <div class="cycle-step"><b>5. Certificar</b>Meta del nivel</div>
+          <div class="cycle-step"><b>6. Ascender</b>Siguiente etapa</div>
         </div>
       </div>
     </section>
-  </header>
 
-  <a class="whatsapp-float"
-    href="https://wa.me/5491126202806?text=Hola,%20quiero%20información%20sobre%20la%20Academia%20de%20Ajedrez."
-    target="_blank">
-    <span class="whatsapp-text">Contáctanos</span>
+    <section class="section" id="metodologia">
+      <div class="container">
+        <div class="section-label">Metodología propia</div>
+        <h2 class="section-title reveal">No enseñamos jugadas aisladas. <span class="gradient-text">Construimos
+            criterio.</span></h2>
+        <p class="section-copy reveal">
+          Cada alumno ingresa con una evaluación inicial, recibe una ruta adecuada a su nivel
+          y avanza mediante clases, práctica guiada, torneos y retroalimentación.
+        </p>
 
-    <svg class="whatsapp-icon" viewBox="0 0 32 32" aria-hidden="true">
-      <path fill="currentColor"
-        d="M16.01 3.2A12.76 12.76 0 0 0 5.1 22.55L3.2 29l6.6-1.73A12.76 12.76 0 1 0 16.01 3.2Zm0 23.2c-2.05 0-4.05-.6-5.75-1.73l-.41-.27-3.92 1.03 1.05-3.82-.27-.43a10.4 10.4 0 1 1 9.3 5.22Zm5.7-7.78c-.31-.16-1.84-.91-2.13-1.01-.29-.11-.5-.16-.71.16-.21.31-.82 1.01-1 1.22-.18.21-.37.24-.68.08-.31-.16-1.32-.49-2.52-1.56-.93-.83-1.56-1.86-1.74-2.17-.18-.31-.02-.48.14-.64.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.71-1.71-.97-2.34-.26-.62-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.08-1.1 2.63s1.13 3.05 1.29 3.26c.16.21 2.23 3.4 5.4 4.77.75.32 1.34.52 1.8.66.76.24 1.45.21 2 .13.61-.09 1.84-.75 2.1-1.48.26-.73.26-1.35.18-1.48-.08-.13-.29-.21-.6-.37Z" />
-    </svg>
-  </a>
+        <div class="cards-3">
+          <article class="feature-card reveal">
+            <div class="icon-box">🧠</div>
+            <h3>Pensamiento estratégico</h3>
+            <p>Aprende a analizar posiciones, anticipar respuestas y tomar mejores decisiones.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="icon-box">🎯</div>
+            <h3>Aprendizaje por objetivos</h3>
+            <p>Cada nivel tiene metas claras, evidencias de progreso y retos adecuados.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="icon-box">🏆</div>
+            <h3>Competencia saludable</h3>
+            <p>Torneos, ligas y desafíos que fortalecen confianza, disciplina y constancia.</p>
+          </article>
+        </div>
 
-  <script>
-    function shareApp() {
-      const shareData = {
-        title: 'Academia de Ajedrez Mauro',
-        text: '♟️ Entrena ajedrez online y sube tu nivel',
-        url: window.location.href
-      };
+        <div class="path">
+          <div class="path-step reveal">
+            <div class="path-node">♙</div>
+            <h3>Descubrir</h3><span>Reglas y visión</span>
+          </div>
+          <div class="path-step reveal">
+            <div class="path-node">♘</div>
+            <h3>Aprender</h3><span>Táctica básica</span>
+          </div>
+          <div class="path-step reveal">
+            <div class="path-node">♗</div>
+            <h3>Dominar</h3><span>Estrategia y finales</span>
+          </div>
+          <div class="path-step reveal">
+            <div class="path-node">♖</div>
+            <h3>Competir</h3><span>Preparación real</span>
+          </div>
+          <div class="path-step reveal">
+            <div class="path-node">♕</div>
+            <h3>Avanzar</h3><span>Rendimiento superior</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      if (navigator.share) {
-        navigator.share(shareData);
-      } else {
-        navigator.clipboard.writeText(shareData.url)
-          .then(() => alert("📋 Enlace copiado. ¡Compártelo!"));
+    <section class="section" id="programas">
+      <div class="container">
+        <div class="section-label">Programas continuos</div>
+        <h2 class="section-title reveal">Siempre existe un <span class="gradient-text">siguiente nivel.</span></h2>
+        <p class="section-copy reveal">
+          La academia está diseñada para acompañar al alumno en el tiempo, sin limitarlo a un solo curso.
+        </p>
+
+        <div class="program-grid">
+          <article class="program-card reveal">
+            <div class="badge">🐣</div>
+            <div>
+              <h3>Pequeños estrategas</h3>
+              <p>Introducción lúdica para niños que empiezan a reconocer piezas, movimientos y patrones.</p>
+              <div class="tags"><span class="tag">Nivel inicial</span><span class="tag">Juego guiado</span><span
+                  class="tag">Atención</span></div>
+            </div>
+          </article>
+          <article class="program-card reveal">
+            <div class="badge">♟</div>
+            <div>
+              <h3>Fundamentos sólidos</h3>
+              <p>Reglas, mates básicos, principios de apertura, táctica y pensamiento ordenado.</p>
+              <div class="tags"><span class="tag">Principiantes</span><span class="tag">1–2 clases</span><span
+                  class="tag">Progreso</span></div>
+            </div>
+          </article>
+          <article class="program-card reveal">
+            <div class="badge">⚔️</div>
+            <div>
+              <h3>Táctica y estrategia</h3>
+              <p>Cálculo, combinaciones, planes de medio juego y análisis de partidas.</p>
+              <div class="tags"><span class="tag">Intermedio</span><span class="tag">Retos</span><span
+                  class="tag">Análisis</span></div>
+            </div>
+          </article>
+          <article class="program-card reveal">
+            <div class="badge">🏆</div>
+            <div>
+              <h3>Equipo de competencia</h3>
+              <p>Preparación para torneos, repertorio, gestión del tiempo y control emocional.</p>
+              <div class="tags"><span class="tag">Avanzado</span><span class="tag">Torneos</span><span
+                  class="tag">Rendimiento</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="plataforma">
+      <div class="container platform-grid">
+        <div class="dashboard reveal">
+          <div class="dash-top">
+            <strong>Panel del alumno</strong>
+            <div class="dash-window"><i></i><i></i><i></i></div>
+          </div>
+          <div class="dash-grid">
+            <div class="dash-card">
+              <span style="color:var(--muted);font-size:.82rem">Progreso general</span>
+              <div class="progress-ring"></div>
+              <strong>Intermedio · Nivel 3</strong>
+            </div>
+            <div class="dash-card">
+              <span style="color:var(--muted);font-size:.82rem">Esta semana</span>
+              <div class="mini-list">
+                <div class="mini-item"><span>Problemas</span><strong>18/20</strong></div>
+                <div class="mini-item"><span>Clases</span><strong>2/2</strong></div>
+                <div class="mini-item"><span>Partidas</span><strong>6</strong></div>
+              </div>
+            </div>
+            <div class="dash-card" style="grid-column:1/-1">
+              <span style="color:var(--muted);font-size:.82rem">Ruta de aprendizaje</span>
+              <strong style="display:block;margin-top:6px">Tácticas de desviación</strong>
+              <div class="bar"><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label">Plataforma digital</div>
+          <h2 class="section-title reveal">El aprendizaje continúa <span class="gradient-text">fuera de clase.</span>
+          </h2>
+          <p class="section-copy reveal">
+            Los alumnos pueden practicar, revisar contenidos y visualizar su avance desde celular, tablet o computadora.
+          </p>
+
+          <div class="platform-list">
+            <div class="platform-item reveal">
+              <div class="check">✓</div>
+              <div><strong>Problema del día</strong><span>Retos breves para desarrollar cálculo y constancia.</span>
+              </div>
+            </div>
+            <div class="platform-item reveal">
+              <div class="check">✓</div>
+              <div><strong>Seguimiento de progreso</strong><span>Historial de contenidos, resultados y logros.</span>
+              </div>
+            </div>
+            <div class="platform-item reveal">
+              <div class="check">✓</div>
+              <div><strong>Material de repaso</strong><span>Lecciones, partidas comentadas y ejercicios por
+                  nivel.</span></div>
+            </div>
+            <div class="platform-item reveal">
+              <div class="check">✓</div>
+              <div><strong>Ranking y certificados</strong><span>Motivación visible y reconocimiento por cada
+                  etapa.</span></div>
+            </div>
+          </div>
+
+          <a href="#contacto" class="btn btn-secondary">Solicitar demostración</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="planes">
+      <div class="container">
+        <div class="section-label">Planes flexibles</div>
+        <h2 class="section-title reveal">Elige el ritmo que mejor se adapte a ti.</h2>
+        <p class="section-copy reveal">
+          Puedes usar estos nombres y contenidos como base. Los precios se pueden configurar después.
+        </p>
+
+        <div class="plans">
+          <article class="plan reveal">
+            <h3>Esencial</h3>
+            <div class="plan-sub">Para empezar con constancia.</div>
+            <div class="price">1 <small>clase semanal</small></div>
+            <ul class="plan-list">
+              <li>Clase grupal por nivel</li>
+              <li>Acceso a ejercicios</li>
+              <li>Seguimiento mensual</li>
+              <li>Torneo interno</li>
+            </ul>
+            <a class="btn btn-secondary" href="#contacto">Consultar</a>
+          </article>
+
+          <article class="plan popular reveal">
+            <div class="popular-ribbon">Más elegido</div>
+            <h3>Progreso</h3>
+            <div class="plan-sub">Para avanzar más rápido.</div>
+            <div class="price">2 <small>clases semanales</small></div>
+            <ul class="plan-list">
+              <li>Dos clases grupales</li>
+              <li>Problemas semanales</li>
+              <li>Análisis de partidas</li>
+              <li>Ranking y certificados</li>
+              <li>Torneo mensual</li>
+            </ul>
+            <a class="btn btn-primary" href="#contacto">Reservar evaluación</a>
+          </article>
+
+          <article class="plan reveal">
+            <h3>Competencia</h3>
+            <div class="plan-sub">Para torneos y rendimiento.</div>
+            <div class="price">3 <small>sesiones semanales</small></div>
+            <ul class="plan-list">
+              <li>Entrenamiento intensivo</li>
+              <li>Plan individual</li>
+              <li>Repertorio de aperturas</li>
+              <li>Preparación de torneos</li>
+              <li>Revisión personalizada</li>
+            </ul>
+            <a class="btn btn-secondary" href="#contacto">Postular al equipo</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Experiencia del alumno</div>
+        <h2 class="section-title reveal">Una comunidad que aprende, compite y crece.</h2>
+
+        <div class="testimonial-grid">
+          <article class="testimonial reveal">
+            <div class="rating">★★★★★</div>
+            <p class="quote">“Antes jugaba sin criterio ajedrecistico, solo movía, evaluaba y capturaba piezas. Mi ELO
+              estaba entre 1630 y 1670 en
+              Lichess.
+              Tras 7 meses de entrenamiento estructurado alcancé los 1900 de ELO.
+              Mauro analiza tu juego, detecta tus errores y te guía con una ruta de aprendizaje personalizada.
+              Lo recomiendo sin dudar.”</p>
+            <div class="student">
+              <div class="student-avatar">LP</div>
+              <div><strong>Victor Gamarra</strong><span>Alumno adulto</span></div>
+            </div>
+          </article>
+          <article class="testimonial reveal">
+            <div class="rating">★★★★★</div>
+            <p class="quote">“Entrenar con Mauro fue clave para mi progreso. En solo 4 meses logré subir 300 puntos de
+              Elo,
+              pasando de 1800 a 2100 en Lichess, con un trabajo totalmente enfocado y ordenado.
+              Su método es claro, exigente y muy efectivo: se centra en planes, estructuras, medio juego y toma de
+              decisiones reales de torneo. Cada clase tiene sentido y impacto directo en el rendimiento.
+              Sin dudas, el mejor entrenador que tuve. Lo recomiendo totalmente a cualquiera que quiera mejorar de
+              verdad y en poco tiempo.”</p>
+            <div class="student">
+              <div class="student-avatar">CM</div>
+              <div><strong>Felipe</strong><span>Alumno adulto</span></div>
+            </div>
+          </article>
+          <article class="testimonial reveal">
+            <div class="rating">★★★★★</div>
+            <p class="quote">“Los torneos internos motivan muchísimo. Cada mes hay una nueva meta y una razón para
+              seguir.”</p>
+            <div class="student">
+              <div class="student-avatar">AR</div>
+              <div><strong>Andrea R.</strong><span>Equipo de competencia</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Preguntas frecuentes</div>
+        <h2 class="section-title reveal">Todo lo que necesitas saber.</h2>
+
+        <div class="faq">
+          <div class="faq-item reveal">
+            <button class="faq-question"><span>¿Necesito saber jugar ajedrez?</span><span>+</span></button>
+            <div class="faq-answer">
+              <p>No. Contamos con grupos para alumnos que empiezan desde cero y una evaluación inicial para ubicarte
+                correctamente.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button class="faq-question"><span>¿Los grupos se forman por edad o nivel?</span><span>+</span></button>
+            <div class="faq-answer">
+              <p>Principalmente por nivel y objetivos. En alumnos pequeños también cuidamos la edad para mantener una
+                dinámica adecuada.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button class="faq-question"><span>¿Puedo combinar clases grupales y
+                particulares?</span><span>+</span></button>
+            <div class="faq-answer">
+              <p>Sí. El modelo híbrido permite usar clases grupales para el progreso continuo y sesiones particulares
+                para necesidades específicas.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button class="faq-question"><span>¿Qué sucede si falto a una clase?</span><span>+</span></button>
+            <div class="faq-answer">
+              <p>El alumno mantiene acceso al material de repaso y puede coordinar alternativas según las condiciones
+                del plan contratado.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contacto">
+      <div class="container">
+        <div class="contact-wrap">
+          <div class="contact-panel">
+            <div class="section-label">Empieza hoy</div>
+            <h2 class="section-title">Reserva una <span class="gradient-text">clase de evaluación.</span></h2>
+            <p class="section-copy">
+              Cuéntanos la edad, experiencia y objetivos del alumno. Te recomendaremos el grupo y plan más adecuado.
+            </p>
+
+            <div class="contact-points">
+              <div class="contact-point"><span>✓</span>
+                <div>Evaluación inicial y recomendación de nivel.</div>
+              </div>
+              <div class="contact-point"><span>✓</span>
+                <div>Horarios grupales disponibles.</div>
+              </div>
+              <div class="contact-point"><span>✓</span>
+                <div>Orientación para padres y alumnos.</div>
+              </div>
+            </div>
+          </div>
+
+          <form class="form-card" id="contactForm">
+            <div class="form-grid">
+              <div class="field">
+                <label for="name">Nombre</label>
+                <input id="name" name="name" required placeholder="Tu nombre" />
+              </div>
+              <div class="field">
+                <label for="age">Edad del alumno</label>
+                <input id="age" name="age" type="number" min="4" max="99" required placeholder="Ej. 10" />
+              </div>
+              <div class="field">
+                <label for="level">Nivel actual</label>
+                <select id="level" name="level">
+                  <option>Empieza desde cero</option>
+                  <option>Principiante</option>
+                  <option>Intermedio</option>
+                  <option>Avanzado</option>
+                  <option>No estoy seguro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="frequency">Frecuencia preferida</label>
+                <select id="frequency" name="frequency">
+                  <option>1 clase por semana</option>
+                  <option>2 clases por semana</option>
+                  <option>3 clases por semana</option>
+                  <option>Necesito recomendación</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="contact">WhatsApp o correo</label>
+                <input id="contact" name="contact" required placeholder="Número o correo" />
+              </div>
+              <div class="field full">
+                <label for="message">Objetivo principal</label>
+                <textarea id="message" name="message"
+                  placeholder="Ej. aprender desde cero, mejorar para competir, desarrollar concentración..."></textarea>
+              </div>
+              <div class="field full">
+                <button class="btn btn-primary" type="submit">Solicitar evaluación gratuita →</button>
+                <div class="success" id="successMessage">¡Solicitud registrada! Configura el número de WhatsApp en el
+                  código para recibir los datos automáticamente.</div>
+                <div class="form-note">Al enviar, aceptas ser contactado para coordinar la evaluación.</div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-strip">
+      <div class="container cta-row">
+        <div>
+          <h3>Tu siguiente gran jugada empieza aquí.</h3>
+          <p>Evaluación, grupo adecuado y ruta de aprendizaje personalizada.</p>
+        </div>
+        <a class="btn btn-primary" href="#contacto">Quiero una clase gratuita</a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="#inicio">
+              <span class="brand-mark">♞</span>
+              <span>Academia Mauro<small>Ajedrez & estrategia</small></span>
+            </a>
+            <p>Formación continua de ajedrez para niños, jóvenes y adultos, con metodología, comunidad y objetivos
+              reales.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Academia</h4>
+            <a href="#ruta-aprendizaje">Ruta</a>
+            <a href="#metodologia">Metodología</a>
+            <a href="#programas">Programas</a>
+            <a href="#planes">Planes</a>
+          </div>
+          <div class="footer-col">
+            <h4>Experiencia</h4>
+            <a href="#plataforma">Plataforma</a>
+            <a href="#contacto">Evaluación</a>
+            <a href="#contacto">Torneos</a>
+          </div>
+          <div class="footer-col">
+            <h4>Contacto</h4>
+            <a
+              href="https://wa.me/5491126202806?text=Hola,%20quiero%20información%20sobre%20la%20Academia%20de%20Ajedrez.">WhatsApp</a>
+            <a href="#contacto">Correo</a>
+            <a href="#contacto">Inscripciones</a>
+          </div>
+        </div>
+
+        <div class="copyright">
+          <span>© <span id="year"></span> Academia de Ajedrez Mauro.</span>
+          <span>Diseñado para inspirar mejores decisiones.</span>
+        </div>
+      </div>
+    </footer>
+
+    <a class="whatsapp" id="whatsappBtn" href="#contacto" aria-label="Contactar por WhatsApp">✆</a>
+
+    <script>
+      // ===== CONFIGURACIÓN RÁPIDA =====
+      // Reemplaza con tu número, incluyendo código de país, sin + ni espacios.
+      const WHATSAPP_NUMBER = "51999999999";
+
+      // Crear tablero.
+      const board = document.getElementById("board");
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const square = document.createElement("div");
+          square.className = "sq " + ((row + col) % 2 === 0 ? "light" : "dark");
+          board.appendChild(square);
+        }
       }
-    }
-  </script>
 
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        // navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+      // Navegación.
+      const nav = document.getElementById("nav");
+      const menuBtn = document.getElementById("menuBtn");
+      const navLinks = document.getElementById("navLinks");
+
+      addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 20));
+      menuBtn.addEventListener("click", () => navLinks.classList.toggle("open"));
+      navLinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => navLinks.classList.remove("open")));
+
+      // Aparición al hacer scroll.
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: .14 });
+      document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+      // Contadores.
+      const counters = document.querySelectorAll("[data-count]");
+      const countObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          const target = Number(el.dataset.count);
+          const duration = 1000;
+          const start = performance.now();
+
+          function animate(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            el.textContent = Math.floor(progress * target) + (target >= 100 ? "+" : "");
+            if (progress < 1) requestAnimationFrame(animate);
+          }
+          requestAnimationFrame(animate);
+          countObserver.unobserve(el);
+        });
+      }, { threshold: .5 });
+      counters.forEach(c => countObserver.observe(c));
+
+      // FAQ.
+      document.querySelectorAll(".faq-question").forEach(btn => {
+        btn.addEventListener("click", () => btn.parentElement.classList.toggle("open"));
       });
-    }
-  </script>
 
-</body>
+      // Formulario a WhatsApp.
+      const form = document.getElementById("contactForm");
+      const successMessage = document.getElementById("successMessage");
+
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        const data = new FormData(form);
+        const text =
+          `Hola, deseo solicitar una evaluación gratuita de ajedrez.
+
+Nombre: ${data.get("name")}
+Edad: ${data.get("age")}
+Nivel: ${data.get("level")}
+Frecuencia: ${data.get("frequency")}
+Contacto: ${data.get("contact")}
+Objetivo: ${data.get("message") || "No especificado"}`;
+
+        successMessage.style.display = "block";
+        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+        setTimeout(() => window.open(url, "_blank"), 350);
+      });
+
+      document.getElementById("whatsappBtn").href =
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hola, deseo información sobre la Academia de Ajedrez Mauro.")}`;
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
 
 </html>
