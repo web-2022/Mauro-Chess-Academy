@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pago aprobado - Marie Kids</title>
+  <title>Pago aprobado - Academia de Ajedrez</title>
 
   <style>
     body {
@@ -62,45 +62,70 @@
       font-weight: 800;
       color: #374151;
     }
+
+    .small {
+      font-size: .9rem;
+      color: #6b7280;
+      font-weight: 700;
+    }
   </style>
 </head>
 
 <body>
   <div class="box">
-    <h1>🎉 Pago aprobado</h1>
-    <p class="msg" id="msg">Confirmando tu pago...</p>
+    <h1>🎉 Operación aprobada</h1>
+    <p class="msg" id="msg">Confirmando tu operación...</p>
 
     <div class="code" id="codeBox" style="display:none;"></div>
 
     <button id="copyBtn" style="display:none;" onclick="copiarCodigo()">Copiar código</button>
     <br>
-    <a href="index.html">Volver a Marie Kids</a>
+    <a href="index.html">Volver a la Academia</a>
+
+    <p class="small">
+      Guarda tu código Premium. Lo necesitarás para activar el acceso en tu dispositivo.
+    </p>
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzeDbOOONWxW-K6TfVzOzImxX4vobCTwMuOB8Lehd4DS_NfwrInxcN8XpynzjuIPRaXaQ/exec";
+
     let generatedCode = "";
 
-    async function confirmarPago() {
+    async function confirmarOperacion() {
       const params = new URLSearchParams(window.location.search);
+
       const paymentId = params.get("payment_id");
+      const preapprovalId =
+        params.get("preapproval_id") ||
+        params.get("preapproval_id") ||
+        params.get("id");
 
       const msg = document.getElementById("msg");
       const codeBox = document.getElementById("codeBox");
       const copyBtn = document.getElementById("copyBtn");
 
-      if (!paymentId) {
-        msg.textContent = "No se encontró el ID del pago. Contáctanos para ayudarte.";
+      let bodyData = null;
+
+      if (paymentId) {
+        bodyData = {
+          action: "mp_confirm_payment",
+          payment_id: paymentId
+        };
+      } else if (preapprovalId) {
+        bodyData = {
+          action: "mp_confirm_subscription",
+          subscription_id: preapprovalId
+        };
+      } else {
+        msg.textContent = "No se encontró el ID del pago o suscripción. Contáctanos para ayudarte.";
         return;
       }
 
       try {
         const res = await fetch(API_URL, {
           method: "POST",
-          body: JSON.stringify({
-            action: "mp_confirm_payment",
-            payment_id: paymentId
-          })
+          body: JSON.stringify(bodyData)
         });
 
         const data = await res.json();
@@ -113,7 +138,7 @@
           codeBox.style.display = "block";
           copyBtn.style.display = "inline-block";
         } else {
-          msg.textContent = "No se pudo confirmar el pago: " + (data.msg || "Intenta nuevamente.");
+          msg.textContent = "No se pudo confirmar: " + (data.msg || "Intenta nuevamente.");
           console.log(data);
         }
 
@@ -128,7 +153,7 @@
       alert("Código copiado: " + generatedCode);
     }
 
-    confirmarPago();
+    confirmarOperacion();
   </script>
 </body>
 </html>
