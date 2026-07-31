@@ -821,12 +821,61 @@
 
       <section class="premium-activate" id="premiumBox" aria-label="Activar acceso Premium">
         <h2 id="premiumTitle">🔓 Activar acceso Premium</h2>
-        <p id="premiumText">Los 3 primeros temas son gratis. Ingresa tu código para desbloquear toda la ruta.</p>
+        <p id="premiumText">Los 3 primeros temas son gratis. Activa tu código o elige un plan para desbloquear toda la ruta.</p>
 
         <div class="premium-form" id="premiumForm">
           <input id="codeInput" placeholder="Ej: MK-ABCD-1234" autocomplete="off">
           <button type="button" onclick="activarCodigo()">Activar código</button>
-          <button type="button" class="premium-buy" onclick="comprarPremium()">💳 Comprar Premium S/ 25</button>
+
+          <div style="width:100%;margin-top:10px;font-weight:1000;color:#9a3412;">
+            Datos del comprador
+          </div>
+
+          <input
+            id="buyerEmail"
+            type="email"
+            placeholder="Correo electrónico del padre"
+            autocomplete="email"
+            inputmode="email"
+            style="text-transform:none;"
+          >
+
+          <input
+            id="buyerPhone"
+            type="tel"
+            placeholder="Celular del padre"
+            autocomplete="tel"
+            inputmode="tel"
+            style="text-transform:none;"
+          >
+
+          <p style="width:100%;margin:4px 0 0;color:#7c2d12;font-size:.86rem;font-weight:750;">
+            Usaremos estos datos solo para identificar tu compra y ayudarte a recuperar tu código.
+          </p>
+
+          <div style="width:100%;margin-top:10px;font-weight:1000;color:#9a3412;">
+            Pago único: Yape o tarjeta
+          </div>
+
+          <button type="button" class="premium-buy" onclick="comprarPagoUnico('monthly')">
+            📅 Pago único mensual S/ 25
+          </button>
+
+          <button type="button" class="premium-buy" onclick="comprarPagoUnico('yearly')">
+            🌟 Pago único anual S/ 199
+          </button>
+
+          <div style="width:100%;margin-top:12px;font-weight:1000;color:#9a3412;">
+            Suscripción automática: tarjeta
+          </div>
+
+          <button type="button" class="premium-buy" onclick="crearSuscripcion('monthly')">
+            🔁 Suscripción mensual S/ 25
+          </button>
+
+          <button type="button" class="premium-buy" onclick="crearSuscripcion('yearly')">
+            🔁 Suscripción anual S/ 199
+          </button>
         </div>
 
         <p id="msg"></p>
@@ -926,7 +975,7 @@
         { id: 50, emoji: "⚙️", title: "Planes típicos", desc: "Planes estratégicos", href: "planesestrategicos.html", category: "avanzado" },
         { id: 51, emoji: "🛑", title: "Profilaxis", desc: "Evitar ideas del rival", href: "profilaxis.html", category: "avanzado" },
         { id: 52, emoji: "🛑", title: "Maniobras", desc: "Maniobras", href: "maniobras.html", category: "avanzado" },
-        { id: 53, emoji: "🛑", title: "Dominio de casillas", desc: "Dominio de casillas", href: "dominiodecasillas.html", category:  "avanzado" },
+        { id: 53, emoji: "🛑", title: "Dominio de casillas", desc: "Dominio de casillas", href: "dominiodecasillas.html", category: "avanzado" },
 
         // ===== MAESTRO =====
         { id: 54, emoji: "🏹", title: "Ataque al rey avanzado", desc: "Métodos de ataque", href: "ataquealreyavanzado.html", category: "maestro" },
@@ -980,7 +1029,7 @@
         { id: 91, emoji: "♟️", title: "Partidas clásicas inmortales", desc: "Aprender de partidas históricas", href: "partidasclasicas.html", category: "elite" },
         { id: 92, emoji: "📖", title: "Partidas modelo por estructura", desc: "Ejemplos típicos de planes", href: "partidasmodelo.html", category: "elite" },
         { id: 93, emoji: "🔥", title: "Ataques clásicos al rey", desc: "Patrones históricos", href: "ataquesclasicos.html", category: "elite" },
-        { id: 94, emoji: "🧠", title: "Partidas estratégicas modelo", desc: "Dominio posicional", href: "partidasestrategicas.html", category:"elite" },
+        { id: 94, emoji: "🧠", title: "Partidas estratégicas modelo", desc: "Dominio posicional", href: "partidasestrategicas.html", category: "elite" },
         { id: 95, emoji: "🔍", title: "Cómo analizar una partida", desc: "Método profesional", href: "comoanalizar.html", category: "elite" },
         { id: 96, emoji: "⚔️", title: "Partidas modernas de élite", desc: "Ajedrez contemporáneo", href: "partidasmodernas.html", category: "elite" },
         { id: 97, emoji: "🔍", title: "Cómo analizar una partida", desc: "Método profesional", href: "comoanalizar.html", category: "elite" },
@@ -1102,17 +1151,77 @@
           msg.textContent = "Error de conexión. Intenta nuevamente.";
         }
       }
-
-      async function comprarPremium() {
+      function obtenerDatosComprador() {
         const msg = document.getElementById("msg");
+        const emailInput = document.getElementById("buyerEmail");
+        const phoneInput = document.getElementById("buyerPhone");
 
-        msg.textContent = "Creando enlace de pago...";
+        const buyerEmail = (emailInput.value || "").trim().toLowerCase();
+        const buyerPhone = (phoneInput.value || "").trim();
+
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyerEmail);
+        const phoneDigits = buyerPhone.replace(/\D/g, "");
+
+        if (!buyerEmail) {
+          msg.textContent = "Ingresa tu correo electrónico.";
+          emailInput.focus();
+          return null;
+        }
+
+        if (!emailOk) {
+          msg.textContent = "Ingresa un correo electrónico válido.";
+          emailInput.focus();
+          return null;
+        }
+
+        if (!buyerPhone) {
+          msg.textContent = "Ingresa tu número de celular.";
+          phoneInput.focus();
+          return null;
+        }
+
+        if (phoneDigits.length < 7) {
+          msg.textContent = "Ingresa un número de celular válido.";
+          phoneInput.focus();
+          return null;
+        }
+
+        return {
+          buyerEmail,
+          buyerPhone
+        };
+      }
+
+      function bloquearBotonesPremium(bloquear) {
+        document.querySelectorAll(".premium-buy").forEach(btn => {
+          btn.disabled = bloquear;
+          btn.style.opacity = bloquear ? ".65" : "1";
+          btn.style.pointerEvents = bloquear ? "none" : "auto";
+        });
+      }
+
+      async function enviarMercadoPago(action, plan, loadingText, errorText) {
+        const msg = document.getElementById("msg");
+        const buyer = obtenerDatosComprador();
+
+        if (!buyer) return;
+
+        if (API_URL === "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT") {
+          msg.textContent = "⚠️ Falta pegar tu API_URL de Apps Script en el HTML.";
+          return;
+        }
+
+        msg.textContent = loadingText;
+        bloquearBotonesPremium(true);
 
         try {
           const res = await fetch(API_URL, {
             method: "POST",
             body: JSON.stringify({
-              action: "mp_create_preference"
+              action: action,
+              buyerEmail: buyer.buyerEmail,
+              buyerPhone: buyer.buyerPhone,
+              plan: plan
             })
           });
 
@@ -1121,14 +1230,35 @@
           if (data.ok && data.init_point) {
             window.location.href = data.init_point;
           } else {
-            msg.textContent = "❌ No se pudo crear el pago.";
+            msg.textContent = errorText;
             console.log(data);
+            alert(JSON.stringify(data, null, 2));
+            bloquearBotonesPremium(false);
           }
 
         } catch (error) {
           msg.textContent = "Error de conexión con Mercado Pago.";
           console.error(error);
+          bloquearBotonesPremium(false);
         }
+      }
+
+      async function comprarPagoUnico(plan) {
+        return enviarMercadoPago(
+          "mp_create_preference",
+          plan,
+          "Creando enlace de pago único...",
+          "❌ No se pudo crear el pago."
+        );
+      }
+
+      async function crearSuscripcion(plan) {
+        return enviarMercadoPago(
+          "mp_create_subscription",
+          plan,
+          "Creando suscripción automática...",
+          "❌ No se pudo crear la suscripción."
+        );
       }
 
       function mostrarAvisoPremium() {
