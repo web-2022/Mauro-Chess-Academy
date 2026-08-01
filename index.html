@@ -326,6 +326,15 @@
         animation: pulse 1.7s infinite;
       }
 
+      .path-level {
+        margin-top: 12px;
+        color: #38bdf8;
+        font-size: 0.75rem;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
       @keyframes pulse {
         70% {
           box-shadow: 0 0 0 12px rgba(102, 230, 168, 0)
@@ -631,7 +640,7 @@
       .path {
         margin-top: 55px;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         gap: 14px;
         position: relative;
       }
@@ -1072,78 +1081,231 @@
         font-size: .93rem
       }
 
+      /* ===============================
+   
+
       /* PLANS */
+      /* ===============================
+   PLANES DE CLASES
+   =============================== */
+
       .plans {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 22px;
-        margin-top: 50px;
-        align-items: stretch
+        margin-top: 36px;
+        align-items: stretch;
       }
 
       .plan {
-        padding: 32px;
         position: relative;
-        overflow: hidden
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 28px 24px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 24px;
+        background:
+          linear-gradient(145deg,
+            rgba(15, 23, 42, 0.94),
+            rgba(2, 6, 23, 0.96));
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+        overflow: hidden;
+        transition:
+          transform 0.18s ease,
+          border-color 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+
+      .plan:hover {
+        transform: translateY(-6px);
+        border-color: rgba(56, 189, 248, 0.55);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.32);
       }
 
       .plan.popular {
-        border-color: rgba(34, 197, 94, .5);
-        background: linear-gradient(180deg, rgba(247, 201, 72, .11), rgba(255, 255, 255, .055));
-        transform: scale(1.035);
+        border: 2px solid #22c55e;
+        background:
+          radial-gradient(500px 220px at 50% 0%,
+            rgba(34, 197, 94, 0.15),
+            transparent 65%),
+          linear-gradient(145deg,
+            rgba(15, 23, 42, 0.97),
+            rgba(2, 6, 23, 0.98));
       }
 
       .popular-ribbon {
         position: absolute;
-        right: 18px;
-        top: 18px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        color: #020617;
-        font-size: .72rem;
-        font-weight: 900;
+        top: 16px;
+        right: -38px;
+        width: 150px;
+        padding: 7px 10px;
+        background: linear-gradient(90deg, #22c55e, #16a34a);
+        color: white;
+        font-size: 0.72rem;
+        font-weight: 1000;
+        text-align: center;
+        text-transform: uppercase;
+        transform: rotate(38deg);
+      }
+
+      .plan-icon {
+        width: 56px;
+        height: 56px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 18px;
+        border-radius: 18px;
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.22);
+        font-size: 1.7rem;
+      }
+
+      .plan.popular .plan-icon {
+        background: rgba(34, 197, 94, 0.12);
+        border-color: rgba(34, 197, 94, 0.28);
       }
 
       .plan h3 {
-        font-size: 1.5rem
+        margin: 0 0 8px;
+        color: #f8fafc;
+        font-size: 1.45rem;
       }
 
-      .plan .plan-sub {
-        color: var(--muted);
-        font-size: .92rem;
-        margin: 6px 0 20px
+      .plan-sub {
+        min-height: 52px;
+        color: #94a3b8;
+        font-weight: 650;
+        line-height: 1.5;
       }
 
       .price {
-        font-size: 2.75rem;
-        font-weight: 950;
-        letter-spacing: -.04em
+        display: flex;
+        align-items: end;
+        gap: 10px;
+        margin: 24px 0 8px;
+        color: #f8fafc;
+        font-size: clamp(2.8rem, 5vw, 4rem);
+        font-weight: 1000;
+        line-height: 0.9;
       }
 
       .price small {
-        font-size: .9rem;
-        color: var(--muted);
-        font-weight: 600
+        max-width: 115px;
+        padding-bottom: 5px;
+        color: #cbd5e1;
+        font-size: 0.92rem;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .class-mode {
+        display: inline-flex;
+        align-items: center;
+        align-self: flex-start;
+        margin: 12px 0 20px;
+        padding: 8px 11px;
+        border-radius: 999px;
+        background: rgba(56, 189, 248, 0.10);
+        border: 1px solid rgba(56, 189, 248, 0.20);
+        color: #bae6fd;
+        font-size: 0.82rem;
+        font-weight: 900;
       }
 
       .plan-list {
-        list-style: none;
         display: grid;
         gap: 12px;
-        margin: 24px 0 28px;
-        color: #dbe4f7
+        margin: 0 0 26px;
+        padding: 0;
+        list-style: none;
+        color: #cbd5e1;
+        line-height: 1.45;
       }
 
       .plan-list li {
-        display: flex;
-        gap: 10px
+        position: relative;
+        padding-left: 25px;
       }
 
       .plan-list li::before {
         content: "✓";
-        color: var(--green);
-        font-weight: 900
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #22c55e;
+        font-weight: 1000;
+      }
+
+      .plan .btn {
+        width: 100%;
+        margin-top: auto;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .plans-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+        margin-top: 26px;
+        padding: 22px;
+        border: 1px solid rgba(56, 189, 248, 0.20);
+        border-radius: 20px;
+        background: rgba(15, 23, 42, 0.70);
+      }
+
+      .plans-note-icon {
+        flex: 0 0 auto;
+        width: 50px;
+        height: 50px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #22c55e, #38bdf8);
+        color: #020617;
+        font-size: 1.5rem;
+      }
+
+      .plans-note h3 {
+        margin: 0 0 7px;
+        color: #f8fafc;
+      }
+
+      .plans-note p {
+        margin: 0;
+        color: #94a3b8;
+        font-weight: 650;
+        line-height: 1.55;
+      }
+
+      /* TABLETS */
+      @media (max-width: 950px) {
+        .plans {
+          grid-template-columns: 1fr;
+          max-width: 680px;
+          margin-right: auto;
+          margin-left: auto;
+        }
+
+        .plan-sub {
+          min-height: auto;
+        }
+      }
+
+      /* CELULARES */
+      @media (max-width: 600px) {
+        .plan {
+          padding: 24px 18px;
+        }
+
+        .plans-note {
+          flex-direction: column;
+        }
+
+        .price {
+          font-size: 3rem;
+        }
       }
 
       /* TESTIMONIALS */
@@ -1238,6 +1400,14 @@
       }
 
       /* CONTACT */
+
+      .whatsapp-submit {
+        width: 100%;
+        margin-top: 4px;
+        border: none;
+        font-size: 1rem;
+      }
+
       .contact-wrap {
         display: grid;
         grid-template-columns: .9fr 1.1fr;
@@ -1603,8 +1773,7 @@
         </div>
 
         <div class="nav-cta">
-          <a class="btn btn-primary btn-sm"
-            href="https://wa.me/5491126202806?text=Hola,%20quiero%20información%20sobre%20la%20Academia%20de%20Ajedrez.">Clase
+          <a class="btn btn-primary btn-sm" href="#contacto">Clase
             gratuita</a>
           <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">☰</button>
         </div>
@@ -1618,7 +1787,7 @@
           <h1>Piensa mejor.<br><span class="gradient-text">Juega con propósito.</span></h1>
           <p>
             Academia online con entrenamiento progresivo, clases grupales, partidas comentadas, táctica real y
-            estrategia moderna. Avanza mediante una ruta de 9 niveles y 124 temas.
+            estrategia moderna. Avanza mediante una ruta de 6 niveles y 124 temas.
           </p>
 
           <div class="hero-actions">
@@ -1654,9 +1823,9 @@
 
     <section class="trust">
       <div class="container trust-grid">
-        <div class="stat"><strong data-count="9">0</strong><span>Niveles progresivos</span></div>
+        <div class="stat"><strong data-count="6">0</strong><span>Niveles progresivos</span></div>
         <div class="stat"><strong data-count="124">0</strong><span>Temas estructurados</span></div>
-        <div class="stat"><strong data-count="3">0</strong><span>Temas gratuitos</span></div>
+        <div class="stat"><strong data-count="3">0</strong><span>Planes de Clases</span></div>
         <div class="stat"><strong data-count="1">0</strong><span>Ruta integral</span></div>
       </div>
     </section>
@@ -1665,7 +1834,7 @@
     <section class="section learning-route" id="ruta-aprendizaje">
       <div class="container">
         <div class="section-label">Programa integral</div>
-        <h2 class="section-title reveal">Una ruta clara de <span class="gradient-text">9 niveles y 124 temas.</span>
+        <h2 class="section-title reveal">Una ruta clara de <span class="gradient-text">6 niveles y 124 temas.</span>
         </h2>
         <p class="section-copy reveal">
           El alumno no toma un curso aislado: avanza desde las reglas fundamentales hasta el entrenamiento competitivo,
@@ -1673,83 +1842,162 @@
         </p>
 
         <div class="route-summary reveal">
-          <div><strong>Evaluación inicial → nivel adecuado → progreso medible</strong><span>Los primeros 3 temas pueden
-              ofrecerse gratis y el resto desbloquearse con la matrícula.</span></div>
+          <div><strong>Evaluación inicial → nivel adecuado → progreso medible</strong><span>La primera clase de
+              evaluación es gratis</span></div>
           <a class="btn btn-primary btn-sm" href="ruta-chess.html">Explorar los 124 temas →</a>
         </div>
 
         <div class="route-grid">
+
+          <!-- NIVEL 1: INICIAL -->
           <a class="level-card reveal" data-piece="♙" href="ruta-chess.html?nivel=1">
-            <div class="level-top"><span class="level-number">01</span><span class="level-range">Temas 1–19</span></div>
-            <div class="level-subtitle">Fundamentos</div>
-            <h3>Peón Inicial</h3>
-            <p>Tablero, coordenadas, piezas, movimientos especiales, capturas, jaque y jaque mate.</p>
-            <div class="level-meta"><span>19 temas · Principiante</span><span class="level-arrow">→</span></div>
+
+            <div class="level-top">
+              <span class="level-number">01</span>
+              <span class="level-range">Temas 1–19</span>
+            </div>
+
+            <div class="level-subtitle">Nivel Inicial</div>
+
+            <h3>Descubriendo el ajedrez</h3>
+
+            <p>
+              Tablero, coordenadas, piezas, movimientos, capturas,
+              reglas básicas, jaque y jaque mate.
+            </p>
+
+            <div class="level-meta">
+              <span>19 temas · Inicial</span>
+              <span class="level-arrow">→</span>
+            </div>
+
           </a>
+
+
+          <!-- NIVEL 2: BÁSICO -->
           <a class="level-card reveal" data-piece="♘" href="ruta-chess.html?nivel=2">
-            <div class="level-top"><span class="level-number">02</span><span class="level-range">Temas 20–31</span>
+
+            <div class="level-top">
+              <span class="level-number">02</span>
+              <span class="level-range">Temas 20–43</span>
             </div>
-            <div class="level-subtitle">Táctica básica</div>
-            <h3>Caballo Táctico</h3>
-            <p>Ataques dobles, clavadas, descubiertas, aperturas, principios de desarrollo y patrones de mate.</p>
-            <div class="level-meta"><span>12 temas · Básico</span><span class="level-arrow">→</span></div>
+
+            <div class="level-subtitle">Nivel Básico</div>
+
+            <h3>Primeras tácticas y estrategias</h3>
+
+            <p>
+              Ataques dobles, clavadas, ataques descubiertos, aperturas,
+              patrones de mate, estrategia elemental y finales básicos.
+            </p>
+
+            <div class="level-meta">
+              <span>24 temas · Básico</span>
+              <span class="level-arrow">→</span>
+            </div>
+
           </a>
+
+
+          <!-- NIVEL 3: INTERMEDIO -->
           <a class="level-card reveal" data-piece="♗" href="ruta-chess.html?nivel=3">
-            <div class="level-top"><span class="level-number">03</span><span class="level-range">Temas 32–43</span>
+
+            <div class="level-top">
+              <span class="level-number">03</span>
+              <span class="level-range">Temas 44–65</span>
             </div>
-            <div class="level-subtitle">Estrategia y finales</div>
-            <h3>Alfil Estratégico</h3>
-            <p>Seguridad del rey, casillas fuertes, tensión, finales básicos y proceso mental de una partida.</p>
-            <div class="level-meta"><span>12 temas · Intermedio I</span><span class="level-arrow">→</span></div>
+
+            <div class="level-subtitle">Nivel Intermedio</div>
+
+            <h3>Pensando cada jugada</h3>
+
+            <p>
+              Cálculo de variantes, método de candidatos, visualización,
+              estructuras de peones, profilaxis, finales y repertorios.
+            </p>
+
+            <div class="level-meta">
+              <span>22 temas · Intermedio</span>
+              <span class="level-arrow">→</span>
+            </div>
+
           </a>
+
+
+          <!-- NIVEL 4: AVANZADO -->
           <a class="level-card reveal" data-piece="♖" href="ruta-chess.html?nivel=4">
-            <div class="level-top"><span class="level-number">04</span><span class="level-range">Temas 44–53</span>
+
+            <div class="level-top">
+              <span class="level-number">04</span>
+              <span class="level-range">Temas 66–90</span>
             </div>
-            <div class="level-subtitle">Cálculo</div>
-            <h3>Torre Calculadora</h3>
-            <p>Variantes, candidatos, visualización, estructuras de peones, profilaxis y dominio de casillas.</p>
-            <div class="level-meta"><span>10 temas · Intermedio II</span><span class="level-arrow">→</span></div>
-          </a>
-          <a class="level-card reveal" data-piece="♔" href="ruta-chess.html?nivel=5">
-            <div class="level-top"><span class="level-number">05</span><span class="level-range">Temas 54–65</span>
+
+            <div class="level-subtitle">Nivel Avanzado</div>
+
+            <h3>Dominando el tablero</h3>
+
+            <p>
+              Cálculo profundo, estrategia avanzada, finales complejos,
+              psicología competitiva, engines y preparación contra rivales.
+            </p>
+
+            <div class="level-meta">
+              <span>25 temas · Avanzado</span>
+              <span class="level-arrow">→</span>
             </div>
-            <div class="level-subtitle">Competencia</div>
-            <h3>Rey Competidor</h3>
-            <p>Ataque avanzado, conversión de ventajas, finales, repertorio y preparación de partidas.</p>
-            <div class="level-meta"><span>12 temas · Avanzado</span><span class="level-arrow">→</span></div>
+
           </a>
-          <a class="level-card reveal" data-piece="♕" href="ruta-chess.html?nivel=6">
-            <div class="level-top"><span class="level-number">06</span><span class="level-range">Temas 66–90</span>
+
+
+          <!-- NIVEL 5: COMPETITIVO -->
+          <a class="level-card reveal" data-piece="♕" href="ruta-chess.html?nivel=5">
+
+            <div class="level-top">
+              <span class="level-number">05</span>
+              <span class="level-range">Temas 91–110</span>
             </div>
-            <div class="level-subtitle">Alto rendimiento</div>
-            <h3>Dama de Élite</h3>
-            <p>Cálculo profesional, estrategia profunda, finales élite, psicología y preparación contra rivales.</p>
-            <div class="level-meta"><span>25 temas · Competitivo</span><span class="level-arrow">→</span></div>
-          </a>
-          <a class="level-card reveal" data-piece="♜" href="ruta-chess.html?nivel=7">
-            <div class="level-top"><span class="level-number">07</span><span class="level-range">Temas 91–103</span>
+
+            <div class="level-subtitle">Nivel Competitivo</div>
+
+            <h3>Preparación para competir</h3>
+
+            <p>
+              Partidas modelo, análisis profesional, entrenamiento práctico,
+              simulación de torneos y planificación de la carrera ajedrecística.
+            </p>
+
+            <div class="level-meta">
+              <span>20 temas · Competitivo</span>
+              <span class="level-arrow">→</span>
             </div>
-            <div class="level-subtitle">Aprendizaje por modelos</div>
-            <h3>Maestro de Partidas</h3>
-            <p>Partidas clásicas y modernas, análisis profesional, cálculo diario y simulaciones de torneo.</p>
-            <div class="level-meta"><span>13 temas · Práctico</span><span class="level-arrow">→</span></div>
+
           </a>
-          <a class="level-card reveal" data-piece="♚" href="ruta-chess.html?nivel=8">
-            <div class="level-top"><span class="level-number">08</span><span class="level-range">Temas 104–116</span>
+
+
+          <!-- NIVEL 6: ENTRENAMIENTO INTEGRAL -->
+          <a class="level-card reveal" data-piece="♔" href="ruta-chess.html?nivel=6">
+
+            <div class="level-top">
+              <span class="level-number">06</span>
+              <span class="level-range">Temas 111–124</span>
             </div>
-            <div class="level-subtitle">Carrera y estudio</div>
-            <h3>Ruta del Maestro</h3>
-            <p>Plan anual, rating, elección de torneos, método semanal y ciclo de mejora continua.</p>
-            <div class="level-meta"><span>13 temas · Especialización</span><span class="level-arrow">→</span></div>
-          </a>
-          <a class="level-card reveal" data-piece="♛" href="ruta-chess.html?nivel=9">
-            <div class="level-top"><span class="level-number">09</span><span class="level-range">Temas 117–124</span>
+
+            <div class="level-subtitle">Entrenamiento Integral</div>
+
+            <h3>Entrenamiento completo del ajedrecista</h3>
+
+            <p>
+              Método de estudio, mejora continua, neurociencia, memoria,
+              preparación física, nutrición, sueño y concentración.
+            </p>
+
+            <div class="level-meta">
+              <span>14 temas · Rendimiento integral</span>
+              <span class="level-arrow">→</span>
             </div>
-            <div class="level-subtitle">Ciencia del rendimiento</div>
-            <h3>Élite Integral</h3>
-            <p>Neurociencia, preparación física, sueño, nutrición, concentración y control del estrés.</p>
-            <div class="level-meta"><span>8 temas · Rendimiento</span><span class="level-arrow">→</span></div>
+
           </a>
+
         </div>
 
         <div class="route-cycle reveal" aria-label="Ciclo de avance del alumno">
@@ -1764,105 +2012,318 @@
     </section>
 
     <section class="section" id="metodologia">
+
       <div class="container">
-        <div class="section-label">Metodología propia</div>
-        <h2 class="section-title reveal">No enseñamos jugadas aisladas. <span class="gradient-text">Construimos
-            criterio.</span></h2>
+
+        <div class="section-label">
+          Metodología de aprendizaje
+        </div>
+
+        <h2 class="section-title reveal">
+          No enseñamos jugadas aisladas.
+          <span class="gradient-text">Construimos criterio ajedrecístico.</span>
+        </h2>
+
         <p class="section-copy reveal">
-          Cada alumno ingresa con una evaluación inicial, recibe una ruta adecuada a su nivel
-          y avanza mediante clases, práctica guiada, torneos y retroalimentación.
+          El estudiante avanza mediante una ruta organizada en seis niveles.
+          Cada etapa combina explicación, práctica guiada, resolución de ejercicios,
+          partidas, análisis y retroalimentación.
         </p>
 
+
+        <!-- PILARES DE LA METODOLOGÍA -->
         <div class="cards-3">
+
           <article class="feature-card reveal">
             <div class="icon-box">🧠</div>
-            <h3>Pensamiento estratégico</h3>
-            <p>Aprende a analizar posiciones, anticipar respuestas y tomar mejores decisiones.</p>
+
+            <h3>Comprender antes de mover</h3>
+
+            <p>
+              El alumno aprende a observar la posición, identificar amenazas,
+              comparar alternativas y entender el propósito de cada jugada.
+            </p>
           </article>
+
+
           <article class="feature-card reveal">
             <div class="icon-box">🎯</div>
-            <h3>Aprendizaje por objetivos</h3>
-            <p>Cada nivel tiene metas claras, evidencias de progreso y retos adecuados.</p>
+
+            <h3>Aprendizaje por niveles</h3>
+
+            <p>
+              Los 124 temas están organizados desde los fundamentos hasta el
+              entrenamiento competitivo, con objetivos claros en cada nivel.
+            </p>
           </article>
+
+
           <article class="feature-card reveal">
             <div class="icon-box">🏆</div>
-            <h3>Competencia saludable</h3>
-            <p>Torneos, ligas y desafíos que fortalecen confianza, disciplina y constancia.</p>
+
+            <h3>Aprender, practicar y aplicar</h3>
+
+            <p>
+              Cada concepto se refuerza mediante ejercicios, partidas guiadas,
+              desafíos, análisis de errores y situaciones reales de juego.
+            </p>
           </article>
+
         </div>
 
+
+        <!-- RUTA DE LOS 6 NIVELES -->
         <div class="path">
+
+          <!-- NIVEL 1 -->
           <div class="path-step reveal">
             <div class="path-node">♙</div>
-            <h3>Descubrir</h3><span>Reglas y visión</span>
+
+            <div class="path-level">Nivel 1</div>
+
+            <h3>Descubrir</h3>
+
+            <span>
+              Tablero, piezas, movimientos y reglas
+            </span>
           </div>
+
+
+          <!-- NIVEL 2 -->
           <div class="path-step reveal">
             <div class="path-node">♘</div>
-            <h3>Aprender</h3><span>Táctica básica</span>
+
+            <div class="path-level">Nivel 2</div>
+
+            <h3>Resolver</h3>
+
+            <span>
+              Tácticas, aperturas y finales básicos
+            </span>
           </div>
+
+
+          <!-- NIVEL 3 -->
           <div class="path-step reveal">
             <div class="path-node">♗</div>
-            <h3>Dominar</h3><span>Estrategia y finales</span>
+
+            <div class="path-level">Nivel 3</div>
+
+            <h3>Pensar</h3>
+
+            <span>
+              Cálculo, estrategia y planificación
+            </span>
           </div>
+
+
+          <!-- NIVEL 4 -->
           <div class="path-step reveal">
             <div class="path-node">♖</div>
-            <h3>Competir</h3><span>Preparación real</span>
+
+            <div class="path-level">Nivel 4</div>
+
+            <h3>Dominar</h3>
+
+            <span>
+              Estrategia avanzada y cálculo profundo
+            </span>
           </div>
+
+
+          <!-- NIVEL 5 -->
           <div class="path-step reveal">
             <div class="path-node">♕</div>
-            <h3>Avanzar</h3><span>Rendimiento superior</span>
+
+            <div class="path-level">Nivel 5</div>
+
+            <h3>Competir</h3>
+
+            <span>
+              Torneos, análisis y preparación competitiva
+            </span>
           </div>
+
+
+          <!-- NIVEL 6 -->
+          <div class="path-step reveal">
+            <div class="path-node">♔</div>
+
+            <div class="path-level">Nivel 6</div>
+
+            <h3>Entrenar</h3>
+
+            <span>
+              Método de estudio y rendimiento integral
+            </span>
+          </div>
+
         </div>
+
       </div>
+
     </section>
 
     <section class="section" id="programas">
+
       <div class="container">
+
         <div class="section-label">Programas continuos</div>
-        <h2 class="section-title reveal">Siempre existe un <span class="gradient-text">siguiente nivel.</span></h2>
+
+        <h2 class="section-title reveal">
+          Siempre existe un
+          <span class="gradient-text">siguiente nivel.</span>
+        </h2>
+
         <p class="section-copy reveal">
-          La academia está diseñada para acompañar al alumno en el tiempo, sin limitarlo a un solo curso.
+          Nuestra ruta está organizada en seis niveles progresivos.
+          El alumno comienza con los fundamentos y avanza hasta desarrollar
+          preparación competitiva y hábitos de alto rendimiento.
         </p>
 
         <div class="program-grid">
+
+          <!-- NIVEL 1 -->
           <article class="program-card reveal">
+
             <div class="badge">🐣</div>
+
             <div>
-              <h3>Pequeños estrategas</h3>
-              <p>Introducción lúdica para niños que empiezan a reconocer piezas, movimientos y patrones.</p>
-              <div class="tags"><span class="tag">Nivel inicial</span><span class="tag">Juego guiado</span><span
-                  class="tag">Atención</span></div>
+              <h3>1. Descubriendo el ajedrez</h3>
+
+              <p>
+                Aprende a reconocer el tablero, las piezas, sus movimientos,
+                las capturas, las reglas básicas, el jaque y el jaque mate.
+              </p>
+
+              <div class="tags">
+                <span class="tag">Nivel inicial</span>
+                <span class="tag">Temas 1–19</span>
+                <span class="tag">Fundamentos</span>
+              </div>
             </div>
+
           </article>
+
+
+          <!-- NIVEL 2 -->
           <article class="program-card reveal">
-            <div class="badge">♟</div>
+
+            <div class="badge">🎯</div>
+
             <div>
-              <h3>Fundamentos sólidos</h3>
-              <p>Reglas, mates básicos, principios de apertura, táctica y pensamiento ordenado.</p>
-              <div class="tags"><span class="tag">Principiantes</span><span class="tag">1–2 clases</span><span
-                  class="tag">Progreso</span></div>
+              <h3>2. Primeras tácticas y estrategias</h3>
+
+              <p>
+                Descubre ataques dobles, clavadas, ataques descubiertos,
+                aperturas, patrones de mate y finales básicos.
+              </p>
+
+              <div class="tags">
+                <span class="tag">Nivel básico</span>
+                <span class="tag">Temas 20–43</span>
+                <span class="tag">Táctica</span>
+              </div>
             </div>
+
           </article>
+
+
+          <!-- NIVEL 3 -->
           <article class="program-card reveal">
-            <div class="badge">⚔️</div>
+
+            <div class="badge">🧠</div>
+
             <div>
-              <h3>Táctica y estrategia</h3>
-              <p>Cálculo, combinaciones, planes de medio juego y análisis de partidas.</p>
-              <div class="tags"><span class="tag">Intermedio</span><span class="tag">Retos</span><span
-                  class="tag">Análisis</span></div>
+              <h3>3. Pensando cada jugada</h3>
+
+              <p>
+                Aprende a calcular variantes, seleccionar jugadas candidatas,
+                visualizar posiciones y construir planes estratégicos.
+              </p>
+
+              <div class="tags">
+                <span class="tag">Nivel intermedio</span>
+                <span class="tag">Temas 44–65</span>
+                <span class="tag">Cálculo</span>
+              </div>
             </div>
+
           </article>
+
+
+          <!-- NIVEL 4 -->
           <article class="program-card reveal">
+
+            <div class="badge">♟️</div>
+
+            <div>
+              <h3>4. Dominando el tablero</h3>
+
+              <p>
+                Profundiza en estrategia avanzada, cálculo complejo,
+                estructuras de peones, finales y preparación contra diferentes rivales.
+              </p>
+
+              <div class="tags">
+                <span class="tag">Nivel avanzado</span>
+                <span class="tag">Temas 66–90</span>
+                <span class="tag">Estrategia</span>
+              </div>
+            </div>
+
+          </article>
+
+
+          <!-- NIVEL 5 -->
+          <article class="program-card reveal">
+
             <div class="badge">🏆</div>
+
             <div>
-              <h3>Equipo de competencia</h3>
-              <p>Preparación para torneos, repertorio, gestión del tiempo y control emocional.</p>
-              <div class="tags"><span class="tag">Avanzado</span><span class="tag">Torneos</span><span
-                  class="tag">Rendimiento</span></div>
+              <h3>5. Preparación para competir</h3>
+
+              <p>
+                Entrena con partidas modelo, análisis profesional,
+                simulaciones de torneo, gestión del tiempo y preparación competitiva.
+              </p>
+
+              <div class="tags">
+                <span class="tag">Nivel competitivo</span>
+                <span class="tag">Temas 91–110</span>
+                <span class="tag">Torneos</span>
+              </div>
             </div>
+
           </article>
+
+
+          <!-- NIVEL 6 -->
+          <article class="program-card reveal">
+
+            <div class="badge">🚀</div>
+
+            <div>
+              <h3>6. Entrenamiento completo del ajedrecista</h3>
+
+              <p>
+                Desarrolla un método de estudio constante y fortalece
+                concentración, memoria, preparación física, descanso y control del estrés.
+              </p>
+
+              <div class="tags">
+                <span class="tag">Entrenamiento integral</span>
+                <span class="tag">Temas 111–124</span>
+                <span class="tag">Alto rendimiento</span>
+              </div>
+            </div>
+
+          </article>
+
         </div>
+
       </div>
+
     </section>
 
     <section class="section" id="plataforma">
@@ -1931,57 +2392,166 @@
     </section>
 
     <section class="section" id="planes">
+
       <div class="container">
-        <div class="section-label">Planes flexibles</div>
-        <h2 class="section-title reveal">Elige el ritmo que mejor se adapte a ti.</h2>
+
+        <div class="section-label">
+          Planes de clases en vivo
+        </div>
+
+        <h2 class="section-title reveal">
+          Elige cuántas clases deseas recibir
+          <span class="gradient-text">cada semana.</span>
+        </h2>
+
         <p class="section-copy reveal">
-          Puedes usar estos nombres y contenidos como base. Los precios se pueden configurar después.
+          Las clases son dictadas en vivo y de manera remota por un entrenador.
+          El estudiante avanza por una ruta de 6 niveles y 124 temas, de acuerdo
+          con sus conocimientos, progreso y objetivos.
         </p>
 
         <div class="plans">
+
+          <!-- PLAN: 1 CLASE SEMANAL -->
           <article class="plan reveal">
-            <h3>Esencial</h3>
-            <div class="plan-sub">Para empezar con constancia.</div>
-            <div class="price">1 <small>clase semanal</small></div>
+
+            <div class="plan-icon">📘</div>
+
+            <h3>Plan Inicial</h3>
+
+            <div class="plan-sub">
+              Para aprender de forma progresiva y mantener una práctica constante.
+            </div>
+
+            <div class="price">
+              1
+              <small>clase semanal</small>
+            </div>
+
+            <div class="class-mode">
+              💻 Clase remota en vivo
+            </div>
+
             <ul class="plan-list">
-              <li>Clase grupal por nivel</li>
-              <li>Acceso a ejercicios</li>
-              <li>Seguimiento mensual</li>
-              <li>Torneo interno</li>
+              <li>Una clase en vivo por semana</li>
+              <li>Entrenamiento dirigido por un entrenador</li>
+              <li>Evaluación inicial del estudiante</li>
+              <li>Ubicación en uno de los 6 niveles</li>
+              <li>Temas seleccionados según su progreso</li>
+              <li>Ejercicios para practicar durante la semana</li>
+              <li>Seguimiento periódico del aprendizaje</li>
             </ul>
-            <a class="btn btn-secondary" href="#contacto">Consultar</a>
+
+            <!-- PLAN DE 1 CLASE SEMANAL -->
+            <a class="btn btn-secondary" href="#contacto" onclick="seleccionarFrecuencia('1 clase por semana')">
+              Reservar clase de evaluación
+            </a>
+
           </article>
 
+
+          <!-- PLAN: 2 CLASES SEMANALES -->
           <article class="plan popular reveal">
-            <div class="popular-ribbon">Más elegido</div>
-            <h3>Progreso</h3>
-            <div class="plan-sub">Para avanzar más rápido.</div>
-            <div class="price">2 <small>clases semanales</small></div>
+
+            <div class="popular-ribbon">
+              Más elegido
+            </div>
+
+            <div class="plan-icon">🎯</div>
+
+            <h3>Plan Progreso</h3>
+
+            <div class="plan-sub">
+              Para avanzar más rápido y reforzar cada tema con mayor práctica.
+            </div>
+
+            <div class="price">
+              2
+              <small>clases semanales</small>
+            </div>
+
+            <div class="class-mode">
+              💻 Clases remotas en vivo
+            </div>
+
             <ul class="plan-list">
-              <li>Dos clases grupales</li>
-              <li>Problemas semanales</li>
-              <li>Análisis de partidas</li>
-              <li>Ranking y certificados</li>
-              <li>Torneo mensual</li>
+              <li>Dos clases en vivo por semana</li>
+              <li>Entrenamiento dirigido por un entrenador</li>
+              <li>Evaluación y ubicación por nivel</li>
+              <li>Mayor avance en la ruta de 124 temas</li>
+              <li>Ejercicios tácticos y estratégicos</li>
+              <li>Partidas guiadas durante las clases</li>
+              <li>Análisis de errores y retroalimentación</li>
+              <li>Seguimiento continuo del progreso</li>
             </ul>
-            <a class="btn btn-primary" href="#contacto">Reservar evaluación</a>
+
+            <!-- PLAN DE 2 CLASES SEMANALES -->
+            <a class="btn btn-primary" href="#contacto" onclick="seleccionarFrecuencia('2 clases por semana')">
+              Reservar clase de evaluación
+            </a>
+
           </article>
 
+
+          <!-- PLAN: 3 CLASES SEMANALES -->
           <article class="plan reveal">
-            <h3>Competencia</h3>
-            <div class="plan-sub">Para torneos y rendimiento.</div>
-            <div class="price">3 <small>sesiones semanales</small></div>
+
+            <div class="plan-icon">🏆</div>
+
+            <h3>Plan Intensivo</h3>
+
+            <div class="plan-sub">
+              Para estudiantes que buscan preparación avanzada o competitiva.
+            </div>
+
+            <div class="price">
+              3
+              <small>clases semanales</small>
+            </div>
+
+            <div class="class-mode">
+              💻 Clases remotas en vivo
+            </div>
+
             <ul class="plan-list">
-              <li>Entrenamiento intensivo</li>
-              <li>Plan individual</li>
-              <li>Repertorio de aperturas</li>
-              <li>Preparación de torneos</li>
-              <li>Revisión personalizada</li>
+              <li>Tres clases en vivo por semana</li>
+              <li>Entrenamiento intensivo con un entrenador</li>
+              <li>Plan de aprendizaje según nivel y objetivos</li>
+              <li>Desarrollo acelerado de la ruta de 124 temas</li>
+              <li>Entrenamiento táctico y estratégico</li>
+              <li>Análisis detallado de partidas</li>
+              <li>Preparación para competencias y torneos</li>
+              <li>Entrenamiento de gestión del tiempo</li>
+              <li>Seguimiento personalizado del rendimiento</li>
             </ul>
-            <a class="btn btn-secondary" href="#contacto">Postular al equipo</a>
+
+            <!-- PLAN DE 3 CLASES SEMANALES -->
+            <a class="btn btn-secondary" href="#contacto" onclick="seleccionarFrecuencia('3 clases por semana')">
+              Reservar clase de evaluación
+            </a>
+
           </article>
+
         </div>
+
+        <div class="plans-note reveal">
+
+          <div class="plans-note-icon">♟️</div>
+
+          <div>
+            <h3>¿Cómo se utilizan los 124 temas?</h3>
+
+            <p>
+              El entrenador evalúa el nivel de cada estudiante y selecciona los temas
+              que debe desarrollar. El alumno no necesita empezar necesariamente desde
+              el tema 1: comienza en el punto adecuado según sus conocimientos.
+            </p>
+          </div>
+
+        </div>
+
       </div>
+
     </section>
 
     <section class="section">
@@ -1992,7 +2562,7 @@
         <div class="testimonial-grid">
           <article class="testimonial reveal">
             <div class="rating">★★★★★</div>
-            <p class="quote">“Antes jugaba sin criterio ajedrecistico, solo movía, evaluaba y capturaba piezas. Mi ELO
+            <p class="quote">“Antes jugaba sin criterio ajedrecístico, solo movía, evaluaba y capturaba piezas. Mi ELO
               estaba entre 1630 y 1670 en
               Lichess.
               Tras 7 meses de entrenamiento estructurado alcancé los 1900 de ELO.
@@ -2074,7 +2644,7 @@
         <div class="contact-wrap">
           <div class="contact-panel">
             <div class="section-label">Empieza hoy</div>
-            <h2 class="section-title">Reserva una <span class="gradient-text">clase de evaluación.</span></h2>
+            <h2 class="section-title">Reserva una <span class="gradient-text">clase GRATUITA de evaluación.</span></h2>
             <p class="section-copy">
               Cuéntanos la edad, experiencia y objetivos del alumno. Te recomendaremos el grupo y plan más adecuado.
             </p>
@@ -2093,17 +2663,42 @@
           </div>
 
           <form class="form-card" id="contactForm">
+
             <div class="form-grid">
+
               <div class="field">
-                <label for="name">Nombre</label>
-                <input id="name" name="name" required placeholder="Tu nombre" />
+                <label for="name">
+                  Nombre de contacto
+                </label>
+
+                <input id="name" name="name" type="text" autocomplete="name" required
+                  placeholder="Ejemplo: María López">
               </div>
+
+
               <div class="field">
-                <label for="age">Edad del alumno</label>
-                <input id="age" name="age" type="number" min="4" max="99" required placeholder="Ej. 10" />
+                <label for="studentName">
+                  Nombre del estudiante
+                </label>
+
+                <input id="studentName" name="studentName" type="text" required placeholder="Ejemplo: Carlos">
               </div>
+
+
               <div class="field">
-                <label for="level">Nivel actual</label>
+                <label for="age">
+                  Edad del alumno
+                </label>
+
+                <input id="age" name="age" type="number" min="4" max="99" required placeholder="Ejemplo: 10">
+              </div>
+
+
+              <div class="field">
+                <label for="level">
+                  Nivel actual
+                </label>
+
                 <select id="level" name="level">
                   <option>Empieza desde cero</option>
                   <option>Principiante</option>
@@ -2112,8 +2707,13 @@
                   <option>No estoy seguro</option>
                 </select>
               </div>
+
+
               <div class="field">
-                <label for="frequency">Frecuencia preferida</label>
+                <label for="frequency">
+                  Frecuencia preferida
+                </label>
+
                 <select id="frequency" name="frequency">
                   <option>1 clase por semana</option>
                   <option>2 clases por semana</option>
@@ -2121,22 +2721,47 @@
                   <option>Necesito recomendación</option>
                 </select>
               </div>
-              <div class="field full">
-                <label for="contact">WhatsApp o correo</label>
-                <input id="contact" name="contact" required placeholder="Número o correo" />
+
+
+              <div class="field">
+                <label for="contact">
+                  WhatsApp del estudiante o apoderado
+                </label>
+
+                <input id="contact" name="contact" type="tel" inputmode="tel" autocomplete="tel" required
+                  placeholder="Ejemplo: 999 999 999">
               </div>
+
+
               <div class="field full">
-                <label for="message">Objetivo principal</label>
+                <label for="message">
+                  Objetivo principal
+                </label>
+
                 <textarea id="message" name="message"
-                  placeholder="Ej. aprender desde cero, mejorar para competir, desarrollar concentración..."></textarea>
+                  placeholder="Ejemplo: aprender desde cero, prepararse para competir o desarrollar concentración"></textarea>
               </div>
+
+
               <div class="field full">
-                <button class="btn btn-primary" type="submit">Solicitar evaluación gratuita →</button>
-                <div class="success" id="successMessage">¡Solicitud registrada! Configura el número de WhatsApp en el
-                  código para recibir los datos automáticamente.</div>
-                <div class="form-note">Al enviar, aceptas ser contactado para coordinar la evaluación.</div>
+
+                <button type="submit" class="btn btn-primary whatsapp-submit">
+                  <span>💬</span>
+                  Reservar una clase de evaluación
+                </button>
+
+                <div class="success" id="successMessage">
+                  Se abrirá WhatsApp con tus datos. Pulsa “Enviar” para completar la solicitud.
+                </div>
+
+                <div class="form-note">
+                  Al enviar, aceptas ser contactado para coordinar la evaluación.
+                </div>
+
               </div>
+
             </div>
+
           </form>
         </div>
       </div>
@@ -2148,7 +2773,7 @@
           <h3>Tu siguiente gran jugada empieza aquí.</h3>
           <p>Evaluación, grupo adecuado y ruta de aprendizaje personalizada.</p>
         </div>
-        <a class="btn btn-primary" href="#contacto">Quiero una clase gratuita</a>
+        
       </div>
     </section>
 
@@ -2182,12 +2807,13 @@
               href="https://wa.me/5491126202806?text=Hola,%20quiero%20información%20sobre%20la%20Academia%20de%20Ajedrez.">WhatsApp</a>
             <a href="#contacto">Correo</a>
             <a href="#contacto">Inscripciones</a>
+            <a href="#" onclick="shareApp(); return false;">Compartir App</a>
           </div>
         </div>
 
         <div class="copyright">
           <span>© <span id="year"></span> Academia de Ajedrez Mauro.</span>
-          <span>Piensa, proyectate y actúa...</span>
+          <span>Piensa, proyéctate y actúa...</span>
         </div>
       </div>
     </footer>
@@ -2255,26 +2881,45 @@
         btn.addEventListener("click", () => btn.parentElement.classList.toggle("open"));
       });
 
-      // Formulario a WhatsApp.
+
+      function seleccionarFrecuencia(frecuencia) {
+        const frequencySelect = document.getElementById("frequency");
+
+        if (frequencySelect) {
+          frequencySelect.value = frecuencia;
+        }
+      }
+
+
+      // Formulario a WhatsApp
       const form = document.getElementById("contactForm");
       const successMessage = document.getElementById("successMessage");
 
-      form.addEventListener("submit", e => {
-        e.preventDefault();
-        const data = new FormData(form);
-        const text =
-          `Hola, deseo solicitar una evaluación gratuita de ajedrez.
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-Nombre: ${data.get("name")}
-Edad: ${data.get("age")}
-Nivel: ${data.get("level")}
-Frecuencia: ${data.get("frequency")}
-Contacto: ${data.get("contact")}
-Objetivo: ${data.get("message") || "No especificado"}`;
+        const data = new FormData(form);
+
+        const text = `♟️ NUEVA SOLICITUD DE CLASE DE EVALUACIÓN
+
+👤 Nombre de contacto: ${data.get("name")}
+🎓 Nombre del estudiante: ${data.get("studentName")}
+🎂 Edad del estudiante: ${data.get("age")}
+📊 Nivel actual: ${data.get("level")}
+📅 Frecuencia elegida: ${data.get("frequency")}
+📱 WhatsApp de contacto: ${data.get("contact")}
+🎯 Objetivo: ${data.get("message") || "No especificado"}
+
+Deseo coordinar una clase de evaluación.`;
+
+        const url =
+          `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
         successMessage.style.display = "block";
-        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-        setTimeout(() => window.open(url, "_blank"), 350);
+        successMessage.textContent =
+          'Se abrirá WhatsApp. Pulsa "Enviar" para completar la solicitud.';
+
+        window.open(url, "_blank", "noopener,noreferrer");
       });
 
       document.getElementById("whatsappBtn").href =
@@ -2283,14 +2928,33 @@ Objetivo: ${data.get("message") || "No especificado"}`;
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
 
+      <script>
+    function shareApp() {
+      const shareData = {
+        title: 'Academia de Ajedrez Mauro',
+        text: '♟️ Entrena ajedrez online y sube tu nivel',
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData);
+      } else {
+        navigator.clipboard.writeText(shareData.url)
+          .then(() => alert("📋 Enlace copiado. ¡Compártelo!"));
+      }
+    }
+  </script>
+
     <!-- PWA -->
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-          // navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+          navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
         });
       }
     </script>
+
+
 
 
   </body>
