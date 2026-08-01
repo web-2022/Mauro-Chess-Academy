@@ -1768,7 +1768,7 @@
           <a href="#metodologia">Metodología</a>
           <a href="#programas">Programas</a>
           <a href="#plataforma">Plataforma</a>
-          <a href="progreso.html">Mi progreso</a>
+          <a href="miProgreso.html">Mi progreso</a>
           <a href="#planes">Planes</a>
           <a href="#contacto">Contacto</a>
         </div>
@@ -2358,36 +2358,96 @@
 
         <div>
           <div class="section-label">Plataforma digital</div>
-          <h2 class="section-title reveal">El aprendizaje continúa <span class="gradient-text">fuera de clase.</span>
+
+          <h2 class="section-title reveal">
+            Tu aprendizaje continúa
+            <span class="gradient-text">fuera de clase.</span>
           </h2>
+
           <p class="section-copy reveal">
-            Los alumnos pueden practicar, revisar contenidos y visualizar su avance desde celular, tablet o computadora.
+            Cada estudiante puede revisar automáticamente su avance dentro de la ruta
+            de 6 niveles y 124 temas desde celular, tablet o computadora.
           </p>
 
           <div class="platform-list">
+
             <div class="platform-item reveal">
               <div class="check">✓</div>
-              <div><strong>Problema del día</strong><span>Retos breves para desarrollar cálculo y constancia.</span>
+
+              <div>
+                <strong>Progreso automático</strong>
+                <span>
+                  Cada tema marcado como realizado se refleja automáticamente
+                  en el panel Mi Progreso.
+                </span>
               </div>
             </div>
+
             <div class="platform-item reveal">
               <div class="check">✓</div>
-              <div><strong>Seguimiento de progreso</strong><span>Historial de contenidos, resultados y logros.</span>
+
+              <div>
+                <strong>Ruta de 6 niveles y 124 temas</strong>
+                <span>
+                  Visualiza cuántos temas has completado, cuántos faltan
+                  y en qué nivel te encuentras.
+                </span>
               </div>
             </div>
+
             <div class="platform-item reveal">
               <div class="check">✓</div>
-              <div><strong>Material de repaso</strong><span>Lecciones, partidas comentadas y ejercicios por
-                  nivel.</span></div>
+
+              <div>
+                <strong>Avance por cada nivel</strong>
+                <span>
+                  Consulta el porcentaje completado en cada una de las
+                  seis etapas de aprendizaje.
+                </span>
+              </div>
             </div>
+
             <div class="platform-item reveal">
               <div class="check">✓</div>
-              <div><strong>Ranking y certificados</strong><span>Motivación visible y reconocimiento por cada
-                  etapa.</span></div>
+
+              <div>
+                <strong>Siguiente tema recomendado</strong>
+                <span>
+                  El sistema identifica automáticamente el siguiente tema
+                  pendiente para continuar entrenando.
+                </span>
+              </div>
             </div>
+
+            <div class="platform-item reveal">
+              <div class="check">✓</div>
+
+              <div>
+                <strong>Mapa completo de aprendizaje</strong>
+                <span>
+                  Los 124 temas muestran visualmente cuáles están realizados,
+                  cuál sigue y cuáles están pendientes.
+                </span>
+              </div>
+            </div>
+
+            <div class="platform-item reveal">
+              <div class="check">✓</div>
+
+              <div>
+                <strong>Panel personalizado</strong>
+                <span>
+                  El estudiante registra su nombre y recibe un panel personal
+                  para seguir aprendiendo y entrenando.
+                </span>
+              </div>
+            </div>
+
           </div>
 
-          <a href="#contacto" class="btn btn-secondary">Solicitar demostración</a>
+          <a href="miProgreso.html" class="btn btn-secondary">
+            Ver Mi Progreso
+          </a>
         </div>
       </div>
     </section>
@@ -2774,7 +2834,7 @@
           <h3>Tu siguiente gran jugada empieza aquí.</h3>
           <p>Evaluación, grupo adecuado y ruta de aprendizaje personalizada.</p>
         </div>
-        
+
       </div>
     </section>
 
@@ -2929,22 +2989,22 @@ Deseo coordinar una clase de evaluación.`;
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
 
-      <script>
-    function shareApp() {
-      const shareData = {
-        title: 'Academia de Ajedrez Mauro',
-        text: '♟️ Entrena ajedrez online y sube tu nivel',
-        url: window.location.href
-      };
+    <script>
+      function shareApp() {
+        const shareData = {
+          title: 'Academia de Ajedrez Mauro',
+          text: '♟️ Entrena ajedrez online y sube tu nivel',
+          url: window.location.href
+        };
 
-      if (navigator.share) {
-        navigator.share(shareData);
-      } else {
-        navigator.clipboard.writeText(shareData.url)
-          .then(() => alert("📋 Enlace copiado. ¡Compártelo!"));
+        if (navigator.share) {
+          navigator.share(shareData);
+        } else {
+          navigator.clipboard.writeText(shareData.url)
+            .then(() => alert("📋 Enlace copiado. ¡Compártelo!"));
+        }
       }
-    }
-  </script>
+    </script>
 
     <!-- PWA -->
     <script>
