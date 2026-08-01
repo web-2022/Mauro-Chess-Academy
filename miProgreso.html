@@ -609,6 +609,261 @@
       font-weight:800;
     }
 
+
+    /* ===== PREMIUM / PAGOS ===== */
+    .premium-activate {
+      margin-top:18px;
+      padding:clamp(22px,2.6vw,34px);
+      border:1px solid rgba(249,115,22,.38);
+      border-radius:26px;
+      background:
+        radial-gradient(circle at 88% 10%,rgba(249,115,22,.16),transparent 28%),
+        linear-gradient(145deg,rgba(30,20,14,.96),rgba(15,23,42,.96));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .premium-activate.premium-ok {
+      border-color:rgba(34,197,94,.38);
+      background:
+        radial-gradient(circle at 88% 10%,rgba(34,197,94,.14),transparent 28%),
+        linear-gradient(145deg,rgba(8,33,25,.96),rgba(15,23,42,.96));
+    }
+
+    .premium-head {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:24px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    }
+
+    .premium-kicker {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      margin-bottom:8px;
+      color:#fdba74;
+      font-size:.86rem;
+      font-weight:950;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .premium-activate.premium-ok .premium-kicker { color:#86efac; }
+
+    .premium-activate h2 {
+      margin:0;
+      font-size:clamp(1.55rem,2.6vw,2.35rem);
+      line-height:1.1;
+    }
+
+    .premium-activate > .premium-head p,
+    .premium-copy {
+      margin:9px 0 0;
+      max-width:850px;
+      color:#cbd5e1;
+      font-size:1rem;
+      line-height:1.55;
+    }
+
+    .premium-free {
+      flex:0 0 auto;
+      padding:10px 14px;
+      border:1px solid rgba(249,115,22,.28);
+      border-radius:999px;
+      color:#fed7aa;
+      background:rgba(249,115,22,.09);
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .premium-activate.premium-ok .premium-free {
+      border-color:rgba(34,197,94,.25);
+      color:#bbf7d0;
+      background:rgba(34,197,94,.08);
+    }
+
+    .premium-grid {
+      display:grid;
+      grid-template-columns:minmax(300px,.8fr) minmax(520px,1.2fr);
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .premium-panel {
+      padding:20px;
+      border:1px solid rgba(148,163,184,.16);
+      border-radius:20px;
+      background:rgba(2,6,23,.36);
+    }
+
+    .premium-panel h3 {
+      margin:0 0 6px;
+      font-size:1.08rem;
+    }
+
+    .premium-panel > p {
+      margin:0 0 15px;
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.5;
+    }
+
+    .premium-form {
+      display:grid;
+      gap:11px;
+    }
+
+    .premium-form input {
+      width:100%;
+      min-height:50px;
+      padding:0 15px;
+      border:1px solid rgba(148,163,184,.22);
+      border-radius:13px;
+      outline:none;
+      background:rgba(255,255,255,.045);
+      color:var(--text);
+      font:inherit;
+      font-weight:800;
+    }
+
+    .premium-form input::placeholder { color:#64748b; }
+
+    .premium-form input:focus {
+      border-color:var(--blue);
+      box-shadow:0 0 0 4px rgba(56,189,248,.09);
+    }
+
+    #codeInput { text-transform:uppercase; }
+
+    .activate-row {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:10px;
+    }
+
+    .premium-action,
+    .premium-buy {
+      min-height:50px;
+      padding:0 16px;
+      border:0;
+      border-radius:13px;
+      cursor:pointer;
+      font:inherit;
+      font-weight:950;
+      transition:transform .14s ease,filter .14s ease,opacity .14s ease;
+    }
+
+    .premium-action:hover,
+    .premium-buy:hover { transform:translateY(-1px); filter:brightness(1.05); }
+
+    .premium-action {
+      color:#431407;
+      background:linear-gradient(135deg,#fdba74,#f97316);
+    }
+
+    .buyer-note {
+      margin:0;
+      color:#94a3b8;
+      font-size:.82rem;
+      line-height:1.45;
+    }
+
+    .plans-label {
+      margin:15px 0 9px;
+      color:#fed7aa;
+      font-size:.85rem;
+      font-weight:950;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+
+    .plans-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .premium-buy {
+      min-height:58px;
+      text-align:left;
+      color:#fff;
+      border:1px solid rgba(249,115,22,.25);
+      background:linear-gradient(145deg,rgba(249,115,22,.22),rgba(234,88,12,.11));
+    }
+
+    .premium-buy strong { display:block; font-size:.98rem; }
+    .premium-buy span { display:block; margin-top:3px; color:#fed7aa; font-size:.82rem; }
+
+    .premium-msg {
+      min-height:24px;
+      margin:16px 0 0;
+      color:#fdba74;
+      font-weight:850;
+    }
+
+    .premium-activate.premium-ok .premium-msg { color:#86efac; }
+
+    .premium-success {
+      display:none;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      padding:18px 20px;
+      border:1px solid rgba(34,197,94,.24);
+      border-radius:18px;
+      background:rgba(34,197,94,.07);
+    }
+
+    .premium-success strong { color:#bbf7d0; font-size:1.05rem; }
+    .premium-success span { display:block; margin-top:4px; color:#94a3b8; font-size:.88rem; }
+
+    .topic-card.locked {
+      border-color:rgba(249,115,22,.22);
+      background:rgba(249,115,22,.035);
+    }
+
+    .topic-card.locked .topic-number {
+      color:#fed7aa;
+      background:rgba(249,115,22,.10);
+      border-color:rgba(249,115,22,.20);
+    }
+
+    .topic-card.locked .topic-status { color:#fdba74; }
+
+    .topic-card.locked .topic-title,
+    .topic-card.locked .topic-desc { opacity:.76; }
+
+    .topic-unlock {
+      min-height:40px;
+      padding:0 13px;
+      border:1px solid rgba(249,115,22,.30);
+      border-radius:10px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(249,115,22,.10);
+      color:#fed7aa;
+      font:inherit;
+      font-size:.84rem;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    @media(max-width:1000px) {
+      .premium-grid { grid-template-columns:1fr; }
+    }
+
+    @media(max-width:620px) {
+      .premium-activate { padding:18px; border-radius:21px; }
+      .activate-row { grid-template-columns:1fr; }
+      .plans-grid { grid-template-columns:1fr; }
+      .premium-free { white-space:normal; }
+    }
+
   </style>
 </head>
 
@@ -684,6 +939,98 @@
       </a>
     </section>
 
+
+
+    <section class="premium-activate" id="premiumBox" aria-label="Activar acceso Premium">
+      <div class="premium-head">
+        <div>
+          <div class="premium-kicker">♟ Acceso completo</div>
+          <h2 id="premiumTitle">🔓 Activa Premium y desbloquea los 124 temas</h2>
+          <p id="premiumText">Los 3 primeros temas son gratuitos. Activa tu código si ya compraste, o elige un plan para continuar con toda la ruta.</p>
+        </div>
+        <div class="premium-free" id="premiumBadge">3 temas gratis · 121 Premium</div>
+      </div>
+
+      <div id="premiumForm">
+        <div class="premium-grid">
+          <div class="premium-panel">
+            <h3>Ya tengo un código</h3>
+            <p>Ingresa el código recibido después de tu compra para activar el acceso en este dispositivo.</p>
+
+            <div class="premium-form">
+              <div class="activate-row">
+                <input id="codeInput" placeholder="Ej: MK-ABCD-1234" autocomplete="off">
+                <button type="button" class="premium-action" onclick="activarCodigo()">Activar código</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="premium-panel">
+            <h3>Comprar un plan</h3>
+            <p>Completa los datos del comprador y elige pago único o suscripción automática.</p>
+
+            <div class="premium-form">
+              <input
+                id="buyerEmail"
+                type="email"
+                placeholder="Correo electrónico del padre"
+                autocomplete="email"
+                inputmode="email"
+                style="text-transform:none;"
+              >
+
+              <input
+                id="buyerPhone"
+                type="tel"
+                placeholder="Celular del padre"
+                autocomplete="tel"
+                inputmode="tel"
+                style="text-transform:none;"
+              >
+
+              <p class="buyer-note">Usaremos estos datos solo para identificar tu compra y ayudarte a recuperar tu código.</p>
+
+              <div class="plans-label">Pago único · Yape o tarjeta</div>
+              <div class="plans-grid">
+                <button type="button" class="premium-buy" onclick="comprarPagoUnico('monthly')">
+                  <strong>📅 Mensual · S/ 25</strong>
+                  <span>Pago único</span>
+                </button>
+
+                <button type="button" class="premium-buy" onclick="comprarPagoUnico('yearly')">
+                  <strong>🌟 Anual · S/ 199</strong>
+                  <span>Pago único</span>
+                </button>
+              </div>
+
+              <div class="plans-label">Suscripción automática · tarjeta</div>
+              <div class="plans-grid">
+                <button type="button" class="premium-buy" onclick="crearSuscripcion('monthly')">
+                  <strong>🔁 Mensual · S/ 25</strong>
+                  <span>Renovación automática</span>
+                </button>
+
+                <button type="button" class="premium-buy" onclick="crearSuscripcion('yearly')">
+                  <strong>🔁 Anual · S/ 199</strong>
+                  <span>Renovación automática</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-success" id="premiumSuccess">
+        <div>
+          <strong>✅ Acceso Premium activo</strong>
+          <span>Ya puedes abrir y marcar como realizados los temas 4 al 124.</span>
+        </div>
+      </div>
+
+      <p class="premium-msg" id="msg"></p>
+    </section>
+
+
     <section class="card section" id="niveles">
       <div class="head">
         <h2>Mi ruta de aprendizaje · 124 temas</h2>
@@ -723,6 +1070,10 @@
   <script>
     const PROGRESS_KEY = "mk_learning_path_done_realizado_v3";
     const STUDENT_NAME_KEY = "mauro_student_name_v1";
+    const PREMIUM_FLAG = "mk_ajedrez_premium";
+    const STUDENT_CODE_KEY = "academia_mauro_codigo_estudiante_v1";
+    const FREE_LIMIT = 3;
+    const API_URL = "https://script.google.com/macros/s/AKfycbzeDbOOONWxW-K6TfVzOzImxX4vobCTwMuOB8Lehd4DS_NfwrInxcN8XpynzjuIPRaXaQ/exec";
 
     const LEVELS = [
       { id: 1, name: "Descubriendo el ajedrez", stage: "Nivel Inicial", start: 1, end: 19, icon: "♙" },
@@ -736,7 +1087,7 @@
     const topics = [
 
         // ===== FUNDAMENTOS =====
-        { id: 1, emoji: "🏁", title: "El ajedrez", desc: "Qué es el ajedrez", href: "queeselajedrez", category: "fundamentos" },
+        { id: 1, emoji: "🏁", title: "El ajedrez", desc: "Qué es el ajedrez", href: "queeselajedrez.html", category: "fundamentos" },
         { id: 2, emoji: "🏁", title: "El Tablero", desc: "Filas, columnas y diagonales", href: "eltablero.html", category: "fundamentos" },
         { id: 3, emoji: "🏁", title: "Tablero y coordenadas", desc: "Cómo ubicar casillas", href: "tableroycoordenadas.html", category: "fundamentos" },
         { id: 4, emoji: "🏁", title: "Practiquemos coordenadas", desc: "Ejercicios de ubicación", href: "practiquemoseltableroycoordenadas.html", category: "fundamentos" },
@@ -928,7 +1279,16 @@
       );
     }
 
+    function isPremiumActive() {
+      return localStorage.getItem(PREMIUM_FLAG) === "true";
+    }
+
     function toggleTopicDone(id) {
+      if (!isPremiumActive() && id > FREE_LIMIT) {
+        mostrarAvisoPremium();
+        return;
+      }
+
       const doneSet = loadDoneSet();
 
       if (doneSet.has(id)) {
@@ -1033,8 +1393,208 @@
       if (!getStudentName()) openNameModal(false);
     }
 
+    function actualizarCajaPremium() {
+      const premiumBox = document.getElementById("premiumBox");
+      const premiumTitle = document.getElementById("premiumTitle");
+      const premiumText = document.getElementById("premiumText");
+      const premiumForm = document.getElementById("premiumForm");
+      const premiumSuccess = document.getElementById("premiumSuccess");
+      const premiumBadge = document.getElementById("premiumBadge");
+      const msg = document.getElementById("msg");
+
+      if (!premiumBox) return;
+
+      if (isPremiumActive()) {
+        premiumBox.classList.add("premium-ok");
+        premiumTitle.textContent = "✅ Acceso Premium activo";
+        premiumText.textContent = "Toda la ruta de 124 temas está desbloqueada en este dispositivo.";
+        premiumBadge.textContent = "124 temas desbloqueados";
+        premiumForm.style.display = "none";
+        premiumSuccess.style.display = "flex";
+        if (msg) msg.textContent = "";
+      } else {
+        premiumBox.classList.remove("premium-ok");
+        premiumTitle.textContent = "🔓 Activa Premium y desbloquea los 124 temas";
+        premiumText.textContent = "Los 3 primeros temas son gratuitos. Activa tu código si ya compraste, o elige un plan para continuar con toda la ruta.";
+        premiumBadge.textContent = "3 temas gratis · 121 Premium";
+        premiumForm.style.display = "block";
+        premiumSuccess.style.display = "none";
+      }
+    }
+
+    function mostrarAvisoPremium() {
+      const premiumBox = document.getElementById("premiumBox");
+      const codeInput = document.getElementById("codeInput");
+      const msg = document.getElementById("msg");
+
+      if (msg) {
+        msg.textContent = "🔒 Este tema es Premium. Activa tu código o elige un plan para desbloquearlo.";
+      }
+
+      premiumBox?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => codeInput?.focus(), 550);
+      return false;
+    }
+
+    function guardPremiumTopic(id) {
+      if (id <= FREE_LIMIT || isPremiumActive()) return true;
+      return mostrarAvisoPremium();
+    }
+
+    async function activarCodigo() {
+      const codeInput = document.getElementById("codeInput");
+      const msg = document.getElementById("msg");
+      const code = (codeInput?.value || "").trim().toUpperCase();
+
+      if (!code) {
+        msg.textContent = "Ingresa un código Premium.";
+        codeInput?.focus();
+        return;
+      }
+
+      if (API_URL === "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT") {
+        msg.textContent = "⚠️ Falta pegar tu API_URL de Apps Script en el HTML.";
+        return;
+      }
+
+      msg.textContent = "Validando código...";
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "validate",
+            code: code
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.ok) {
+          localStorage.setItem(PREMIUM_FLAG, "true");
+          localStorage.setItem(STUDENT_CODE_KEY, code);
+          msg.textContent = "✅ Acceso Premium activado correctamente.";
+          actualizarCajaPremium();
+          render();
+        } else {
+          msg.textContent = "❌ " + (data.msg || "Código inválido");
+        }
+
+      } catch (error) {
+        console.error(error);
+        msg.textContent = "Error de conexión. Intenta nuevamente.";
+      }
+    }
+
+    function obtenerDatosComprador() {
+      const msg = document.getElementById("msg");
+      const emailInput = document.getElementById("buyerEmail");
+      const phoneInput = document.getElementById("buyerPhone");
+
+      const buyerEmail = (emailInput?.value || "").trim().toLowerCase();
+      const buyerPhone = (phoneInput?.value || "").trim();
+
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyerEmail);
+      const phoneDigits = buyerPhone.replace(/\D/g, "");
+
+      if (!buyerEmail) {
+        msg.textContent = "Ingresa tu correo electrónico.";
+        emailInput?.focus();
+        return null;
+      }
+
+      if (!emailOk) {
+        msg.textContent = "Ingresa un correo electrónico válido.";
+        emailInput?.focus();
+        return null;
+      }
+
+      if (!buyerPhone) {
+        msg.textContent = "Ingresa tu número de celular.";
+        phoneInput?.focus();
+        return null;
+      }
+
+      if (phoneDigits.length < 7) {
+        msg.textContent = "Ingresa un número de celular válido.";
+        phoneInput?.focus();
+        return null;
+      }
+
+      return { buyerEmail, buyerPhone };
+    }
+
+    function bloquearBotonesPremium(bloquear) {
+      document.querySelectorAll(".premium-buy").forEach(btn => {
+        btn.disabled = bloquear;
+        btn.style.opacity = bloquear ? ".65" : "1";
+        btn.style.pointerEvents = bloquear ? "none" : "auto";
+      });
+    }
+
+    async function enviarMercadoPago(action, plan, loadingText, errorText) {
+      const msg = document.getElementById("msg");
+      const buyer = obtenerDatosComprador();
+
+      if (!buyer) return;
+
+      if (API_URL === "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT") {
+        msg.textContent = "⚠️ Falta pegar tu API_URL de Apps Script en el HTML.";
+        return;
+      }
+
+      msg.textContent = loadingText;
+      bloquearBotonesPremium(true);
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: action,
+            buyerEmail: buyer.buyerEmail,
+            buyerPhone: buyer.buyerPhone,
+            plan: plan
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.ok && data.init_point) {
+          window.location.href = data.init_point;
+        } else {
+          msg.textContent = data.msg ? `❌ ${data.msg}` : errorText;
+          console.error(data);
+          bloquearBotonesPremium(false);
+        }
+
+      } catch (error) {
+        msg.textContent = "Error de conexión con Mercado Pago.";
+        console.error(error);
+        bloquearBotonesPremium(false);
+      }
+    }
+
+    async function comprarPagoUnico(plan) {
+      return enviarMercadoPago(
+        "mp_create_preference",
+        plan,
+        "Creando enlace de pago único...",
+        "❌ No se pudo crear el pago."
+      );
+    }
+
+    async function crearSuscripcion(plan) {
+      return enviarMercadoPago(
+        "mp_create_subscription",
+        plan,
+        "Creando suscripción automática...",
+        "❌ No se pudo crear la suscripción."
+      );
+    }
+
     function render() {
       renderStudentName();
+      actualizarCajaPremium();
       const doneSet = loadDoneSet();
       const done = doneSet.size;
       const pending = 124 - done;
@@ -1072,12 +1632,19 @@
           `Tema ${topic.id} · ${topic.title}`;
 
         const href = topic.href || "index.html";
+        const locked = !isPremiumActive() && topic.id > FREE_LIMIT;
 
-        continueBtn.href = href;
-        continueBtn.textContent = `▶ Continuar con Tema ${topic.id}`;
+        continueBtn.href = locked ? "#premiumBox" : href;
+        continueBtn.onclick = locked ? () => mostrarAvisoPremium() : null;
+        continueBtn.textContent = locked
+          ? `🔒 Desbloquear Tema ${topic.id}`
+          : `▶ Continuar con Tema ${topic.id}`;
 
-        nextTopicBtn.href = href;
-        nextTopicBtn.textContent = `Abrir Tema ${topic.id} →`;
+        nextTopicBtn.href = locked ? "#premiumBox" : href;
+        nextTopicBtn.onclick = locked ? () => mostrarAvisoPremium() : null;
+        nextTopicBtn.textContent = locked
+          ? `🔓 Desbloquear Tema ${topic.id}`
+          : `Abrir Tema ${topic.id} →`;
 
       } else {
         document.getElementById("nextLevelLabel").textContent = "Ruta completa";
@@ -1085,9 +1652,11 @@
           "🏆 ¡Completaste los 124 temas!";
 
         continueBtn.href = "index.html";
+        continueBtn.onclick = null;
         continueBtn.textContent = "✓ Revisar la ruta";
 
         nextTopicBtn.href = "index.html";
+        nextTopicBtn.onclick = null;
         nextTopicBtn.textContent = "Ver ruta →";
       }
 
@@ -1100,12 +1669,22 @@
           const topic = topicById(id);
           const isDone = doneSet.has(id);
           const isNext = id === nextTopicId;
+          const isLocked = !isPremiumActive() && id > FREE_LIMIT;
 
           if (isDone) levelDone++;
 
-          const className = isDone ? "done" : isNext ? "next" : "";
-          const statusText = isDone ? "✓ Realizado" : isNext ? "● Siguiente tema" : "Pendiente";
+          const className = isDone ? "done" : isLocked ? "locked" : isNext ? "next" : "";
+          const statusText = isDone
+            ? "✓ Realizado"
+            : isLocked
+              ? "🔒 Premium"
+              : isNext
+                ? "● Siguiente tema"
+                : "Pendiente";
           const markText = isDone ? "Desmarcar" : "✓ Marcar realizado";
+          const topicHref = escapeHTML(topic?.href || "index.html");
+          const openHref = isLocked ? "#premiumBox" : topicHref;
+          const openClick = isLocked ? `onclick="return mostrarAvisoPremium()"` : "";
 
           topicNodes.push(`
             <article class="topic-card ${className}">
@@ -1115,8 +1694,9 @@
                 <div class="topic-info">
                   <a
                     class="topic-title"
-                    href="${escapeHTML(topic?.href || "index.html")}"
-                    title="Abrir Tema ${id} · ${escapeHTML(topic?.title || "")}"
+                    href="${openHref}"
+                    ${openClick}
+                    title="${isLocked ? "Desbloquear" : "Abrir"} Tema ${id} · ${escapeHTML(topic?.title || "")}"
                   >
                     <span class="emoji">${escapeHTML(topic?.emoji || "♟")}</span>
                     <span>${escapeHTML(topic?.title || `Tema ${id}`)}</span>
@@ -1130,8 +1710,10 @@
                 <span class="topic-status">${statusText}</span>
 
                 <div class="topic-buttons">
-                  <a class="topic-open" href="${escapeHTML(topic?.href || "index.html")}">Abrir tema</a>
-                  <button class="topic-mark" type="button" onclick="toggleTopicDone(${id})">${markText}</button>
+                  ${isLocked
+                    ? `<a class="topic-unlock" href="#premiumBox" onclick="return mostrarAvisoPremium()">🔓 Desbloquear</a>`
+                    : `<a class="topic-open" href="${topicHref}">Abrir tema</a>`}
+                  <button class="topic-mark" type="button" onclick="toggleTopicDone(${id})">${isLocked ? "Premium" : markText}</button>
                 </div>
               </div>
             </article>
@@ -1194,7 +1776,13 @@
     initializeStudentName();
 
     window.addEventListener("storage", event => {
-      if (event.key === PROGRESS_KEY) render();
+      if (
+        event.key === PROGRESS_KEY ||
+        event.key === STUDENT_NAME_KEY ||
+        event.key === PREMIUM_FLAG
+      ) {
+        render();
+      }
     });
 
     window.addEventListener("pageshow", render);
