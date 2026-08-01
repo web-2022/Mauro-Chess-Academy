@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#020617">
+  <title>Mi Progreso | Academia de Ajedrez Mauro</title>
+
+  <style>
+    :root {
+      --bg:#020617;
+      --panel:#0f172a;
+      --panel2:#111c31;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --green:#22c55e;
+      --blue:#38bdf8;
+      --line:rgba(148,163,184,.18);
+      --shadow:0 24px 70px rgba(0,0,0,.34);
+    }
+
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+      font-size:17px;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 8%,rgba(56,189,248,.12),transparent 25%),
+        radial-gradient(circle at 90% 10%,rgba(34,197,94,.10),transparent 28%),
+        var(--bg);
+    }
+
+    a { color:inherit; text-decoration:none; }
+    .container { width:min(1720px,calc(100% - 32px)); margin:auto; }
+
+    .topbar {
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(2,6,23,.88);
+      border-bottom:1px solid var(--line);
+      backdrop-filter:blur(16px);
+    }
+
+    .topbar-inner {
+      min-height:70px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:1.04rem;
+      font-weight:950;
+    }
+
+    .brand-mark {
+      width:44px;
+      height:44px;
+      border-radius:15px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,var(--green),var(--blue));
+      color:#020617;
+      font-size:1.5rem;
+    }
+
+    .btn {
+      min-height:46px;
+      padding:0 18px;
+      border-radius:13px;
+      border:1px solid var(--line);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-weight:900;
+      background:rgba(255,255,255,.04);
+    }
+
+    .btn.primary {
+      border:0;
+      background:linear-gradient(135deg,var(--green),var(--blue));
+      color:#020617;
+    }
+
+    main { padding:28px 0 70px; }
+
+    .hero {
+      display:grid;
+      grid-template-columns:1fr 210px;
+      gap:24px;
+      align-items:center;
+      padding:28px;
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:
+        linear-gradient(120deg,rgba(34,197,94,.11),transparent 42%),
+        linear-gradient(300deg,rgba(56,189,248,.12),transparent 50%),
+        linear-gradient(145deg,rgba(15,23,42,.96),rgba(2,6,23,.96));
+      box-shadow:var(--shadow);
+    }
+
+    .hero h1 {
+      margin:0 0 10px;
+      font-size:clamp(2rem,5vw,4.2rem);
+      line-height:.96;
+      letter-spacing:-.05em;
+    }
+
+    .gradient {
+      background:linear-gradient(90deg,var(--green),var(--blue));
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero-actions {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:20px;
+    }
+
+    .ring {
+      --p:0deg;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      margin:auto;
+      background:conic-gradient(var(--green) var(--p),rgba(255,255,255,.08) 0);
+      position:relative;
+    }
+
+    .ring::before {
+      content:"";
+      position:absolute;
+      inset:16px;
+      border-radius:50%;
+      background:#07101f;
+      border:1px solid var(--line);
+    }
+
+    .ring div { position:relative; text-align:center; }
+    .ring strong { display:block; font-size:2.7rem; line-height:1; }
+    .ring span { color:var(--muted); font-size:.88rem; }
+
+    .stats {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin-top:18px;
+    }
+
+    .stat,
+    .card {
+      border:1px solid var(--line);
+      background:linear-gradient(145deg,rgba(17,28,49,.93),rgba(8,17,32,.94));
+      box-shadow:var(--shadow);
+      border-radius:22px;
+    }
+
+    .stat { padding:18px; }
+    .stat span { display:block; color:var(--muted); font-size:.88rem; font-weight:750; }
+    .stat strong { display:block; font-size:1.75rem; margin-top:8px; }
+
+    .next-card {
+      margin-top:18px;
+      padding:20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .next-card span {
+      display:block;
+      color:#7dd3fc;
+      font-size:.88rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+    }
+
+    .next-card strong {
+      display:block;
+      margin-top:5px;
+      font-size:1.22rem;
+    }
+
+    .section {
+      padding:22px;
+      margin-top:18px;
+    }
+
+    .head {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:16px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+
+    .head h2 { margin:0; font-size:1.55rem; }
+
+    .legend {
+      display:flex;
+      gap:13px;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:.88rem;
+    }
+
+    .dot {
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      display:inline-block;
+      margin-right:5px;
+      background:#475569;
+    }
+
+    .dot.done { background:var(--green); }
+    .dot.next { background:var(--blue); }
+
+    .levels { display:grid; gap:26px; }
+
+    .level {
+      overflow:hidden;
+      border:1px solid rgba(56,189,248,.24);
+      border-radius:24px;
+      background:linear-gradient(145deg,rgba(15,23,42,.96),rgba(7,16,31,.98));
+      box-shadow:0 18px 45px rgba(0,0,0,.22);
+    }
+
+    .level:nth-child(1) { border-color:rgba(56,189,248,.34); }
+    .level:nth-child(2) { border-color:rgba(34,197,94,.34); }
+    .level:nth-child(3) { border-color:rgba(168,85,247,.34); }
+    .level:nth-child(4) { border-color:rgba(245,158,11,.34); }
+    .level:nth-child(5) { border-color:rgba(244,63,94,.30); }
+    .level:nth-child(6) { border-color:rgba(14,165,233,.38); }
+
+    .level-head {
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      align-items:center;
+      padding:22px 24px 18px;
+      background:
+        linear-gradient(90deg,rgba(56,189,248,.13),rgba(34,197,94,.07) 55%,transparent),
+        rgba(255,255,255,.025);
+      border-bottom:1px solid rgba(148,163,184,.16);
+    }
+
+    .level-title {
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+
+    .level-icon {
+      width:56px;
+      height:56px;
+      border-radius:17px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(145deg,rgba(56,189,248,.18),rgba(34,197,94,.10));
+      border:1px solid rgba(125,211,252,.28);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+      font-size:1.7rem;
+    }
+
+    .level-title strong {
+      display:block;
+      font-size:1.24rem;
+      line-height:1.2;
+      letter-spacing:-.01em;
+    }
+
+    .level-title span {
+      display:block;
+      margin-top:5px;
+      color:#a9b8cb;
+      font-size:.90rem;
+      font-weight:700;
+    }
+
+    .level-count {
+      flex:0 0 auto;
+      padding:9px 12px;
+      border-radius:999px;
+      color:#dbeafe;
+      background:rgba(56,189,248,.09);
+      border:1px solid rgba(56,189,248,.18);
+      font-size:.90rem;
+      font-weight:900;
+    }
+
+    .track {
+      height:11px;
+      margin:0;
+      border-radius:0;
+      overflow:hidden;
+      background:rgba(255,255,255,.055);
+    }
+
+    .track i {
+      display:block;
+      height:100%;
+      width:0;
+      background:linear-gradient(90deg,var(--green),var(--blue));
+      box-shadow:0 0 18px rgba(56,189,248,.22);
+    }
+
+    .topics {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin:0;
+      padding:20px;
+      background:rgba(2,6,23,.24);
+    }
+
+    @media(min-width:1500px) {
+      .topics { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    }
+
+    .topic-card {
+      min-width:0;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.028);
+      transition:.18s ease;
+      overflow:hidden;
+    }
+
+    .topic-card:hover {
+      transform:translateY(-2px);
+      border-color:rgba(56,189,248,.34);
+      background:rgba(255,255,255,.045);
+    }
+
+    .topic-card.done {
+      border-color:rgba(34,197,94,.34);
+      background:rgba(34,197,94,.07);
+    }
+
+    .topic-card.next {
+      border-color:rgba(56,189,248,.60);
+      background:rgba(56,189,248,.08);
+      box-shadow:0 0 0 3px rgba(56,189,248,.08);
+    }
+
+    .topic-main {
+      display:flex;
+      align-items:flex-start;
+      gap:14px;
+      padding:17px;
+    }
+
+    .topic-number {
+      flex:0 0 48px;
+      width:48px;
+      height:48px;
+      border-radius:15px;
+      display:grid;
+      place-items:center;
+      font-size:.95rem;
+      font-weight:950;
+      color:#cbd5e1;
+      background:rgba(148,163,184,.10);
+      border:1px solid var(--line);
+    }
+
+    .topic-card.done .topic-number {
+      color:#052e16;
+      background:linear-gradient(145deg,#4ade80,#22c55e);
+      border-color:transparent;
+    }
+
+    .topic-card.next .topic-number {
+      color:#082f49;
+      background:linear-gradient(145deg,#7dd3fc,#38bdf8);
+      border-color:transparent;
+    }
+
+    .topic-info { min-width:0; flex:1; }
+
+    .topic-title {
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+      color:var(--text);
+      font-size:1.06rem;
+      font-weight:900;
+      line-height:1.25;
+    }
+
+    .topic-title .emoji { flex:0 0 auto; }
+
+    .topic-desc {
+      margin-top:5px;
+      color:var(--muted);
+      font-size:.88rem;
+      line-height:1.48;
+    }
+
+    .topic-actions {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      padding:0 17px 16px 79px;
+      flex-wrap:wrap;
+    }
+
+    .topic-status {
+      font-size:.80rem;
+      font-weight:900;
+      color:#94a3b8;
+    }
+
+    .topic-card.done .topic-status { color:#86efac; }
+    .topic-card.next .topic-status { color:#7dd3fc; }
+
+    .topic-buttons {
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+    }
+
+    .topic-open,
+    .topic-mark {
+      min-height:38px;
+      padding:0 12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      font:inherit;
+      font-size:.80rem;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .topic-open:hover,
+    .topic-mark:hover {
+      border-color:rgba(56,189,248,.45);
+      background:rgba(56,189,248,.08);
+    }
+
+    .topic-card.done .topic-mark {
+      color:#bbf7d0;
+      border-color:rgba(34,197,94,.35);
+      background:rgba(34,197,94,.08);
+    }
+
+    @media(max-width:920px) {
+      .hero { grid-template-columns:1fr; }
+      .ring { width:160px; height:160px; margin:0; }
+      .stats { grid-template-columns:1fr 1fr; }
+      .topics { grid-template-columns:1fr; }
+      .level-head { align-items:flex-start; }
+    }
+
+    @media(max-width:480px) {
+      .container { width:calc(100% - 14px); }
+      .hero,.section { padding:16px; }
+      .level-head { padding:18px 16px 15px; }
+      .level-icon { width:48px; height:48px; font-size:1.45rem; }
+      .level-title strong { font-size:1.08rem; }
+      .level-title span { font-size:.82rem; }
+      .level-count { font-size:.80rem; }
+      .topics { padding:12px; gap:10px; }
+      .topic-main { padding:14px; gap:11px; }
+      .topic-number { flex-basis:42px; width:42px; height:42px; }
+      .topic-title { font-size:.98rem; }
+      .topic-desc { font-size:.84rem; }
+      .topic-actions { padding:0 14px 14px 67px; }
+      .topic-buttons { width:100%; }
+      .topic-open,.topic-mark { flex:1; }
+    }
+
+    .welcome-text {
+      margin:0 0 6px;
+      color:var(--muted);
+      font-size:clamp(1.05rem,2.3vw,1.28rem);
+      font-weight:750;
+      line-height:1.5;
+    }
+
+    .welcome-text strong {
+      color:var(--text);
+      font-weight:950;
+    }
+
+    .name-link {
+      margin-top:12px;
+      padding:0;
+      border:0;
+      background:transparent;
+      color:#7dd3fc;
+      font:inherit;
+      font-size:.88rem;
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .name-link:hover {
+      text-decoration:underline;
+    }
+
+    .name-modal {
+      position:fixed;
+      inset:0;
+      z-index:100;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      background:rgba(2,6,23,.78);
+      backdrop-filter:blur(12px);
+    }
+
+    .name-modal.open {
+      display:flex;
+    }
+
+    .name-card {
+      width:min(520px,100%);
+      padding:28px;
+      border:1px solid var(--line);
+      border-radius:26px;
+      background:linear-gradient(145deg,#111c31,#07101f);
+      box-shadow:0 30px 90px rgba(0,0,0,.48);
+      text-align:center;
+    }
+
+    .name-icon {
+      width:62px;
+      height:62px;
+      margin:0 auto 16px;
+      display:grid;
+      place-items:center;
+      border-radius:20px;
+      background:linear-gradient(135deg,var(--green),var(--blue));
+      color:#020617;
+      font-size:2rem;
+    }
+
+    .name-card h2 {
+      margin:0;
+      font-size:clamp(1.5rem,4vw,2.2rem);
+    }
+
+    .name-card p {
+      margin:10px auto 20px;
+      max-width:420px;
+      color:var(--muted);
+      line-height:1.55;
+    }
+
+    .name-form {
+      display:grid;
+      gap:12px;
+    }
+
+    .name-form input {
+      width:100%;
+      min-height:52px;
+      padding:0 16px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      outline:none;
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      font:inherit;
+      font-weight:800;
+    }
+
+    .name-form input:focus {
+      border-color:var(--blue);
+      box-shadow:0 0 0 4px rgba(56,189,248,.10);
+    }
+
+    .name-form .btn {
+      width:100%;
+      cursor:pointer;
+    }
+
+    .name-error {
+      min-height:20px;
+      color:#fda4af;
+      font-size:.8rem;
+      font-weight:800;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">♞</span>
+        <span>Mi Progreso</span>
+      </a>
+
+      <a class="btn primary" href="index.html">
+        ⌂ Inicio
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="hero">
+      <div>
+        <h1>Mi <span class="gradient">Progreso</span></h1>
+        <p class="welcome-text" id="welcomeText">
+          Bienvenido, sigamos aprendiendo y entrenando.
+        </p>
+        <button class="name-link" id="editNameBtn" type="button">✏️ Cambiar nombre</button>
+
+        <div class="hero-actions">
+          <a class="btn primary" id="continueBtn" href="ruta-chess.html">
+            ▶ Continuar aprendiendo
+          </a>
+        </div>
+      </div>
+
+      <div class="ring" id="ring">
+        <div>
+          <strong id="percent">0%</strong>
+          <span>ruta completada</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <article class="stat">
+        <span>✅ Temas realizados</span>
+        <strong id="doneStat">0 / 124</strong>
+      </article>
+
+      <article class="stat">
+        <span>♟ Nivel actual</span>
+        <strong id="levelStat">1 / 6</strong>
+      </article>
+
+      <article class="stat">
+        <span>📚 Temas pendientes</span>
+        <strong id="pendingStat">124</strong>
+      </article>
+
+      <article class="stat">
+        <span>🏆 Niveles completados</span>
+        <strong id="levelsDoneStat">0 / 6</strong>
+      </article>
+    </section>
+
+    <section class="card next-card">
+      <div>
+        <span id="nextLevelLabel">Nivel 1</span>
+        <strong id="nextTopicTitle">Tema 1 · El ajedrez</strong>
+      </div>
+
+      <a class="btn primary" id="nextTopicBtn" href="ruta-chess.html">
+        Continuar →
+      </a>
+    </section>
+
+    <section class="card section" id="niveles">
+      <div class="head">
+        <h2>Mi ruta de aprendizaje · 124 temas</h2>
+
+        <div class="legend">
+          <span><i class="dot done"></i>Realizado</span>
+          <span><i class="dot next"></i>Siguiente</span>
+          <span><i class="dot"></i>Pendiente</span>
+        </div>
+      </div>
+
+      <div class="levels" id="levels"></div>
+    </section>
+
+  </main>
+
+  <div class="name-modal" id="nameModal" role="dialog" aria-modal="true" aria-labelledby="nameTitle">
+    <div class="name-card">
+      <div class="name-icon">♟</div>
+      <h2 id="nameTitle">¡Bienvenido a Mi Progreso!</h2>
+      <p>Ingresa tu nombre y apellido. Se guardará únicamente en este dispositivo para personalizar tu panel.</p>
+
+      <form class="name-form" id="nameForm">
+        <input
+          id="studentNameInput"
+          type="text"
+          maxlength="70"
+          autocomplete="name"
+          placeholder="Ejemplo: Victor Gamarra"
+          required>
+        <div class="name-error" id="nameError"></div>
+        <button class="btn primary" type="submit">Guardar y ver mi progreso</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const PROGRESS_KEY = "mk_learning_path_done_realizado_v3";
+    const STUDENT_NAME_KEY = "mauro_student_name_v1";
+
+    const LEVELS = [
+      { id: 1, name: "Descubriendo el ajedrez", stage: "Nivel Inicial", start: 1, end: 19, icon: "♙" },
+      { id: 2, name: "Primeras tácticas y estrategias", stage: "Nivel Básico", start: 20, end: 43, icon: "♘" },
+      { id: 3, name: "Pensando cada jugada", stage: "Nivel Intermedio", start: 44, end: 65, icon: "♗" },
+      { id: 4, name: "Dominando el tablero", stage: "Nivel Avanzado", start: 66, end: 90, icon: "♖" },
+      { id: 5, name: "Preparación para competir", stage: "Nivel Competitivo", start: 91, end: 110, icon: "♕" },
+      { id: 6, name: "Entrenamiento completo del ajedrecista", stage: "Entrenamiento Integral", start: 111, end: 124, icon: "♔" }
+    ];
+
+    const topics = [
+
+        // ===== FUNDAMENTOS =====
+        { id: 1, emoji: "🏁", title: "El ajedrez", desc: "Qué es el ajedrez", href: "queeselajedrez", category: "fundamentos" },
+        { id: 2, emoji: "🏁", title: "El Tablero", desc: "Filas, columnas y diagonales", href: "eltablero.html", category: "fundamentos" },
+        { id: 3, emoji: "🏁", title: "Tablero y coordenadas", desc: "Cómo ubicar casillas", href: "tableroycoordenadas.html", category: "fundamentos" },
+        { id: 4, emoji: "🏁", title: "Practiquemos coordenadas", desc: "Ejercicios de ubicación", href: "practiquemoseltableroycoordenadas.html", category: "fundamentos" },
+        { id: 5, emoji: "🏁", title: "¿Dónde está la pieza?", desc: "Reconocimiento visual", href: "dondeEstaLaPieza.html", category: "fundamentos" },
+
+        // ===== PIEZAS =====
+        { id: 6, emoji: "♙", title: "Las piezas del ajedrez", desc: "Funciones básicas", href: "laspiezasdelajedrez.html", category: "fundamentos" },
+        { id: 7, emoji: "♙", title: "Valor de las piezas", desc: "Concepto de material", href: "elValorDeLasPiezas.html", category: "fundamentos" },
+
+        // ===== MOVIMIENTOS =====
+        { id: 8, emoji: "♙", title: "Movimiento del peón", desc: "Reglas del peón", href: "movimientodelpeon.html", category: "movimientos" },
+        { id: 9, emoji: "♘", title: "Movimiento del caballo", desc: "Movimiento en L", href: "movimientodelcaballo.html", category: "movimientos" },
+        { id: 10, emoji: "♗", title: "Movimiento del alfil", desc: "Diagonales", href: "movimientodelalfil.html", category: "movimientos" },
+        { id: 11, emoji: "♖", title: "Movimiento de la torre", desc: "Líneas rectas", href: "movimientodelatorre.html", category: "movimientos" },
+        { id: 12, emoji: "♕", title: "Movimiento de la reina", desc: "Combinación torre + alfil", href: "movimientodelareina.html", category: "movimientos" },
+        { id: 13, emoji: "♔", title: "Movimiento del rey", desc: "Reglas del rey", href: "movimientodelrey.html", category: "movimientos" },
+        { id: 14, emoji: "♙", title: "Peón al paso", desc: "Captura especial", href: "peonalpaso.html", category: "movimientos" },
+        { id: 15, emoji: "🔄", title: "Enroque", desc: "Movimiento especial", href: "enroque.html", category: "movimientos" },
+        { id: 16, emoji: "👑", title: "Promoción del peón", desc: "Coronación", href: "promociondelpeon.html", category: "movimientos" },
+
+        // ===== REGLAS =====
+        { id: 17, emoji: "🎯", title: "Capturas y reglas básicas", desc: "Turnos y capturas", href: "capturasyreglasbasicas.html", category: "reglas" },
+        { id: 18, emoji: "🚫", title: "¿Qué es el jaque?", desc: "Concepto de jaque", href: "queeseljaque.html", category: "reglas" },
+        { id: 19, emoji: "🏁", title: "Jaque mate", desc: "Concepto de mate", href: "jaquemateidea.html", category: "reglas" },
+
+        // ===== TÁCTICA =====
+        { id: 20, emoji: "🎣", title: "Ataque doble", desc: "Fork", href: "trucoataquedoble.html", category: "tactica" },
+        { id: 21, emoji: "📌", title: "Clavada", desc: "Pin", href: "trucoclavada.html", category: "tactica" },
+        { id: 22, emoji: "🔍", title: "Ataque descubierto", desc: "Ataque oculto", href: "trucodescubierto.html", category: "tactica" },
+        { id: 23, emoji: "⚡", title: "Jaque a la descubierta", desc: "Mover una pieza para descubrir un jaque al rey rival", href: "jaquealadescubierta.html", category: "tactica" },
+        { id: 24, emoji: "🎯", title: "Piezas sin defensa", desc: "Piezas colgadas", href: "piezassindefensa.html", category: "tactica" },
+
+        // ===== APERTURA =====
+        { id: 25, emoji: "🌞", title: "Aperturas abiertas", desc: "Centro abierto", href: "aperturasabiertas.html", category: "apertura" },
+        { id: 26, emoji: "🌙", title: "Aperturas cerradas", desc: "Centro cerrado", href: "aperturascerradas.html", category: "apertura" },
+        { id: 27, emoji: "🧩", title: "Principios de apertura", desc: "Desarrollo", href: "principiosdeapertura.html", category: "apertura" },
+
+
+        // ===== MATES =====
+        { id: 28, emoji: "🧠", title: "Mates básicos", desc: "Mate en 1", href: "matesbasicos.html", category: "tactica" },
+        { id: 29, emoji: "🧠", title: "Mate con patrones", desc: "Patrones clásicos", href: "mateconpatrones.html", category: "tactica" },
+        { id: 30, emoji: "🧠", title: "Mate intermedio", desc: "Mate en 2", href: "matenivelintermedio.html", category: "tactica" },
+        { id: 31, emoji: "🧠", title: "Mate táctico", desc: "Cálculo", href: "mateniveltactico.html", category: "tactica" },
+
+        // ===== ESTRATEGIA =====
+        { id: 32, emoji: "🛡️", title: "Seguridad del rey", desc: "Ataque y defensa", href: "seguridaddelrey.html", category: "estrategia" },
+        { id: 33, emoji: "♟️", title: "Casillas fuertes", desc: "Outposts", href: "casillasfuertesydebiles.html", category: "estrategia" },
+        { id: 34, emoji: "🔥", title: "Sacrificios tácticos", desc: "Entrega material", href: "sacrificiostacticos.html", category: "estrategia" },
+        { id: 35, emoji: "🔦", title: "Rayos X", desc: "Presión", href: "rayosx.html", category: "estrategia" },
+        // ===== ESTRATEGIA =====
+        { id: 36, emoji: "⚖️", title: "Cuándo capturar y cuándo mantener tensión", desc: "Evaluar cambios y activación", href: "mantenertension.html", category: "estrategia" },
+
+
+        // ===== FINALES =====
+        { id: 37, emoji: "🏰", title: "Final rey y peones", desc: "Conceptos básicos", href: "finalreypeones.html", category: "finales" },
+        { id: 38, emoji: "🏁", title: "Oposición", desc: "Técnica básica", href: "oposicionenfinales.html", category: "finales" },
+        { id: 39, emoji: "👑", title: "Final torre", desc: "Mate con torre", href: "finalreytorre.html", category: "finales" },
+        { id: 40, emoji: "👑", title: "Final reina", desc: "Mate con reina", href: "finalreyreina.html", category: "finales" },
+
+        // ===== PRÁCTICA =====
+        { id: 41, emoji: "🤝", title: "Empates", desc: "Tablas", href: "empates.html", category: "reglas" },
+        { id: 42, emoji: "🏆", title: "Partida guiada", desc: "Checklist", href: "partidaguiada.html", category: "practica" },
+        { id: 43, emoji: "🏁", title: "Cómo jugar una partida", desc: "Proceso mental", href: "comojugarunapartida.html", category: "practica" },
+
+        // ===== COMPETITIVO =====
+        { id: 44, emoji: "🧠", title: "Cálculo de variantes", desc: "Cómo calcular correctamente", href: "calculodevariantes.html", category: "avanzado" },
+        { id: 45, emoji: "🎯", title: "Método de candidatos", desc: "Elegir jugadas", href: "metododecandidatos.html", category: "avanzado" },
+        { id: 46, emoji: "👁️", title: "Visualización", desc: "Pensar sin mover piezas", href: "visualizacion.html", category: "avanzado" },
+        { id: 47, emoji: "👁️", title: "Cálculo profundo", desc: "Cálculo profundo", href: "calculoprofundo.html", category: "avanzado" },
+        { id: 48, emoji: "👁️", title: "Táctica compleja", desc: "Táctica compleja", href: "tacticacompleja.html", category: "avanzado" },
+        { id: 49, emoji: "🧩", title: "Estructuras de peones", desc: "Tipos y planes", href: "estructurasdepeones.html", category: "avanzado" },
+        { id: 50, emoji: "⚙️", title: "Planes típicos", desc: "Planes estratégicos", href: "planesestrategicos.html", category: "avanzado" },
+        { id: 51, emoji: "🛑", title: "Profilaxis", desc: "Evitar ideas del rival", href: "profilaxis.html", category: "avanzado" },
+        { id: 52, emoji: "🛑", title: "Maniobras", desc: "Maniobras", href: "maniobras.html", category: "avanzado" },
+        { id: 53, emoji: "🛑", title: "Dominio de casillas", desc: "Dominio de casillas", href: "dominiodecasillas.html", category: "avanzado" },
+
+        // ===== MAESTRO =====
+        { id: 54, emoji: "🏹", title: "Ataque al rey avanzado", desc: "Métodos de ataque", href: "ataquealreyavanzado.html", category: "maestro" },
+        { id: 55, emoji: "♟️", title: "Conversión de ventaja", desc: "Cómo ganar posiciones", href: "conversiondeventaja.html", category: "maestro" },
+        { id: 56, emoji: "🧱", title: "Defensa activa", desc: "Cómo defender posiciones", href: "defensaactiva.html", category: "maestro" },
+        { id: 57, emoji: "⚙️", title: "Juego posicional", desc: "Juego posicional", href: "juegoposicional.html", category: "maestro" },
+        { id: 58, emoji: "🏰", title: "Finales de torre avanzados", desc: "Finales de torre avanzados", href: "finalestorreavanzados.html", category: "maestro" },
+        { id: 59, emoji: "🏰", title: "Finales de peones teóricos", desc: "Finales de peones teóricos", href: "finalespeones.html", category: "maestro" },
+        { id: 60, emoji: "🏰", title: "Finales de alfiles", desc: "Finales de alfiles", href: "finalesalfiles.html", category: "maestro" },
+        { id: 61, emoji: "🏰", title: "Técnica de conversión", desc: "Técnica de conversión", href: "tecnicadeconversion.html", category: "maestro" },
+        { id: 62, emoji: "📚", title: "Construcción de repertorio", desc: "Construir repertorio", href: "repertoriodeaperturas.html", category: "maestro" },
+        { id: 63, emoji: "📚", title: "Cómo estudiar aperturas", desc: "Métodos de estudio", href: "comoestudiaraperturas.html", category: "maestro" },
+        { id: 64, emoji: "📚", title: "Ideas típicas de apertura", desc: "Ideas típicas", href: "ideastipicas.html", category: "maestro" },
+        { id: 65, emoji: "🧪", title: "Preparación competitiva", desc: "Preparación", href: "preparaciondepartidas.html", category: "maestro" },
+
+        // ===== ALTO RENDIMIENTO =====
+        { id: 66, emoji: "🧠", title: "Árbol de variantes", desc: "Cómo estructurar el cálculo profundo", href: "arboldevariantes.html", category: "elite" },
+        { id: 67, emoji: "🎯", title: "Cálculo forzado", desc: "Secuencias críticas", href: "calculoforzado.html", category: "elite" },
+        { id: 68, emoji: "⚖️", title: "Evaluación dinámica", desc: "Factores dinámicos vs estáticos", href: "evaluaciondinamica.html", category: "elite" },
+        { id: 69, emoji: "🧩", title: "Intuición vs cálculo", desc: "Cuándo calcular y cuándo evaluar", href: "intuicionvscalculo.html", category: "elite" },
+        { id: 70, emoji: "🧠", title: "Eliminación de candidatos", desc: "Filtrado profesional", href: "eliminaciondecandidatos.html", category: "elite" },
+
+        // ===== ESTRATEGIA PROFUNDA =====
+        { id: 71, emoji: "♟️", title: "Transformación de ventajas", desc: "Convertir ventajas", href: "transformaciondeventajas.html", category: "elite" },
+        { id: 72, emoji: "🧱", title: "Juego en posiciones iguales", desc: "Crear desequilibrios", href: "posicionesiguales.html", category: "elite" },
+        { id: 73, emoji: "🛡️", title: "Defensa técnica", desc: "Salvar posiciones inferiores", href: "defensatecnica.html", category: "elite" },
+        { id: 74, emoji: "⚙️", title: "Restricción", desc: "Limitar el juego rival", href: "restriccion.html", category: "elite" },
+        { id: 75, emoji: "🔺", title: "Mejora de piezas", desc: "Optimización progresiva", href: "mejoradepiezas.html", category: "elite" },
+        // ===== FINALES ELITE =====
+        { id: 76, emoji: "🏰", title: "Lucena y Philidor avanzados", desc: "Finales de torre avanzados", href: "lucenayphilidor.html", category: "elite" },
+        { id: 77, emoji: "👑", title: "Finales de dama complejos", desc: "Técnica avanzada", href: "finalesdedama.html", category: "elite" },
+        { id: 78, emoji: "♝", title: "Finales de piezas menores", desc: "Alfiles y caballos", href: "finalespiezasmenores.html", category: "elite" },
+        { id: 79, emoji: "📐", title: "Finales técnicos", desc: "Precisión técnica", href: "finalestecnicos.html", category: "elite" },
+        { id: 80, emoji: "🎯", title: "Finales prácticos de torneo", desc: "Decisiones prácticas", href: "finalespracticos.html", category: "elite" },
+
+        // ===== PSICOLOGÍA COMPETITIVA =====
+        { id: 81, emoji: "🧠", title: "Control emocional", desc: "Gestión psicológica", href: "controlemocional.html", category: "elite" },
+        { id: 82, emoji: "⏳", title: "Gestión del tiempo", desc: "Uso del reloj", href: "gestiondeltiempo.html", category: "elite" },
+        { id: 83, emoji: "🔥", title: "Manejo de presión", desc: "Juego bajo presión", href: "manejodepresion.html", category: "elite" },
+        { id: 84, emoji: "🔄", title: "Recuperación tras derrota", desc: "Mentalidad resiliente", href: "recuperaciontrasderrota.html", category: "elite" },
+        { id: 85, emoji: "🏆", title: "Rutinas de torneo", desc: "Preparación mental", href: "rutinasdetorneo.html", category: "elite" },
+
+        // ===== PREPARACIÓN PROFESIONAL =====
+        { id: 86, emoji: "💻", title: "Uso correcto de engines", desc: "Cómo entrenar con engine", href: "usoengines.html", category: "elite" },
+        { id: 87, emoji: "📊", title: "Preparación contra rival", desc: "Análisis previo", href: "preparacioncontrarival.html", category: "elite" },
+        { id: 88, emoji: "📚", title: "Repertorio profundo", desc: "Construcción avanzada", href: "repertorioprofundo.html", category: "elite" },
+        { id: 89, emoji: "🎯", title: "Estrategia de torneo", desc: "Planificación competitiva", href: "estrategiadetorneo.html", category: "elite" },
+        { id: 90, emoji: "🔍", title: "Análisis post partida", desc: "Método profesional", href: "analisispostpartida.html", category: "elite" },
+
+        // ===== PARTIDAS MODELO =====
+        { id: 91, emoji: "♟️", title: "Partidas clásicas inmortales", desc: "Aprender de partidas históricas", href: "partidasclasicas.html", category: "elite" },
+        { id: 92, emoji: "📖", title: "Partidas modelo por estructura", desc: "Ejemplos típicos de planes", href: "partidasmodelo.html", category: "elite" },
+        { id: 93, emoji: "🔥", title: "Ataques clásicos al rey", desc: "Patrones históricos", href: "ataquesclasicos.html", category: "elite" },
+        { id: 94, emoji: "🧠", title: "Partidas estratégicas modelo", desc: "Dominio posicional", href: "partidasestrategicas.html", category: "elite" },
+        { id: 95, emoji: "🔍", title: "Cómo analizar una partida", desc: "Método profesional", href: "comoanalizar.html", category: "elite" },
+        { id: 96, emoji: "⚔️", title: "Partidas modernas de élite", desc: "Ajedrez contemporáneo", href: "partidasmodernas.html", category: "elite" },
+        { id: 97, emoji: "🔍", title: "Cómo analizar una partida", desc: "Método profesional", href: "comoanalizar.html", category: "elite" },
+
+        // ===== ENTRENAMIENTO PRÁCTICO =====
+        { id: 98, emoji: "🎯", title: "Entrenamiento de cálculo diario", desc: "Rutina de cálculo", href: "calculodiario.html", category: "elite" },
+        { id: 99, emoji: "👁️", title: "Visualización avanzada", desc: "Pensar sin tablero", href: "visualizacionavanzada.html", category: "elite" },
+        { id: 100, emoji: "♟️", title: "Evaluación sin mover piezas", desc: "Pensamiento estratégico", href: "evaluacionsinmover.html", category: "elite" },
+        { id: 101, emoji: "⏱️", title: "Simulación de torneo", desc: "Partidas bajo presión", href: "simulaciontorneo.html", category: "elite" },
+        { id: 102, emoji: "🧩", title: "Entrenamiento por posiciones", desc: "Entrenamiento dirigido", href: "entrenamientoposiciones.html", category: "elite" },
+        { id: 103, emoji: "👓", title: "Detección de errores típicos", desc: "Eliminar fallos", href: "errorestipicos.html", category: "elite" },
+
+
+        // ===== PLANIFICACIÓN DE CARRERA =====
+        { id: 104, emoji: "📈", title: "Cómo subir Elo", desc: "Estrategia de progreso", href: "subirelo.html", category: "elite" },
+        { id: 105, emoji: "🗺️", title: "Plan anual de entrenamiento", desc: "Planificación profesional", href: "plananual.html", category: "elite" },
+        { id: 106, emoji: "🏟️", title: "Cómo elegir torneos", desc: "Selección estratégica", href: "elegirtorneos.html", category: "elite" },
+        { id: 107, emoji: "⚖️", title: "Gestión de rating", desc: "Maximizar rendimiento", href: "gestionrating.html", category: "elite" },
+        { id: 108, emoji: "🧠", title: "Mentalidad de alto rendimiento", desc: "Psicología competitiva avanzada", href: "mentalidadgm.html", category: "elite" },
+        { id: 109, emoji: "🏆", title: "Camino a Maestro Internacional", desc: "Ruta realista", href: "caminoaim.html", category: "elite" },
+        { id: 110, emoji: "🌟", title: "Camino a Gran Maestro", desc: "Requisitos y preparación", href: "caminoagm.html", category: "elite" },
+
+        // ===== MÉTODO DE ESTUDIO =====
+        { id: 111, emoji: "📚", title: "Cómo estudiar ajedrez correctamente", desc: "Principios del entrenamiento eficiente", href: "comoestudiarajedrez.html", category: "metodologia" },
+        { id: 112, emoji: "🧠", title: "Método de entrenamiento semanal", desc: "Cómo organizar la semana de estudio", href: "metodosemanal.html", category: "metodologia" },
+        { id: 113, emoji: "🎯", title: "Equilibrio entre táctica, estrategia y finales", desc: "Distribución del entrenamiento", href: "equilibrioentrenamiento.html", category: "metodologia" },
+        { id: 114, emoji: "📊", title: "Cómo medir el progreso real", desc: "Indicadores de mejora", href: "medirprogreso.html", category: "metodologia" },
+        { id: 115, emoji: "🔁", title: "Ciclo de mejora continua", desc: "Entrenar → jugar → analizar → ajustar", href: "ciclomejora.html", category: "metodologia" },
+        { id: 116, emoji: "🧩", title: "Errores comunes en el entrenamiento", desc: "Qué evitar para no estancarse", href: "erroresentrenamiento.html", category: "metodologia" },
+
+        // ===== CIENCIA DEL RENDIMIENTO =====
+        { id: 117, emoji: "🧠", title: "Neurociencia del cálculo", desc: "Cómo funciona el cerebro al calcular variantes", href: "neurocienciacalculo.html", category: "rendimiento" },
+        { id: 118, emoji: "⚡", title: "Entrenamiento cognitivo", desc: "Mejorar memoria de trabajo y enfoque", href: "entrenamientocognitivo.html", category: "rendimiento" },
+        { id: 119, emoji: "💪", title: "Preparación física para ajedrez", desc: "Resistencia mental y energía en torneos", href: "preparacionfisica.html", category: "rendimiento" },
+        { id: 120, emoji: "🥗", title: "Nutrición para torneos", desc: "Alimentación para rendimiento cognitivo", href: "nutricionajedrez.html", category: "rendimiento" },
+        { id: 121, emoji: "😴", title: "Sueño y rendimiento mental", desc: "Optimizar descanso para cálculo", href: "suenorendimiento.html", category: "rendimiento" },
+        { id: 122, emoji: "🔥", title: "Resistencia mental en partidas largas", desc: "Evitar fatiga cognitiva", href: "resistenciamental.html", category: "rendimiento" },
+        { id: 123, emoji: "🎯", title: "Entrenamiento de concentración profunda", desc: "Mantener foco durante horas", href: "concentracionprofunda.html", category: "rendimiento" },
+        { id: 124, emoji: "🧘", title: "Gestión del estrés competitivo", desc: "Control fisiológico en torneos", href: "estrescompetitivo.html", category: "rendimiento" }
+    ];
+
+    function loadDoneSet() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "[]");
+
+        return new Set(
+          (Array.isArray(raw) ? raw : [])
+            .map(Number)
+            .filter(id => Number.isInteger(id) && id >= 1 && id <= 124)
+        );
+      } catch {
+        return new Set();
+      }
+    }
+
+    function saveDoneSet(doneSet) {
+      localStorage.setItem(
+        PROGRESS_KEY,
+        JSON.stringify([...doneSet].sort((a, b) => a - b))
+      );
+    }
+
+    function toggleTopicDone(id) {
+      const doneSet = loadDoneSet();
+
+      if (doneSet.has(id)) {
+        doneSet.delete(id);
+      } else {
+        doneSet.add(id);
+      }
+
+      saveDoneSet(doneSet);
+      render();
+    }
+
+    function topicById(id) {
+      return topics.find(topic => topic.id === id);
+    }
+
+    function levelForTopic(id) {
+      return LEVELS.find(level => id >= level.start && id <= level.end) || LEVELS[0];
+    }
+
+    function getCurrentLevel(doneSet) {
+      if (!doneSet.size) return LEVELS[0];
+
+      const highestTopic = Math.max(...doneSet);
+      return levelForTopic(highestTopic);
+    }
+
+    function getNextTopic(doneSet, currentLevel) {
+      for (let id = currentLevel.start; id <= currentLevel.end; id++) {
+        if (!doneSet.has(id)) return id;
+      }
+
+      for (const level of LEVELS) {
+        if (level.id <= currentLevel.id) continue;
+
+        for (let id = level.start; id <= level.end; id++) {
+          if (!doneSet.has(id)) return id;
+        }
+      }
+
+      for (let id = 1; id <= 124; id++) {
+        if (!doneSet.has(id)) return id;
+      }
+
+      return null;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      })[char]);
+    }
+
+    function cleanStudentName(value) {
+      return String(value || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .slice(0, 70);
+    }
+
+    function getStudentName() {
+      return cleanStudentName(localStorage.getItem(STUDENT_NAME_KEY));
+    }
+
+    function renderStudentName() {
+      const name = getStudentName();
+      const welcomeText = document.getElementById("welcomeText");
+      const editNameBtn = document.getElementById("editNameBtn");
+
+      if (name) {
+        welcomeText.innerHTML = `Bienvenido <strong>${escapeHTML(name)}</strong>, sigamos aprendiendo y entrenando.`;
+        editNameBtn.style.display = "inline-block";
+      } else {
+        welcomeText.textContent = "Bienvenido, sigamos aprendiendo y entrenando.";
+        editNameBtn.style.display = "none";
+      }
+    }
+
+    function openNameModal(editing = false) {
+      const modal = document.getElementById("nameModal");
+      const input = document.getElementById("studentNameInput");
+      const title = document.getElementById("nameTitle");
+      const error = document.getElementById("nameError");
+
+      title.textContent = editing ? "Actualizar nombre" : "¡Bienvenido a Mi Progreso!";
+      input.value = editing ? getStudentName() : "";
+      error.textContent = "";
+      modal.classList.add("open");
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function closeNameModal() {
+      document.getElementById("nameModal").classList.remove("open");
+    }
+
+    function initializeStudentName() {
+      renderStudentName();
+      if (!getStudentName()) openNameModal(false);
+    }
+
+    function render() {
+      renderStudentName();
+      const doneSet = loadDoneSet();
+      const done = doneSet.size;
+      const pending = 124 - done;
+      const percent = Math.round((done / 124) * 100);
+
+      const currentLevel = getCurrentLevel(doneSet);
+      const nextTopicId = getNextTopic(doneSet, currentLevel);
+
+      const completedLevels = LEVELS.filter(level => {
+        for (let id = level.start; id <= level.end; id++) {
+          if (!doneSet.has(id)) return false;
+        }
+        return true;
+      }).length;
+
+      document.getElementById("percent").textContent = percent + "%";
+      document.getElementById("ring").style.setProperty("--p", (percent * 3.6) + "deg");
+
+      document.getElementById("doneStat").textContent = `${done} / 124`;
+      document.getElementById("pendingStat").textContent = String(pending);
+      document.getElementById("levelStat").textContent = `${currentLevel.id} / 6`;
+      document.getElementById("levelsDoneStat").textContent = `${completedLevels} / 6`;
+
+      const continueBtn = document.getElementById("continueBtn");
+      const nextTopicBtn = document.getElementById("nextTopicBtn");
+
+      if (nextTopicId) {
+        const topic = topicById(nextTopicId);
+        const level = levelForTopic(nextTopicId);
+
+        document.getElementById("nextLevelLabel").textContent =
+          `${level.stage} · Nivel ${level.id}`;
+
+        document.getElementById("nextTopicTitle").textContent =
+          `Tema ${topic.id} · ${topic.title}`;
+
+        const href = topic.href || "index.html";
+
+        continueBtn.href = href;
+        continueBtn.textContent = `▶ Continuar con Tema ${topic.id}`;
+
+        nextTopicBtn.href = href;
+        nextTopicBtn.textContent = `Abrir Tema ${topic.id} →`;
+
+      } else {
+        document.getElementById("nextLevelLabel").textContent = "Ruta completa";
+        document.getElementById("nextTopicTitle").textContent =
+          "🏆 ¡Completaste los 124 temas!";
+
+        continueBtn.href = "index.html";
+        continueBtn.textContent = "✓ Revisar la ruta";
+
+        nextTopicBtn.href = "index.html";
+        nextTopicBtn.textContent = "Ver ruta →";
+      }
+
+      document.getElementById("levels").innerHTML = LEVELS.map(level => {
+        const total = level.end - level.start + 1;
+        let levelDone = 0;
+        const topicNodes = [];
+
+        for (let id = level.start; id <= level.end; id++) {
+          const topic = topicById(id);
+          const isDone = doneSet.has(id);
+          const isNext = id === nextTopicId;
+
+          if (isDone) levelDone++;
+
+          const className = isDone ? "done" : isNext ? "next" : "";
+          const statusText = isDone ? "✓ Realizado" : isNext ? "● Siguiente tema" : "Pendiente";
+          const markText = isDone ? "Desmarcar" : "✓ Marcar realizado";
+
+          topicNodes.push(`
+            <article class="topic-card ${className}">
+              <div class="topic-main">
+                <div class="topic-number">${id}</div>
+
+                <div class="topic-info">
+                  <a
+                    class="topic-title"
+                    href="${escapeHTML(topic?.href || "index.html")}"
+                    title="Abrir Tema ${id} · ${escapeHTML(topic?.title || "")}"
+                  >
+                    <span class="emoji">${escapeHTML(topic?.emoji || "♟")}</span>
+                    <span>${escapeHTML(topic?.title || `Tema ${id}`)}</span>
+                  </a>
+
+                  <div class="topic-desc">${escapeHTML(topic?.desc || "")}</div>
+                </div>
+              </div>
+
+              <div class="topic-actions">
+                <span class="topic-status">${statusText}</span>
+
+                <div class="topic-buttons">
+                  <a class="topic-open" href="${escapeHTML(topic?.href || "index.html")}">Abrir tema</a>
+                  <button class="topic-mark" type="button" onclick="toggleTopicDone(${id})">${markText}</button>
+                </div>
+              </div>
+            </article>
+          `);
+        }
+
+        const levelPercent = Math.round((levelDone / total) * 100);
+
+        return `
+          <section class="level">
+            <div class="level-head">
+              <div class="level-title">
+                <div class="level-icon">${level.icon}</div>
+
+                <div>
+                  <strong>Nivel ${level.id} · ${escapeHTML(level.name)}</strong>
+                  <span>${level.stage} · Temas ${level.start}–${level.end}</span>
+                </div>
+              </div>
+
+              <div class="level-count">
+                ${levelDone}/${total} · ${levelPercent}%
+              </div>
+            </div>
+
+            <div class="track">
+              <i style="width:${levelPercent}%"></i>
+            </div>
+
+            <div class="topics">
+              ${topicNodes.join("")}
+            </div>
+          </section>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("nameForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const input = document.getElementById("studentNameInput");
+      const error = document.getElementById("nameError");
+      const name = cleanStudentName(input.value);
+
+      if (name.length < 3 || !name.includes(" ")) {
+        error.textContent = "Ingresa tu nombre y apellido.";
+        input.focus();
+        return;
+      }
+
+      localStorage.setItem(STUDENT_NAME_KEY, name);
+      closeNameModal();
+      renderStudentName();
+    });
+
+    document.getElementById("editNameBtn").addEventListener("click", () => {
+      openNameModal(true);
+    });
+
+    initializeStudentName();
+
+    window.addEventListener("storage", event => {
+      if (event.key === PROGRESS_KEY) render();
+    });
+
+    window.addEventListener("pageshow", render);
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
