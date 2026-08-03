@@ -167,7 +167,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 24px;
+        gap: 14px;
       }
 
       .brand {
@@ -201,13 +201,19 @@
       .nav-links {
         display: flex;
         align-items: center;
-        gap: 24px;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        gap: 14px;
         color: #dfe6f7;
-        font-size: .94rem
+        font-size: .84rem;
+        flex: 1;
+        justify-content: center;
       }
 
       .nav-links a {
-        transition: .2s
+        transition: .2s;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
       .nav-links a:hover {
@@ -1771,6 +1777,7 @@
           <a href="miProgreso.html">Mi progreso</a>
           <a href="#planes">Planes</a>
           <a href="#contacto">Contacto</a>
+          <a href="tableroDePractica.html">Tablero de práctica</a>
         </div>
 
         <div class="nav-cta">
