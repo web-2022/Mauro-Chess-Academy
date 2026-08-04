@@ -2145,6 +2145,1195 @@
         }
       }
 
+    
+
+      /* ===== V18 · BANDEJA LATERAL + TIPOGRAFÍA MÁS CÓMODA EN LAPTOP/PC ===== */
+      @media (min-width: 1101px) {
+        .page {
+          width: min(1600px, calc(100% - 18px));
+        }
+
+        .practice-layout {
+          grid-template-columns: minmax(720px, 1.45fr) minmax(500px, 1fr);
+          gap: 14px;
+        }
+
+        /* El tablero aprovecha el ancho: piezas a la izquierda, tablero a la derecha. */
+        .board-card {
+          display: grid;
+          grid-template-columns: 116px minmax(0, 1fr);
+          grid-template-areas:
+            "toolbar toolbar"
+            "tray board"
+            "tray info"
+            "controls controls";
+          column-gap: 10px;
+          row-gap: 8px;
+          align-items: start;
+        }
+
+        .board-toolbar {
+          grid-area: toolbar;
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 6px;
+          margin-bottom: 0;
+        }
+
+        .board-toolbar .tool-btn,
+        .board-toolbar .action-btn,
+        .board-toolbar .annotation-select {
+          width: 100%;
+          min-width: 0;
+          min-height: 36px;
+          font-size: .90rem;
+          padding: 6px 7px;
+        }
+
+        .board-shell {
+          grid-area: board;
+          width: min(100%, 720px, calc(100vh - 205px));
+          margin: 0 auto;
+        }
+
+        .board-info {
+          grid-area: info;
+          margin-top: 0;
+          font-size: .86rem;
+          padding: 8px 10px;
+        }
+
+        /* Hacemos que los dos paneles hijos participen directamente en el grid del board-card. */
+        .board-bottom-tools {
+          display: contents;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child {
+          grid-area: tray;
+          align-self: stretch;
+          width: 116px;
+          padding: 8px 7px !important;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          gap: 2px;
+          overflow: hidden;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child h2 {
+          text-align: center;
+          font-size: .86rem;
+          margin-bottom: 6px;
+          white-space: nowrap;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .piece-section-title {
+          margin: 5px 0 3px;
+          text-align: center;
+          font-size: .74rem;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .piece-tray {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 4px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece {
+          width: 100%;
+          max-height: none;
+          min-height: 45px;
+          padding: 2px;
+          border-radius: 8px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img {
+          width: 88%;
+          height: 88%;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img.tray-bN {
+          width: 72%;
+          height: 72%;
+        }
+
+        .board-bottom-tools > .board-mini-panel:nth-child(2) {
+          grid-area: controls;
+          padding: 9px 10px !important;
+        }
+
+        .board-bottom-tools > .board-mini-panel:nth-child(2) h2 {
+          font-size: .96rem;
+          margin-bottom: 6px;
+        }
+
+        .board-mini-panel .actions {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 6px;
+        }
+
+        .board-mini-panel .actions .action-btn {
+          min-height: 36px;
+          padding: 6px 8px;
+          font-size: .86rem;
+          line-height: 1.15;
+        }
+
+        .board-mini-panel .actions .wide {
+          grid-column: span 2;
+        }
+
+        /* Tipografía general más legible en laptop/PC. */
+        body {
+          font-size: 18px;
+        }
+
+        .home-link,
+        .back-learning {
+          font-size: .92rem;
+        }
+
+        .tool-btn,
+        .action-btn,
+        .nav-btn,
+        .v16-mini-btn {
+          font-size: .90rem;
+        }
+
+        .panel h2 {
+          font-size: 1.08rem;
+        }
+
+        .lesson-input,
+        .fen-input,
+        .evaluation-select,
+        .annotation-select,
+        .v16-select,
+        .v16-input,
+        textarea.v16-input {
+          font-size: .94rem;
+        }
+
+        .comment-input {
+          min-height: 64px;
+          height: 64px;
+          max-height: 150px;
+          padding: 9px 10px;
+          font-size: 1rem;
+          line-height: 1.42;
+        }
+
+        .comment-head strong {
+          font-size: .96rem;
+        }
+
+        .comment-help {
+          font-size: .76rem;
+        }
+
+        .comment-actions .action-btn {
+          min-height: 36px;
+          padding: 6px 12px;
+          font-size: .88rem;
+        }
+
+        .field-label,
+        .evaluation-field,
+        .v16-field {
+          font-size: .82rem;
+        }
+
+        .hint,
+        .format-note,
+        .lesson-banner,
+        .v16-variant-status {
+          font-size: .84rem;
+          line-height: 1.45;
+        }
+
+        .study-counter {
+          font-size: .88rem;
+        }
+
+        .study-nav .nav-btn {
+          min-height: 36px;
+          padding: 6px 8px;
+          font-size: .86rem;
+        }
+
+        .commented-moves-head h3 {
+          font-size: 1rem;
+        }
+
+        .commented-moves-head span {
+          font-size: .78rem;
+        }
+
+        .study-head-number,
+        .study-head-cell {
+          font-size: .84rem;
+          min-height: 34px;
+        }
+
+        .study-turn-number {
+          font-size: .88rem;
+        }
+
+        .study-move-cell {
+          min-height: 58px;
+          padding: 8px 10px;
+        }
+
+        .study-move-prefix {
+          font-size: .84rem;
+        }
+
+        .study-move-label {
+          font-size: .94rem;
+        }
+
+        .study-move-comment {
+          font-size: .84rem;
+          line-height: 1.36;
+          -webkit-line-clamp: 3;
+        }
+
+        .study-eval-badge,
+        .evaluation-badge {
+          font-size: .76rem;
+          min-height: 24px;
+        }
+
+        .v16-modebar,
+        .v16-variant-bar,
+        .v16-details,
+        .v16-question-box {
+          font-size: .88rem;
+        }
+
+        .student-main-comment {
+          font-size: .96rem;
+          line-height: 1.55;
+        }
+
+        .student-info {
+          font-size: .88rem;
+          line-height: 1.5;
+        }
+
+        .student-question-title {
+          font-size: .96rem;
+        }
+      }
+
+      /* Pantallas grandes: damos un poco más de aire sin desperdiciar ancho. */
+      @media (min-width: 1500px) {
+        .practice-layout {
+          grid-template-columns: minmax(850px, 1.35fr) minmax(560px, 1fr);
+        }
+
+        .board-card {
+          grid-template-columns: 126px minmax(0, 1fr);
+          column-gap: 12px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child {
+          width: 126px;
+        }
+
+        .board-shell {
+          width: min(100%, 740px, calc(100vh - 205px));
+        }
+
+        .study-move-comment {
+          font-size: .88rem;
+        }
+      }
+
+      /* En pantallas medianas seguimos con la distribución anterior para no comprimir el tablero. */
+      @media (min-width: 701px) and (max-width: 1100px) {
+        .tool-btn,
+        .action-btn,
+        .nav-btn,
+        .v16-mini-btn {
+          font-size: .84rem;
+        }
+
+        .comment-input {
+          font-size: .90rem;
+          min-height: 56px;
+          height: 56px;
+        }
+
+        .study-move-label {
+          font-size: .86rem;
+        }
+
+        .study-move-comment {
+          font-size: .76rem;
+        }
+      }
+
+
+      /* ===== V19 · BANDEJA CLARA + CONTROLES DEBAJO DE LAS PIEZAS ===== */
+      @media (min-width: 1101px) {
+        /* Columna lateral única: piezas arriba y controles inmediatamente debajo. */
+        .board-card {
+          grid-template-columns: 150px minmax(0, 1fr);
+          grid-template-areas:
+            "toolbar toolbar"
+            "left board"
+            "left info";
+          column-gap: 12px;
+          row-gap: 8px;
+        }
+
+        .board-bottom-tools {
+          grid-area: left;
+          display: flex !important;
+          flex-direction: column;
+          gap: 8px;
+          align-self: start;
+          width: 150px;
+          min-width: 150px;
+        }
+
+        /* Anulamos las áreas individuales de V18 porque ahora ambas viven en la columna izquierda. */
+        .board-bottom-tools > .board-mini-panel:first-child,
+        .board-bottom-tools > .board-mini-panel:nth-child(2) {
+          grid-area: auto;
+          width: 100%;
+          min-width: 0;
+          align-self: auto;
+        }
+
+        /* Bandeja de piezas con contraste claro para piezas negras. */
+        .board-bottom-tools > .board-mini-panel:first-child {
+          padding: 9px 8px !important;
+          background: linear-gradient(180deg, #eef2f7 0%, #dfe5ec 100%);
+          border: 1px solid rgba(148, 163, 184, .70);
+          box-shadow: 0 10px 24px rgba(0, 0, 0, .20);
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child h2 {
+          color: #0f172a;
+          font-size: .94rem;
+          margin-bottom: 6px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .piece-section-title {
+          color: #334155;
+          font-size: .78rem;
+          font-weight: 950;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .piece-tray {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 5px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece {
+          min-height: 50px;
+          background: #f8fafc;
+          border: 1px solid #b8c2cf;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 2px 5px rgba(15,23,42,.10);
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece:hover {
+          background: #ffffff;
+          border-color: #38bdf8;
+          box-shadow: 0 0 0 2px rgba(56,189,248,.14), 0 4px 10px rgba(15,23,42,.12);
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece.active {
+          background: #dcfce7;
+          border-color: #22c55e;
+          box-shadow: 0 0 0 2px rgba(34,197,94,.17) inset, 0 3px 8px rgba(15,23,42,.12);
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img {
+          width: 90%;
+          height: 90%;
+          filter: drop-shadow(0 2px 2px rgba(15, 23, 42, .20));
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img.tray-bN {
+          width: 75%;
+          height: 75%;
+        }
+
+        /* Controles debajo de las piezas, en una columna clara y fácil de leer. */
+        .board-bottom-tools > .board-mini-panel:nth-child(2) {
+          padding: 9px 8px !important;
+        }
+
+        .board-bottom-tools > .board-mini-panel:nth-child(2) h2 {
+          text-align: center;
+          font-size: .94rem;
+          margin-bottom: 7px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:nth-child(2) .actions {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:nth-child(2) .actions .action-btn,
+        .board-bottom-tools > .board-mini-panel:nth-child(2) .actions .wide {
+          grid-column: 1 / -1;
+          width: 100%;
+          min-height: 38px;
+          padding: 7px 7px;
+          font-size: .84rem;
+          line-height: 1.14;
+          white-space: normal;
+        }
+
+        .board-shell {
+          grid-area: board;
+        }
+
+        .board-info {
+          grid-area: info;
+        }
+      }
+
+      @media (min-width: 1500px) {
+        .board-card {
+          grid-template-columns: 160px minmax(0, 1fr);
+        }
+
+        .board-bottom-tools {
+          width: 160px;
+          min-width: 160px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece {
+          min-height: 54px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:nth-child(2) .actions .action-btn {
+          font-size: .88rem;
+        }
+      }
+
+
+
+      /* ===== V19.1 · SESIÓN Y PANTALLA COMPLETA DEBAJO DEL TABLERO ===== */
+      .board-session-controls {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin-top: 8px;
+      }
+
+      .board-session-controls .action-btn {
+        min-height: 38px;
+        padding: 7px 10px;
+        font-size: .86rem;
+        white-space: normal;
+      }
+
+      body.student-mode .board-session-controls {
+        display: none !important;
+      }
+
+      @media (min-width: 1101px) {
+        .board-card {
+          grid-template-areas:
+            "toolbar toolbar"
+            "left board"
+            "left info"
+            "left session";
+        }
+
+        .board-session-controls {
+          grid-area: session;
+          margin-top: 0;
+          width: 100%;
+        }
+
+        .board-session-controls .action-btn {
+          min-height: 40px;
+          font-size: .90rem;
+          font-weight: 850;
+        }
+      }
+
+      @media (min-width: 1500px) {
+        .board-session-controls .action-btn {
+          min-height: 42px;
+          font-size: .94rem;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .board-session-controls {
+          grid-template-columns: 1fr;
+          gap: 5px;
+        }
+
+        .board-session-controls .action-btn {
+          min-height: 36px;
+          font-size: .78rem;
+        }
+      }
+
+    
+
+      /* ===== V19.2 · ARCHIVOS DE LECCIÓN EN COLUMNA DERECHA ===== */
+      @media (min-width: 1201px) {
+        /* Aprovecha el ancho superior del panel sin quitar espacio al listado de jugadas. */
+        .comment-editor-panel {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 170px;
+          column-gap: 12px;
+          row-gap: 0;
+          align-items: start;
+        }
+
+        /* El contenido normal de edición queda a la izquierda. */
+        .comment-editor-panel > .comment-side-header,
+        .comment-editor-panel > #loadedLessonBanner,
+        .comment-editor-panel > .lesson-title-row,
+        .comment-editor-panel > .study-nav,
+        .comment-editor-panel > .move-comment-card,
+        .comment-editor-panel > #studentLessonView {
+          grid-column: 1;
+        }
+
+        /* Accesos de archivos: columna compacta a la derecha. */
+        .comment-editor-panel > .file-actions {
+          grid-column: 2;
+          grid-row: 1 / span 3;
+          align-self: start;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 7px;
+          margin: 0;
+          padding: 8px;
+          border: 1px solid rgba(56, 189, 248, .22);
+          border-radius: 11px;
+          background: rgba(2, 6, 23, .46);
+        }
+
+        .comment-editor-panel > .file-actions::before {
+          content: "📦 Lección";
+          display: block;
+          margin-bottom: 1px;
+          color: var(--blue-soft);
+          font-size: .76rem;
+          font-weight: 950;
+          text-align: center;
+        }
+
+        .comment-editor-panel > .v16-pgn-actions {
+          grid-column: 2;
+          grid-row: 4 / span 2;
+          align-self: start;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 7px;
+          margin: 8px 0 0;
+          padding: 8px;
+          border: 1px solid rgba(34, 197, 94, .22);
+          border-radius: 11px;
+          background: rgba(2, 6, 23, .46);
+        }
+
+        .comment-editor-panel > .v16-pgn-actions::before {
+          content: "♟ PGN";
+          display: block;
+          margin-bottom: 1px;
+          color: var(--green-soft);
+          font-size: .76rem;
+          font-weight: 950;
+          text-align: center;
+        }
+
+        .comment-editor-panel > .file-actions .action-btn,
+        .comment-editor-panel > .v16-pgn-actions .action-btn {
+          width: 100%;
+          min-height: 43px;
+          padding: 7px 8px;
+          font-size: .82rem;
+          line-height: 1.18;
+          white-space: normal;
+        }
+
+        /* La nota se mantiene bajo los accesos de archivos. */
+        .comment-editor-panel > .format-note {
+          grid-column: 2;
+          grid-row: 6;
+          margin: 6px 2px 0;
+          text-align: center;
+          font-size: .70rem;
+          line-height: 1.3;
+        }
+
+        /* El listado de movimientos recupera TODO el ancho del panel. */
+        .comment-editor-panel > .commented-moves {
+          grid-column: 1 / -1;
+          width: 100%;
+          margin-top: 10px;
+        }
+
+        /* Los inputs ocultos no participan de la cuadrícula. */
+        .comment-editor-panel > input[hidden] {
+          display: none !important;
+        }
+      }
+
+      @media (min-width: 1500px) {
+        .comment-editor-panel {
+          grid-template-columns: minmax(0, 1fr) 190px;
+          column-gap: 14px;
+        }
+
+        .comment-editor-panel > .file-actions .action-btn,
+        .comment-editor-panel > .v16-pgn-actions .action-btn {
+          min-height: 46px;
+          font-size: .88rem;
+        }
+      }
+
+
+
+      /* ===== V19.3 · ARCHIVOS EN EL MARGEN EXTERIOR DERECHO =====
+         El panel de lección NO pierde ancho. La barra sólo sale al margen
+         cuando la pantalla tiene espacio real suficiente. ===== */
+
+      /* Primero anulamos la división interna introducida en V19.2. */
+      @media (min-width: 1201px) {
+        .comment-editor-panel {
+          display: block !important;
+        }
+
+        .comment-editor-panel > .comment-side-header,
+        .comment-editor-panel > #loadedLessonBanner,
+        .comment-editor-panel > .lesson-title-row,
+        .comment-editor-panel > .study-nav,
+        .comment-editor-panel > .move-comment-card,
+        .comment-editor-panel > #studentLessonView,
+        .comment-editor-panel > .commented-moves,
+        .comment-editor-panel > .file-actions,
+        .comment-editor-panel > .v16-pgn-actions,
+        .comment-editor-panel > .format-note {
+          grid-column: auto !important;
+          grid-row: auto !important;
+        }
+
+        /* En pantallas sin margen exterior suficiente, los botones quedan
+           debajo del panel, sin comprimir ningún contenido. */
+        .comment-editor-panel > .file-actions,
+        .comment-editor-panel > .v16-pgn-actions {
+          position: static;
+          width: auto;
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 7px;
+          margin: 9px 0 0;
+          padding: 8px 0 0;
+          border: 0;
+          border-top: 1px solid var(--line);
+          border-radius: 0;
+          background: transparent;
+        }
+
+        .comment-editor-panel > .file-actions::before,
+        .comment-editor-panel > .v16-pgn-actions::before {
+          display: none !important;
+          content: none !important;
+        }
+
+        .comment-editor-panel > .file-actions .action-btn,
+        .comment-editor-panel > .v16-pgn-actions .action-btn {
+          width: 100%;
+          min-height: 42px;
+          padding: 7px 10px;
+          font-size: .88rem;
+          line-height: 1.2;
+          white-space: normal;
+        }
+
+        .comment-editor-panel > .format-note {
+          position: static;
+          margin: 6px 0 0;
+          text-align: left;
+          font-size: .72rem;
+          line-height: 1.3;
+        }
+      }
+
+      /* En Full HD / monitores anchos usamos exclusivamente el margen libre
+         que queda a la derecha del contenedor principal de 1460 px. */
+      @media (min-width: 1800px) {
+        .comment-editor-panel > .file-actions,
+        .comment-editor-panel > .v16-pgn-actions {
+          position: fixed;
+          z-index: 80;
+          right: max(8px, calc((100vw - 1460px) / 2 - 170px));
+          width: 160px;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 7px;
+          margin: 0;
+          padding: 9px;
+          border: 1px solid rgba(56, 189, 248, .28);
+          border-radius: 13px;
+          background: linear-gradient(180deg, rgba(11, 23, 48, .97), rgba(4, 12, 28, .97));
+          box-shadow: 0 14px 36px rgba(0, 0, 0, .32);
+          backdrop-filter: blur(10px);
+        }
+
+        .comment-editor-panel > .file-actions {
+          top: 82px;
+        }
+
+        .comment-editor-panel > .v16-pgn-actions {
+          top: 218px;
+          border-color: rgba(34, 197, 94, .28);
+        }
+
+        .comment-editor-panel > .file-actions::before,
+        .comment-editor-panel > .v16-pgn-actions::before {
+          display: block !important;
+          margin-bottom: 1px;
+          text-align: center;
+          font-size: .77rem;
+          font-weight: 950;
+          letter-spacing: .02em;
+        }
+
+        .comment-editor-panel > .file-actions::before {
+          content: "📦 LECCIÓN" !important;
+          color: var(--blue-soft);
+        }
+
+        .comment-editor-panel > .v16-pgn-actions::before {
+          content: "♟ PGN" !important;
+          color: var(--green-soft);
+        }
+
+        .comment-editor-panel > .file-actions .action-btn,
+        .comment-editor-panel > .v16-pgn-actions .action-btn {
+          min-height: 44px;
+          padding: 7px 8px;
+          font-size: .80rem;
+          line-height: 1.18;
+        }
+
+        /* La nota no ocupa lugar en el panel cuando la barra está afuera. */
+        .comment-editor-panel > .format-note {
+          display: none;
+        }
+      }
+
+      /* En pantallas ultrawide se puede hacer la barra un poco más cómoda. */
+      @media (min-width: 2100px) {
+        .comment-editor-panel > .file-actions,
+        .comment-editor-panel > .v16-pgn-actions {
+          right: calc((100vw - 1460px) / 2 - 195px);
+          width: 184px;
+        }
+
+        .comment-editor-panel > .file-actions .action-btn,
+        .comment-editor-panel > .v16-pgn-actions .action-btn {
+          font-size: .86rem;
+        }
+      }
+
+    
+
+      /* ===== V19.4 · AJUSTE DE MARGEN DERECHO + CENTRADO + PANEL CLARO ===== */
+      @media (min-width: 1101px) {
+        /* Aprovecha mejor las dos columnas libres y centra visualmente el conjunto. */
+        .page {
+          width: min(1520px, calc(100% - 38px));
+        }
+
+        .practice-layout {
+          grid-template-columns: minmax(760px, 1.42fr) minmax(540px, 1fr);
+          gap: 18px;
+          align-items: start;
+        }
+
+        /* Bandeja izquierda un poco más compacta para ganar aire visual. */
+        .board-card {
+          grid-template-columns: 104px minmax(0, 1fr);
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child {
+          width: 104px;
+          padding: 8px 6px !important;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece {
+          min-height: 40px;
+          padding: 1px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img {
+          width: 80%;
+          height: 80%;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img.tray-bN {
+          width: 64%;
+          height: 64%;
+        }
+
+        /* Tipografía ligeramente mayor para comentarios y botones. */
+        .comment-editor-panel .action-btn,
+        .comment-editor-panel .nav-btn,
+        .comment-editor-panel .v16-mini-btn,
+        .comment-editor-panel .v16-select,
+        .comment-editor-panel .v16-input,
+        .comment-editor-panel .evaluation-select,
+        .comment-editor-panel .lesson-input {
+          font-size: .98rem;
+        }
+
+        .comment-editor-panel .comment-input {
+          font-size: 1.03rem;
+          line-height: 1.48;
+        }
+
+        .comment-editor-panel .study-move-label {
+          font-size: .98rem;
+        }
+
+        .comment-editor-panel .study-move-comment {
+          font-size: .88rem;
+        }
+
+        /* Panel de lección en gris claro para mejorar legibilidad. */
+        .comment-editor-panel {
+          background: linear-gradient(180deg, #f3f6fb 0%, #e8eef6 100%) !important;
+          color: #0f172a !important;
+          border-color: rgba(100, 116, 139, .22) !important;
+          box-shadow: 0 20px 60px rgba(15, 23, 42, .12) !important;
+        }
+
+        .comment-editor-panel h2,
+        .comment-editor-panel h3,
+        .comment-editor-panel strong,
+        .comment-editor-panel .field-label,
+        .comment-editor-panel .evaluation-field,
+        .comment-editor-panel .v16-field,
+        .comment-editor-panel .study-counter,
+        .comment-editor-panel .v16-variant-status,
+        .comment-editor-panel .v16-details summary,
+        .comment-editor-panel .student-question-title,
+        .comment-editor-panel .student-main-comment {
+          color: #0f172a !important;
+        }
+
+        .comment-editor-panel .comment-help,
+        .comment-editor-panel .hint,
+        .comment-editor-panel .format-note,
+        .comment-editor-panel .commented-moves-head span,
+        .comment-editor-panel .study-move-comment,
+        .comment-editor-panel .student-info,
+        .comment-editor-panel .student-feedback,
+        .comment-editor-panel .v16-summary,
+        .comment-editor-panel .lesson-banner,
+        .comment-editor-panel .v16-variant-status {
+          color: #475569 !important;
+        }
+
+        .comment-editor-panel .sticky-badge {
+          background: rgba(226, 232, 240, .96) !important;
+          color: #0f172a !important;
+          border: 1px solid rgba(100, 116, 139, .20) !important;
+        }
+
+        .comment-editor-panel .lesson-title-row,
+        .comment-editor-panel .study-nav,
+        .comment-editor-panel .v16-variant-bar,
+        .comment-editor-panel .move-comment-card,
+        .comment-editor-panel .v16-student-view,
+        .comment-editor-panel .commented-moves,
+        .comment-editor-panel .v16-question-box,
+        .comment-editor-panel .v16-details {
+          background: rgba(255, 255, 255, .86) !important;
+          border-color: rgba(100, 116, 139, .16) !important;
+          box-shadow: 0 6px 18px rgba(15, 23, 42, .05) !important;
+        }
+
+        .comment-editor-panel .lesson-input,
+        .comment-editor-panel .comment-input,
+        .comment-editor-panel .evaluation-select,
+        .comment-editor-panel .v16-input,
+        .comment-editor-panel .v16-select {
+          background: rgba(255, 255, 255, .96) !important;
+          color: #0f172a !important;
+          border-color: rgba(100, 116, 139, .26) !important;
+        }
+
+        .comment-editor-panel .lesson-input::placeholder,
+        .comment-editor-panel .comment-input::placeholder,
+        .comment-editor-panel .v16-input::placeholder {
+          color: #64748b !important;
+        }
+
+        .comment-editor-panel .study-grid-head {
+          background: linear-gradient(180deg, rgba(241, 245, 249, .98), rgba(226, 232, 240, .96)) !important;
+        }
+
+        .comment-editor-panel .study-head-number,
+        .comment-editor-panel .study-head-cell {
+          background: rgba(226, 232, 240, .96) !important;
+          color: #0f172a !important;
+          border-color: rgba(100, 116, 139, .22) !important;
+        }
+
+        .comment-editor-panel .study-turn-number {
+          color: #475569 !important;
+        }
+
+        .comment-editor-panel .study-move-cell {
+          background: rgba(255, 255, 255, .95) !important;
+          border-color: rgba(100, 116, 139, .22) !important;
+          color: #0f172a !important;
+        }
+
+        .comment-editor-panel .study-move-cell:hover {
+          border-color: rgba(37, 99, 235, .36) !important;
+        }
+
+        .comment-editor-panel .study-move-label,
+        .comment-editor-panel .san-label {
+          color: #0f172a !important;
+        }
+
+        .comment-editor-panel .study-move-prefix {
+          color: #2563eb !important;
+        }
+      }
+
+      /* Barra externa de archivos: más a la derecha para no tapar el badge del panel. */
+      @media (min-width: 1800px) {
+        .comment-editor-panel > .file-actions,
+        .comment-editor-panel > .v16-pgn-actions {
+          right: max(8px, calc((100vw - 1520px) / 2 - 214px)) !important;
+          width: 154px !important;
+        }
+
+        .comment-editor-panel > .file-actions {
+          top: 80px;
+        }
+
+        .comment-editor-panel > .v16-pgn-actions {
+          top: 222px;
+        }
+      }
+
+      @media (min-width: 2100px) {
+        .comment-editor-panel > .file-actions,
+        .comment-editor-panel > .v16-pgn-actions {
+          right: calc((100vw - 1520px) / 2 - 236px) !important;
+          width: 178px !important;
+        }
+      }
+
+    
+
+      /* ===== V19.5 · COLUMNA IZQUIERDA DESPLAZADA AL MARGEN ===== */
+      @media (min-width: 1101px) {
+        /* Usamos más ancho real de la pantalla manteniendo el conjunto centrado. */
+        .page {
+          width: min(1660px, calc(100% - 22px));
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .practice-layout {
+          grid-template-columns: minmax(760px, 1.42fr) minmax(540px, 1fr);
+          gap: 16px;
+        }
+
+        /* La pista de la bandeja sigue siendo compacta, pero el panel se desplaza
+           hacia el espacio libre del margen izquierdo. */
+        .board-card {
+          grid-template-columns: 100px minmax(0, 1fr);
+          column-gap: 4px;
+          overflow: visible;
+        }
+
+        .board-bottom-tools {
+          width: 104px;
+          min-width: 104px;
+          transform: translateX(-22px);
+          position: relative;
+          z-index: 5;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child,
+        .board-bottom-tools > .board-mini-panel:nth-child(2) {
+          width: 104px;
+        }
+
+        /* Piezas un poco más pequeñas para que la columna lateral se sienta ligera. */
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece {
+          min-height: 38px;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img {
+          width: 76%;
+          height: 76%;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img.tray-bN {
+          width: 61%;
+          height: 61%;
+        }
+
+        /* El tablero se aproxima ligeramente a la izquierda para cerrar el hueco
+           visual creado por el desplazamiento de la bandeja. */
+        .board-shell,
+        .board-info,
+        .board-session-controls {
+          position: relative;
+          left: -5px;
+          width: calc(100% + 5px);
+        }
+      }
+
+      /* En monitores amplios podemos aprovechar todavía más el margen izquierdo. */
+      @media (min-width: 1500px) {
+        .page {
+          width: min(1720px, calc(100% - 28px));
+        }
+
+        .board-card {
+          grid-template-columns: 104px minmax(0, 1fr);
+        }
+
+        .board-bottom-tools {
+          width: 108px;
+          min-width: 108px;
+          transform: translateX(-30px);
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child,
+        .board-bottom-tools > .board-mini-panel:nth-child(2) {
+          width: 108px;
+        }
+      }
+
+      /* En resoluciones muy anchas el desplazamiento es mayor, pero sigue dentro
+         del margen disponible del viewport. */
+      @media (min-width: 1800px) {
+        .board-bottom-tools {
+          transform: translateX(-42px);
+        }
+      }
+
+    
+
+      /* ===== V19.6 · COMPACTO CORREGIDO ===== */
+      @media (min-width: 1101px) {
+        /* Recupera una composición compacta y centrada. */
+        .page {
+          width: min(1520px, calc(100% - 28px)) !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+        }
+
+        .practice-layout {
+          grid-template-columns: minmax(720px, 1.38fr) minmax(520px, 1fr) !important;
+          gap: 12px !important;
+        }
+
+        .board-card {
+          grid-template-columns: 98px minmax(0, 1fr) !important;
+          column-gap: 6px !important;
+        }
+
+        /* La columna izquierda se desplaza solo un poco, sin abrir todo el layout. */
+        .board-bottom-tools {
+          width: 98px !important;
+          min-width: 98px !important;
+          transform: translateX(-10px) !important;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child,
+        .board-bottom-tools > .board-mini-panel:nth-child(2) {
+          width: 98px !important;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece {
+          min-height: 42px !important;
+          padding: 0 !important;
+          overflow: hidden;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img {
+          width: 94% !important;
+          height: 94% !important;
+          transform: scale(1.05);
+          transform-origin: center;
+        }
+
+        .board-bottom-tools > .board-mini-panel:first-child .tray-piece img.tray-bN {
+          width: 76% !important;
+          height: 76% !important;
+          transform: scale(1.05);
+        }
+
+        /* Evita que el tablero se expanda de más. */
+        .board-shell {
+          width: min(100%, 690px, calc(100vh - 205px)) !important;
+          left: 0 !important;
+        }
+
+        .board-info,
+        .board-session-controls {
+          left: 0 !important;
+          width: 100% !important;
+        }
+
+        /* Panel lateral más compacto verticalmente. */
+        .comment-editor-panel {
+          padding: 9px !important;
+        }
+
+        .comment-editor-panel .move-comment-card {
+          margin-top: 4px !important;
+          padding: 6px !important;
+        }
+
+        .comment-editor-panel .study-nav,
+        .comment-editor-panel .v16-variant-bar {
+          margin-top: 3px !important;
+        }
+
+        .comment-editor-panel .commented-moves {
+          margin-top: 6px !important;
+        }
+
+        .comment-editor-panel .study-move-cell {
+          min-height: 52px !important;
+          padding: 7px 8px !important;
+        }
+      }
+
+      @media (min-width: 1500px) {
+        .page {
+          width: min(1560px, calc(100% - 34px)) !important;
+        }
+
+        .board-bottom-tools {
+          transform: translateX(-14px) !important;
+        }
+      }
+
+      @media (min-width: 1800px) {
+        .board-bottom-tools {
+          transform: translateX(-18px) !important;
+        }
+      }
+
     </style>
   </head>
 
@@ -2197,9 +3386,15 @@
             <span id="positionInfo">32 piezas en el tablero</span>
           </div>
 
+          <div class="board-session-controls" aria-label="Controles de sesión del tablero">
+            <button class="action-btn" id="saveBtn" type="button">💾 Guardar sesión</button>
+            <button class="action-btn" id="restoreBtn" type="button">📂 Restaurar sesión</button>
+            <button class="action-btn" id="fullscreenBtn" type="button">⛶ Pantalla completa</button>
+          </div>
+
           <div class="board-bottom-tools">
             <section class="card panel board-mini-panel">
-              <h2>🧩 Bandeja de piezas</h2>
+              <h2>🧩 Piezas</h2>
               <div class="piece-section-title">Blancas</div>
               <div id="whiteTray" class="piece-tray"></div>
               <div class="piece-section-title">Negras</div>
@@ -2214,9 +3409,6 @@
                 <button class="action-btn primary wide" id="resetBtn" type="button">♟ Posición inicial estándar</button>
                 <button class="action-btn danger" id="clearBtn" type="button">Vaciar tablero</button>
                 <button class="action-btn" id="coordsBtn" type="button">Coordenadas ✓</button>
-                <button class="action-btn" id="saveBtn" type="button">💾 Guardar sesión</button>
-                <button class="action-btn" id="restoreBtn" type="button">📂 Restaurar sesión</button>
-                <button class="action-btn wide" id="fullscreenBtn" type="button">⛶ Pantalla completa</button>
               </div>
             </section>
           </div>
@@ -2334,8 +3526,8 @@
               <button class="action-btn" id="importLessonBtn" type="button">📂 Cargar lección</button>
             </div>
             <div class="v16-pgn-actions">
-              <button class="action-btn teacher-only" id="exportPgnBtn" type="button">⬇ Exportar PGN</button>
               <button class="action-btn teacher-only" id="importPgnBtn" type="button">📥 Importar PGN</button>
+              <button class="action-btn teacher-only" id="exportPgnBtn" type="button">⬇ Exportar PGN</button>
             </div>
             <input id="pgnFileInput" type="file" accept=".pgn,text/plain" hidden />
             <input id="lessonFileInput" type="file" accept=".maurochess,.json,application/json" hidden />
