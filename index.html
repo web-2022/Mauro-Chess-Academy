@@ -230,6 +230,8 @@
         display: none;
         width: 44px;
         height: 44px;
+        min-width: 44px;
+        flex: 0 0 44px;
         border-radius: 14px;
         border: 1px solid var(--line);
         background: var(--card);
@@ -1619,6 +1621,40 @@
       }
 
       @media(max-width:980px) {
+        .nav .container {
+          width: calc(100% - 20px);
+        }
+
+        .nav-inner {
+          gap: 8px;
+        }
+
+        .brand {
+          min-width: 0;
+          gap: 8px;
+        }
+
+        .brand-mark {
+          width: 40px;
+          height: 40px;
+          flex: 0 0 40px;
+        }
+
+        .brand > span:last-child {
+          font-size: .92rem;
+          line-height: 1.15;
+        }
+
+        .brand small {
+          font-size: .58rem;
+          letter-spacing: .10em;
+        }
+
+        .nav-cta {
+          margin-left: auto;
+          flex: 0 0 auto;
+        }
+
         .nav-links {
           display: none;
           position: absolute;
@@ -1684,6 +1720,37 @@
       }
 
       @media(max-width:680px) {
+        .nav .container {
+          width: calc(100% - 12px);
+        }
+
+        .nav-inner {
+          min-height: 70px;
+          gap: 6px;
+        }
+
+        .brand-mark {
+          width: 38px;
+          height: 38px;
+          flex-basis: 38px;
+          font-size: 1.35rem;
+        }
+
+        .brand > span:last-child {
+          font-size: .84rem;
+        }
+
+        .brand small {
+          font-size: .52rem;
+        }
+
+        .menu-btn {
+          width: 42px;
+          height: 42px;
+          min-width: 42px;
+          flex-basis: 42px;
+        }
+
         .section {
           padding: 78px 0
         }
