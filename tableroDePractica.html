@@ -1300,6 +1300,69 @@
         font-size: .72rem
       }
 
+      /* ===== V8 · BANDEJA Y CONTROLES DEBAJO DEL TABLERO ===== */
+      .board-bottom-tools {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .board-mini-panel {
+        padding: 8px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, .22);
+      }
+
+      .board-mini-panel h2 {
+        margin: 0 0 4px;
+        font-size: .78rem;
+      }
+
+      .board-mini-panel .piece-section-title {
+        margin: 3px 0 2px;
+        font-size: .60rem;
+      }
+
+      .board-mini-panel .piece-tray {
+        gap: 2px;
+      }
+
+      .board-mini-panel .tray-piece {
+        max-height: 34px;
+        min-height: 30px;
+        padding: 1px;
+      }
+
+      .board-mini-panel .actions {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 3px;
+      }
+
+      .board-mini-panel .actions .wide {
+        grid-column: span 2;
+      }
+
+      .board-mini-panel .actions .action-btn {
+        min-height: 26px;
+        padding: 3px 4px;
+        font-size: .61rem;
+        border-radius: 7px;
+      }
+
+      /* El lado derecho se dedica principalmente a la lección comentada. */
+      .study-list {
+        min-height: 250px;
+        max-height: calc(100vh - 365px);
+      }
+
+      @media(min-height:900px) and (min-width:981px) {
+        .study-list {
+          min-height: 360px;
+          max-height: calc(100vh - 350px);
+        }
+      }
+
       @media(max-width:1180px) {
         .practice-layout {
           grid-template-columns: minmax(460px, 1.25fr) minmax(430px, .9fr)
@@ -1419,6 +1482,669 @@
           padding: 0 2px 3px
         }
       }
+
+      @media(max-width:980px) {
+        .board-bottom-tools {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .study-list {
+          min-height: 220px;
+          max-height: 320px;
+        }
+      }
+
+      @media(max-width:700px) {
+        .board-bottom-tools {
+          grid-template-columns: 1fr;
+        }
+
+        .board-mini-panel .actions {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .board-mini-panel .actions .wide {
+          grid-column: 1 / -1;
+        }
+
+        .study-list {
+          min-height: 180px;
+          max-height: 260px;
+        }
+      }
+
+
+
+
+      /* ===== V15 · MINIEVALUACIÓN EDUCATIVA POR JUGADA ===== */
+      .evaluation-actions {
+        align-items: end;
+        justify-content: space-between;
+      }
+
+      .evaluation-field {
+        display: grid;
+        grid-template-columns: auto minmax(125px, 1fr);
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        color: var(--muted);
+        font-size: .62rem;
+        font-weight: 850;
+      }
+
+      .evaluation-select {
+        min-width: 0;
+        height: 28px;
+        padding: 3px 7px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #071426;
+        color: var(--text);
+        font: inherit;
+        font-size: .68rem;
+        font-weight: 850;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .evaluation-select:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, .10);
+      }
+
+      .evaluation-select:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+      }
+
+      .study-move-top {
+        justify-content: flex-start;
+      }
+
+      .study-move-label {
+        flex: 1 1 auto;
+      }
+
+      .study-eval-badge {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 25px;
+        min-height: 20px;
+        padding: 2px 5px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        font-size: .63rem;
+        font-weight: 1000;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .eval-key {
+        color: #fde68a;
+        background: rgba(250, 204, 21, .14);
+        border-color: rgba(250, 204, 21, .42);
+      }
+
+      .eval-verygood {
+        color: #bbf7d0;
+        background: rgba(34, 197, 94, .14);
+        border-color: rgba(34, 197, 94, .40);
+      }
+
+      .eval-good {
+        color: #bae6fd;
+        background: rgba(56, 189, 248, .12);
+        border-color: rgba(56, 189, 248, .38);
+      }
+
+      .eval-dubious {
+        color: #fde68a;
+        background: rgba(245, 158, 11, .12);
+        border-color: rgba(245, 158, 11, .38);
+      }
+
+      .eval-error {
+        color: #fed7aa;
+        background: rgba(249, 115, 22, .13);
+        border-color: rgba(249, 115, 22, .42);
+      }
+
+      .eval-blunder {
+        color: #fecdd3;
+        background: rgba(244, 63, 94, .14);
+        border-color: rgba(244, 63, 94, .44);
+      }
+
+      @media(max-width:700px) {
+        .evaluation-field {
+          grid-template-columns: 1fr;
+          gap: 2px;
+          font-size: .58rem;
+        }
+
+        .evaluation-select {
+          height: 27px;
+          font-size: .62rem;
+        }
+
+        .study-eval-badge {
+          min-width: 21px;
+          min-height: 18px;
+          padding: 2px 4px;
+          font-size: .57rem;
+        }
+      }
+
+      /* ===== V14 · PANEL DE MOVIMIENTOS MÁS COMPACTO Y TIPO TABLA ===== */
+      .study-list {
+        display: grid;
+        gap: 6px;
+        min-height: 360px;
+        max-height: calc(100vh - 355px);
+        overflow: auto;
+        padding-right: 4px;
+      }
+
+      .study-initial {
+        margin-bottom: 2px;
+      }
+
+      .study-grid {
+        display: grid;
+        gap: 6px;
+      }
+
+      .study-grid-head {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) minmax(0, 1fr);
+        gap: 6px;
+        padding-bottom: 2px;
+        background: linear-gradient(180deg, rgba(4, 12, 28, .97), rgba(4, 12, 28, .88));
+      }
+
+      .study-head-number,
+      .study-head-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        padding: 4px 6px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        font-size: .68rem;
+        font-weight: 950;
+        letter-spacing: .03em;
+        backdrop-filter: blur(8px);
+      }
+
+      .study-head-number {
+        color: var(--muted);
+        background: rgba(15, 29, 57, .92);
+      }
+
+      .study-head-cell {
+        color: var(--blue-soft);
+        background: rgba(15, 29, 57, .92);
+      }
+
+      .study-row {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) minmax(0, 1fr);
+        gap: 6px;
+        align-items: stretch;
+      }
+
+      .study-turn-number {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 8px;
+        color: var(--muted);
+        font-weight: 950;
+        font-size: .72rem;
+      }
+
+      .study-move-cell {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        padding: 6px 7px;
+        background: rgba(15, 29, 57, .72);
+        color: var(--text);
+        cursor: pointer;
+        transition: .16s ease;
+        min-height: 46px;
+      }
+
+      .study-move-cell:hover {
+        border-color: rgba(56, 189, 248, .55);
+        transform: translateY(-1px);
+      }
+
+      .study-move-cell.active {
+        border-color: var(--green);
+        background: linear-gradient(135deg, rgba(34, 197, 94, .17), rgba(56, 189, 248, .10));
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, .10) inset;
+      }
+
+      .study-move-cell.empty {
+        cursor: default;
+        opacity: .42;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 46px;
+      }
+
+      .study-move-cell.empty:hover {
+        transform: none;
+        border-color: var(--line);
+      }
+
+      .study-move-top {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .study-move-prefix {
+        flex: 0 0 auto;
+        color: var(--green-soft);
+        font-weight: 950;
+        font-size: .68rem;
+      }
+
+      .study-move-label {
+        min-width: 0;
+        font-weight: 900;
+        color: var(--text);
+        font-size: .75rem;
+        line-height: 1.15;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .study-move-comment {
+        color: var(--muted);
+        font-size: .66rem;
+        line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .study-initial-card {
+        min-height: 42px;
+      }
+
+      .study-initial-card .study-move-label {
+        color: var(--blue-soft);
+      }
+
+      @media(max-width:700px) {
+        .study-list {
+          min-height: 250px;
+          max-height: 360px;
+        }
+
+        .study-grid-head,
+        .study-row {
+          grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr);
+          gap: 4px;
+        }
+
+        .study-head-number,
+        .study-head-cell {
+          min-height: 25px;
+          padding: 3px 4px;
+          font-size: .60rem;
+        }
+
+        .study-turn-number {
+          padding-top: 7px;
+          font-size: .62rem;
+        }
+
+        .study-move-cell {
+          min-height: 42px;
+          padding: 5px 6px;
+        }
+
+        .study-move-prefix {
+          font-size: .60rem;
+        }
+
+        .study-move-label {
+          font-size: .67rem;
+        }
+
+        .study-move-comment {
+          font-size: .60rem;
+        }
+      }
+      /* ===== V11 · ANOTACIONES DIDÁCTICAS + FLECHAS CON COLOR AUTOMÁTICO POR PIEZA ===== */
+      .board-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+      }
+
+      .board-wrap .board {
+        position: absolute;
+        inset: 0;
+      }
+
+      .arrow-layer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 8;
+        overflow: visible;
+      }
+
+      .square.highlighted::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(250, 204, 21, .34);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .square.arrow-source {
+        box-shadow: inset 0 0 0 6px rgba(56, 189, 248, .92);
+      }
+
+      .annotation-select {
+        min-height: 31px;
+        padding: 4px 7px;
+        border: 1px solid rgba(56, 189, 248, .38);
+        border-radius: 9px;
+        color: var(--blue-soft);
+        background: #0f1d39;
+        font: inherit;
+        font-size: .72rem;
+        font-weight: 850;
+        outline: none;
+        cursor: pointer;
+        flex: 1.15;
+        min-width: 105px;
+      }
+
+      .annotation-select:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, .10);
+      }
+
+      @media(max-width:700px) {
+        .board-toolbar {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .annotation-select {
+          min-width: 0;
+          width: 100%;
+          min-height: 30px;
+          font-size: .62rem;
+          padding: 3px 4px;
+        }
+      }
+
+
+      /* ===== V16 · ACADEMIA COMPLETA ===== */
+      .v16-inline-controls{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+      .v16-select,.v16-input,.v16-textarea{
+        border:1px solid var(--line);border-radius:8px;background:#071426;color:var(--text);
+        font:inherit;outline:none
+      }
+      .v16-select{min-height:29px;padding:4px 6px;font-size:.68rem;font-weight:800}
+      .v16-input{width:100%;padding:6px 8px;font-size:.72rem}
+      .v16-textarea{width:100%;min-height:42px;max-height:90px;padding:6px 8px;resize:vertical;font-size:.72rem;line-height:1.25}
+      .v16-input:focus,.v16-textarea:focus,.v16-select:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(56,189,248,.10)}
+      .v16-mini-btn{border:1px solid var(--line);border-radius:8px;min-height:29px;padding:4px 7px;background:#0f1d39;color:var(--text);font-size:.66rem;font-weight:850;cursor:pointer}
+      .v16-mini-btn:hover{border-color:var(--blue)}
+      .v16-mini-btn.active{border-color:var(--green);background:rgba(34,197,94,.15);color:#fff}
+      .v16-mini-btn.warning.active{border-color:var(--warning);background:rgba(250,204,21,.12)}
+      .v16-mini-btn.danger{border-color:rgba(251,113,133,.38)}
+      .v16-variant-bar{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:5px;margin-top:5px;padding:5px;border:1px solid var(--line);border-radius:9px;background:rgba(2,6,23,.45)}
+      .v16-variant-status{grid-column:1/-1;color:var(--muted);font-size:.62rem;line-height:1.25}
+      .v16-details{margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
+      .v16-details summary{cursor:pointer;color:var(--blue-soft);font-size:.70rem;font-weight:900;user-select:none}
+      .v16-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px}
+      .v16-field{display:grid;gap:3px;color:var(--blue-soft);font-size:.64rem;font-weight:850}
+      .v16-field.wide{grid-column:1/-1}
+      .v16-check-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:5px 0;color:var(--text);font-size:.68rem}
+      .v16-question-box{margin-top:6px;padding:7px;border:1px solid rgba(56,189,248,.24);border-radius:9px;background:rgba(56,189,248,.05)}
+      .v16-question-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:5px}
+      .v16-student-view{display:none;margin-top:7px;padding:9px;border:1px solid rgba(56,189,248,.25);border-radius:11px;background:linear-gradient(145deg,rgba(56,189,248,.06),rgba(34,197,94,.04))}
+      body.student-mode .v16-student-view{display:block}
+      body.student-mode .teacher-only{display:none!important}
+      body.student-mode #placeTool,body.student-mode #eraseTool,body.student-mode #markTool,body.student-mode #annotationMode{display:none!important}
+      body.student-mode .board-bottom-tools,body.student-mode #fenPanel,body.student-mode #historyPanel{display:none!important}
+      body.student-mode .comment-editor-panel{position:sticky}
+      body.student-mode .move-comment-card{display:none}
+      body.student-mode .lesson-title-row input{pointer-events:none;border-color:transparent;background:transparent;padding-left:0;font-weight:950;color:#fff}
+      .student-eval{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+      .student-main-comment{padding:8px;border-radius:9px;background:rgba(2,6,23,.48);color:var(--text);font-size:.76rem;line-height:1.38}
+      .student-structured{display:grid;gap:5px;margin-top:6px}
+      .student-info{padding:6px 7px;border-left:3px solid var(--blue);border-radius:6px;background:rgba(15,29,57,.62);font-size:.70rem;line-height:1.3;color:var(--muted)}
+      .student-info strong{color:var(--blue-soft)}
+      .student-question{margin-top:7px;padding:8px;border:1px solid rgba(250,204,21,.28);border-radius:9px;background:rgba(250,204,21,.055)}
+      .student-question-title{font-size:.75rem;font-weight:950;color:#fde68a;margin-bottom:6px}
+      .student-option{width:100%;text-align:left;border:1px solid var(--line);border-radius:8px;padding:6px 7px;background:#0f1d39;color:var(--text);font-size:.69rem;cursor:pointer}
+      .student-option.correct{border-color:var(--green);background:rgba(34,197,94,.15)}
+      .student-option.wrong{border-color:var(--danger);background:rgba(251,113,133,.12)}
+      .student-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+      .v16-hidden{display:none!important}
+      .key-star{color:#facc15;margin-left:4px}
+      .v16-summary{margin-top:8px;padding:9px;border:1px solid rgba(34,197,94,.28);border-radius:10px;background:rgba(34,197,94,.055)}
+      .v16-summary h3{margin:0 0 6px;font-size:.88rem;color:var(--green-soft)}
+      .summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+      .summary-stat{padding:6px;border:1px solid var(--line);border-radius:8px;text-align:center;background:rgba(2,6,23,.42)}
+      .summary-stat strong{display:block;color:#fff;font-size:.88rem}.summary-stat span{font-size:.60rem;color:var(--muted)}
+      .legal-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted);margin-right:4px}.legal-dot.on{background:var(--green);box-shadow:0 0 10px rgba(34,197,94,.7)}
+      .v16-pgn-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:5px}
+      .study-move-cell .san-label{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:950;letter-spacing:.01em}
+      .variant-chip{display:inline-flex;align-items:center;padding:2px 5px;border-radius:999px;background:rgba(168,85,247,.13);border:1px solid rgba(168,85,247,.3);color:#ddd6fe;font-size:.56rem;font-weight:900;margin-left:4px}
+      .student-feedback{margin-top:5px;min-height:18px;font-size:.68rem;font-weight:850;color:var(--muted)}
+      .student-feedback.good{color:var(--green-soft)}.student-feedback.bad{color:#fecdd3}
+      .square.legal-target::after{content:"";position:absolute;width:20%;height:20%;border-radius:50%;background:rgba(34,197,94,.58);z-index:6;pointer-events:none;box-shadow:0 0 12px rgba(34,197,94,.45)}
+      .square.legal-capture::after{content:"";position:absolute;inset:8%;border:5px solid rgba(251,113,133,.60);border-radius:50%;z-index:6;pointer-events:none}
+      .square.king-check{box-shadow:inset 0 0 0 6px rgba(251,113,133,.95),0 0 18px rgba(251,113,133,.35)}
+      @media(max-width:900px){.v16-field-grid{grid-template-columns:1fr}.v16-question-options{grid-template-columns:1fr}.v16-variant-bar{grid-template-columns:1fr 1fr}.v16-variant-bar .v16-select{grid-column:1/-1}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+      @media(max-width:700px){.v16-select{font-size:.60rem;min-height:28px}.v16-mini-btn{font-size:.59rem;padding:3px 5px}.v16-student-view{padding:7px}.student-main-comment{font-size:.70rem}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+    
+
+      /* ===== V17 · TIPOGRAFÍA MEJORADA PARA LAPTOP Y PC ===== */
+      @media (min-width: 901px) {
+        body {
+          font-size: 17px;
+        }
+
+        .brand {
+          font-size: .78rem;
+        }
+
+        h1 {
+          font-size: clamp(1.45rem, 2.2vw, 2.15rem);
+        }
+
+        .back-learning,
+        .home-link {
+          font-size: .88rem;
+        }
+
+        .tool-btn,
+        .action-btn,
+        .nav-btn,
+        .v16-mini-btn {
+          font-size: .84rem;
+        }
+
+        .board-info,
+        .hint,
+        .format-note,
+        .lesson-banner,
+        .v16-variant-status {
+          font-size: .78rem;
+          line-height: 1.38;
+        }
+
+        .panel h2 {
+          font-size: 1rem;
+        }
+
+        .sticky-badge {
+          font-size: .68rem;
+        }
+
+        .field-label,
+        .piece-section-title,
+        .evaluation-field,
+        .v16-field {
+          font-size: .76rem;
+        }
+
+        .lesson-input,
+        .comment-input,
+        .fen-input,
+        .evaluation-select,
+        .annotation-select,
+        .v16-select,
+        .v16-input,
+        textarea.v16-input {
+          font-size: .84rem;
+        }
+
+        .study-counter {
+          font-size: .80rem;
+        }
+
+        .comment-head strong {
+          font-size: .86rem;
+        }
+
+        .comment-help {
+          font-size: .70rem;
+        }
+
+        .commented-moves-head h3 {
+          font-size: .94rem;
+        }
+
+        .commented-moves-head span {
+          font-size: .72rem;
+        }
+
+        .study-head-number,
+        .study-head-cell {
+          font-size: .78rem;
+          min-height: 32px;
+        }
+
+        .study-turn-number {
+          font-size: .82rem;
+        }
+
+        .study-move-cell {
+          min-height: 52px;
+          padding: 7px 9px;
+        }
+
+        .study-move-prefix {
+          font-size: .78rem;
+        }
+
+        .study-move-label {
+          font-size: .86rem;
+        }
+
+        .study-move-comment {
+          font-size: .75rem;
+          line-height: 1.28;
+        }
+
+        .study-eval-badge,
+        .evaluation-badge {
+          font-size: .72rem;
+          min-height: 22px;
+        }
+
+        .board-mini-panel h2 {
+          font-size: .88rem;
+        }
+
+        .board-mini-panel .piece-section-title {
+          font-size: .69rem;
+        }
+
+        .board-mini-panel .actions .action-btn {
+          font-size: .72rem;
+        }
+
+        .history-item {
+          font-size: .76rem;
+        }
+
+        .v16-modebar,
+        .v16-variant-bar,
+        .v16-details,
+        .v16-question-box {
+          font-size: .80rem;
+        }
+
+        .student-main-comment {
+          font-size: .86rem;
+          line-height: 1.48;
+        }
+
+        .student-info {
+          font-size: .80rem;
+          line-height: 1.4;
+        }
+
+        .student-question-title {
+          font-size: .86rem;
+        }
+
+        .student-option {
+          font-size: .80rem;
+        }
+
+        .student-feedback {
+          font-size: .78rem;
+        }
+
+        .variant-chip {
+          font-size: .66rem;
+        }
+
+        .summary-card,
+        .summary-item {
+          font-size: .78rem;
+        }
+
+        footer {
+          font-size: .80rem;
+        }
+      }
+
     </style>
   </head>
 
@@ -1430,6 +2156,7 @@
           <h1>Tablero de <span class="gradient-text">práctica libre</span></h1>
           <div class="header-actions">
             <a class="home-link" href="index.html" title="Ir al inicio">🏠 Inicio</a>
+            <button class="home-link" id="uiModeBtn" type="button" title="Cambiar modo Profesor/Alumno">👨‍🏫 Profesor</button>
             <a class="back-learning" href="miProgreso.html" title="Volver a la ruta de aprendizaje">← Ruta de
               aprendizaje</a>
           </div>
@@ -1442,17 +2169,56 @@
             <button class="tool-btn active" id="moveTool" type="button">✋ Mover</button>
             <button class="tool-btn" id="placeTool" type="button">➕ Colocar</button>
             <button class="tool-btn" id="eraseTool" type="button">🗑 Borrar</button>
-            <button class="tool-btn" id="markTool" type="button">⭕ Marcar</button>
+            <button class="tool-btn" id="markTool" type="button">🎨 Anotar</button>
+            <select id="annotationMode" class="annotation-select" title="Tipo de anotación con anticlick" aria-label="Tipo de anotación">
+              <option value="circle">⭕ Círculo</option>
+              <option value="highlight">🟨 Resaltar</option>
+              <option value="arrow">➡️ Flecha para piezas</option>
+              <option value="arrowRed">➡️ Flecha roja</option>
+              <option value="arrowBlue">➡️ Flecha azul</option>
+              <option value="erase">🧹 Borrar marca</option>
+            </select>
+            <button class="action-btn" id="legalModeBtn" type="button" title="Activar o desactivar validación de reglas"><span class="legal-dot" id="legalDot"></span>Modo libre</button>
+            <select id="promotionChoice" class="annotation-select" title="Pieza de promoción">
+              <option value="Q">Promo ♕</option><option value="R">Promo ♖</option><option value="B">Promo ♗</option><option value="N">Promo ♘</option>
+            </select>
             <button class="action-btn" id="flipBtn" type="button">↕ Girar</button>
           </div>
 
           <div class="board-shell">
-            <div id="board" class="board" aria-label="Tablero de ajedrez de práctica"></div>
+            <div class="board-wrap">
+              <div id="board" class="board" aria-label="Tablero de ajedrez de práctica"></div>
+              <svg id="arrowLayer" class="arrow-layer" viewBox="0 0 800 800" preserveAspectRatio="none" aria-hidden="true"></svg>
+            </div>
           </div>
 
           <div class="board-info">
             <strong id="statusText">Modo mover · selecciona una pieza</strong>
             <span id="positionInfo">32 piezas en el tablero</span>
+          </div>
+
+          <div class="board-bottom-tools">
+            <section class="card panel board-mini-panel">
+              <h2>🧩 Bandeja de piezas</h2>
+              <div class="piece-section-title">Blancas</div>
+              <div id="whiteTray" class="piece-tray"></div>
+              <div class="piece-section-title">Negras</div>
+              <div id="blackTray" class="piece-tray"></div>
+            </section>
+
+            <section class="card panel board-mini-panel">
+              <h2>🎛 Controles</h2>
+              <div class="actions">
+                <button class="action-btn" id="undoBtn" type="button">↶ Deshacer</button>
+                <button class="action-btn" id="redoBtn" type="button">↷ Rehacer</button>
+                <button class="action-btn primary wide" id="resetBtn" type="button">♟ Posición inicial estándar</button>
+                <button class="action-btn danger" id="clearBtn" type="button">Vaciar tablero</button>
+                <button class="action-btn" id="coordsBtn" type="button">Coordenadas ✓</button>
+                <button class="action-btn" id="saveBtn" type="button">💾 Guardar sesión</button>
+                <button class="action-btn" id="restoreBtn" type="button">📂 Restaurar sesión</button>
+                <button class="action-btn wide" id="fullscreenBtn" type="button">⛶ Pantalla completa</button>
+              </div>
+            </section>
           </div>
 
         </article>
@@ -1481,6 +2247,14 @@
               <button class="nav-btn" id="studyEndBtn" type="button" title="Último movimiento">Final ⏭</button>
             </div>
 
+            <div class="v16-variant-bar" aria-label="Variantes de la lección">
+              <select id="variantSelect" class="v16-select"><option value="">🌳 Línea principal</option></select>
+              <button class="v16-mini-btn teacher-only" id="createVariantBtn" type="button">＋ Variante</button>
+              <button class="v16-mini-btn teacher-only" id="renameVariantBtn" type="button">✎ Nombre</button>
+              <button class="v16-mini-btn danger teacher-only" id="deleteVariantBtn" type="button">🗑</button>
+              <div id="variantStatus" class="v16-variant-status">Línea principal</div>
+            </div>
+
             <div class="move-comment-card">
               <div class="comment-head">
                 <strong id="currentMoveTitle">💬 Comentario de la posición inicial</strong>
@@ -1488,9 +2262,63 @@
               </div>
               <textarea id="moveComment" class="comment-input"
                 placeholder="Describe brevemente la idea de este movimiento..."></textarea>
-              <div class="comment-actions">
+              <details class="v16-details teacher-only" open>
+                <summary>🎓 Datos educativos de esta posición</summary>
+                <div class="v16-field-grid">
+                  <label class="v16-field">🎯 Objetivo<input id="moveObjective" class="v16-input" placeholder="Ej.: controlar e5 y preparar el enroque"></label>
+                  <label class="v16-field">💡 Idea clave<input id="moveKeyIdea" class="v16-input" placeholder="Idea que el alumno debe recordar"></label>
+                  <label class="v16-field wide">⚠️ Error frecuente<input id="moveCommonError" class="v16-input" placeholder="Error típico que debe evitarse"></label>
+                </div>
+                <div class="v16-check-row">
+                  <label><input type="checkbox" id="moveIsKey"> ⭐ Posición clave</label>
+                  <label><input type="checkbox" id="questionEnabled"> 🎯 Pregunta</label>
+                  <label><input type="checkbox" id="hideExplanation"> 🙈 Ocultar explicación hasta responder</label>
+                  <button class="v16-mini-btn" id="saveThreatBtn" type="button">👁 Guardar marcas como amenaza</button>
+                </div>
+                <div id="questionEditor" class="v16-question-box v16-hidden">
+                  <label class="v16-field">Pregunta<input id="questionPrompt" class="v16-input" placeholder="Ej.: ¿Cuál es la idea principal de esta jugada?"></label>
+                  <div class="v16-question-options">
+                    <input id="questionOpt0" class="v16-input" placeholder="A) Opción 1">
+                    <input id="questionOpt1" class="v16-input" placeholder="B) Opción 2">
+                    <input id="questionOpt2" class="v16-input" placeholder="C) Opción 3">
+                    <input id="questionOpt3" class="v16-input" placeholder="D) Opción 4">
+                  </div>
+                  <label class="v16-field" style="margin-top:5px">Respuesta correcta
+                    <select id="questionCorrect" class="v16-select"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select>
+                  </label>
+                </div>
+              </details>
+
+              <div class="comment-actions evaluation-actions">
+                <label class="evaluation-field" title="Evaluación educativa de esta jugada">
+                  <span>Evaluación</span>
+                  <select id="moveEvaluation" class="evaluation-select" aria-label="Evaluación de la jugada">
+                    <option value="">— Sin evaluar —</option>
+                    <option value="key">★ Clave</option>
+                    <option value="verygood">! Muy buena</option>
+                    <option value="good">✓ Correcta</option>
+                    <option value="dubious">?! Dudosa</option>
+                    <option value="error">? Error</option>
+                    <option value="blunder">?? Error grave</option>
+                  </select>
+                </label>
                 <button class="action-btn primary" id="saveCommentBtn" type="button">💾 Guardar</button>
               </div>
+            </div>
+
+            <div id="studentLessonView" class="v16-student-view">
+              <div id="studentEval" class="student-eval"></div>
+              <div id="studentMainComment" class="student-main-comment"></div>
+              <div id="studentStructured" class="student-structured"></div>
+              <div id="studentQuestion" class="student-question v16-hidden"></div>
+              <div class="student-actions">
+                <button class="v16-mini-btn" id="studentPracticeBtn" type="button">🎯 Practicar siguiente jugada</button>
+                <button class="v16-mini-btn" id="studentThreatBtn" type="button">👁 Ver amenaza</button>
+                <button class="v16-mini-btn" id="studentRevealBtn" type="button">💡 Mostrar explicación</button>
+                <button class="v16-mini-btn warning" id="nextKeyBtn" type="button">⭐ Siguiente clave</button>
+              </div>
+              <div id="studentFeedback" class="student-feedback"></div>
+              <div id="lessonSummary" class="v16-summary v16-hidden"></div>
             </div>
 
             <div class="commented-moves">
@@ -1498,40 +2326,23 @@
                 <h3>📖 Movimientos comentados</h3>
                 <span>Haz clic para ir a una jugada</span>
               </div>
-              <div id="studyList" class="study-list"></div>
+              <div id="studyList" class="study-list" aria-label="Movimientos comentados de blancas y negras"></div>
             </div>
 
             <div class="file-actions">
               <button class="action-btn primary" id="exportLessonBtn" type="button">⬇ Descargar .maurochess</button>
               <button class="action-btn" id="importLessonBtn" type="button">📂 Cargar lección</button>
             </div>
+            <div class="v16-pgn-actions">
+              <button class="action-btn teacher-only" id="exportPgnBtn" type="button">⬇ Exportar PGN</button>
+              <button class="action-btn teacher-only" id="importPgnBtn" type="button">📥 Importar PGN</button>
+            </div>
+            <input id="pgnFileInput" type="file" accept=".pgn,text/plain" hidden />
             <input id="lessonFileInput" type="file" accept=".maurochess,.json,application/json" hidden />
             <div class="format-note">Guarda posición, movimientos y comentarios.</div>
           </section>
 
-          <section class="card panel">
-            <h2>🧩 Bandeja de piezas</h2>
-            <div class="piece-section-title">Blancas</div>
-            <div id="whiteTray" class="piece-tray"></div>
-            <div class="piece-section-title">Negras</div>
-            <div id="blackTray" class="piece-tray"></div>
-          </section>
-
-          <section class="card panel">
-            <h2>🎛 Controles</h2>
-            <div class="actions">
-              <button class="action-btn" id="undoBtn" type="button">↶ Deshacer</button>
-              <button class="action-btn" id="redoBtn" type="button">↷ Rehacer</button>
-              <button class="action-btn primary wide" id="resetBtn" type="button">♟ Posición inicial estándar</button>
-              <button class="action-btn danger" id="clearBtn" type="button">Vaciar tablero</button>
-              <button class="action-btn" id="coordsBtn" type="button">Coordenadas ✓</button>
-              <button class="action-btn" id="saveBtn" type="button">💾 Guardar sesión</button>
-              <button class="action-btn" id="restoreBtn" type="button">📂 Restaurar sesión</button>
-              <button class="action-btn wide" id="fullscreenBtn" type="button">⛶ Pantalla completa</button>
-            </div>
-          </section>
-
-          <section class="card panel">
+          <section class="card panel" id="fenPanel">
             <h2>📝 Posición FEN</h2>
             <p class="hint">Puedes preparar una posición concreta con FEN. Al cargarla se convierte en la nueva posición
               inicial de la lección.</p>
@@ -1552,7 +2363,7 @@
             <div id="capturedBlack" class="captured"></div>
           </section>
 
-          <section class="card panel">
+          <section class="card panel" id="historyPanel">
             <h2>📜 Registro de edición</h2>
             <div id="history" class="history"></div>
           </section>
@@ -1585,6 +2396,44 @@
         wK: 'Rey blanco', wQ: 'Dama blanca', wR: 'Torre blanca', wB: 'Alfil blanco', wN: 'Caballo blanco', wP: 'Peón blanco',
         bK: 'Rey negro', bQ: 'Dama negra', bR: 'Torre negra', bB: 'Alfil negro', bN: 'Caballo negro', bP: 'Peón negro'
       };
+
+      // V12 · Colores más diferenciados + dos flechas fijas (roja y azul).
+      // El color se guarda dentro de la anotación para conservarse al avanzar,
+      // retroceder y al exportar/importar una lección .maurochess.
+      const arrowColorByPiece = {
+        wK: '#facc15', // rey blanco · amarillo
+        wQ: '#ff3b5c', // dama blanca · rojo frambuesa (muy distinto del caballo)
+        wR: '#22d3ee', // torre blanca · cian
+        wB: '#fb923c', // alfil blanco · naranja
+        wN: '#7c3aed', // caballo blanco · violeta profundo
+        wP: '#4ade80', // peón blanco · verde
+        bK: '#fb7185', // rey negro · rojo suave
+        bQ: '#ff00a8', // dama negra · fucsia intenso
+        bR: '#60a5fa', // torre negra · azul
+        bB: '#fbbf24', // alfil negro · ámbar
+        bN: '#14b8a6', // caballo negro · turquesa (muy distinto de la dama)
+        bP: '#a3e635'  // peón negro · lima
+      };
+      const DEFAULT_ARROW_COLOR = '#22c55e';
+      const FIXED_ARROW_RED = '#ff2d2d';
+      const FIXED_ARROW_BLUE = '#1677ff';
+
+      function isArrowMode(mode = annotationMode) {
+        return mode === 'arrow' || mode === 'arrowRed' || mode === 'arrowBlue';
+      }
+
+      function arrowStyleForSquare(sq, mode = annotationMode) {
+        const piece = boardState[sq] || null;
+        if (mode === 'arrowRed') return { piece, color: FIXED_ARROW_RED, fixed: true, label: 'roja fija' };
+        if (mode === 'arrowBlue') return { piece, color: FIXED_ARROW_BLUE, fixed: true, label: 'azul fija' };
+        return {
+          piece,
+          color: arrowColorByPiece[piece] || DEFAULT_ARROW_COLOR,
+          fixed: false,
+          label: piece ? `por ${pieceNames[piece]}` : 'por casilla vacía'
+        };
+      }
+
       const fenToPiece = { K: 'wK', Q: 'wQ', R: 'wR', B: 'wB', N: 'wN', P: 'wP', k: 'bK', q: 'bQ', r: 'bR', b: 'bB', n: 'bN', p: 'bP' };
       const pieceToFen = Object.fromEntries(Object.entries(fenToPiece).map(([k, v]) => [v, k]));
 
@@ -1602,7 +2451,12 @@
       let flipped = false;
       let showCoords = true;
       let lastMove = null;
-      let markedSquares = new Set();
+      let markedSquares = new Set(); // círculos, conservado por compatibilidad con lecciones anteriores
+      let highlightedSquares = new Set();
+      let arrows = []; // [{from:'e2', to:'e4', piece:'wP', color:'#4ade80'}]
+      let annotationMode = 'circle';
+      let arrowStartSquare = null;
+      let rightDragStart = null;
       let capturedWhite = [];
       let capturedBlack = [];
       let historyLog = [];
@@ -1618,6 +2472,8 @@
       let currentStudyStep = 0; // 0 = posición inicial; 1..n = después de cada movimiento
 
       const boardEl = document.getElementById('board');
+      const arrowLayerEl = document.getElementById('arrowLayer');
+      const annotationModeEl = document.getElementById('annotationMode');
       const statusText = document.getElementById('statusText');
       const positionInfo = document.getElementById('positionInfo');
       const historyEl = document.getElementById('history');
@@ -1627,6 +2483,7 @@
       const studyListEl = document.getElementById('studyList');
       const studyCounterEl = document.getElementById('studyCounter');
       const moveCommentEl = document.getElementById('moveComment');
+      const moveEvaluationEl = document.getElementById('moveEvaluation');
       const currentMoveTitleEl = document.getElementById('currentMoveTitle');
       const lessonTitleEl = document.getElementById('lessonTitle');
       const loadedLessonBannerEl = document.getElementById('loadedLessonBanner');
@@ -1636,6 +2493,8 @@
           boardState: { ...boardState },
           lastMove: lastMove ? { ...lastMove } : null,
           markedSquares: [...markedSquares],
+          highlightedSquares: [...highlightedSquares],
+          arrows: deepClone(arrows),
           capturedWhite: [...capturedWhite],
           capturedBlack: [...capturedBlack]
         };
@@ -1661,6 +2520,10 @@
         boardState = { ...(s.boardState || {}) };
         lastMove = s.lastMove ? { ...s.lastMove } : null;
         markedSquares = new Set(s.markedSquares || []);
+        highlightedSquares = new Set(s.highlightedSquares || []);
+        arrows = Array.isArray(s.arrows) ? deepClone(s.arrows) : [];
+        arrowStartSquare = null;
+        rightDragStart = null;
         capturedWhite = [...(s.capturedWhite || [])];
         capturedBlack = [...(s.capturedBlack || [])];
         selectedSquare = null;
@@ -1730,6 +2593,8 @@
           if (lastMove?.from === sq) div.classList.add('last-from');
           if (lastMove?.to === sq) div.classList.add('last-to');
           if (markedSquares.has(sq)) div.classList.add('marked');
+          if (highlightedSquares.has(sq)) div.classList.add('highlighted');
+          if (arrowStartSquare === sq) div.classList.add('arrow-source');
 
           const piece = boardState[sq];
           if (piece) {
@@ -1759,7 +2624,28 @@
           }
 
           div.addEventListener('click', () => handleSquareClick(sq));
-          div.addEventListener('contextmenu', e => { e.preventDefault(); toggleMark(sq); });
+          div.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            if (!isArrowMode()) applyAnnotationToSquare(sq);
+          });
+          div.addEventListener('mousedown', e => {
+            if (e.button === 2 && isArrowMode()) {
+              e.preventDefault();
+              rightDragStart = sq;
+              arrowStartSquare = sq;
+              renderBoard();
+            }
+          });
+          div.addEventListener('mouseup', e => {
+            if (e.button === 2 && isArrowMode() && rightDragStart) {
+              e.preventDefault();
+              const from = rightDragStart;
+              rightDragStart = null;
+              arrowStartSquare = null;
+              if (from !== sq) toggleArrow(from, sq);
+              else renderBoard();
+            }
+          });
           div.addEventListener('dragover', e => { if (tool === 'move' && draggedFrom) { e.preventDefault(); div.classList.add('drop-target'); } });
           div.addEventListener('dragleave', () => div.classList.remove('drop-target'));
           div.addEventListener('drop', e => {
@@ -1769,6 +2655,7 @@
           });
           boardEl.appendChild(div);
         }
+        renderArrows();
       }
 
       function handleSquareClick(sq) {
@@ -1798,7 +2685,22 @@
           }
           return;
         }
-        if (tool === 'mark') { toggleMark(sq); return; }
+        if (tool === 'mark') {
+          if (isArrowMode()) {
+            if (!arrowStartSquare) {
+              arrowStartSquare = sq;
+              statusText.textContent = `Flecha · origen ${sq} · elige destino`;
+              renderBoard();
+            } else {
+              const from = arrowStartSquare;
+              arrowStartSquare = null;
+              if (from !== sq) toggleArrow(from, sq); else renderBoard();
+            }
+          } else {
+            applyAnnotationToSquare(sq);
+          }
+          return;
+        }
 
         if (!selectedSquare) {
           if (boardState[sq]) { selectedSquare = sq; statusText.textContent = `${pieceNames[boardState[sq]]} seleccionada en ${sq} · elige destino`; renderBoard(); }
@@ -1836,6 +2738,7 @@
           from, to, piece, captured,
           notation,
           comment: '',
+          evaluation: '',
           snapshot: null
         };
         move.snapshot = clonePositionSnapshot();
@@ -1852,18 +2755,124 @@
       }
 
       function toggleMark(sq) {
+        annotationMode = 'circle';
+        if (annotationModeEl) annotationModeEl.value = 'circle';
+        applyAnnotationToSquare(sq);
+      }
+
+      function applyAnnotationToSquare(sq) {
         pushUndo();
-        if (markedSquares.has(sq)) markedSquares.delete(sq); else markedSquares.add(sq);
-        historyLog.push(`${markedSquares.has(sq) ? 'Marcaste' : 'Quitaste la marca de'} ${sq}.`);
+        let changed = true;
+        if (annotationMode === 'circle') {
+          if (markedSquares.has(sq)) markedSquares.delete(sq); else markedSquares.add(sq);
+          historyLog.push(`${markedSquares.has(sq) ? 'Añadiste' : 'Quitaste'} círculo en ${sq}.`);
+        } else if (annotationMode === 'highlight') {
+          if (highlightedSquares.has(sq)) highlightedSquares.delete(sq); else highlightedSquares.add(sq);
+          historyLog.push(`${highlightedSquares.has(sq) ? 'Resaltaste' : 'Quitaste el resaltado de'} ${sq}.`);
+        } else if (annotationMode === 'erase') {
+          const hadCircle = markedSquares.delete(sq);
+          const hadHighlight = highlightedSquares.delete(sq);
+          const before = arrows.length;
+          arrows = arrows.filter(a => a.from !== sq && a.to !== sq);
+          if (!hadCircle && !hadHighlight && before === arrows.length) changed = false;
+          historyLog.push(changed ? `Borraste las anotaciones relacionadas con ${sq}.` : `No había marcas en ${sq}.`);
+        } else {
+          changed = false;
+        }
+        if (!changed) {
+          undoStack.pop();
+          updateButtons();
+          renderAll();
+          return;
+        }
         syncCurrentLessonSnapshot();
         renderAll();
       }
 
+      function toggleArrow(from, to) {
+        if (!from || !to || from === to) return;
+        pushUndo();
+        const style = arrowStyleForSquare(from, annotationMode);
+        const idx = arrows.findIndex(a => a.from === from && a.to === to);
+        if (idx >= 0) {
+          const current = arrows[idx];
+          if ((current.color || '').toLowerCase() === style.color.toLowerCase()) {
+            arrows.splice(idx, 1);
+            historyLog.push(`Quitaste la flecha ${from} → ${to}.`);
+          } else {
+            arrows[idx] = { from, to, piece: style.piece, color: style.color, fixed: !!style.fixed };
+            historyLog.push(`Cambiaste el color de la flecha ${from} → ${to} a ${style.label}.`);
+            toast(`Flecha ${from} → ${to}: ${style.label}`);
+          }
+        } else {
+          arrows.push({ from, to, piece: style.piece, color: style.color, fixed: !!style.fixed });
+          const owner = style.fixed ? `flecha ${style.label}` : (style.piece ? pieceNames[style.piece] : 'casilla vacía');
+          historyLog.push(`Dibujaste una flecha ${from} → ${to} · ${owner}.`);
+          toast(`${owner}: ${from} → ${to}`);
+        }
+        syncCurrentLessonSnapshot();
+        renderAll();
+      }
+
+      function squareCenter(sq) {
+        const fileIndex = files.indexOf(sq[0]);
+        const rank = Number(sq[1]);
+        const col = flipped ? 7 - fileIndex : fileIndex;
+        const row = flipped ? rank - 1 : 8 - rank;
+        return { x: col * 100 + 50, y: row * 100 + 50 };
+      }
+
+      function renderArrows() {
+        if (!arrowLayerEl) return;
+        arrowLayerEl.innerHTML = '';
+        const ns = 'http://www.w3.org/2000/svg';
+        for (const arrow of arrows) {
+          if (!arrow?.from || !arrow?.to) continue;
+          const a = squareCenter(arrow.from);
+          const b = squareCenter(arrow.to);
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const len = Math.hypot(dx, dy);
+          if (len < 1) continue;
+          const ux = dx / len, uy = dy / len;
+          const startPad = 18, endPad = 30;
+          const x1 = a.x + ux * startPad;
+          const y1 = a.y + uy * startPad;
+          const x2 = b.x - ux * endPad;
+          const y2 = b.y - uy * endPad;
+
+          // Lecciones antiguas pueden no tener color guardado. En ese caso se
+          // intenta reconocer la pieza de origen y, si no existe, se usa verde.
+          const inferredPiece = arrow.piece || boardState[arrow.from] || null;
+          const arrowColor = arrow.color || arrowColorByPiece[inferredPiece] || DEFAULT_ARROW_COLOR;
+
+          const line = document.createElementNS(ns, 'line');
+          line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+          line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+          line.setAttribute('stroke', arrowColor);
+          line.setAttribute('stroke-width', '17');
+          line.setAttribute('stroke-linecap', 'round');
+          line.setAttribute('opacity', '.86');
+          arrowLayerEl.appendChild(line);
+
+          const headLen = 42, headWidth = 30;
+          const tipX = b.x - ux * 9, tipY = b.y - uy * 9;
+          const baseX = tipX - ux * headLen, baseY = tipY - uy * headLen;
+          const px = -uy, py = ux;
+          const polygon = document.createElementNS(ns, 'polygon');
+          polygon.setAttribute('points', `${tipX},${tipY} ${baseX + px * headWidth},${baseY + py * headWidth} ${baseX - px * headWidth},${baseY - py * headWidth}`);
+          polygon.setAttribute('fill', arrowColor);
+          polygon.setAttribute('opacity', '.86');
+          arrowLayerEl.appendChild(polygon);
+        }
+      }
+
       function setTool(next) {
-        tool = next; selectedSquare = null;
+        tool = next; selectedSquare = null; arrowStartSquare = null; rightDragStart = null;
         document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(next + 'Tool')?.classList.add('active');
-        const labels = { move: 'Modo mover · selecciona una pieza', place: 'Modo colocar · elige una pieza y una casilla', erase: 'Modo borrar · toca una pieza', mark: 'Modo marcar · toca una casilla' };
+        const annLabels = { circle: 'círculo', highlight: 'resaltado de casilla', arrow: 'flecha por pieza', arrowRed: 'flecha roja fija', arrowBlue: 'flecha azul fija', erase: 'borrar marcas' };
+        const labels = { move: 'Modo mover · selecciona una pieza', place: 'Modo colocar · elige una pieza y una casilla', erase: 'Modo borrar · toca una pieza', mark: `Modo anotar · ${annLabels[annotationMode] || 'marca'} · anticlick en el tablero` };
         statusText.textContent = labels[next];
         renderBoard();
       }
@@ -1899,6 +2908,24 @@
         });
       }
 
+      function evaluationMeta(value) {
+        const map = {
+          key: { symbol: '★', label: 'Clave', className: 'eval-key' },
+          verygood: { symbol: '!', label: 'Muy buena', className: 'eval-verygood' },
+          good: { symbol: '✓', label: 'Correcta', className: 'eval-good' },
+          dubious: { symbol: '?!', label: 'Dudosa', className: 'eval-dubious' },
+          error: { symbol: '?', label: 'Error', className: 'eval-error' },
+          blunder: { symbol: '??', label: 'Error grave', className: 'eval-blunder' }
+        };
+        return map[value] || null;
+      }
+
+      function evaluationBadgeHtml(value) {
+        const meta = evaluationMeta(value);
+        if (!meta) return '';
+        return `<span class="study-eval-badge ${meta.className}" title="${escapeHtml(meta.label)}">${escapeHtml(meta.symbol)}</span>`;
+      }
+
       function renderStudy() {
         const total = lessonMoves.length;
         studyCounterEl.textContent = currentStudyStep === 0
@@ -1911,28 +2938,102 @@
         document.getElementById('studyEndBtn').disabled = currentStudyStep >= total;
 
         studyListEl.innerHTML = '';
-        const initial = document.createElement('button');
-        initial.type = 'button';
-        initial.className = 'study-item' + (currentStudyStep === 0 ? ' active' : '');
-        initial.innerHTML = `<span class="study-move">0. Posición inicial</span><span class="study-comment-preview">${escapeHtml(lessonStartComment || 'Sin comentario')}</span>`;
-        initial.addEventListener('click', () => goToStudyStep(0));
-        studyListEl.appendChild(initial);
 
-        lessonMoves.forEach((m, i) => {
-          const step = i + 1;
-          const b = document.createElement('button'); b.type = 'button'; b.className = 'study-item' + (currentStudyStep === step ? ' active' : '');
-          b.innerHTML = `<span class="study-move">${step}. ${escapeHtml(m.notation || `${m.from} → ${m.to}`)}</span><span class="study-comment-preview">${escapeHtml(m.comment || 'Sin comentario')}</span>`;
-          b.addEventListener('click', () => goToStudyStep(step));
-          studyListEl.appendChild(b);
-        });
+        const makeMoveCell = (move, step, prefixText, extraClass = '') => {
+          if (!move) {
+            const empty = document.createElement('div');
+            empty.className = 'study-move-cell empty';
+            empty.innerHTML = '<span class="study-move-label">—</span>';
+            return empty;
+          }
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `study-move-cell ${extraClass}`.trim() + (currentStudyStep === step ? ' active' : '');
+          const notation = escapeHtml(move.notation || `${move.from} → ${move.to}`);
+          const comment = (move.comment || '').trim();
+          btn.innerHTML = `
+            <span class="study-move-top">
+              <span class="study-move-prefix">${escapeHtml(prefixText)}</span>
+              <span class="study-move-label">${notation}</span>
+              ${evaluationBadgeHtml(move.evaluation || '')}
+            </span>
+            ${comment ? `<span class="study-move-comment">${escapeHtml(comment)}</span>` : ''}
+          `;
+          btn.addEventListener('click', () => goToStudyStep(step));
+          return btn;
+        };
+
+        const initialWrap = document.createElement('div');
+        initialWrap.className = 'study-initial';
+        const initialBtn = document.createElement('button');
+        initialBtn.type = 'button';
+        initialBtn.className = 'study-move-cell study-initial-card' + (currentStudyStep === 0 ? ' active' : '');
+        initialBtn.innerHTML = `
+          <span class="study-move-top">
+            <span class="study-move-prefix">0.</span>
+            <span class="study-move-label">Posición inicial</span>
+          </span>
+          ${lessonStartComment ? `<span class="study-move-comment">${escapeHtml(lessonStartComment)}</span>` : ''}
+        `;
+        initialBtn.addEventListener('click', () => goToStudyStep(0));
+        initialWrap.appendChild(initialBtn);
+        studyListEl.appendChild(initialWrap);
+
+        const grid = document.createElement('div');
+        grid.className = 'study-grid';
+        grid.innerHTML = `
+          <div class="study-grid-head">
+            <div class="study-head-number">#</div>
+            <div class="study-head-cell">⚪ Blancas</div>
+            <div class="study-head-cell">⚫ Negras</div>
+          </div>
+        `;
+
+        if (!lessonMoves.length) {
+          const row = document.createElement('div');
+          row.className = 'study-row';
+          row.innerHTML = `
+            <div class="study-turn-number">1</div>
+            <div class="study-move-cell empty"><span class="study-move-label">Sin movimientos</span></div>
+            <div class="study-move-cell empty"><span class="study-move-label">Sin movimientos</span></div>
+          `;
+          grid.appendChild(row);
+        } else {
+          for (let i = 0; i < lessonMoves.length; i += 2) {
+            const whiteMove = lessonMoves[i] || null;
+            const blackMove = lessonMoves[i + 1] || null;
+            const whiteStep = i + 1;
+            const blackStep = i + 2;
+            const moveNumber = Math.floor(i / 2) + 1;
+
+            const row = document.createElement('div');
+            row.className = 'study-row';
+
+            const number = document.createElement('div');
+            number.className = 'study-turn-number';
+            number.textContent = `${moveNumber}`;
+            row.appendChild(number);
+
+            row.appendChild(makeMoveCell(whiteMove, whiteStep, `${moveNumber}.`, 'white-cell'));
+            row.appendChild(makeMoveCell(blackMove, blackStep, `${moveNumber}...`, 'black-cell'));
+
+            grid.appendChild(row);
+          }
+        }
+
+        studyListEl.appendChild(grid);
 
         if (currentStudyStep === 0) {
           currentMoveTitleEl.textContent = '💬 Comentario de la posición inicial';
           if (document.activeElement !== moveCommentEl) moveCommentEl.value = lessonStartComment || '';
+          moveEvaluationEl.value = '';
+          moveEvaluationEl.disabled = true;
         } else {
           const m = lessonMoves[currentStudyStep - 1];
           currentMoveTitleEl.textContent = `💬 Movimiento ${currentStudyStep}: ${m?.notation || ''}`;
           if (document.activeElement !== moveCommentEl) moveCommentEl.value = m?.comment || '';
+          moveEvaluationEl.disabled = false;
+          moveEvaluationEl.value = m?.evaluation || '';
         }
       }
 
@@ -1962,8 +3063,12 @@
 
       function storeCommentFromEditor() {
         const value = moveCommentEl.value.trim();
-        if (currentStudyStep === 0) lessonStartComment = value;
-        else if (lessonMoves[currentStudyStep - 1]) lessonMoves[currentStudyStep - 1].comment = value;
+        if (currentStudyStep === 0) {
+          lessonStartComment = value;
+        } else if (lessonMoves[currentStudyStep - 1]) {
+          lessonMoves[currentStudyStep - 1].comment = value;
+          lessonMoves[currentStudyStep - 1].evaluation = moveEvaluationEl.value || '';
+        }
       }
 
       function saveCurrentComment() {
@@ -2004,17 +3109,17 @@
           }
           if (fileIndex !== 8) throw new Error('Cada fila FEN debe completar 8 casillas.');
         }
-        pushUndo(); boardState = next; selectedSquare = null; lastMove = null; markedSquares.clear(); capturedWhite = []; capturedBlack = []; historyLog.push('Cargaste una posición FEN.');
+        pushUndo(); boardState = next; selectedSquare = null; lastMove = null; markedSquares.clear(); highlightedSquares.clear(); arrows = []; capturedWhite = []; capturedBlack = []; historyLog.push('Cargaste una posición FEN.');
         setCurrentAsLessonStart('FEN cargado como nueva posición inicial'); renderAll();
       }
 
       function resetBoard() {
-        pushUndo(); boardState = initialBoard(); selectedSquare = null; lastMove = null; markedSquares.clear(); capturedWhite = []; capturedBlack = []; historyLog.push('Restauraste la posición inicial estándar.');
+        pushUndo(); boardState = initialBoard(); selectedSquare = null; lastMove = null; markedSquares.clear(); highlightedSquares.clear(); arrows = []; capturedWhite = []; capturedBlack = []; historyLog.push('Restauraste la posición inicial estándar.');
         setCurrentAsLessonStart('Posición inicial estándar preparada'); renderAll();
       }
 
       function clearBoard() {
-        pushUndo(); boardState = {}; selectedSquare = null; lastMove = null; markedSquares.clear(); capturedWhite = []; capturedBlack = []; historyLog.push('Vaciaste el tablero.');
+        pushUndo(); boardState = {}; selectedSquare = null; lastMove = null; markedSquares.clear(); highlightedSquares.clear(); arrows = []; capturedWhite = []; capturedBlack = []; historyLog.push('Vaciaste el tablero.');
         setCurrentAsLessonStart('Tablero vacío preparado como posición inicial'); renderAll();
       }
 
@@ -2127,10 +3232,418 @@
         const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 1900);
       }
 
+
+      // ===============================================================
+      // V16 · CAPA AVANZADA: reglas, SAN, variantes, alumno, PGN, ejercicios
+      // ===============================================================
+      let v16LegalMode = false;
+      let v16UiMode = 'teacher';
+      let v16ChessMeta = { turn:'w', castling:'KQkq', ep:'-', halfmove:0, fullmove:1 };
+      let v16Variants = [];
+      let v16ActiveVariantId = null;
+      let v16LessonStartMeta = v16DefaultEduMeta();
+      let v16ThreatVisible = false;
+      let v16StudentRevealed = false;
+      let v16StudentAnswered = false;
+      let v16StudentAnswerIndex = null;
+      let v16StudentPractice = false;
+
+      const uiModeBtn = document.getElementById('uiModeBtn');
+      const legalModeBtn = document.getElementById('legalModeBtn');
+      const legalDot = document.getElementById('legalDot');
+      const promotionChoiceEl = document.getElementById('promotionChoice');
+      const variantSelectEl = document.getElementById('variantSelect');
+      const variantStatusEl = document.getElementById('variantStatus');
+      const moveObjectiveEl = document.getElementById('moveObjective');
+      const moveKeyIdeaEl = document.getElementById('moveKeyIdea');
+      const moveCommonErrorEl = document.getElementById('moveCommonError');
+      const moveIsKeyEl = document.getElementById('moveIsKey');
+      const questionEnabledEl = document.getElementById('questionEnabled');
+      const hideExplanationEl = document.getElementById('hideExplanation');
+      const questionEditorEl = document.getElementById('questionEditor');
+      const questionPromptEl = document.getElementById('questionPrompt');
+      const questionCorrectEl = document.getElementById('questionCorrect');
+      const questionOptEls = [0,1,2,3].map(i=>document.getElementById('questionOpt'+i));
+      const studentLessonViewEl = document.getElementById('studentLessonView');
+      const studentEvalEl = document.getElementById('studentEval');
+      const studentMainCommentEl = document.getElementById('studentMainComment');
+      const studentStructuredEl = document.getElementById('studentStructured');
+      const studentQuestionEl = document.getElementById('studentQuestion');
+      const studentFeedbackEl = document.getElementById('studentFeedback');
+      const lessonSummaryEl = document.getElementById('lessonSummary');
+
+      function v16DefaultEduMeta(){ return { objective:'', keyIdea:'', commonError:'', isKey:false, question:{enabled:false,prompt:'',options:['','','',''],correctIndex:0,hideExplanation:false}, threat:null }; }
+      function v16NormalizeEduMeta(m){
+        const base=v16DefaultEduMeta(); const src=m||{};
+        base.objective=src.objective||''; base.keyIdea=src.keyIdea||''; base.commonError=src.commonError||''; base.isKey=!!src.isKey;
+        const q=src.question||{}; base.question={enabled:!!q.enabled,prompt:q.prompt||'',options:Array.isArray(q.options)?[...q.options.slice(0,4),...['','','','']].slice(0,4):['','','',''],correctIndex:Math.max(0,Math.min(3,Number(q.correctIndex)||0)),hideExplanation:!!q.hideExplanation};
+        base.threat=src.threat?deepClone(src.threat):null; return base;
+      }
+      function v16CurrentVariant(){ return v16Variants.find(v=>v.id===v16ActiveVariantId)||null; }
+      function v16ActiveMoves(){ const v=v16CurrentVariant(); return v?v.moves:lessonMoves; }
+      function v16ActiveStartSnapshot(){ const v=v16CurrentVariant(); return v?v.startSnapshot:lessonStartSnapshot; }
+      function v16ActiveStartComment(){ const v=v16CurrentVariant(); return v?(v.startComment||''):lessonStartComment; }
+      function v16SetActiveStartComment(value){ const v=v16CurrentVariant(); if(v)v.startComment=value; else lessonStartComment=value; }
+      function v16CurrentRecord(){ if(currentStudyStep===0) return v16CurrentVariant()?v16CurrentVariant():v16LessonStartMeta; return v16ActiveMoves()[currentStudyStep-1]||null; }
+      function v16CurrentEdu(){ const r=v16CurrentRecord(); if(currentStudyStep===0){ if(v16CurrentVariant()){r.edu=v16NormalizeEduMeta(r.edu);return r.edu;} v16LessonStartMeta=v16NormalizeEduMeta(v16LessonStartMeta);return v16LessonStartMeta;} r.edu=v16NormalizeEduMeta(r.edu); return r.edu; }
+
+      // ----- Snapshot ampliado -----
+      const v15ClonePositionSnapshot = clonePositionSnapshot;
+      clonePositionSnapshot = function(){ const x=v15ClonePositionSnapshot(); x.chessMeta=deepClone(v16ChessMeta); return x; };
+      const v15ApplyPositionSnapshot = applyPositionSnapshot;
+      applyPositionSnapshot = function(s,render=true){ v15ApplyPositionSnapshot(s,false); if(s?.chessMeta) v16ChessMeta=deepClone(s.chessMeta); else v16ChessMeta={turn:'w',castling:'-',ep:'-',halfmove:0,fullmove:1}; if(render)renderAll(); };
+      const v15CloneSnapshot=cloneSnapshot;
+      cloneSnapshot=function(){ const x=v15CloneSnapshot(); x.v16={legalMode:v16LegalMode,uiMode:v16UiMode,chessMeta:deepClone(v16ChessMeta),variants:deepClone(v16Variants),activeVariantId:v16ActiveVariantId,lessonStartMeta:deepClone(v16LessonStartMeta)}; return x; };
+      const v15RestoreSnapshot=restoreSnapshot;
+      restoreSnapshot=function(s){
+        if(s?.v16){ v16LegalMode=!!s.v16.legalMode; v16UiMode=s.v16.uiMode||'teacher'; v16ChessMeta=deepClone(s.v16.chessMeta||v16ChessMeta); v16Variants=deepClone(s.v16.variants||[]); v16ActiveVariantId=s.v16.activeVariantId||null; v16LessonStartMeta=v16NormalizeEduMeta(s.v16.lessonStartMeta); }
+        v15RestoreSnapshot(s); v16ApplyMode(); v16UpdateLegalButton(); v16RenderVariantSelect();
+      };
+
+      // ----- Motor de ajedrez legal -----
+      function v16Color(p){return p?.[0]||null} function v16Type(p){return p?.[1]||null}
+      function v16Opp(c){return c==='w'?'b':'w'}
+      function v16FR(sq){return {f:files.indexOf(sq[0]),r:Number(sq[1])}}
+      function v16Sq(f,r){return f>=0&&f<8&&r>=1&&r<=8?files[f]+r:null}
+      function v16KingSquare(board,color){return Object.keys(board).find(s=>board[s]===color+'K')||null}
+      function v16IsAttacked(board,sq,by){
+        if(!sq)return false; const {f,r}=v16FR(sq);
+        const pd=by==='w'?1:-1;
+        for(const df of [-1,1]){const s=v16Sq(f-df,r-pd); if(s&&board[s]===by+'P')return true;}
+        for(const [df,dr] of [[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]]){const s=v16Sq(f+df,r+dr);if(s&&board[s]===by+'N')return true;}
+        for(const [df,dr] of [[1,0],[-1,0],[0,1],[0,-1]]){let nf=f+df,nr=r+dr;while(v16Sq(nf,nr)){const p=board[v16Sq(nf,nr)];if(p){if(v16Color(p)===by&&(v16Type(p)==='R'||v16Type(p)==='Q'))return true;break;}nf+=df;nr+=dr;}}
+        for(const [df,dr] of [[1,1],[1,-1],[-1,1],[-1,-1]]){let nf=f+df,nr=r+dr;while(v16Sq(nf,nr)){const p=board[v16Sq(nf,nr)];if(p){if(v16Color(p)===by&&(v16Type(p)==='B'||v16Type(p)==='Q'))return true;break;}nf+=df;nr+=dr;}}
+        for(let df=-1;df<=1;df++)for(let dr=-1;dr<=1;dr++){if(!df&&!dr)continue;const s=v16Sq(f+df,r+dr);if(s&&board[s]===by+'K')return true;}
+        return false;
+      }
+      function v16PseudoMoves(board,meta,from,withCastle=true){
+        const p=board[from]; if(!p)return []; const c=v16Color(p),t=v16Type(p),{f,r}=v16FR(from),out=[];
+        const add=(to,special=null,captureSquare=null,promotion=false)=>{if(!to)return;const target=board[to];if(!target||v16Color(target)!==c)out.push({from,to,piece:p,captured:target||null,special,captureSquare,promotion});};
+        if(t==='P'){
+          const d=c==='w'?1:-1,start=c==='w'?2:7,prom=c==='w'?8:1; const one=v16Sq(f,r+d);
+          if(one&&!board[one]){add(one,null,null,r+d===prom);const two=v16Sq(f,r+2*d);if(r===start&&two&&!board[two])add(two,'double');}
+          for(const df of [-1,1]){const to=v16Sq(f+df,r+d);if(!to)continue;if(board[to]&&v16Color(board[to])!==c)add(to,null,null,r+d===prom);else if(meta.ep===to){const cs=v16Sq(f+df,r);if(cs&&board[cs]===v16Opp(c)+'P')out.push({from,to,piece:p,captured:board[cs],special:'ep',captureSquare:cs,promotion:false});}}
+        } else if(t==='N'){
+          for(const [df,dr] of [[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]])add(v16Sq(f+df,r+dr));
+        } else if(t==='B'||t==='R'||t==='Q'){
+          const dirs=[];if(t==='B'||t==='Q')dirs.push([1,1],[1,-1],[-1,1],[-1,-1]);if(t==='R'||t==='Q')dirs.push([1,0],[-1,0],[0,1],[0,-1]);
+          for(const [df,dr] of dirs){let nf=f+df,nr=r+dr;while(v16Sq(nf,nr)){const to=v16Sq(nf,nr),target=board[to];if(!target)add(to);else{if(v16Color(target)!==c)add(to);break;}nf+=df;nr+=dr;}}
+        } else if(t==='K'){
+          for(let df=-1;df<=1;df++)for(let dr=-1;dr<=1;dr++){if(df||dr)add(v16Sq(f+df,r+dr));}
+          if(withCastle){const rank=c==='w'?1:8,enemy=v16Opp(c);if(from==='e'+rank&&!v16IsAttacked(board,from,enemy)){
+            const kRight=c==='w'?'K':'k',qRight=c==='w'?'Q':'q';
+            if(meta.castling.includes(kRight)&&board['h'+rank]===c+'R'&&!board['f'+rank]&&!board['g'+rank]&&!v16IsAttacked(board,'f'+rank,enemy)&&!v16IsAttacked(board,'g'+rank,enemy))out.push({from,to:'g'+rank,piece:p,captured:null,special:'castleK'});
+            if(meta.castling.includes(qRight)&&board['a'+rank]===c+'R'&&!board['b'+rank]&&!board['c'+rank]&&!board['d'+rank]&&!v16IsAttacked(board,'d'+rank,enemy)&&!v16IsAttacked(board,'c'+rank,enemy))out.push({from,to:'c'+rank,piece:p,captured:null,special:'castleQ'});
+          }}
+        }
+        return out;
+      }
+      function v16ApplyState(board,meta,m,promo='Q'){
+        const b={...board},nm=deepClone(meta);const p=b[m.from],c=v16Color(p),t=v16Type(p);let captured=m.captured||null;
+        delete b[m.from];
+        if(m.special==='ep'&&m.captureSquare){captured=b[m.captureSquare]||captured;delete b[m.captureSquare];}
+        if(m.special==='castleK'){const rank=c==='w'?1:8;b['g'+rank]=p;delete b['h'+rank];b['f'+rank]=c+'R';}
+        else if(m.special==='castleQ'){const rank=c==='w'?1:8;b['c'+rank]=p;delete b['a'+rank];b['d'+rank]=c+'R';}
+        else b[m.to]=(m.promotion?c+(promo||'Q'):p);
+        let rights=nm.castling||'-'; const rem=x=>{rights=rights.replace(x,'')};
+        if(p==='wK'){rem('K');rem('Q')} if(p==='bK'){rem('k');rem('q')}
+        if(m.from==='a1'||m.to==='a1')rem('Q'); if(m.from==='h1'||m.to==='h1')rem('K'); if(m.from==='a8'||m.to==='a8')rem('q'); if(m.from==='h8'||m.to==='h8')rem('k');
+        nm.castling=rights||'-'; nm.ep='-'; if(t==='P'&&Math.abs(Number(m.to[1])-Number(m.from[1]))===2)nm.ep=m.from[0]+((Number(m.to[1])+Number(m.from[1]))/2);
+        nm.halfmove=(t==='P'||captured)?0:(Number(nm.halfmove)||0)+1; if(c==='b')nm.fullmove=(Number(nm.fullmove)||1)+1; nm.turn=v16Opp(c);
+        return {board:b,meta:nm,captured};
+      }
+      function v16LegalMovesFor(from,board=boardState,meta=v16ChessMeta){
+        const p=board[from];if(!p||v16Color(p)!==meta.turn)return[];const c=v16Color(p),king=v16KingSquare(board,c);if(!king)return[];
+        return v16PseudoMoves(board,meta,from,true).filter(m=>{const st=v16ApplyState(board,meta,m,promotionChoiceEl?.value||'Q');const k=v16KingSquare(st.board,c);return !!k&&!v16IsAttacked(st.board,k,v16Opp(c));});
+      }
+      function v16AllLegal(board=boardState,meta=v16ChessMeta){const out=[];for(const [sq,p] of Object.entries(board))if(v16Color(p)===meta.turn)out.push(...v16LegalMovesFor(sq,board,meta));return out;}
+      function v16PositionLegalReady(){return Object.values(boardState).filter(p=>p==='wK').length===1&&Object.values(boardState).filter(p=>p==='bK').length===1;}
+      function v16SAN(m,before,meta,after,afterMeta,promo='Q'){
+        if(m.special==='castleK')return 'O-O'+v16CheckSuffix(after,afterMeta);if(m.special==='castleQ')return 'O-O-O'+v16CheckSuffix(after,afterMeta);
+        const t=v16Type(m.piece),capture=!!m.captured||m.special==='ep';let san='';const letters={K:'K',Q:'Q',R:'R',B:'B',N:'N'};
+        if(t==='P'){if(capture)san+=m.from[0];}else{san+=letters[t]||t;const others=[];for(const [sq,p] of Object.entries(before)){if(sq!==m.from&&p===m.piece){const ls=v16LegalMovesFor(sq,before,meta);if(ls.some(x=>x.to===m.to))others.push(sq);}}if(others.length){const sameFile=others.some(s=>s[0]===m.from[0]),sameRank=others.some(s=>s[1]===m.from[1]);san+=!sameFile?m.from[0]:(!sameRank?m.from[1]:m.from);}}
+        if(capture)san+='x';san+=m.to;if(m.promotion)san+='='+(promo||'Q');return san+v16CheckSuffix(after,afterMeta);
+      }
+      function v16CheckSuffix(board,meta){const king=v16KingSquare(board,meta.turn);if(!king||!v16IsAttacked(board,king,v16Opp(meta.turn)))return'';return v16AllLegal(board,meta).length?'+' :'#';}
+      function v16NormalizeSAN(s){return String(s||'').trim().replace(/[!?]+$/,'').replace(/0-0-0/g,'O-O-O').replace(/0-0/g,'O-O').replace(/e\.p\.?/ig,'').trim();}
+
+      // ----- Línea activa / variantes -----
+      function v16RenderVariantSelect(){
+        if(!variantSelectEl)return; const current=v16ActiveVariantId||'';variantSelectEl.innerHTML='<option value="">🌳 Línea principal</option>';
+        v16Variants.forEach(v=>{const o=document.createElement('option');o.value=v.id;o.textContent=`↳ ${v.name} · desde mov. ${v.parentStep}`;variantSelectEl.appendChild(o)});variantSelectEl.value=current;
+        const v=v16CurrentVariant();variantStatusEl.textContent=v?`Variante “${v.name}” · nace después del movimiento ${v.parentStep} · ${v.moves.length} jugadas`:`Línea principal · ${lessonMoves.length} jugadas · ${v16Variants.length} variantes`;
+      }
+      function v16CreateVariant(){
+        if(v16ActiveVariantId){toast('Vuelve a la línea principal para crear una variante');return;} storeCommentFromEditor();const baseStep=currentStudyStep;const snap=baseStep===0?lessonStartSnapshot:lessonMoves[baseStep-1]?.snapshot;if(!snap){toast('No hay una posición base');return;}
+        const name=prompt('Nombre de la variante:',`Variante ${v16Variants.length+1}`);if(name===null)return;const id='v'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);v16Variants.push({id,name:(name.trim()||`Variante ${v16Variants.length+1}`),parentStep:baseStep,startSnapshot:deepClone(snap),startComment:'',edu:v16DefaultEduMeta(),moves:[]});v16ActiveVariantId=id;currentStudyStep=0;applyPositionSnapshot(deepClone(snap),false);v16RenderVariantSelect();renderAll();toast('Variante creada sin borrar la línea principal');
+      }
+      function v16SwitchVariant(id){storeCommentFromEditor();v16ActiveVariantId=id||null;currentStudyStep=0;const snap=v16ActiveStartSnapshot();applyPositionSnapshot(deepClone(snap),false);v16ThreatVisible=false;v16StudentPractice=false;renderAll();}
+      function v16RenameVariant(){const v=v16CurrentVariant();if(!v){toast('Selecciona una variante');return;}const n=prompt('Nuevo nombre:',v.name);if(n!==null&&n.trim()){v.name=n.trim();v16RenderVariantSelect();}}
+      function v16DeleteVariant(){const v=v16CurrentVariant();if(!v){toast('Selecciona una variante');return;}if(!confirm(`¿Eliminar la variante “${v.name}”?`))return;v16Variants=v16Variants.filter(x=>x.id!==v.id);v16ActiveVariantId=null;currentStudyStep=v.parentStep;const snap=currentStudyStep===0?lessonStartSnapshot:lessonMoves[currentStudyStep-1]?.snapshot;applyPositionSnapshot(deepClone(snap),false);v16RenderVariantSelect();renderAll();}
+
+      // Override line-aware functions
+      truncateFutureMoves=function(){const moves=v16ActiveMoves();if(currentStudyStep<moves.length){moves.splice(currentStudyStep);historyLog.push(v16ActiveVariantId?'Recortaste la continuación de la variante.':'Recortaste la línea principal desde una posición anterior.');}};
+      syncCurrentLessonSnapshot=function(){const snap=clonePositionSnapshot();const moves=v16ActiveMoves();if(currentStudyStep===0){const v=v16CurrentVariant();if(v)v.startSnapshot=deepClone(snap);else{lessonStartSnapshot=deepClone(snap);lessonStartSnapshot.lastMove=null;}}else if(moves[currentStudyStep-1])moves[currentStudyStep-1].snapshot=deepClone(snap);};
+      const v15SetCurrentAsLessonStart=setCurrentAsLessonStart;
+      setCurrentAsLessonStart=function(message='Nueva posición inicial preparada.'){v16ActiveVariantId=null;v16Variants=[];v16LessonStartMeta=v16DefaultEduMeta();v15SetCurrentAsLessonStart(message);v16RenderVariantSelect();};
+
+      // ----- Movimiento principal, legal o libre, con SAN -----
+      movePiece=function(from,to){
+        const piece=boardState[from];if(!piece)return;
+        if(v16UiMode==='student')return v16StudentAttemptMove(from,to);
+        storeCommentFromEditor();
+        let chosen=null, result=null, notation='',captured=null,promo=promotionChoiceEl?.value||'Q',before={...boardState},beforeMeta=deepClone(v16ChessMeta);
+        if(v16LegalMode){
+          if(!v16PositionLegalReady()){toast('Para modo legal debe haber un rey blanco y uno negro');return;}
+          if(v16Color(piece)!==v16ChessMeta.turn){toast(`Turno de ${v16ChessMeta.turn==='w'?'blancas':'negras'}`);return;}
+          chosen=v16LegalMovesFor(from).find(m=>m.to===to);if(!chosen){toast('Movimiento no legal en esta posición');return;}result=v16ApplyState(boardState,v16ChessMeta,chosen,promo);captured=result.captured;notation=v16SAN(chosen,before,beforeMeta,result.board,result.meta,promo);
+        }else{
+          captured=boardState[to]||null;chosen={from,to,piece,captured,special:null,promotion:false};result={board:{...boardState},meta:deepClone(v16ChessMeta),captured};delete result.board[from];result.board[to]=piece;result.meta.turn=v16Opp(v16Color(piece));if(v16Color(piece)==='b')result.meta.fullmove=(Number(result.meta.fullmove)||1)+1; const letter={K:'K',Q:'Q',R:'R',B:'B',N:'N',P:''}[v16Type(piece)]||'';notation=(v16Type(piece)==='P'&&captured?from[0]:'')+letter+(captured?'x':'')+to;
+        }
+        pushUndo();truncateFutureMoves();
+        if(captured){if(v16Color(captured)==='w')capturedWhite.push(captured);else capturedBlack.push(captured);}
+        boardState=result.board;v16ChessMeta=result.meta;lastMove={from,to};historyLog.push(`${notation}${captured?' · captura':''}`);
+        const moves=v16ActiveMoves();const move={number:moves.length+1,from,to,piece,captured,notation,san:notation,side:v16Color(piece),fullmove:Number(beforeMeta.fullmove)||Math.floor(moves.length/2)+1,comment:'',evaluation:'',edu:v16DefaultEduMeta(),snapshot:null};move.snapshot=clonePositionSnapshot();moves.push(move);currentStudyStep=moves.length;selectedSquare=null;loadedLessonBannerEl.hidden=true;v16ThreatVisible=false;renderAll();setTimeout(()=>moveCommentEl.focus({preventScroll:true}),0);
+      };
+
+      // ----- FEN completo -----
+      boardToFen=function(){const rows=[];for(let r=8;r>=1;r--){let row='',empty=0;for(const f of files){const p=boardState[f+r];if(!p){empty++;continue}if(empty){row+=empty;empty=0}row+=pieceToFen[p]||''}if(empty)row+=empty;rows.push(row)}return `${rows.join('/')} ${v16ChessMeta.turn||'w'} ${v16ChessMeta.castling||'-'} ${v16ChessMeta.ep||'-'} ${Number(v16ChessMeta.halfmove)||0} ${Number(v16ChessMeta.fullmove)||1}`;};
+      loadFen=function(fen){const parts=(fen||'').trim().split(/\s+/);const rows=(parts[0]||'').split('/');if(rows.length!==8)throw new Error('El FEN debe tener 8 filas.');const next={};for(let i=0;i<8;i++){let fi=0;for(const ch of rows[i]){if(/[1-8]/.test(ch)){fi+=Number(ch);continue}const p=fenToPiece[ch];if(!p)throw new Error(`Símbolo FEN no válido: ${ch}`);if(fi>7)throw new Error('Demasiadas casillas.');next[files[fi]+(8-i)]=p;fi++}if(fi!==8)throw new Error('Cada fila FEN debe completar 8 casillas.')}pushUndo();boardState=next;v16ChessMeta={turn:parts[1]==='b'?'b':'w',castling:parts[2]||'-',ep:parts[3]||'-',halfmove:Number(parts[4])||0,fullmove:Math.max(1,Number(parts[5])||1)};selectedSquare=null;lastMove=null;markedSquares.clear();highlightedSquares.clear();arrows=[];capturedWhite=[];capturedBlack=[];historyLog.push('Cargaste una posición FEN completa.');setCurrentAsLessonStart('FEN cargado como nueva posición inicial');lessonStartSnapshot=clonePositionSnapshot();renderAll();};
+      resetBoard=function(){pushUndo();boardState=initialBoard();v16ChessMeta={turn:'w',castling:'KQkq',ep:'-',halfmove:0,fullmove:1};selectedSquare=null;lastMove=null;markedSquares.clear();highlightedSquares.clear();arrows=[];capturedWhite=[];capturedBlack=[];historyLog.push('Restauraste la posición inicial estándar.');setCurrentAsLessonStart('Posición inicial estándar preparada');lessonStartSnapshot=clonePositionSnapshot();renderAll();};
+      clearBoard=function(){pushUndo();boardState={};v16ChessMeta={turn:'w',castling:'-',ep:'-',halfmove:0,fullmove:1};selectedSquare=null;lastMove=null;markedSquares.clear();highlightedSquares.clear();arrows=[];capturedWhite=[];capturedBlack=[];historyLog.push('Vaciaste el tablero.');setCurrentAsLessonStart('Tablero vacío preparado como posición inicial');lessonStartSnapshot=clonePositionSnapshot();renderAll();};
+
+      // ----- Editor educativo -----
+      function v16LoadEduEditor(){
+        const e=v16CurrentEdu(), disabled=currentStudyStep===0&&!!v16CurrentVariant()?false:false;
+        moveObjectiveEl.value=e.objective||'';moveKeyIdeaEl.value=e.keyIdea||'';moveCommonErrorEl.value=e.commonError||'';moveIsKeyEl.checked=!!e.isKey;questionEnabledEl.checked=!!e.question.enabled;hideExplanationEl.checked=!!e.question.hideExplanation;questionPromptEl.value=e.question.prompt||'';questionCorrectEl.value=String(e.question.correctIndex||0);questionOptEls.forEach((el,i)=>el.value=e.question.options[i]||'');questionEditorEl.classList.toggle('v16-hidden',!e.question.enabled);
+      }
+      function v16StoreEduEditor(){const e=v16CurrentEdu();e.objective=moveObjectiveEl.value.trim();e.keyIdea=moveKeyIdeaEl.value.trim();e.commonError=moveCommonErrorEl.value.trim();e.isKey=moveIsKeyEl.checked;e.question.enabled=questionEnabledEl.checked;e.question.hideExplanation=hideExplanationEl.checked;e.question.prompt=questionPromptEl.value.trim();e.question.correctIndex=Number(questionCorrectEl.value)||0;e.question.options=questionOptEls.map(x=>x.value.trim());}
+      const v15StoreComment=storeCommentFromEditor;
+      storeCommentFromEditor=function(){const moves=v16ActiveMoves(),value=moveCommentEl.value.trim();if(currentStudyStep===0)v16SetActiveStartComment(value);else if(moves[currentStudyStep-1]){moves[currentStudyStep-1].comment=value;moves[currentStudyStep-1].evaluation=moveEvaluationEl.value||'';}v16StoreEduEditor();};
+      saveCurrentComment=function(){storeCommentFromEditor();renderStudy();toast('Explicación y datos educativos guardados');};
+      function v16SaveThreat(){v16StoreEduEditor();const e=v16CurrentEdu();if(!markedSquares.size&&!highlightedSquares.size&&!arrows.length){toast('Primero dibuja círculos, resaltados o flechas');return;}e.threat={markedSquares:[...markedSquares],highlightedSquares:[...highlightedSquares],arrows:deepClone(arrows)};pushUndo();markedSquares.clear();highlightedSquares.clear();arrows=[];syncCurrentLessonSnapshot();renderAll();toast('Amenaza guardada · el alumno podrá revelarla');}
+
+      // Threat overlay wrapping renderBoard
+      const v15RenderBoard=renderBoard;
+      function v16DecorateBoard(){
+        document.querySelectorAll('.legal-target,.legal-capture,.king-check').forEach(el=>el.classList.remove('legal-target','legal-capture','king-check'));
+        if(v16LegalMode&&selectedSquare&&boardState[selectedSquare]&&v16Color(boardState[selectedSquare])===v16ChessMeta.turn){for(const m of v16LegalMovesFor(selectedSquare)){const el=boardEl.querySelector(`[data-square="${m.to}"]`);if(el)el.classList.add((m.captured||m.special==='ep')?'legal-capture':'legal-target');}}
+        if(v16LegalMode){const k=v16KingSquare(boardState,v16ChessMeta.turn);if(k&&v16IsAttacked(boardState,k,v16Opp(v16ChessMeta.turn))){boardEl.querySelector(`[data-square="${k}"]`)?.classList.add('king-check');}}
+      }
+      renderBoard=function(){
+        if(!v16ThreatVisible){v15RenderBoard();v16DecorateBoard();return;}
+        const e=v16CurrentEdu(),th=e?.threat;if(!th){v15RenderBoard();v16DecorateBoard();return;}
+        const oldM=markedSquares,oldH=highlightedSquares,oldA=arrows;markedSquares=new Set([...oldM,...(th.markedSquares||[])]);highlightedSquares=new Set([...oldH,...(th.highlightedSquares||[])]);arrows=[...oldA,...deepClone(th.arrows||[])];v15RenderBoard();markedSquares=oldM;highlightedSquares=oldH;arrows=oldA;v16DecorateBoard();
+      };
+
+      // ----- Render de estudio compacto, numeración real, claves y estudiante -----
+      const v15EvaluationBadgeHtml=evaluationBadgeHtml;
+      renderStudy=function(){
+        const moves=v16ActiveMoves(),total=moves.length;studyCounterEl.textContent=currentStudyStep===0?`Posición base · 0 / ${total}`:`Movimiento ${currentStudyStep} de ${total}`;
+        document.getElementById('studyStartBtn').disabled=currentStudyStep===0;document.getElementById('studyPrevBtn').disabled=currentStudyStep===0;document.getElementById('studyNextBtn').disabled=currentStudyStep>=total;document.getElementById('studyEndBtn').disabled=currentStudyStep>=total;studyListEl.innerHTML='';
+        const initial=document.createElement('button');initial.type='button';initial.className='study-move-cell study-initial-card'+(currentStudyStep===0?' active':'');initial.innerHTML=`<span class="study-move-top"><span class="study-move-prefix">0.</span><span class="study-move-label">${v16ActiveVariantId?'Inicio de variante':'Posición inicial'}</span></span>${v16ActiveStartComment()?`<span class="study-move-comment">${escapeHtml(v16ActiveStartComment())}</span>`:''}`;initial.onclick=()=>goToStudyStep(0);studyListEl.appendChild(initial);
+        const grid=document.createElement('div');grid.className='study-grid';grid.innerHTML='<div class="study-grid-head"><div class="study-head-number">#</div><div class="study-head-cell">⚪ Blancas</div><div class="study-head-cell">⚫ Negras</div></div>';
+        const rows=new Map();moves.forEach((m,i)=>{const side=m.side||v16Color(m.piece)||(i%2?'b':'w');const num=Number(m.fullmove)||Math.floor(i/2)+1;if(!rows.has(num))rows.set(num,{w:null,b:null,wi:0,bi:0});const row=rows.get(num);row[side]=m;row[side+'i']=i+1;});
+        const make=(m,step,num,side)=>{if(!m){const d=document.createElement('div');d.className='study-move-cell empty';d.innerHTML='<span class="study-move-label">—</span>';return d;}const b=document.createElement('button');b.type='button';b.className='study-move-cell'+(currentStudyStep===step?' active':'');const edu=v16NormalizeEduMeta(m.edu);b.innerHTML=`<span class="study-move-top"><span class="study-move-prefix">${num}${side==='w'?'.':'...'}</span><span class="study-move-label san-label">${escapeHtml(m.san||m.notation||`${m.from}→${m.to}`)}</span>${m.evaluation?evaluationBadgeHtml(m.evaluation):''}${edu.isKey?'<span class="key-star">★</span>':''}</span>${m.comment?`<span class="study-move-comment">${escapeHtml(m.comment)}</span>`:''}`;b.onclick=()=>goToStudyStep(step);return b;};
+        if(!rows.size){const r=document.createElement('div');r.className='study-row';r.innerHTML='<div class="study-turn-number">1</div><div class="study-move-cell empty">Sin movimientos</div><div class="study-move-cell empty">Sin movimientos</div>';grid.appendChild(r);}else for(const [num,row] of [...rows.entries()].sort((a,b)=>a[0]-b[0])){const r=document.createElement('div');r.className='study-row';const n=document.createElement('div');n.className='study-turn-number';n.textContent=num;r.append(n,make(row.w,row.wi,num,'w'),make(row.b,row.bi,num,'b'));grid.appendChild(r);}studyListEl.appendChild(grid);
+        if(currentStudyStep===0){currentMoveTitleEl.textContent=v16ActiveVariantId?'💬 Comentario del inicio de variante':'💬 Comentario de la posición inicial';if(document.activeElement!==moveCommentEl)moveCommentEl.value=v16ActiveStartComment()||'';moveEvaluationEl.value='';moveEvaluationEl.disabled=true;}else{const m=moves[currentStudyStep-1];currentMoveTitleEl.textContent=`💬 ${m?.san||m?.notation||'Movimiento '+currentStudyStep}`;if(document.activeElement!==moveCommentEl)moveCommentEl.value=m?.comment||'';moveEvaluationEl.disabled=false;moveEvaluationEl.value=m?.evaluation||'';}
+        v16LoadEduEditor();v16RenderVariantSelect();v16RenderStudentView();
+      };
+      goToStudyStep=function(step){storeCommentFromEditor();const moves=v16ActiveMoves();step=Math.max(0,Math.min(Number(step)||0,moves.length));currentStudyStep=step;const snap=step===0?v16ActiveStartSnapshot():moves[step-1]?.snapshot;applyPositionSnapshot(deepClone(snap||v16ActiveStartSnapshot()),false);selectedSquare=null;v16ThreatVisible=false;v16StudentRevealed=false;v16StudentAnswered=false;v16StudentAnswerIndex=null;v16StudentPractice=false;setTool('move');renderAll();};
+
+      // ----- Modo Profesor / Alumno y ejercicios -----
+      function v16ApplyMode(){document.body.classList.toggle('student-mode',v16UiMode==='student');uiModeBtn.textContent=v16UiMode==='student'?'🎓 Alumno':'👨‍🏫 Profesor';if(v16UiMode==='student'){setTool('move');selectedTrayPiece=null;}v16RenderStudentView();}
+      function v16ToggleMode(){storeCommentFromEditor();v16UiMode=v16UiMode==='teacher'?'student':'teacher';v16StudentPractice=false;v16StudentRevealed=false;v16StudentAnswered=false;v16StudentAnswerIndex=null;v16ApplyMode();renderAll();toast(v16UiMode==='student'?'Modo Alumno · edición protegida':'Modo Profesor · edición habilitada');}
+      function v16UpdateLegalButton(){legalDot.classList.toggle('on',v16LegalMode);legalModeBtn.innerHTML=`<span class="legal-dot ${v16LegalMode?'on':''}" id="legalDotInner"></span>${v16LegalMode?'Mov. legales':'Modo libre'}`;}
+      updatePositionInfo=function(){const count=Object.keys(boardState).length;let extra='';if(v16LegalMode){const king=v16KingSquare(boardState,v16ChessMeta.turn),check=king&&v16IsAttacked(boardState,king,v16Opp(v16ChessMeta.turn));extra=` · turno ${v16ChessMeta.turn==='w'?'blancas':'negras'}${check?' · JAQUE':''}`;}positionInfo.textContent=`${count} ${count===1?'pieza':'piezas'}${extra}`;fenInput.value=boardToFen();};
+      function v16ToggleLegal(){if(!v16LegalMode&&!v16PositionLegalReady()){toast('Agrega exactamente un rey blanco y un rey negro antes de activar reglas');return;}v16LegalMode=!v16LegalMode;v16UpdateLegalButton();toast(v16LegalMode?'Reglas legales activadas':'Modo libre activado');}
+      function v16RenderStudentView(){if(!studentLessonViewEl)return;const moves=v16ActiveMoves(),record=currentStudyStep===0?null:moves[currentStudyStep-1],edu=v16CurrentEdu(),comment=currentStudyStep===0?v16ActiveStartComment():(record?.comment||''),ev=record?.evaluation||'';studentEvalEl.innerHTML=`${ev?evaluationBadgeHtml(ev):'<span class="hint">Sin evaluación</span>'}${edu.isKey?'<span class="evaluation-badge eval-key">★ Posición clave</span>':''}${v16ActiveVariantId?'<span class="variant-chip">Variante</span>':''}`;
+        const hide=edu.question.enabled&&edu.question.hideExplanation&&!v16StudentAnswered&&!v16StudentRevealed;studentMainCommentEl.classList.toggle('v16-hidden',hide);studentStructuredEl.classList.toggle('v16-hidden',hide);studentMainCommentEl.innerHTML=comment?escapeHtml(comment):'<span class="hint">Sin explicación escrita.</span>';studentStructuredEl.innerHTML='';if(edu.objective)studentStructuredEl.innerHTML+=`<div class="student-info"><strong>🎯 Objetivo:</strong> ${escapeHtml(edu.objective)}</div>`;if(edu.keyIdea)studentStructuredEl.innerHTML+=`<div class="student-info"><strong>💡 Idea clave:</strong> ${escapeHtml(edu.keyIdea)}</div>`;if(edu.commonError)studentStructuredEl.innerHTML+=`<div class="student-info"><strong>⚠️ Error frecuente:</strong> ${escapeHtml(edu.commonError)}</div>`;
+        studentQuestionEl.classList.toggle('v16-hidden',!edu.question.enabled);if(edu.question.enabled){studentQuestionEl.innerHTML=`<div class="student-question-title">🎯 ${escapeHtml(edu.question.prompt||'Responde antes de continuar')}</div><div class="v16-question-options">${edu.question.options.map((o,i)=>o?`<button class="student-option" data-answer="${i}" type="button">${String.fromCharCode(65+i)}) ${escapeHtml(o)}</button>`:'').join('')}</div>`;studentQuestionEl.querySelectorAll('[data-answer]').forEach(b=>{const x=Number(b.dataset.answer);if(v16StudentAnswered){b.disabled=true;if(x===Number(edu.question.correctIndex||0))b.classList.add('correct');else if(x===v16StudentAnswerIndex)b.classList.add('wrong');}b.onclick=()=>v16AnswerQuestion(x);});}
+        document.getElementById('studentRevealBtn').style.display=hide?'inline-flex':'none';document.getElementById('studentThreatBtn').disabled=!edu.threat;document.getElementById('studentThreatBtn').classList.toggle('active',v16ThreatVisible);document.getElementById('studentPracticeBtn').classList.toggle('active',v16StudentPractice);v16RenderSummary();
+      }
+      function v16AnswerQuestion(i){const e=v16CurrentEdu(),correct=Number(e.question.correctIndex)||0;v16StudentAnswered=true;v16StudentAnswerIndex=i;studentFeedbackEl.textContent=i===correct?'✅ Correcto. Ahora revisa la explicación.':'❌ Revisa la respuesta correcta y la explicación.';studentFeedbackEl.className='student-feedback '+(i===correct?'good':'bad');v16RenderStudentView();}
+      function v16TogglePractice(){const moves=v16ActiveMoves();if(currentStudyStep>=moves.length){toast('Ya estás al final de esta línea');return;}v16StudentPractice=!v16StudentPractice;studentFeedbackEl.textContent=v16StudentPractice?'Mueve en el tablero la jugada que crees correcta.':'';studentFeedbackEl.className='student-feedback';v16RenderStudentView();}
+      function v16StudentAttemptMove(from,to){if(!v16StudentPractice){toast('Modo Alumno: activa “Practicar siguiente jugada” para mover');selectedSquare=null;renderBoard();return;}const expected=v16ActiveMoves()[currentStudyStep];if(!expected)return;const ok=expected.from===from&&expected.to===to;if(ok){v16StudentPractice=false;studentFeedbackEl.textContent='✅ ¡Correcto!';studentFeedbackEl.className='student-feedback good';goToStudyStep(currentStudyStep+1);}else{studentFeedbackEl.textContent=`❌ Esa no es la jugada preparada. Intenta otra vez.`;studentFeedbackEl.className='student-feedback bad';selectedSquare=null;renderBoard();}}
+      function v16NextKey(){const moves=v16ActiveMoves();if(!moves.length)return;for(let k=1;k<=moves.length;k++){const idx=(currentStudyStep+k-1)%moves.length;if(v16NormalizeEduMeta(moves[idx].edu).isKey){goToStudyStep(idx+1);return;}}toast('No hay posiciones clave marcadas en esta línea');}
+      function v16RenderSummary(){const moves=v16ActiveMoves(),el=lessonSummaryEl;if(v16UiMode!=='student'||currentStudyStep<moves.length){el.classList.add('v16-hidden');return;}const keys=moves.filter(m=>v16NormalizeEduMeta(m.edu).isKey).length,questions=moves.filter(m=>v16NormalizeEduMeta(m.edu).question.enabled).length,errors=moves.filter(m=>['error','blunder'].includes(m.evaluation)).length,ideas=moves.filter(m=>v16NormalizeEduMeta(m.edu).keyIdea).length;el.classList.remove('v16-hidden');el.innerHTML=`<h3>🏆 Lección completada</h3><div class="summary-grid"><div class="summary-stat"><strong>${moves.length}</strong><span>movimientos</span></div><div class="summary-stat"><strong>${keys}</strong><span>posiciones clave</span></div><div class="summary-stat"><strong>${questions}</strong><span>preguntas</span></div><div class="summary-stat"><strong>${errors}</strong><span>errores señalados</span></div><div class="summary-stat"><strong>${ideas}</strong><span>ideas clave</span></div><div class="summary-stat"><strong>${v16Variants.length}</strong><span>variantes</span></div></div>`;}
+
+      // ----- PGN -----
+      function v16EvalSuffix(e){return ({key:'',verygood:'!',good:'',dubious:'?!',error:'?',blunder:'??'})[e]||'';}
+      function v16PgnComment(m){const e=v16NormalizeEduMeta(m.edu);const bits=[m.comment,e.objective&&`Objetivo: ${e.objective}`,e.keyIdea&&`Idea clave: ${e.keyIdea}`,e.commonError&&`Error frecuente: ${e.commonError}`].filter(Boolean);return bits.length?` {${bits.join(' | ').replace(/[{}]/g,'')}}`:'';}
+      function v16LineToPgn(moves){let text='',lastNum=null;for(const m of moves){const n=Number(m.fullmove)||1,side=m.side||v16Color(m.piece);if(side==='w'){text+=`${n}. `;lastNum=n;}else if(lastNum!==n)text+=`${n}... `;text+=`${m.san||m.notation||m.to}${v16EvalSuffix(m.evaluation)}${v16PgnComment(m)} `;}return text.trim();}
+      function v16ExportPGN(){storeCommentFromEditor();const title=lessonTitleEl.value.trim()||'Lección Mauro Chess';let movetext=v16LineToPgn(lessonMoves);for(const v of v16Variants){const vp=v16LineToPgn(v.moves);if(vp)movetext+=`\n\n{Variante ${v.name}, desde movimiento ${v.parentStep}} (${vp})`;}const pgn=`[Event "${title.replace(/"/g,"'")}"]\n[Site "Academia de Ajedrez Mauro"]\n[Date "${new Date().toISOString().slice(0,10).replace(/-/g,'.')}"]\n[Result "*"]\n[FEN "${v16SnapshotToFen(lessonStartSnapshot)}"]\n[SetUp "1"]\n\n${movetext} *\n`;v16DownloadText(`${safeFilename(title)}.pgn`,pgn,'text/plain;charset=utf-8');toast('PGN exportado');}
+      function v16SnapshotToFen(snap){const saveB=boardState,saveM=v16ChessMeta;boardState={...(snap?.boardState||{})};v16ChessMeta=deepClone(snap?.chessMeta||{turn:'w',castling:'-',ep:'-',halfmove:0,fullmove:1});const f=boardToFen();boardState=saveB;v16ChessMeta=saveM;return f;}
+      function v16DownloadText(name,text,type){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+      function v16StripPgnVariations(text){
+        let out='', depth=0, inBrace=false, inSemicolon=false;
+        for(let i=0;i<text.length;i++){
+          const ch=text[i];
+          if(inSemicolon){ if(ch==='\n'){inSemicolon=false;if(depth===0)out+='\n';} continue; }
+          if(inBrace){ if(depth===0)out+=ch; if(ch==='}')inBrace=false; continue; }
+          if(ch===';'){inSemicolon=true;continue;}
+          if(ch==='{'){inBrace=true;if(depth===0)out+=ch;continue;}
+          if(ch==='('){depth++;continue;}
+          if(ch===')'){if(depth>0)depth--;continue;}
+          if(depth===0)out+=ch;
+        }
+        return out;
+      }
+      function v16NormalizePgnToken(token){
+        let t=String(token||'').trim();
+        t=t.replace(/^\uFEFF/,'');
+        t=t.replace(/^\d+\.(?:\.\.)?/,'');
+        t=t.replace(/^\.\.\./,'');
+        t=t.replace(/[♔♚]/g,'K').replace(/[♕♛]/g,'Q').replace(/[♖♜]/g,'R').replace(/[♗♝]/g,'B').replace(/[♘♞]/g,'N');
+        t=t.replace(/[×:]/g,'x').replace(/[‐‑‒–—]/g,'-');
+        t=t.replace(/0-0-0/gi,'O-O-O').replace(/0-0/gi,'O-O');
+        t=t.replace(/e\.?p\.?/ig,'');
+        t=t.replace(/[!?]+$/,'');
+        t=t.replace(/[+#]+$/,'');
+        return t.trim();
+      }
+      function v16ParsePGNMain(text){
+        text=String(text||'').replace(/^\uFEFF/,'');
+        const tags={};
+        text.replace(/^\s*\[([^\s]+)\s+"((?:\\.|[^"])*)"\]\s*$/gm,(_,k,v)=>{tags[k]=v.replace(/\\"/g,'"');return '';});
+        let body=text.replace(/^\s*\[[^\]]*\]\s*$/gm,' ');
+        body=v16StripPgnVariations(body);
+        const comments=[];
+        body=body.replace(/\{([^}]*)\}/g,(_,c)=>` __COMMENT_${comments.push(c.trim())-1}__ `);
+        body=body.replace(/\$\d+/g,' ');
+        body=body.replace(/\b(1-0|0-1|1\/2-1\/2|½-½|\*)\b/g,' ');
+        body=body.replace(/\r/g,'\n');
+        const raw=body.split(/\s+/).filter(Boolean),tokens=[];
+        for(let token of raw){
+          if(/^__COMMENT_\d+__$/.test(token)){tokens.push(token);continue;}
+          token=token.replace(/^\d+\.(?:\.\.)?/,'').replace(/^\.\.\./,'');
+          if(!token||/^\d+\.+$/.test(token)||token==='...')continue;
+          if(/^(1-0|0-1|1\/2-1\/2|½-½|\*)$/.test(token))continue;
+          tokens.push(token);
+        }
+        return {tags,tokens,comments};
+      }
+      function v16FindMoveBySAN(token,board,meta){
+        const target=v16NormalizePgnToken(token);
+        if(!target)return null;
+
+        // También acepta notación coordenada/UCI: e2e4, e2-e4, e7e8q.
+        const uci=target.match(/^([a-h][1-8])[-x]?([a-h][1-8])(?:=?([QRBNqrbn]))?$/);
+        if(uci){
+          const from=uci[1],to=uci[2],promo=(uci[3]||'Q').toUpperCase();
+          const legal=v16LegalMovesFor(from,board,meta).filter(m=>m.to===to);
+          for(const m of legal){
+            const choice=m.promotion?promo:(promotionChoiceEl?.value||'Q');
+            const st=v16ApplyState(board,meta,m,choice);
+            const san=v16SAN(m,board,meta,st.board,st.meta,choice);
+            return {m,st,san,promo:choice};
+          }
+        }
+
+        for(const m of v16AllLegal(board,meta)){
+          const promotions=m.promotion?['Q','R','B','N']:[promotionChoiceEl?.value||'Q'];
+          for(const promo of promotions){
+            const st=v16ApplyState(board,meta,m,promo);
+            const san=v16SAN(m,board,meta,st.board,st.meta,promo);
+            if(v16NormalizePgnToken(san)===target)return {m,st,san,promo};
+          }
+        }
+        return null;
+      }
+      async function v16ImportPGNFile(file){
+        const backup=cloneSnapshot(),oldTitle=lessonTitleEl.value;
+        try{
+          const text=await file.text();
+          if(!text.trim())throw new Error('El archivo PGN está vacío.');
+          const parsed=v16ParsePGNMain(text);
+          const startFen=parsed.tags.FEN||'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+          // Nueva importación = nueva lección principal.
+          v16Variants=[];v16ActiveVariantId=null;v16LessonStartMeta=v16DefaultEduMeta();
+          loadFen(startFen);
+          lessonTitleEl.value=parsed.tags.Event||file.name.replace(/\.pgn$/i,'')||'Partida PGN';
+          v16LegalMode=true;v16UpdateLegalButton();
+
+          let moveTokenIndex=0;
+          for(const rawToken of parsed.tokens){
+            const cm=rawToken.match(/^__COMMENT_(\d+)__$/);
+            if(cm){
+              const c=parsed.comments[Number(cm[1])]||'';
+              if(lessonMoves.length){
+                const prev=lessonMoves[lessonMoves.length-1];
+                prev.comment=prev.comment?`${prev.comment}\n${c}`:c;
+              }else lessonStartComment=lessonStartComment?`${lessonStartComment}\n${c}`:c;
+              continue;
+            }
+            const token=v16NormalizePgnToken(rawToken);
+            if(!token)continue;
+            moveTokenIndex++;
+            const found=v16FindMoveBySAN(token,boardState,v16ChessMeta);
+            if(!found)throw new Error(`No pude interpretar la jugada ${moveTokenIndex}: “${rawToken}”. Se importaron 0 cambios para evitar dejar la partida incompleta.`);
+            const {m,st,san}=found,beforeMeta=deepClone(v16ChessMeta),captured=st.captured;
+            if(captured){if(v16Color(captured)==='w')capturedWhite.push(captured);else capturedBlack.push(captured);}
+            boardState=st.board;v16ChessMeta=st.meta;lastMove={from:m.from,to:m.to};
+            const rec={number:lessonMoves.length+1,from:m.from,to:m.to,piece:m.piece,captured,notation:san,san,side:v16Color(m.piece),fullmove:Number(beforeMeta.fullmove)||1,comment:'',evaluation:'',edu:v16DefaultEduMeta(),snapshot:clonePositionSnapshot()};
+            lessonMoves.push(rec);
+          }
+          if(!lessonMoves.length)throw new Error('El PGN no contiene movimientos reconocibles.');
+
+          currentStudyStep=0;
+          applyPositionSnapshot(deepClone(lessonStartSnapshot),false);
+          loadedLessonBannerEl.hidden=false;
+          loadedLessonBannerEl.innerHTML=`✅ <strong>PGN cargado:</strong> ${escapeHtml(lessonTitleEl.value)}<br>${lessonMoves.length} movimientos importados. Usa <strong>Siguiente ▶</strong> para estudiarlos.`;
+          v16RenderVariantSelect();renderAll();
+          toast(`✅ PGN importado · ${lessonMoves.length} movimientos`);
+        }catch(e){
+          restoreSnapshot(backup);lessonTitleEl.value=oldTitle;
+          loadedLessonBannerEl.hidden=false;
+          loadedLessonBannerEl.innerHTML=`⚠️ <strong>No se pudo importar el PGN.</strong><br>${escapeHtml(e.message||'Formato PGN no reconocido')}`;
+          console.warn('Error al importar PGN:',e);
+          toast(e.message||'No se pudo importar PGN');
+        }
+      }
+
+      // ----- Paquete MauroChess v2, compatible con v1 -----
+      lessonPackage=function(){storeCommentFromEditor();return {format:'MAURO_CHESS_LESSON',version:2,app:'Academia de Ajedrez Mauro',title:lessonTitleEl.value.trim()||'Lección de ajedrez',createdAt:new Date().toISOString(),orientation:flipped?'black':'white',showCoords,settings:{legalMode:v16LegalMode},start:{snapshot:deepClone(lessonStartSnapshot),comment:lessonStartComment,edu:deepClone(v16LessonStartMeta)},moves:deepClone(lessonMoves),variants:deepClone(v16Variants)};};
+      validateLesson=function(data){if(!data||data.format!=='MAURO_CHESS_LESSON')throw new Error('Este archivo no es una lección Mauro Chess.');if(![1,2].includes(Number(data.version)))throw new Error('Versión no compatible.');if(!data.start?.snapshot?.boardState)throw new Error('No contiene posición inicial válida.');if(!Array.isArray(data.moves))throw new Error('No contiene movimientos.');for(const [i,m] of data.moves.entries())if(!m.snapshot?.boardState)throw new Error(`Movimiento ${i+1} sin posición válida.`);};
+      importLessonFile=async function(file){try{const data=JSON.parse(await file.text());validateLesson(data);pushUndo();lessonTitleEl.value=data.title||'Lección de ajedrez';lessonStartSnapshot=deepClone(data.start.snapshot);lessonStartComment=data.start.comment||'';v16LessonStartMeta=v16NormalizeEduMeta(data.start.edu);lessonMoves=deepClone(data.moves).map(m=>({...m,edu:v16NormalizeEduMeta(m.edu)}));v16Variants=Array.isArray(data.variants)?deepClone(data.variants).map(v=>({...v,edu:v16NormalizeEduMeta(v.edu),moves:(v.moves||[]).map(m=>({...m,edu:v16NormalizeEduMeta(m.edu)}))})):[];v16ActiveVariantId=null;currentStudyStep=0;flipped=data.orientation==='black';showCoords=data.showCoords!==false;v16LegalMode=!!data.settings?.legalMode;document.getElementById('coordsBtn').textContent=`Coordenadas ${showCoords?'✓':'✕'}`;undoStack=[];redoStack=[];applyPositionSnapshot(deepClone(lessonStartSnapshot),false);loadedLessonBannerEl.hidden=false;loadedLessonBannerEl.innerHTML=`📘 <strong>${escapeHtml(data.title||'Lección cargada')}</strong><br>${lessonMoves.length} movimientos · ${v16Variants.length} variantes.`;v16UpdateLegalButton();v16RenderVariantSelect();setTool('move');renderAll();toast('Lección cargada correctamente');}catch(e){toast(e.message||'No se pudo cargar la lección');}};
+
+      // Session v16 extra metadata
+      savePosition=function(){const data=cloneSnapshot();data.lessonMeta={title:lessonTitleEl.value};localStorage.setItem('mauro_chess_practice_session_v3',JSON.stringify(data));toast('Sesión V16 guardada en este dispositivo');};
+      restorePosition=function(){const raw=localStorage.getItem('mauro_chess_practice_session_v3')||localStorage.getItem('mauro_chess_practice_session_v2')||localStorage.getItem('mauro_chess_practice_position_v1');if(!raw){toast('Todavía no hay sesión guardada');return;}try{pushUndo();const data=JSON.parse(raw);restoreSnapshot(data);lessonTitleEl.value=data.lessonMeta?.title||lessonTitleEl.value;toast('Sesión restaurada');}catch(e){toast('No se pudo restaurar la sesión');}};
+
+      // Student protection on click selection
+      const v15HandleSquareClick=handleSquareClick;
+      handleSquareClick=function(sq){if(v16UiMode==='student'){if(!v16StudentPractice){toast('Modo Alumno: usa navegación o activa práctica');return;}if(!selectedSquare){if(boardState[sq]&&v16Color(boardState[sq])===(v16ActiveMoves()[currentStudyStep]?.side||v16Color(v16ActiveMoves()[currentStudyStep]?.piece))){selectedSquare=sq;renderBoard();}return;}if(selectedSquare===sq){selectedSquare=null;renderBoard();return;}return v16StudentAttemptMove(selectedSquare,sq);}return v15HandleSquareClick(sq);};
+
+      // Extra listeners
+      uiModeBtn.addEventListener('click',v16ToggleMode);legalModeBtn.addEventListener('click',v16ToggleLegal);
+      variantSelectEl.addEventListener('change',e=>v16SwitchVariant(e.target.value));document.getElementById('createVariantBtn').addEventListener('click',v16CreateVariant);document.getElementById('renameVariantBtn').addEventListener('click',v16RenameVariant);document.getElementById('deleteVariantBtn').addEventListener('click',v16DeleteVariant);
+      questionEnabledEl.addEventListener('change',()=>{questionEditorEl.classList.toggle('v16-hidden',!questionEnabledEl.checked);v16StoreEduEditor();});
+      [moveObjectiveEl,moveKeyIdeaEl,moveCommonErrorEl,moveIsKeyEl,hideExplanationEl,questionPromptEl,questionCorrectEl,...questionOptEls].forEach(el=>el.addEventListener('change',()=>v16StoreEduEditor()));
+      document.getElementById('saveThreatBtn').addEventListener('click',v16SaveThreat);document.getElementById('studentPracticeBtn').addEventListener('click',v16TogglePractice);document.getElementById('studentThreatBtn').addEventListener('click',()=>{v16ThreatVisible=!v16ThreatVisible;renderAll();});document.getElementById('studentRevealBtn').addEventListener('click',()=>{v16StudentRevealed=true;v16RenderStudentView();});document.getElementById('nextKeyBtn').addEventListener('click',v16NextKey);
+      document.getElementById('exportPgnBtn').addEventListener('click',v16ExportPGN);document.getElementById('importPgnBtn').addEventListener('click',()=>document.getElementById('pgnFileInput').click());document.getElementById('pgnFileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f)v16ImportPGNFile(f);e.target.value='';});
+      v16UpdateLegalButton();v16RenderVariantSelect();v16ApplyMode();
+
       document.getElementById('moveTool').addEventListener('click', () => setTool('move'));
       document.getElementById('placeTool').addEventListener('click', () => setTool('place'));
       document.getElementById('eraseTool').addEventListener('click', () => setTool('erase'));
       document.getElementById('markTool').addEventListener('click', () => setTool('mark'));
+      annotationModeEl.addEventListener('change', e => {
+        annotationMode = e.target.value;
+        arrowStartSquare = null; rightDragStart = null;
+        setTool('mark');
+        const msg = isArrowMode()
+          ? (annotationMode === 'arrowRed'
+              ? 'Flecha roja fija: siempre se dibuja en rojo, sin importar la pieza.'
+              : annotationMode === 'arrowBlue'
+                ? 'Flecha azul fija: siempre se dibuja en azul, sin importar la pieza.'
+                : 'Flecha por pieza: el color depende de la pieza de la casilla de origen.')
+          : annotationMode === 'erase'
+            ? 'Borrar marca: anticlick sobre una casilla elimina sus círculos, resaltados y flechas relacionadas.'
+            : `Anotación ${annotationMode === 'circle' ? 'círculo' : 'resaltado'} activada · usa anticlick sobre una casilla.`;
+        toast(msg);
+      });
       document.getElementById('flipBtn').addEventListener('click', () => { flipped = !flipped; renderBoard(); toast('Tablero girado'); });
       document.getElementById('undoBtn').addEventListener('click', undo);
       document.getElementById('redoBtn').addEventListener('click', redo);
@@ -2142,13 +3655,20 @@
       document.getElementById('copyFenBtn').addEventListener('click', copyFen);
       document.getElementById('loadFenBtn').addEventListener('click', () => { try { loadFen(fenInput.value); } catch (e) { toast(e.message); } });
       document.getElementById('saveCommentBtn').addEventListener('click', saveCurrentComment);
+      moveEvaluationEl.addEventListener('change', () => { if (currentStudyStep > 0) { storeCommentFromEditor(); renderStudy(); toast('Evaluación guardada'); } });
       document.getElementById('studyStartBtn').addEventListener('click', () => goToStudyStep(0));
       document.getElementById('studyPrevBtn').addEventListener('click', () => goToStudyStep(currentStudyStep - 1));
       document.getElementById('studyNextBtn').addEventListener('click', () => goToStudyStep(currentStudyStep + 1));
-      document.getElementById('studyEndBtn').addEventListener('click', () => goToStudyStep(lessonMoves.length));
+      document.getElementById('studyEndBtn').addEventListener('click', () => goToStudyStep(v16ActiveMoves().length));
       document.getElementById('exportLessonBtn').addEventListener('click', exportLesson);
       document.getElementById('importLessonBtn').addEventListener('click', () => document.getElementById('lessonFileInput').click());
       document.getElementById('lessonFileInput').addEventListener('change', e => { const f = e.target.files?.[0]; if (f) importLessonFile(f); e.target.value = ''; });
+      boardEl.addEventListener('contextmenu', e => e.preventDefault());
+      window.addEventListener('mouseup', e => {
+        if (e.button === 2 && rightDragStart) {
+          rightDragStart = null; arrowStartSquare = null; renderBoard();
+        }
+      });
       document.getElementById('fullscreenBtn').addEventListener('click', async () => {
         const target = document.querySelector('.board-card');
         try { if (!document.fullscreenElement) await target.requestFullscreen(); else await document.exitFullscreen(); }
@@ -2166,12 +3686,13 @@
         if (e.key === 'ArrowLeft') { e.preventDefault(); goToStudyStep(currentStudyStep - 1); }
         if (e.key === 'ArrowRight') { e.preventDefault(); goToStudyStep(currentStudyStep + 1); }
         if (e.key === 'Home') { e.preventDefault(); goToStudyStep(0); }
-        if (e.key === 'End') { e.preventDefault(); goToStudyStep(lessonMoves.length); }
+        if (e.key === 'End') { e.preventDefault(); goToStudyStep(v16ActiveMoves().length); }
         if (e.key === 'Escape') { selectedSquare = null; setTool('move'); }
         if (e.key.toLowerCase() === 'f') { flipped = !flipped; renderBoard(); }
       });
 
       lessonStartSnapshot = clonePositionSnapshot();
+      annotationModeEl.value = annotationMode;
       renderAll();
     </script>
 
