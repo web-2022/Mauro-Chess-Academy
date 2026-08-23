@@ -1,10 +1,42 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-PE">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#020617">
-<title>Tema 1 · ¿Qué es el ajedrez? | Academia Mauro</title>
+<title>¿Qué es el ajedrez? Aprende desde cero | Academia Mauro</title>
+<meta name="description" content="Aprende qué es el ajedrez desde cero con una microexperiencia adaptativa: clase, laboratorio, Boss, ayudas progresivas, XP y dominio por conceptos.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="author" content="Academia Mauro">
+<link rel="canonical" href="https://web-2022.github.io/Mauro-Chess-Academy/tema-1-que-es-el-ajedrez.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_PE">
+<meta property="og:site_name" content="Academia Mauro">
+<meta property="og:title" content="¿Qué es el ajedrez? Aprende desde cero | Academia Mauro">
+<meta property="og:description" content="Lección adaptativa para descubrir qué es el ajedrez, practicar en el tablero y demostrar dominio.">
+<meta property="og:url" content="https://web-2022.github.io/Mauro-Chess-Academy/tema-1-que-es-el-ajedrez.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="¿Qué es el ajedrez? | Academia Mauro">
+<meta name="twitter:description" content="Aprende ajedrez desde cero con 15 ejercicios interactivos.">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1976d2">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"LearningResource",
+  "name":"¿Qué es el ajedrez?",
+  "description":"Lección interactiva y adaptativa de iniciación al ajedrez con laboratorio, Boss y refuerzo progresivo.",
+  "url":"https://web-2022.github.io/Mauro-Chess-Academy/tema-1-que-es-el-ajedrez.html",
+  "inLanguage":"es-PE",
+  "learningResourceType":"Lección interactiva",
+  "educationalLevel":"Principiante",
+  "isAccessibleForFree":true,
+  "about":{"@type":"Thing","name":"Ajedrez"},
+  "provider":{"@type":"Organization","name":"Academia Mauro","url":"https://web-2022.github.io/Mauro-Chess-Academy/"}
+}
+</script>
 <style>
 :root{
   --bg:#020617;--panel:#071124;--panel2:#0b1730;--green:#22c55e;--green2:#86efac;
@@ -26,10 +58,20 @@ button{font:inherit;touch-action:manipulation}
 button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
 .app{width:calc(100% - 14px);max-width:none;margin:auto;padding:7px 0 14px}
 .topbar{
-  display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  display:grid;grid-template-columns:auto auto minmax(220px,1fr) auto;gap:10px;align-items:center;
   padding:8px 10px;border:1px solid var(--line);border-radius:15px;
   background:rgba(7,17,36,.94);box-shadow:var(--shadow);position:sticky;top:5px;z-index:40
 }
+.top-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.top-nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  min-height:34px;padding:6px 9px;border:1px solid var(--line);border-radius:9px;
+  background:#0f1d39;color:var(--text);font-size:.68rem;font-weight:900;
+  text-decoration:none;white-space:nowrap;transition:.16s ease
+}
+.top-nav-btn:hover{border-color:rgba(56,189,248,.55);background:rgba(56,189,248,.10);transform:translateY(-1px)}
+.top-nav-btn.route{border-color:rgba(34,197,94,.32);color:var(--green2)}
+.top-nav-btn.home{color:var(--blue2)}
 .logo{display:flex;align-items:center;gap:8px;min-width:0}
 .logo-mark{
   width:39px;height:39px;border-radius:12px;display:grid;place-items:center;font-size:1.55rem;
@@ -93,8 +135,19 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
 .board-sequence-label.show{opacity:1}
 .board-shell{position:relative}
 
-.piece{position:absolute;left:50%;top:50%;width:82%;height:82%;object-fit:contain;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 3px rgba(0,0,0,.33));z-index:2;pointer-events:none}
+.piece{
+  position:absolute;left:50%;top:50%;width:82%;height:82%;object-fit:contain;
+  transform:translate(-50%,-50%);filter:drop-shadow(0 4px 3px rgba(0,0,0,.33));
+  z-index:2;pointer-events:none
+}
+/* Normalización visual: las PNG negras tienen márgenes transparentes distintos.
+   Estas escalas hacen que cada pieza negra se vea del mismo tamaño que su equivalente blanca. */
+.piece.piece-bR{width:81%;height:81%}
 .piece.piece-bN{width:67%;height:67%}
+.piece.piece-bB{width:73%;height:73%}
+.piece.piece-bQ{width:75%;height:75%}
+.piece.piece-bK{width:68%;height:68%}
+.piece.piece-bP{width:82%;height:82%}
 .coord{position:absolute;font-size:clamp(9px,1vw,12px);font-weight:900;opacity:.78;z-index:5;pointer-events:none}
 .coord.file{right:5px;bottom:3px}.coord.rank{left:5px;top:3px}
 .light .coord{color:#1e3a5f}.dark .coord{color:#dbeafe}
@@ -183,6 +236,30 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 
+
+.mobile-duo-concepts{display:none}
+@media(max-width:620px){
+  .board-tools{display:none!important}
+  .lesson-card .fact-grid{display:none!important}
+  .mobile-duo-concepts{
+    display:none;margin:0 0 8px;padding:8px;border:1px solid var(--line);border-radius:13px;
+    background:linear-gradient(180deg,rgba(11,23,48,.98),rgba(7,17,36,.96))
+  }
+  .mobile-duo-concepts.show{display:block}
+  .mobile-duo-head{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:7px}
+  .mobile-duo-head strong{font-size:.68rem;color:var(--green2)}
+  .mobile-duo-head span{font-size:.58rem;color:var(--muted);font-weight:800}
+  .mobile-duo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .mobile-duo-tile{
+    min-height:48px;padding:7px;border:1px solid var(--line);border-bottom:3px solid rgba(148,163,184,.22);
+    border-radius:11px;background:#0f1d39;color:var(--text);font:inherit;font-size:.68rem;font-weight:900;
+    cursor:pointer;text-align:left
+  }
+  .mobile-duo-tile b{display:block;color:var(--blue2);font-size:.75rem}
+  .mobile-duo-tile small{display:block;color:var(--muted);font-size:.57rem;margin-top:2px}
+  .mobile-duo-tile.active{border-color:var(--green);border-bottom-color:var(--green);background:rgba(34,197,94,.13)}
+}
+
 @media(min-width:1200px){
   .topbar{padding:7px 10px}
   .main{grid-template-columns:minmax(600px,1fr) minmax(560px,1fr)}
@@ -198,6 +275,8 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
   .app{width:calc(100% - 18px)}
 }
 @media(max-width:900px){
+  .topbar{grid-template-columns:auto auto minmax(180px,1fr) auto;gap:7px}
+  .top-nav-btn{font-size:.62rem;padding:5px 7px}
   .main{grid-template-columns:1fr}
   .board-card{position:static;min-height:auto}
   .board-shell{width:min(100%,650px);max-width:650px}
@@ -206,9 +285,13 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
 @media(max-width:620px){
   .app{width:calc(100% - 10px);padding-top:5px}
   .topbar{grid-template-columns:auto 1fr;gap:7px;padding:6px 7px}
+  .logo{grid-column:1;grid-row:1}
+  .lesson-progress{grid-column:2;grid-row:1}
+  .top-nav{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .top-nav-btn{width:100%;min-height:32px;padding:5px 6px;font-size:.62rem}
   .logo-copy{display:none}
   .logo-mark{width:34px;height:34px;border-radius:10px;font-size:1.35rem}
-  .stats{grid-column:1/-1;justify-content:flex-end;margin-top:-2px}
+  .stats{grid-column:1/-1;grid-row:3;justify-content:flex-end;margin-top:-2px}
   .stat{font-size:.62rem;padding:4px 6px}
   .progress-label{font-size:.61rem}
   .main{margin-top:7px;gap:7px}
@@ -223,6 +306,71 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
   .fact-grid{grid-template-columns:1fr 1fr}
   .result-grid{grid-template-columns:repeat(3,1fr)}
 }
+
+/* =========================================================
+   ENTRENADOR MAURO · CAPA ADAPTATIVA V1 (Tema 1)
+   ========================================================= */
+.adaptive-strip{
+  display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:0 0 10px
+}
+.adaptive-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;
+  border:1px solid rgba(56,189,248,.25);background:rgba(56,189,248,.08);
+  color:var(--blue2);font-size:.72rem;font-weight:850
+}
+.adaptive-chip.lab{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.09);color:var(--green2)}
+.adaptive-chip.boss{border-color:rgba(250,204,21,.4);background:rgba(250,204,21,.08);color:#fde68a}
+.adaptive-help{
+  display:none;margin-top:10px;padding:11px 12px;border-radius:12px;
+  border:1px solid rgba(56,189,248,.28);background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(34,197,94,.06))
+}
+.adaptive-help.show{display:block}
+.adaptive-help .coach-title{display:flex;gap:8px;align-items:center;font-weight:900;color:var(--blue2);margin-bottom:5px}
+.adaptive-help p{margin:0;color:var(--text);font-size:.8rem;line-height:1.5}
+.adaptive-help small{display:block;margin-top:6px;color:var(--muted);font-size:.72rem}
+.alt-example{
+  display:none;margin-top:9px;padding:10px 11px;border-radius:11px;
+  border-left:3px solid var(--blue);background:rgba(56,189,248,.07);
+  color:var(--blue2);font-size:.8rem;line-height:1.5
+}
+.alt-example.show{display:block}
+.mastery-panel{
+  margin-top:14px;padding:13px;border-radius:14px;border:1px solid var(--line);
+  background:rgba(15,29,57,.7);text-align:left
+}
+.mastery-panel h3{margin:0 0 8px;font-size:.95rem}
+.mastery-row{display:grid;grid-template-columns:1fr 74px;gap:10px;align-items:center;margin:8px 0}
+.mastery-label{font-size:.76rem;color:var(--text);font-weight:800}
+.mastery-track{height:8px;border-radius:999px;background:rgba(148,163,184,.16);overflow:hidden;margin-top:4px}
+.mastery-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--blue))}
+.mastery-score{text-align:right;font-size:.78rem;font-weight:900;color:var(--green2)}
+.mastery-note{margin-top:9px;color:var(--muted);font-size:.73rem;line-height:1.45}
+.phase-banner{
+  margin:0 0 11px;padding:10px 11px;border-radius:12px;border:1px solid rgba(34,197,94,.25);
+  background:rgba(34,197,94,.07);font-size:.78rem;line-height:1.45;color:var(--green2)
+}
+.phase-banner.boss{border-color:rgba(250,204,21,.3);background:rgba(250,204,21,.07);color:#fde68a}
+.fast-badge{
+  display:inline-block;margin-top:7px;padding:4px 8px;border-radius:999px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.28);
+  color:var(--green2);font-size:.7rem;font-weight:900
+}
+@media(max-width:620px){
+  .mastery-row{grid-template-columns:1fr 58px}
+  .adaptive-help p,.alt-example{font-size:.78rem}
+}
+
+</style>
+
+<style>
+.stage-transition{padding:26px 18px;border:1px solid rgba(56,189,248,.28);border-radius:18px;background:linear-gradient(145deg,rgba(7,17,36,.96),rgba(11,23,48,.96));text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.stage-transition .stage-icon{font-size:3rem;line-height:1;margin-bottom:10px}
+.stage-transition h2{margin:4px 0 8px;font-size:clamp(1.45rem,3vw,2.15rem)}
+.stage-transition p{max-width:680px;margin:0 auto 14px;color:var(--muted);line-height:1.6}
+.stage-transition .stage-count{display:inline-flex;gap:8px;align-items:center;margin:8px 0 18px;padding:7px 11px;border-radius:999px;background:rgba(56,189,248,.10);border:1px solid rgba(56,189,248,.24);font-size:.8rem;font-weight:800;color:var(--blue2)}
+.stage-transition.boss{border-color:rgba(250,204,21,.32)}
+.stage-transition.boss .stage-count{background:rgba(250,204,21,.08);border-color:rgba(250,204,21,.25);color:#fde68a}
+.stage-transition .stage-btn{min-height:46px;padding:10px 18px;border:0;border-radius:12px;background:linear-gradient(90deg,var(--green),var(--blue));color:#03111d;font-weight:900;cursor:pointer}
 </style>
 </head>
 <body>
@@ -232,8 +380,12 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
       <div class="logo-mark">♞</div>
       <div class="logo-copy"><strong>Academia Mauro</strong><small>Ajedrez & estrategia</small></div>
     </div>
+    <nav class="top-nav" aria-label="Navegación principal">
+      <a class="top-nav-btn home" href="index.html" title="Volver al inicio">⌂ Inicio</a>
+      <a class="top-nav-btn route" href="ruta-chess.html" title="Abrir la ruta completa de aprendizaje">🗺 Ruta de Aprendizaje</a>
+    </nav>
     <div class="lesson-progress">
-      <div class="progress-label"><span id="stepLabel">Mauro · Tema 1 · Paso 1 de 7</span><span id="pctLabel">0%</span></div>
+      <div class="progress-label"><span id="stepLabel">Mauro · Tema 1 · Paso 1 de 21</span><span id="pctLabel">0%</span></div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     </div>
     <div class="stats">
@@ -246,7 +398,7 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
   <main class="main">
     <section class="card board-card">
       <div class="board-head">
-        <strong>♟ Tablero interactivo</strong>
+        <h1 style="margin:0;font-size:.83rem">♟ ¿Qué es el ajedrez? · Tablero interactivo</h1>
         <div class="board-tools">
           <button class="mini-btn" data-focus="white">Blancas</button>
           <button class="mini-btn" data-focus="black">Negras</button>
@@ -254,7 +406,11 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
           <button class="mini-btn" data-focus="all">Todo</button>
         </div>
       </div>
-      <div class="board-shell"><div class="board" id="board"></div><div id="sequenceLabel" class="board-sequence-label"></div></div>
+      <div class="mobile-duo-concepts" id="mobileDuoConcepts">
+  <div class="mobile-duo-head"><strong>Aprende en el tablero</strong><span>Toca una opción</span></div>
+  <div class="mobile-duo-grid" id="mobileDuoGrid"></div>
+</div>
+<div class="board-shell"><div class="board" id="board"></div><div id="sequenceLabel" class="board-sequence-label"></div></div>
       <div class="board-message" id="boardMessage"><strong>Toca una pieza</strong> para escuchar su nombre.</div>
     </section>
 
@@ -270,16 +426,9 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
           <div class="result-box"><b>100%</b><span>tema completado</span></div>
         </div>
         <div class="mascot"><div class="mascot-icon">♞</div><p>¡Buen comienzo! En el siguiente tema aprenderás a conocer el tablero.</p></div>
-        <div class="test-launch" id="testLaunch">
-          <h3>🧠 Test del Tema 1</h3>
-          <p>10 preguntas, una por una. Si fallas, vuelve a pensar: no se mostrará la respuesta correcta.</p>
-          <button class="test-start-btn" id="startTestBtn" type="button">Empezar test</button>
-        </div>
-        <div class="test-panel" id="testPanel"><div id="testContent"></div></div>
-
-        <div class="bottom-actions">
-          <button class="continue-btn" onclick="restartLesson()">↻ Repetir</button>
-          <button class="continue-btn primary" onclick="goNext()">Tema 2 →</button>
+<div class="bottom-actions">
+          <button class="continue-btn" onclick="restartLesson()">↻ Repetir tema</button>
+          <button class="continue-btn primary" onclick="goNext()">Pasar al siguiente tema →</button>
         </div>
       </div>
     </section>
@@ -308,80 +457,412 @@ a1:'wR',b1:'wN',c1:'wB',d1:'wQ',e1:'wK',f1:'wB',g1:'wN',h1:'wR'
 
 const steps=[
 {
- type:'learn',title:'Bienvenido al ajedrez',
- text:'El ajedrez es un juego de estrategia para dos jugadores. Uno juega con las piezas blancas y el otro con las negras.',
- audio:'El ajedrez es un juego de estrategia para dos jugadores. Uno juega con las piezas blancas y el otro con las negras.',
+ type:'learn',title:'¿Qué es el ajedrez?',
+ text:'El ajedrez es un juego de estrategia para dos jugadores. Cada jugador dirige un ejército de piezas sobre el mismo tablero.',
+ audio:'El ajedrez es un juego de estrategia para dos jugadores. Cada jugador dirige un ejército de piezas sobre el mismo tablero.',
  board:'all',
  facts:[
-   ['2 jugadores','Blancas y negras','En una partida de ajedrez participan dos jugadores. Un jugador controla las piezas blancas y el otro controla las piezas negras.','players'],
-   ['64 casillas','Tablero de ocho por ocho','El tablero de ajedrez tiene sesenta y cuatro casillas. Hay ocho filas y ocho columnas.','allSquares'],
-   ['32 piezas','Dieciséis por jugador','Al comenzar una partida hay treinta y dos piezas en total. Cada jugador tiene dieciséis piezas.','allPieces'],
-   ['1 objetivo','Dar jaque mate','El objetivo principal del ajedrez es dar jaque mate al rey del adversario.','kings'],
-   ['Filas','Líneas horizontales','Las filas son las líneas horizontales del tablero. Se numeran del uno al ocho.','rows'],
-   ['Columnas','Líneas verticales','Las columnas son las líneas verticales del tablero. Se nombran con las letras a, b, c, d, e, f, g y h.','columns'],
-   ['Números de filas','Del 1 al 8','Las filas del tablero se identifican con los números uno, dos, tres, cuatro, cinco, seis, siete y ocho.','rowNumbers'],
-   ['Letras de columnas','De la a hasta la h','Las columnas del tablero se identifican con las letras a, b, c, d, e, f, g y h.','columnLetters'],
-   ['Diagonales','Casillas en línea inclinada','Una diagonal es un conjunto de casillas del mismo color que forman una línea inclinada a través del tablero.','diagonals'],
-   ['Flanco de dama','Lado de la dama','El flanco de dama es la zona del tablero donde comienza la dama. Generalmente corresponde al lado de las columnas a, b, c y d.','queenside'],
-   ['Flanco de rey','Lado del rey','El flanco de rey es la zona del tablero donde comienza el rey. Generalmente corresponde al lado de las columnas e, f, g y h.','kingside'],
-   ['Centro','Corazón del tablero','El centro está formado principalmente por las casillas d cuatro, e cuatro, d cinco y e cinco. Controlar el centro ayuda a mover mejor las piezas.','center']
+  ['Estrategia','Pensar antes de mover','En ajedrez no se trata solo de mover piezas. Debes observar, pensar y tomar decisiones.','none'],
+  ['2 jugadores','Blancas y negras','En una partida participan dos jugadores: uno controla las piezas blancas y el otro las negras.','players'],
+  ['1 tablero','El campo de juego','Los dos jugadores usan el mismo tablero de ajedrez.','allSquares'],
+  ['1 objetivo','Dar jaque mate','El objetivo principal es dar jaque mate al rey rival. Más adelante aprenderás exactamente cómo funciona.','kings']
  ],
- mascot:'Fui creado para guiarte paso a paso. Toca cada botón con el símbolo de audio para escuchar su explicación.'
+ mascot:'Primero descubre las ideas esenciales. No necesitas memorizar movimientos todavía.'
 },
 {
- type:'learn',title:'Dos ejércitos frente a frente',
- text:'Cada jugador comienza con 16 piezas: 8 peones y 8 piezas mayores y menores. Las blancas realizan siempre el primer movimiento.',
- audio:'Cada jugador comienza con dieciséis piezas: ocho peones y ocho piezas. Las blancas realizan siempre el primer movimiento.',
- board:'white',
- facts:[['16 blancas','Empiezan abajo'],['16 negras','Empiezan arriba'],['8 peones','Por cada jugador'],['8 piezas','Rey, dama, torres, alfiles y caballos']],
- mascot:'Pulsa “Blancas” y “Negras” junto al tablero. También puedes tocar cualquier pieza para saber cómo se llama.'
-},
-{
- type:'challenge',title:'Encuentra la idea',
+ type:'challenge',title:'Dos jugadores',
  question:'¿Cuántos jugadores participan normalmente en una partida de ajedrez?',
- choices:['1 jugador','2 jugadores','4 jugadores'],
- answer:1,
- hint1:'Piensa en los dos colores que ves en el tablero.',
- hint2:'Hay un ejército blanco y un ejército negro.',
- success:'¡Exacto! Un jugador controla las blancas y el otro las negras.'
+ choices:['1 jugador','2 jugadores','4 jugadores'],answer:1,
+ hint1:'Observa los dos colores de piezas.','hint2':'Un jugador usa blancas y otro negras.',
+ success:'Una partida de ajedrez enfrenta normalmente a dos jugadores.'
 },
 {
- type:'learn',title:'El rey es la pieza que debes proteger',
- text:'Cada jugador tiene un rey. Durante la partida debes proteger el tuyo y atacar al rey rival. Más adelante aprenderás exactamente qué es un jaque y un jaque mate.',
- audio:'Cada jugador tiene un rey. Debes proteger tu rey y atacar al rey rival. Más adelante aprenderás exactamente qué es un jaque y un jaque mate.',
+ type:'learn',title:'Dos bandos frente a frente',
+ text:'Un jugador controla las piezas blancas y el otro las negras. Las blancas realizan el primer movimiento de la partida.',
+ audio:'Un jugador controla las piezas blancas y el otro las negras. Las blancas realizan el primer movimiento.',
+ board:'all',
+ facts:[
+  ['Blancas','Un ejército','Las piezas blancas pertenecen a uno de los jugadores.','whiteArmy'],
+  ['Negras','El otro ejército','Las piezas negras pertenecen al otro jugador.','blackArmy'],
+  ['Blancas primero','Inician la partida','En ajedrez las piezas blancas realizan siempre el primer movimiento.','whiteArmy'],
+  ['Dos bandos','Uno contra otro','Los dos ejércitos se enfrentan durante toda la partida.','players']
+ ],
+ mascot:'Toca una opción y mira cómo el tablero señala el concepto.'
+},
+{
+ type:'challenge',title:'Encuentra las blancas',
+ question:'Toca cualquier pieza blanca en el tablero.',
+ boardChallenge:'whitePiece',
+ hint1:'Busca las piezas claras de la parte inferior.','hint2':'Puedes tocar cualquiera de las 16 piezas blancas.',
+ success:'Encontraste una pieza blanca.'
+},
+{
+ type:'challenge',title:'Ahora las negras',
+ question:'Toca cualquier pieza negra en el tablero.',
+ boardChallenge:'blackPiece',
+ hint1:'Busca el ejército oscuro de la parte superior.','hint2':'Puedes tocar cualquiera de las 16 piezas negras.',
+ success:'Encontraste una pieza negra.'
+},
+{
+ type:'challenge',title:'¿Quién empieza?',
+ question:'¿Qué color realiza el primer movimiento de una partida?',
+ choices:['Las negras','Las blancas','Se decide al azar'],answer:1,
+ hint1:'Lo acabas de escuchar en la explicación anterior.','hint2':'El ejército claro inicia la partida.',
+ success:'Las blancas realizan siempre el primer movimiento.'
+},
+{
+ type:'learn',title:'Treinta y dos piezas al comenzar',
+ text:'Al inicio hay 32 piezas sobre el tablero: 16 blancas y 16 negras.',
+ audio:'Al comenzar una partida hay treinta y dos piezas en total. Dieciséis blancas y dieciséis negras.',
+ board:'all',
+ facts:[
+  ['32 piezas','En total','Al inicio de una partida hay treinta y dos piezas sobre el tablero.','allPieces'],
+  ['16 blancas','Un jugador','El jugador de blancas comienza con dieciséis piezas.','whiteArmy'],
+  ['16 negras','El otro jugador','El jugador de negras comienza con dieciséis piezas.','blackArmy'],
+  ['2 reyes','Uno por jugador','Cada jugador tiene un rey.','kings']
+ ],
+ mascot:'No necesitas aprender todavía cómo se mueve cada pieza. Eso vendrá paso a paso.'
+},
+{
+ type:'challenge',title:'Cuenta los dos ejércitos',
+ question:'¿Cuántas piezas hay en total al comenzar una partida?',
+ choices:['16','32','64'],answer:1,
+ hint1:'Son 16 blancas y 16 negras.','hint2':'Suma los dos ejércitos.',
+ success:'Al inicio hay 32 piezas en total.'
+},
+{
+ type:'challenge',title:'Un solo ejército',
+ question:'¿Cuántas piezas tiene cada jugador al comenzar?',
+ choices:['8','16','32'],answer:1,
+ hint1:'Piensa solo en un color.','hint2':'Cada bando ocupa dos líneas completas al comenzar.',
+ success:'Cada jugador comienza con 16 piezas.'
+},
+{
+ type:'learn',title:'El tablero es el campo de juego',
+ text:'Todas las piezas se mueven sobre un tablero formado por 64 casillas. Más adelante aprenderás filas, columnas, diagonales y coordenadas.',
+ audio:'El tablero de ajedrez tiene sesenta y cuatro casillas. Más adelante aprenderás cómo se organizan y cómo se llaman.',
+ board:'all',
+ facts:[
+  ['64 casillas','Todo el tablero','El tablero completo está formado por sesenta y cuatro casillas.','allSquares'],
+  ['Claras y oscuras','Se alternan','Las casillas alternan dos colores para que el tablero sea fácil de leer.','allSquares'],
+  ['Campo de juego','Aquí ocurre la partida','Todas las piezas se desplazan sobre estas casillas.','allSquares'],
+  ['Paso a paso','Todavía sin coordenadas','En próximos temas aprenderás a orientarte en el tablero.','none']
+ ],
+ mascot:'Por ahora basta con reconocer el tablero como el espacio donde ocurre la partida.'
+},
+{
+ type:'challenge',title:'¿Cuántas casillas?',
+ question:'¿Cuántas casillas tiene un tablero de ajedrez?',
+ choices:['32','64','100'],answer:1,
+ hint1:'Es el número que acabas de descubrir.','hint2':'El tablero completo tiene sesenta y cuatro.',
+ success:'El tablero tiene 64 casillas.'
+},
+{
+ type:'challenge',title:'Encuentra espacio libre',
+ question:'Toca cualquier casilla vacía del tablero.',
+ boardChallenge:'empty',
+ hint1:'Busca una casilla que no tenga ninguna pieza.','hint2':'En el centro hay muchas casillas vacías al comenzar.',
+ success:'Muy bien. Esa es una casilla libre del tablero.'
+},
+{
+ type:'learn',title:'Dos reyes, un objetivo',
+ text:'Cada jugador tiene un rey. Debes proteger el tuyo y atacar al rey rival. La meta final es dar jaque mate.',
+ audio:'Cada jugador tiene un rey. Debes proteger tu rey y atacar al rey rival. El objetivo final es dar jaque mate.',
  board:'kings',
- facts:[['1 rey blanco','En e1 al comenzar'],['1 rey negro','En e8 al comenzar'],['Protege el tuyo','No puede quedar atacado ilegalmente'],['Ataca al rival','La meta será el jaque mate']],
- mascot:'Por ahora no necesitas memorizar cómo se mueve el rey. Solo reconoce que cada jugador tiene uno.'
+ facts:[
+  ['Rey blanco','Uno','Las blancas tienen un solo rey.','whiteKing'],
+  ['Rey negro','Uno','Las negras tienen un solo rey.','blackKing'],
+  ['Protege el tuyo','Es esencial','Durante la partida debes mantener seguro tu rey.','kings'],
+  ['Jaque mate','Objetivo final','La partida se gana dando jaque mate al rey rival.','kings']
+ ],
+ mascot:'Todavía no estudiaremos las reglas del jaque. Solo recuerda cuál es el objetivo.'
 },
 {
- type:'challenge',title:'Busca en el tablero',
- question:'Toca en el tablero uno de los dos reyes.',
+ type:'challenge',title:'Objetivo del ajedrez',
+ question:'¿Cuál es el objetivo principal de una partida de ajedrez?',
+ choices:['Capturar todas las piezas','Dar jaque mate al rey rival','Llegar con una torre al otro lado'],answer:1,
+ hint1:'La pieza decisiva para el resultado es el rey.','hint2':'La palabra que buscas es jaque mate.',
+ success:'El objetivo es dar jaque mate al rey rival.'
+},
+{
+ type:'challenge',title:'Misión final',
+ question:'Toca uno de los dos reyes en el tablero.',
  boardChallenge:'king',
- hint1:'Busca la pieza con forma de corona y cruz.',
- hint2:'Los reyes comienzan en e1 y e8.',
- success:'¡Encontraste un rey! Cada jugador tiene exactamente uno.'
-},
-{
- type:'challenge',title:'Objetivo del juego',
- question:'¿Cuál es la meta principal de una partida de ajedrez?',
- choices:['Capturar todos los peones','Dar jaque mate al rey rival','Mover la dama hasta el otro lado'],
- answer:1,
- hint1:'La pieza más importante para el resultado es el rey.',
- hint2:'La partida termina cuando el rey queda atacado sin una defensa legal.',
- success:'¡Muy bien! La meta es dar jaque mate al rey rival.'
-},
-{
- type:'challenge',title:'Último reto',
- question:'¿Cuántas piezas tiene cada jugador al comenzar la partida?',
- choices:['8 piezas','12 piezas','16 piezas'],
- answer:2,
- hint1:'Mira solo un color del tablero y cuenta sus dos filas iniciales.',
- hint2:'Hay 8 peones y otras 8 piezas.',
- success:'¡Correcto! Cada jugador comienza con 16 piezas.'
+ hint1:'Busca la pieza principal de cada ejército.','hint2':'Hay un rey blanco y un rey negro.',
+ success:'Misión completada. Reconociste al rey, la pieza central del objetivo del ajedrez.'
 }
 ];
 
+/* =========================================================
+   LABORATORIO + BOSS · se agregan al motor sin alterar
+   los 15 pasos originales.
+   ========================================================= */
+steps.push(
+ {
+  type:'challenge',phase:'lab',title:'Laboratorio · El bando que empieza',
+  question:'Sin mirar la explicación: toca una pieza del bando que realiza el primer movimiento.',
+  boardChallenge:'whitePiece',
+  hint1:'Piensa en qué color inicia siempre una partida.',
+  hint2:'El bando claro es el que comienza.',
+  success:'Aplicaste la regla: las blancas realizan el primer movimiento.',
+  concept:'inicio',difficulty:'Aplicar',xpValue:15,
+  easyVariant:{question:'Toca una pieza blanca.',boardChallenge:'whitePiece'},
+  hardVariant:{question:'Sin usar las etiquetas Blancas/Negras: toca una pieza del jugador que tiene derecho a hacer la primera jugada.',boardChallenge:'whitePiece'}
+ },
+ {
+  type:'challenge',phase:'lab',title:'Laboratorio · Los dos ejércitos',
+  question:'Si cada jugador empieza con 16 piezas, ¿cuántas piezas hay entre los dos jugadores?',
+  choices:['16','24','32'],answer:2,
+  hint1:'Hay dos grupos iguales de 16.',
+  hint2:'Suma 16 + 16.',
+  success:'Correcto. Entre los dos jugadores hay 32 piezas al comenzar.',
+  concept:'piezas',difficulty:'Aplicar',xpValue:15,
+  easyVariant:{question:'¿Cuántas piezas tiene un jugador al comenzar?',choices:['8','16','32'],answer:1},
+  hardVariant:{question:'¿Qué expresión representa correctamente el total de piezas al comenzar?',choices:['16 + 8 = 24','16 + 16 = 32','32 + 32 = 64'],answer:1}
+ },
+ {
+  type:'challenge',phase:'lab',title:'Laboratorio · El campo de juego',
+  question:'Si el tablero tiene 8 filas y 8 columnas, ¿cuántas casillas tiene en total?',
+  choices:['16','32','64'],answer:2,
+  hint1:'Piensa en una cuadrícula de 8 por 8.',
+  hint2:'8 × 8 = 64.',
+  success:'Correcto. El tablero completo tiene 64 casillas.',
+  concept:'tablero',difficulty:'Aplicar',xpValue:15,
+  easyVariant:{question:'¿Cuántas casillas tiene el tablero completo?',choices:['32','64','100'],answer:1},
+  hardVariant:{question:'¿Qué cálculo explica por qué el tablero tiene 64 casillas?',choices:['8 + 8','8 × 8','16 × 4'],answer:1}
+ },
+ {
+  type:'challenge',phase:'lab',title:'Laboratorio · La pieza del objetivo',
+  question:'Toca la pieza alrededor de la cual gira el objetivo de dar jaque mate.',
+  boardChallenge:'king',
+  hint1:'Cada jugador tiene una sola de estas piezas.',
+  hint2:'La partida termina cuando el rey rival recibe jaque mate.',
+  success:'Exacto. El rey es la pieza central del objetivo de la partida.',
+  concept:'objetivo',difficulty:'Aplicar',xpValue:15,
+  easyVariant:{question:'Toca cualquiera de los dos reyes.',boardChallenge:'king'},
+  hardVariant:{question:'Toca el rey del bando que realiza el primer movimiento.',boardChallenge:'whiteKing'}
+ },
+ {
+  type:'challenge',phase:'boss',title:'Boss · Decide sin ayuda',
+  question:'Una partida acaba de comenzar. ¿Qué afirmación es correcta?',
+  choices:['Las negras realizan el primer movimiento','Las blancas realizan el primer movimiento','Cualquiera puede mover primero'],answer:1,
+  success:'Superaste la primera parte del Boss: las blancas comienzan.',
+  concept:'inicio',difficulty:'Descubrir',xpValue:25,noHints:true
+ },
+ {
+  type:'challenge',phase:'boss',title:'Boss · Misión final',
+  question:'Sin pistas: toca uno de los reyes y demuestra que reconoces la pieza central del objetivo.',
+  boardChallenge:'king',
+  success:'Boss completado. Reconoces al rey dentro de una posición inicial completa.',
+  concept:'objetivo',difficulty:'Descubrir',xpValue:25,noHints:true
+ }
+);
+
+/* Metadatos pedagógicos de los retos originales */
+const ADAPTIVE_META={
+ 'Dos jugadores':{concept:'jugadores',difficulty:'Reconocer',visual:'players',
+   coach:'No cuentes piezas. Mira el tablero como si fueran dos equipos. ¿Cuántos ejércitos de distinto color ves?'},
+ 'Encuentra las blancas':{concept:'bandos',difficulty:'Reconocer',visual:'whiteArmy',
+   coach:'Busca el ejército de color claro. No importa qué pieza elijas: primero identifica el bando.'},
+ 'Ahora las negras':{concept:'bandos',difficulty:'Reconocer',visual:'blackArmy',
+   coach:'Ya encontraste las blancas. Ahora busca el ejército del color contrario.'},
+ '¿Quién empieza?':{concept:'inicio',difficulty:'Reconocer',visual:'whiteArmy',
+   coach:'Mira solo el ejército claro. En ajedrez existe una regla fija sobre quién mueve primero. ¿Qué color es el claro?'},
+ 'Cuenta los dos ejércitos':{concept:'piezas',difficulty:'Reconocer',visual:'allPieces',
+   coach:'No intentes memorizar 32. Piensa en dos grupos: 16 blancas y 16 negras. ¿Qué obtienes al juntarlos?'},
+ 'Un solo ejército':{concept:'piezas',difficulty:'Reconocer',visual:'whiteArmy',
+   coach:'Olvida por un momento el total. Mira solo un color: ese es el ejército de un jugador.'},
+ '¿Cuántas casillas?':{concept:'tablero',difficulty:'Reconocer',visual:'allSquares',
+   coach:'Piensa en el tablero completo como una cuadrícula de 8 por 8. ¿Cuántos espacios forma?'},
+ 'Encuentra espacio libre':{concept:'tablero',difficulty:'Reconocer',visual:'allSquares',
+   coach:'No busques una pieza. Busca justamente un cuadro donde no haya ninguna.'},
+ 'Objetivo del ajedrez':{concept:'objetivo',difficulty:'Reconocer',visual:'kings',
+   coach:'No necesitas capturar todas las piezas. Mira cuál es la pieza decisiva para terminar la partida.'},
+ 'Misión final':{concept:'objetivo',difficulty:'Reconocer',visual:'kings',
+   coach:'Hay un rey por cada jugador. Busca la pieza con forma de corona/cruz en el centro de cada primera fila.'},
+ 'Laboratorio · El bando que empieza':{concept:'inicio',difficulty:'Aplicar',visual:'whiteArmy',
+   coach:'Aplica la regla que aprendiste: identifica primero qué bando mueve antes que el otro.'},
+ 'Laboratorio · Los dos ejércitos':{concept:'piezas',difficulty:'Aplicar',visual:'allPieces',
+   coach:'Separa el problema en dos grupos iguales y luego júntalos.'},
+ 'Laboratorio · El campo de juego':{concept:'tablero',difficulty:'Aplicar',visual:'allSquares',
+   coach:'No memorices el número: usa la estructura 8 × 8.'},
+ 'Laboratorio · La pieza del objetivo':{concept:'objetivo',difficulty:'Aplicar',visual:'kings',
+   coach:'Pregúntate qué pieza debes proteger y qué pieza rival quieres llevar a jaque mate.'},
+ 'Boss · Decide sin ayuda':{concept:'inicio',difficulty:'Descubrir',visual:'whiteArmy',
+   coach:'El Boss mide lo que recuerdas sin ayuda.'},
+ 'Boss · Misión final':{concept:'objetivo',difficulty:'Descubrir',visual:'kings',
+   coach:'El Boss mide si reconoces el concepto sin pistas.'}
+};
+
+const ALT_EXAMPLES={
+ '¿Qué es el ajedrez?':'Imagínalo como dos equipos sobre el mismo campo. Cada jugador toma decisiones con sus piezas intentando cumplir un objetivo antes que el rival.',
+ 'Dos bandos frente a frente':'Piensa en una camiseta blanca y una negra: cada color pertenece a un jugador distinto y el equipo blanco siempre hace la primera acción.',
+ 'Treinta y dos piezas al comenzar':'Puedes verlo como dos cajas iguales: una con 16 piezas blancas y otra con 16 negras. Juntas forman 32 piezas.',
+ 'El tablero es el campo de juego':'Es como una cuadrícula de 8 por 8. Cada pequeño cuadro es una casilla; 8 × 8 forman 64.',
+ 'Dos reyes, un objetivo':'Cada ejército tiene un rey. No necesitas capturarlo: la meta es dejar al rey rival sin salida frente a una amenaza, lo que llamamos jaque mate.'
+};
+
+
 let step=0,xp=0,attempts=0,hintLevel=0,boardSolved=false;
+let wrongInStep=0;
+let activeStepObject=null;
+const ADAPTIVE_STORAGE_KEY='mauro_chess_topic1_adaptive_v1';
+let adaptiveState=loadAdaptiveState();
+
+function loadAdaptiveState(){
+  try{
+    return JSON.parse(localStorage.getItem(ADAPTIVE_STORAGE_KEY)||'null') || {
+      concepts:{}, totalCorrect:0, totalWrong:0, coachUses:0, lastUpdated:null
+    };
+  }catch(e){
+    return {concepts:{}, totalCorrect:0, totalWrong:0, coachUses:0, lastUpdated:null};
+  }
+}
+function saveAdaptiveState(){
+  adaptiveState.lastUpdated=new Date().toISOString();
+  try{ localStorage.setItem(ADAPTIVE_STORAGE_KEY,JSON.stringify(adaptiveState)); }catch(e){}
+}
+function metaFor(s){
+  const base=ADAPTIVE_META[s?.title]||{};
+  return {
+    concept:s?.concept||base.concept||'general',
+    difficulty:s?.difficulty||base.difficulty||'Reconocer',
+    visual:base.visual||null,
+    coach:base.coach||'Observa una parte del problema y responde una pregunta más sencilla antes de volver a intentarlo.'
+  };
+}
+function ensureConcept(name){
+  if(!adaptiveState.concepts[name]){
+    adaptiveState.concepts[name]={correct:0,wrong:0,firstTry:0,hints:0,coach:0};
+  }
+  return adaptiveState.concepts[name];
+}
+function recordAdaptiveResult(s,ok,firstTry=false){
+  const m=metaFor(s), c=ensureConcept(m.concept);
+  if(ok){
+    c.correct++; adaptiveState.totalCorrect++;
+    if(firstTry) c.firstTry++;
+  }else{
+    c.wrong++; adaptiveState.totalWrong++;
+  }
+  saveAdaptiveState();
+}
+function recordHintUse(s){
+  const c=ensureConcept(metaFor(s).concept);
+  c.hints++;
+  saveAdaptiveState();
+}
+function conceptMastery(name){
+  const c=ensureConcept(name);
+  const opportunities=c.correct+c.wrong;
+  if(!opportunities) return 0;
+  let score=(c.correct*100)/(opportunities);
+  score += Math.min(c.firstTry*4,12);
+  score -= Math.min(c.hints*4,16);
+  score -= Math.min(c.coach*6,18);
+  return Math.max(0,Math.min(100,Math.round(score)));
+}
+function resolveAdaptiveStep(raw){
+  if(!raw || raw.phase!=='lab') return raw;
+  const score=conceptMastery(raw.concept);
+  if(score>=80 && raw.hardVariant){
+    return {...raw,...raw.hardVariant,difficulty:'Descubrir',adaptiveRoute:'avance'};
+  }
+  if(score<60 && raw.easyVariant){
+    return {...raw,...raw.easyVariant,difficulty:'Reconocer',adaptiveRoute:'refuerzo'};
+  }
+  return {...raw,difficulty:'Aplicar',adaptiveRoute:'práctica'};
+}
+
+function difficultyClass(s){
+  if(s?.phase==='boss') return 'boss';
+  if(s?.phase==='lab') return 'lab';
+  return '';
+}
+function phaseEyebrow(s){
+  if(s?.phase==='lab') return '🎯 Laboratorio Mauro';
+  if(s?.phase==='boss') return '👑 Boss del tema';
+  return 'Reto';
+}
+function xpFor(s){
+  return Number(s?.xpValue || 10);
+}
+function adaptiveVisualHelp(s){
+  const m=metaFor(s);
+  if(m.visual) highlightTheory(m.visual);
+}
+function showCoachBox(s){
+  const box=document.getElementById('adaptiveHelp');
+  if(!box) return;
+  const m=metaFor(s);
+  const c=ensureConcept(m.concept);
+  c.coach++; adaptiveState.coachUses++;
+  saveAdaptiveState();
+  box.innerHTML='<div class="coach-title">♞ Mauro te ayuda</div><p>'+m.coach+'</p><small>Piensa y vuelve a intentarlo. Todavía no te doy la respuesta.</small>';
+  box.classList.add('show');
+  speak('Mauro te ayuda. '+m.coach);
+}
+function progressiveWrongHelp(s){
+  wrongInStep++;
+  if(s?.noHints){
+    if(wrongInStep>=2){
+      const box=document.getElementById('adaptiveHelp');
+      if(box){
+        box.innerHTML='<div class="coach-title">👑 Boss</div><p>Este reto mide tu dominio sin pistas. Vuelve a observar con calma; si no sale, lo marcaremos para repaso.</p>';
+        box.classList.add('show');
+      }
+    }
+    return;
+  }
+  if(wrongInStep===1){
+    const hb=document.getElementById('hintBox');
+    if(hb){
+      hb.classList.add('show');
+      hb.textContent='💡 Nivel de ayuda 1: '+(s.hint1||'Observa de nuevo.');
+      hintLevel=Math.max(hintLevel,1);
+      recordHintUse(s);
+    }
+  }else if(wrongInStep===2){
+    const hb=document.getElementById('hintBox');
+    if(hb){
+      hb.classList.add('show');
+      hb.textContent='👀 Nivel de ayuda 2: te lo muestro en el tablero.';
+    }
+    adaptiveVisualHelp(s);
+    recordHintUse(s);
+  }else if(wrongInStep===3){
+    showCoachBox(s);
+  }else{
+    const hb=document.getElementById('hintBox');
+    if(hb){
+      hb.classList.add('show');
+      hb.textContent='🧩 Nivel de ayuda 4: divide el problema en una idea más pequeña y vuelve a probar.';
+    }
+  }
+}
+function renderMasterySummary(){
+  const old=document.getElementById('masteryPanel');
+  if(old) old.remove();
+  const concepts=[
+    ['jugadores','Jugadores'],
+    ['bandos','Blancas y negras'],
+    ['inicio','Quién comienza'],
+    ['piezas','Cantidad de piezas'],
+    ['tablero','Tablero'],
+    ['objetivo','Rey y objetivo']
+  ];
+  const panel=document.createElement('div');
+  panel.className='mastery-panel';
+  panel.id='masteryPanel';
+  const rows=concepts.map(([key,label])=>{
+    const score=conceptMastery(key);
+    return '<div class="mastery-row"><div><div class="mastery-label">'+label+'</div><div class="mastery-track"><div class="mastery-fill" style="width:'+score+'%"></div></div></div><div class="mastery-score">'+score+'%</div></div>';
+  }).join('');
+  panel.innerHTML='<h3>🧠 Tu dominio del Tema 1</h3>'+rows+
+    '<div class="mastery-note">El porcentaje considera aciertos, errores, pistas y si necesitaste ayuda de Mauro. En esta primera versión se guarda localmente en este dispositivo.</div>';
+  const actions=summary.querySelector('.bottom-actions');
+  if(actions) summary.insertBefore(panel,actions); else summary.appendChild(panel);
+}
 let sequenceTimer=null;
 let sequenceToken=0;
 const content=document.getElementById('lessonContent');
@@ -407,31 +888,61 @@ function renderBoard(){
 }
 
 function handleSquare(sq,p){
- if(steps[step]?.boardChallenge==='king'){
-   attempts++;
-   if(p==='wK'||p==='bK'){
-     boardSolved=true; xp+=10; updateStats(); highlight('kings');
-     boardMessage.innerHTML='<strong>✅ ¡Correcto!</strong> Tocaste el '+names[p]+'.';
-     speak('Muy bien. Encontraste uno de los reyes.');
-     document.getElementById('nextBtn')?.removeAttribute('disabled');
-   }else{
-     boardMessage.innerHTML='<strong>🔎 Sigue buscando.</strong> Esa no es la pieza que necesitamos.';
-     softBuzz();
-   }
-   return;
- }
- boardMessage.innerHTML=p?'<strong>'+sq+':</strong> '+names[p]+'.':'<strong>'+sq+':</strong> casilla vacía.';
- if(p){
-   speak('Esta pieza es '+spokenPieceNames[p]+'.');
-   clearTheoryHighlights();
-   const el=document.querySelector('[data-square="'+sq+'"]');
-   if(el){
-     el.classList.add('theory-highlight');
-     setTimeout(()=>el.classList.remove('theory-highlight'),900);
-   }
- }
-}
+  const s=activeStepObject || steps[step];
+  const challenge=s?.boardChallenge;
+  if(challenge){
+    attempts++;
+    let ok=false;
+    if(challenge==='king') ok=(p==='wK'||p==='bK');
+    else if(challenge==='whitePiece') ok=!!p && p.startsWith('w');
+    else if(challenge==='blackPiece') ok=!!p && p.startsWith('b');
+    else if(challenge==='empty') ok=!p;
+    else if(challenge==='whiteKing') ok=(p==='wK');
+    else if(challenge==='blackKing') ok=(p==='bK');
 
+    if(ok){
+      const firstTry=(wrongInStep===0);
+      recordAdaptiveResult(s,true,firstTry);
+      boardSolved=true;
+      xp+=xpFor(s);
+      if(firstTry && s?.phase!=='boss') xp+=5;
+      updateStats();
+      clearTheoryHighlights();
+      const el=document.querySelector('[data-square="'+sq+'"]');
+      if(el) el.classList.add('theory-highlight-blue');
+      boardMessage.innerHTML='<strong>✅ ¡Correcto!</strong> '+(p?('Tocaste '+names[p]+'.'):'Encontraste una casilla libre.');
+      const fb=document.getElementById('feedback');
+      if(fb){
+        fb.className='feedback show good';
+        fb.innerHTML='✅ '+s.success+(firstTry?'<div class="fast-badge">⚡ A la primera · +5 XP</div>':'');
+      }
+      speak('Muy bien. '+s.success);
+      successBuzz();
+      document.getElementById('nextBtn')?.removeAttribute('disabled');
+      document.getElementById('hintBtn')?.setAttribute('disabled','disabled');
+    }else{
+      recordAdaptiveResult(s,false,false);
+      boardMessage.innerHTML='<strong>🔎 Sigue buscando.</strong> Esa no es la respuesta de este reto.';
+      const fb=document.getElementById('feedback');
+      if(fb){fb.className='feedback show try';fb.textContent='Todavía no. La ayuda aumentará poco a poco si la necesitas.';}
+      softBuzz();
+      speak('Todavía no. Observa de nuevo y vuelve a intentarlo.');
+      progressiveWrongHelp(s);
+    }
+    return;
+  }
+
+  boardMessage.innerHTML=p?'<strong>'+sq+':</strong> '+names[p]+'.':'<strong>'+sq+':</strong> casilla vacía.';
+  if(p){
+    speak('Esta pieza es '+spokenPieceNames[p]+'.');
+    clearTheoryHighlights();
+    const el=document.querySelector('[data-square="'+sq+'"]');
+    if(el){
+      el.classList.add('theory-highlight');
+      setTimeout(()=>el.classList.remove('theory-highlight'),900);
+    }
+  }
+}
 function highlight(mode){
  document.querySelectorAll('.square').forEach(s=>s.classList.remove('glow-white','glow-black','glow-king'));
  Object.entries(initial).forEach(([sq,p])=>{
@@ -604,7 +1115,23 @@ function highlightTheory(kind){
   clearTheoryHighlights();
   if(!kind) return;
 
-  if(kind==='players'){
+  
+  if(kind==='whiteArmy'){ highlight('white'); return; }
+  if(kind==='blackArmy'){ highlight('black'); return; }
+  if(kind==='whiteKing'){
+    clearTheoryHighlights();
+    document.querySelector('[data-square="e1"]')?.classList.add('glow-king');
+    boardMessage.innerHTML='<strong>Rey blanco:</strong> uno de los dos reyes de la partida.';
+    return;
+  }
+  if(kind==='blackKing'){
+    clearTheoryHighlights();
+    document.querySelector('[data-square="e8"]')?.classList.add('glow-king');
+    boardMessage.innerHTML='<strong>Rey negro:</strong> uno de los dos reyes de la partida.';
+    return;
+  }
+
+if(kind==='players'){
     // Highlight both armies, using the existing team outlines.
     highlight('all');
     Object.entries(initial).forEach(([sq,p])=>{
@@ -696,92 +1223,172 @@ function toast(t){
  setTimeout(()=>el.classList.remove('show'),1800);
 }
 
-function renderStep(){
- summary.classList.remove('show');content.style.display='block';
- hintLevel=0;boardSolved=false;
- const s=steps[step];
- if(s.board) highlight(s.board); else highlight('all');
- updateStats();
 
- if(s.type==='learn'){
-   content.innerHTML=`
-   <div class="step-eyebrow">Aprende · Paso ${step+1}</div>
-   <h2 class="step-title">${s.title}</h2>
-   <p class="step-text">${s.text}</p>
-   <div class="speak-row"><button class="primary-btn audio" id="audioBtn">🔊 Escuchar explicación</button></div>
-   <div class="fact-grid">${s.facts.map((f,i)=>`<button class="fact" type="button" data-fact="${i}" aria-label="Escuchar: ${f[0]}"><b>${f[0]}</b><span>${f[1]}</span></button>`).join('')}</div>
-   <div class="mascot"><div class="mascot-icon">♞</div><p>${s.mascot}</p></div>
-   <div class="bottom-actions">
-     <button class="continue-btn" id="backBtn" ${step===0?'disabled':''}>← Retroceder</button>
-     <button class="continue-btn primary" id="nextBtn">Continuar →</button>
-   </div>`;
-   document.getElementById('audioBtn').onclick=()=>speak(s.audio);
-   document.querySelectorAll('[data-fact]').forEach(btn=>{
-     btn.onclick=()=>{
-       const f=s.facts[Number(btn.dataset.fact)];
-       const audioText=f[2] || (f[0]+'. '+f[1]+'.');
-       highlightTheory(f[3]);
-       if(!['rows','columns','rowNumbers','columnLetters'].includes(f[3])){
-         speak(audioText);
-       }
-       toast('🔊 '+f[0]);
-     };
-   });
-   document.getElementById('backBtn').onclick=previousStep;
-   document.getElementById('nextBtn').onclick=nextStep;
- } else {
-   content.innerHTML=`
-   <div class="step-eyebrow">Reto · Paso ${step+1}</div>
-   <h2 class="step-title">${s.title}</h2>
-   <div class="challenge">
-     <p class="challenge-question">${s.question}</p>
-     ${s.choices?`<div class="choices">${s.choices.map((c,i)=>`<button class="choice" data-choice="${i}">${c}</button>`).join('')}</div>`:
-       `<div class="mascot"><div class="mascot-icon">👆</div><p>Responde directamente en el tablero. No hay prisa.</p></div>`}
-     <div class="feedback" id="feedback"></div>
-     <div class="hint-box" id="hintBox"></div>
-     <div class="speak-row">
-       <button class="primary-btn audio" id="questionAudio">🔊 Escuchar pregunta</button>
-       <button class="primary-btn hint" id="hintBtn">💡 Pista</button>
-     </div>
-   </div>
-   <div class="bottom-actions">
-     <button class="continue-btn" id="backBtn">← Retroceder</button>
-     <button class="continue-btn primary" id="nextBtn" disabled>Continuar →</button>
-   </div>`;
-   document.getElementById('questionAudio').onclick=()=>speak(s.question);
-   document.getElementById('hintBtn').onclick=()=>showHint(s);
-   document.getElementById('backBtn').onclick=previousStep;
-   document.getElementById('nextBtn').onclick=nextStep;
-   if(s.choices){
-     document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answerChoice(btn,s));
-   }
- }
+function updateMobileDuoConcepts(stepObj){
+  const tray=document.getElementById('mobileDuoConcepts');
+  const grid=document.getElementById('mobileDuoGrid');
+  if(!tray||!grid) return;
+  const mobile=window.matchMedia('(max-width:620px)').matches;
+
+  if(!mobile || !stepObj || stepObj.type!=='learn'){
+    tray.classList.remove('show');
+    grid.innerHTML='';
+    return;
+  }
+
+  tray.classList.add('show');
+  grid.innerHTML='';
+  stepObj.facts.forEach(function(f,i){
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='mobile-duo-tile';
+    b.innerHTML='<b>'+f[0]+'</b><small>'+f[1]+'</small>';
+    b.addEventListener('click',function(){
+      grid.querySelectorAll('.mobile-duo-tile').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      const audioText=f[2] || (f[0]+'. '+f[1]+'.');
+      highlightTheory(f[3]);
+      speak(audioText);
+    });
+    grid.appendChild(b);
+  });
+}
+
+function renderStep(){
+  summary.classList.remove('show');content.style.display='block';
+  hintLevel=0;boardSolved=false;wrongInStep=0;
+  const rawStep=steps[step];
+  const s=resolveAdaptiveStep(rawStep);
+  activeStepObject=s;
+  updateMobileDuoConcepts(s);
+  if(s.board) highlight(s.board); else highlight('all');
+  updateStats();
+
+  if(s.type==='learn'){
+    const alt=ALT_EXAMPLES[s.title]||'';
+    content.innerHTML=`
+    <div class="step-eyebrow">Aprende · Paso ${step+1}</div>
+    <h2 class="step-title">${s.title}</h2>
+    <p class="step-text">${s.text}</p>
+    <div class="speak-row">
+      <button class="primary-btn audio" id="audioBtn">🔊 Escuchar explicación</button>
+      ${alt?'<button class="primary-btn" id="altExampleBtn">🔄 Otra forma de verlo</button>':''}
+    </div>
+    ${alt?'<div class="alt-example" id="altExample">'+alt+'</div>':''}
+    <div class="fact-grid">${s.facts.map((f,i)=>`<button class="fact" type="button" data-fact="${i}" aria-label="Escuchar: ${f[0]}"><b>${f[0]}</b><span>${f[1]}</span></button>`).join('')}</div>
+    <div class="mascot"><div class="mascot-icon">♞</div><p>${s.mascot}</p></div>
+    <div class="bottom-actions">
+      <button class="continue-btn" id="backBtn" ${step===0?'disabled':''}>← Retroceder</button>
+      <button class="continue-btn primary" id="nextBtn">Continuar →</button>
+    </div>`;
+    document.getElementById('audioBtn').onclick=()=>speak(s.audio);
+    const altBtn=document.getElementById('altExampleBtn');
+    if(altBtn){
+      altBtn.onclick=()=>{
+        document.getElementById('altExample')?.classList.toggle('show');
+        speak(alt);
+      };
+    }
+    document.querySelectorAll('[data-fact]').forEach(btn=>{
+      btn.onclick=()=>{
+        const f=s.facts[Number(btn.dataset.fact)];
+        const audioText=f[2] || (f[0]+'. '+f[1]+'.');
+        highlightTheory(f[3]);
+        if(!['rows','columns','rowNumbers','columnLetters'].includes(f[3])){
+          speak(audioText);
+        }
+        toast('🔊 '+f[0]);
+      };
+    });
+    document.getElementById('backBtn').onclick=previousStep;
+    document.getElementById('nextBtn').onclick=nextStep;
+  } else {
+    const m=metaFor(s);
+    const phase=phaseEyebrow(s);
+    const phaseClass=difficultyClass(s);
+    const phaseBanner=s.phase==='lab'
+      ?'<div class="phase-banner">🎯 <b>Laboratorio Mauro:</b> ahora aplicas lo aprendido con menos apoyo.</div>'
+      :(s.phase==='boss'?'<div class="phase-banner boss">👑 <b>Boss:</b> demuestra dominio. Este reto comienza sin pistas.</div>':'');
+    content.innerHTML=`
+    ${phaseBanner}
+    <div class="adaptive-strip">
+      <span class="adaptive-chip ${phaseClass}">${phase}</span>
+      <span class="adaptive-chip">Nivel: ${m.difficulty}</span>
+      ${s.adaptiveRoute?`<span class="adaptive-chip">${s.adaptiveRoute==='avance'?'🚀 Ruta de avance':(s.adaptiveRoute==='refuerzo'?'🧩 Ruta de refuerzo':'🎯 Ruta práctica')}</span>`:''}
+      <span class="adaptive-chip">Concepto: ${m.concept}</span>
+    </div>
+    <div class="step-eyebrow">${phase} · Paso ${step+1}</div>
+    <h2 class="step-title">${s.title}</h2>
+    <div class="challenge">
+      <p class="challenge-question">${s.question}</p>
+      ${s.choices?`<div class="choices">${s.choices.map((c,i)=>`<button class="choice" data-choice="${i}">${c}</button>`).join('')}</div>`:
+        `<div class="mascot"><div class="mascot-icon">👆</div><p>Responde directamente en el tablero. No hay prisa.</p></div>`}
+      <div class="feedback" id="feedback"></div>
+      <div class="hint-box" id="hintBox"></div>
+      <div class="adaptive-help" id="adaptiveHelp"></div>
+      <div class="speak-row">
+        <button class="primary-btn audio" id="questionAudio">🔊 Escuchar pregunta</button>
+        ${s.noHints?'':`<button class="primary-btn hint" id="hintBtn">💡 Pedir ayuda</button>`}
+      </div>
+    </div>
+    <div class="bottom-actions">
+      <button class="continue-btn" id="backBtn">← Retroceder</button>
+      <button class="continue-btn primary" id="nextBtn" disabled>${step===14?'Ir al Laboratorio Mauro 🎯 →':(step===18?'Ir al Boss 👑 →':'Continuar →')}</button>
+    </div>`;
+    document.getElementById('questionAudio').onclick=()=>speak(s.question);
+    const hintBtn=document.getElementById('hintBtn');
+    if(hintBtn) hintBtn.onclick=()=>showHint(s);
+    document.getElementById('backBtn').onclick=previousStep;
+    document.getElementById('nextBtn').onclick=nextStep;
+    if(s.choices){
+      document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answerChoice(btn,s));
+    }
+  }
 }
 
 function answerChoice(btn,s){
- attempts++;
- document.querySelectorAll('.choice').forEach(b=>b.classList.remove('selected','wrong'));
- btn.classList.add('selected');
- const val=Number(btn.dataset.choice);
- const fb=document.getElementById('feedback');
- if(val===s.answer){
-   btn.classList.add('correct');fb.className='feedback show good';fb.textContent='✅ '+s.success;
-   xp+=10;successBuzz();updateStats();speak('Correcto. '+s.success);
-   document.querySelectorAll('.choice').forEach(b=>b.disabled=true);
-   document.getElementById('nextBtn').disabled=false;
- }else{
-   btn.classList.add('wrong');fb.className='feedback show try';
-   fb.textContent='Todavía no. Revisa la pregunta, observa el tablero y vuelve a intentarlo.';
-   softBuzz();speak('Todavía no. Observa de nuevo y vuelve a intentarlo.');
-   setTimeout(()=>btn.classList.remove('wrong','selected'),650);
- }
+  attempts++;
+  document.querySelectorAll('.choice').forEach(b=>b.classList.remove('selected','wrong'));
+  btn.classList.add('selected');
+  const val=Number(btn.dataset.choice);
+  const fb=document.getElementById('feedback');
+  if(val===s.answer){
+    const firstTry=(wrongInStep===0);
+    recordAdaptiveResult(s,true,firstTry);
+    btn.classList.add('correct');
+    fb.className='feedback show good';
+    fb.innerHTML='✅ '+s.success+(firstTry && s.phase!=='boss'?'<div class="fast-badge">⚡ A la primera · +5 XP</div>':'');
+    xp+=xpFor(s);
+    if(firstTry && s.phase!=='boss') xp+=5;
+    successBuzz();updateStats();speak('Correcto. '+s.success);
+    document.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+    document.getElementById('nextBtn').disabled=false;
+    document.getElementById('hintBtn')?.setAttribute('disabled','disabled');
+  }else{
+    recordAdaptiveResult(s,false,false);
+    btn.classList.add('wrong');fb.className='feedback show try';
+    fb.textContent='Todavía no. La ayuda aumentará poco a poco si la necesitas.';
+    softBuzz();speak('Todavía no. Observa de nuevo y vuelve a intentarlo.');
+    progressiveWrongHelp(s);
+    setTimeout(()=>btn.classList.remove('wrong','selected'),650);
+  }
 }
 
 function showHint(s){
- hintLevel++;
- const hb=document.getElementById('hintBox');hb.classList.add('show');
- hb.textContent=hintLevel===1?'💡 '+s.hint1:'💡 Pista extra: '+s.hint2;
- if(hintLevel>=2) document.getElementById('hintBtn').disabled=true;
+  if(s?.noHints) return;
+  hintLevel++;
+  recordHintUse(s);
+  const hb=document.getElementById('hintBox');
+  hb.classList.add('show');
+  if(hintLevel===1){
+    hb.textContent='💡 Nivel de ayuda 1: '+s.hint1;
+  }else if(hintLevel===2){
+    hb.textContent='👀 Nivel de ayuda 2: '+s.hint2;
+    adaptiveVisualHelp(s);
+  }else{
+    showCoachBox(s);
+  }
+  if(hintLevel>=3) document.getElementById('hintBtn')?.setAttribute('disabled','disabled');
 }
 
 function previousStep(){
@@ -795,8 +1402,37 @@ function previousStep(){
  window.scrollTo({top:0,behavior:'smooth'});
 }
 
+function showStageTransition(kind){
+ stopBoardSequence();
+ const isLab=kind==='lab';
+ content.style.display='block';
+ summary.classList.remove('show');
+ content.innerHTML=isLab ? `
+   <div class="stage-transition">
+     <div class="stage-icon">🎯</div>
+     <div class="stage-count">Clase base completada · 15 de 21 pasos</div>
+     <h2>Ahora empieza el Laboratorio Mauro</h2>
+     <p>Ya aprendiste las ideas esenciales. En los próximos <b>4 retos</b> la clase ajustará la dificultad según cómo respondiste antes: reconocer, aplicar o descubrir.</p>
+     <button class="stage-btn" id="startStageBtn">Iniciar Laboratorio 1 de 4 →</button>
+   </div>` : `
+   <div class="stage-transition boss">
+     <div class="stage-icon">👑</div>
+     <div class="stage-count">Laboratorio completado · 19 de 21 pasos</div>
+     <h2>Has llegado al Boss del Tema 1</h2>
+     <p>Quedan <b>2 retos finales</b>. Empiezan sin pistas para comprobar lo que realmente recuerdas y puedes aplicar.</p>
+     <button class="stage-btn" id="startStageBtn">Comenzar Boss 1 de 2 →</button>
+   </div>`;
+ document.getElementById('startStageBtn').onclick=()=>{
+   step=isLab?15:19;
+   renderStep();
+   window.scrollTo({top:0,behavior:'smooth'});
+ };
+}
+
 function nextStep(){
  stopBoardSequence();
+ if(step===14) return showStageTransition('lab');
+ if(step===18) return showStageTransition('boss');
  step++;
  if(step>=steps.length) return finish();
  renderStep();
@@ -804,6 +1440,7 @@ function nextStep(){
 }
 
 function finish(){
+ document.getElementById('mobileDuoConcepts')?.classList.remove('show');
  step=steps.length;
  document.getElementById('progressFill').style.width='100%';
  document.getElementById('pctLabel').textContent='100%';
@@ -812,6 +1449,8 @@ function finish(){
  content.style.display='none';summary.classList.add('show');
  document.getElementById('finalXp').textContent=xp;
  document.getElementById('finalAttempts').textContent=attempts;
+ saveAdaptiveState();
+ renderMasterySummary();
  const today=new Date().toISOString().slice(0,10);
  let streak=1;
  try{
@@ -825,78 +1464,19 @@ function finish(){
  }catch(e){}
  document.getElementById('streak').textContent=streak;
  localStorage.setItem('mauro_chess_topic1_v3',JSON.stringify({completed:true,xp,attempts,date:today,streak}));
- speak('Excelente. Has completado tu primera lección de Academia Mauro.');
+ let routeProgress={};
+ try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
+ routeProgress['que-es-el-ajedrez']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
+ try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
+ speak('Excelente. Has completado el tema uno. Ya puedes pasar al siguiente tema.');
  successBuzz();
 }
 
 
-const topicTest=[
-{visual:'column',value:'c',q:'Observa el tablero. ¿Qué columna está resaltada?',options:['Columna B','Columna C','Columna D'],answer:1,hint:'Mira la letra que aparece debajo de la línea vertical.'},
-{visual:'row',value:5,q:'Observa el tablero. ¿Qué fila está resaltada?',options:['Fila 4','Fila 5','Fila 6'],answer:1,hint:'Mira el número que aparece al costado de la línea horizontal.'},
-{visual:'diagonal',q:'¿Qué tipo de línea está resaltada?',options:['Fila','Columna','Diagonal'],answer:2,hint:'La línea va inclinada de una esquina hacia la otra.'},
-{visual:'queenFlank',q:'¿Qué zona del tablero está resaltada?',options:['Flanco de dama','Centro','Flanco de rey'],answer:0,hint:'Corresponde a las columnas A, B, C y D.'},
-{visual:'kingFlank',q:'¿Qué zona del tablero está resaltada?',options:['Flanco de dama','Flanco de rey','Diagonal'],answer:1,hint:'Corresponde a las columnas E, F, G y H.'},
-{q:'¿Cuántos jugadores participan normalmente en una partida de ajedrez?',options:['1 jugador','2 jugadores','4 jugadores'],answer:1,hint:'Recuerda los dos colores: blancas y negras.'},
-{q:'¿Cuántas casillas tiene el tablero de ajedrez?',options:['32','64','80'],answer:1,hint:'Tiene 8 filas y 8 columnas.'},
-{q:'¿Cómo se llaman las líneas horizontales del tablero?',options:['Columnas','Filas','Diagonales'],answer:1,hint:'Se numeran del 1 al 8.'},
-{q:'¿Cómo se llaman las líneas verticales del tablero?',options:['Filas','Diagonales','Columnas'],answer:2,hint:'Se nombran con letras.'},
-{q:'¿Cuál es el objetivo principal del ajedrez?',options:['Capturar todos los peones','Llevar la dama al otro lado','Dar jaque mate al rey rival'],answer:2,hint:'La pieza decisiva es el rey.'}
-];
-let testIndex=0,testCorrect=0,testAttempts=0;
-
-function startTopicTest(){
- testIndex=0;testCorrect=0;testAttempts=0;
- document.getElementById('testLaunch').style.display='none';
- document.getElementById('testPanel').classList.add('show');
- renderTestQuestion();
- speak('Comenzamos el test del tema uno. Son diez preguntas.');
-}
-function renderTestQuestion(){
- const item=topicTest[testIndex],wrap=document.getElementById('testContent');
- clearTheoryHighlights();
- if(item.visual) showVisualTest(item.visual,item.value);
- else boardMessage.innerHTML='<strong>Test:</strong> escucha la pregunta y elige tu respuesta.';
- wrap.innerHTML=`<div class="test-top"><span class="test-counter">Pregunta ${testIndex+1} de 10</span><span class="test-score">✅ ${testCorrect} correctas</span></div>
- <div class="progress-track"><div class="progress-fill" style="width:${testIndex*10}%"></div></div>
- <p class="test-question">${item.q}</p>
- <div class="test-options">${item.options.map((o,i)=>`<button class="test-option" type="button" data-test="${i}">${o}</button>`).join('')}</div>
- <div class="test-feedback" id="testFeedback"></div><div class="hint-box" id="testHintBox"></div>
- <div class="test-controls"><button type="button" id="testAudioBtn">🔊 Escuchar</button><button type="button" id="testHintBtn">💡 Pista</button><button class="next-test" type="button" id="nextTestBtn" disabled>${testIndex===9?'Ver resultado':'Siguiente →'}</button></div>`;
- wrap.querySelectorAll('[data-test]').forEach(b=>b.addEventListener('click',()=>answerTest(b)));
- document.getElementById('testAudioBtn').addEventListener('click',()=>speak(item.q));
- document.getElementById('testHintBtn').addEventListener('click',()=>{const h=document.getElementById('testHintBox');h.classList.add('show');h.textContent='💡 '+item.hint;speak(item.hint)});
- document.getElementById('nextTestBtn').addEventListener('click',nextTest);
-}
-function answerTest(btn){
- const item=topicTest[testIndex],val=Number(btn.dataset.test),fb=document.getElementById('testFeedback');
- testAttempts++;
- if(val===item.answer){
-  testCorrect++;xp+=5;updateStats();successBuzz();
-  btn.classList.add('correct');document.querySelectorAll('.test-option').forEach(b=>b.disabled=true);
-  fb.className='test-feedback show good';fb.textContent='✅ ¡Muy bien! Encontraste la respuesta.';
-  document.getElementById('nextTestBtn').disabled=false;speak('Muy bien. Respuesta correcta.');
- }else{
-  btn.classList.add('wrong');fb.className='test-feedback show try';fb.textContent='Todavía no. Piensa otra vez, escucha la pregunta o pide una pista.';
-  softBuzz();speak('Todavía no. Piensa otra vez e inténtalo nuevamente.');
-  setTimeout(()=>btn.classList.remove('wrong'),650);
- }
-}
-function nextTest(){ clearTheoryHighlights(); if(testIndex<9){testIndex++;renderTestQuestion();speak('Pregunta '+(testIndex+1)+'. '+topicTest[testIndex].q)}else finishTopicTest(); }
-function finishTopicTest(){
- clearTheoryHighlights();
- const pct=testCorrect*10,wrap=document.getElementById('testContent');
- wrap.innerHTML=`<div class="test-result"><div class="test-result-icon">${pct===100?'🏆':pct>=80?'🎯':'🌟'}</div><h3>Test completado</h3>
- <p>${pct===100?'Excelente. Dominaste todos los conceptos del Tema 1.':'Buen trabajo. Puedes repetir el test para reforzar lo aprendido.'}</p>
- <div class="test-result-grid"><div class="result-box"><b>${testCorrect}/10</b><span>correctas</span></div><div class="result-box"><b>${pct}%</b><span>resultado</span></div><div class="result-box"><b>${testAttempts}</b><span>intentos</span></div></div>
- <div class="test-controls" style="justify-content:center"><button type="button" id="repeatTestBtn">↻ Repetir test</button></div></div>`;
- document.getElementById('repeatTestBtn').addEventListener('click',startTopicTest);
- speak('Test completado. Obtuviste '+testCorrect+' respuestas correctas de diez.');
-}
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
 function goNext(){window.location.href='tema_002_el_tablero.html'}
 
-document.getElementById('startTestBtn').addEventListener('click',startTopicTest);
 renderBoard();
 try{
  const saved=JSON.parse(localStorage.getItem('mauro_chess_topic1_v3')||'null');
@@ -904,5 +1484,14 @@ try{
 }catch(e){}
 renderStep();
 </script>
+<script>
+      // Registrar Service Worker (PWA)
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          //  navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+        });
+      }
+
+    </script>
 </body>
 </html>
