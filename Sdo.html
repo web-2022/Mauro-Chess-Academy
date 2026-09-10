@@ -1,0 +1,5012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Control Tower FS — Santo Domingo V3 Extendida</title>
+
+  <style>
+    :root {
+      --navy: #06284a;
+      --navy-2: #073763;
+      --blue: #0b63ce;
+      --cyan: #06a8c6;
+      --green: #58cc02;
+      --green-2: #3f9b00;
+      --orange: #ff9800;
+      --red: #ef4444;
+      --purple: #7c3aed;
+      --yellow: #f7c948;
+      --bg: #f4f8fc;
+      --card: #ffffff;
+      --text: #142033;
+      --muted: #65758b;
+      --line: #dce7f3;
+      --soft: #f7fbff;
+      --shadow: 0 14px 32px rgba(6, 40, 74, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #eef8ff, #f8fbff 42%, #f5f8fc);
+    }
+
+    .app {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.45fr 0.85fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .hero-main {
+      background: linear-gradient(135deg, var(--navy), #087f86);
+      color: white;
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      right: -160px;
+      top: -170px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.30);
+      padding: 8px 13px;
+      font-weight: 900;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 16px 0 8px;
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: -1.1px;
+    }
+
+    .hero-main p {
+      margin: 0;
+      max-width: 900px;
+      font-size: 18px;
+      line-height: 1.45;
+      color: #eaf7ff;
+    }
+
+    .hero-side {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .selected {
+      border: 2px solid #c9f3b8;
+      background: #f6fff1;
+      border-radius: 22px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .selected small {
+      color: var(--muted);
+      font-weight: 900;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .selected b {
+      display: block;
+      color: var(--navy);
+      font-size: 22px;
+      margin-top: 4px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      background: #f6fbff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 28px;
+      color: var(--navy);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .bar {
+      height: 17px;
+      background: #e6eff8;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), #a3e635);
+      transition: 0.35s;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+
+    .tab {
+      border: 2px solid var(--line);
+      background: white;
+      color: var(--navy);
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 900;
+      cursor: pointer;
+      min-height: 44px;
+      box-shadow: 0 4px 10px rgba(6, 40, 74, 0.06);
+    }
+
+    .tab.active {
+      background: var(--green);
+      color: white;
+      border-color: var(--green-2);
+    }
+
+    .panel {
+      display: none;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--navy);
+      font-size: 26px;
+      margin: 0 0 16px;
+    }
+
+    .badge {
+      background: var(--green);
+      color: white;
+      border-radius: 15px;
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 1000;
+      flex: 0 0 auto;
+    }
+
+    .help {
+      color: var(--muted);
+      font-weight: 700;
+      margin-top: -5px;
+    }
+
+    .score-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .score {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--soft);
+      padding: 16px;
+    }
+
+    .score small {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .score b {
+      display: block;
+      color: var(--navy);
+      font-size: 30px;
+      margin-top: 4px;
+    }
+
+    .score em {
+      display: block;
+      color: var(--muted);
+      font-style: normal;
+      font-weight: 700;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: white;
+      padding: 18px;
+      box-shadow: 0 8px 18px rgba(6, 40, 74, 0.06);
+    }
+
+    .card h3 {
+      color: var(--navy);
+      margin: 0 0 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      gap: 6px;
+      background: #ecfdf3;
+      border: 1px solid #c9f3b8;
+      color: #247a00;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: white;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+    }
+
+    th {
+      background: var(--navy);
+      color: white;
+      text-align: left;
+      padding: 11px;
+      font-size: 13px;
+    }
+
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .health-ring {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: auto;
+      background: conic-gradient(var(--green) 0deg, var(--green) 238deg, #e6eff8 238deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .health-inner {
+      width: 110px;
+      height: 110px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+    }
+
+    .health-inner b {
+      font-size: 30px;
+      color: var(--navy);
+    }
+
+    .health-inner span {
+      font-weight: 900;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .alert-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .alert {
+      border-left: 8px solid var(--orange);
+      background: #fffaf0;
+      border-radius: 16px;
+      padding: 12px 14px;
+      border-top: 1px solid #f5dfb6;
+      border-right: 1px solid #f5dfb6;
+      border-bottom: 1px solid #f5dfb6;
+    }
+
+    .alert.critical {
+      border-left-color: var(--red);
+      background: #fff5f5;
+      border-color: #f4c5c5;
+    }
+
+    .alert.good {
+      border-left-color: var(--green);
+      background: #f6fff1;
+      border-color: #c9f3b8;
+    }
+
+    .alert b {
+      color: var(--navy);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .alert p {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .disc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(190px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .disc {
+      border: 2px solid var(--line);
+      background: #fbfdff;
+      border-radius: 22px;
+      padding: 15px;
+      text-align: left;
+      cursor: pointer;
+      min-height: 185px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .disc::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 7px;
+      background: var(--blue);
+    }
+
+    .disc:nth-child(2n)::before {
+      background: var(--green);
+    }
+
+    .disc:nth-child(3n)::before {
+      background: var(--orange);
+    }
+
+    .disc:nth-child(4n)::before {
+      background: var(--cyan);
+    }
+
+    .disc:nth-child(5n)::before {
+      background: var(--purple);
+    }
+
+    .disc.active {
+      border-color: var(--green-2);
+      background: #f5fff0;
+      box-shadow: 0 10px 20px rgba(88, 204, 2, 0.16);
+    }
+
+    .disc h3 {
+      margin: 8px 0;
+      color: var(--navy);
+      font-size: 18px;
+    }
+
+    .disc p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .disc .code {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: white;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .status.good {
+      background: var(--green-2);
+    }
+
+    .status.warn {
+      background: var(--orange);
+    }
+
+    .status.bad {
+      background: var(--red);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #f8fbff;
+      padding: 13px;
+    }
+
+    .kpi small {
+      font-weight: 900;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .kpi b {
+      display: block;
+      color: var(--navy);
+      margin-top: 5px;
+    }
+
+    ul.clean {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    ul.clean li {
+      margin: 8px 0;
+      line-height: 1.35;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px;
+      font: inherit;
+      min-height: 38px;
+      background: white;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 15px;
+      background: var(--green);
+      color: white;
+      font-weight: 1000;
+      padding: 12px 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 var(--green-2);
+      margin: 10px 8px 0 0;
+      min-height: 44px;
+    }
+
+    .btn.secondary {
+      background: #edf4fb;
+      color: var(--navy);
+      box-shadow: 0 6px 0 #cfddea;
+    }
+
+    .btn.red {
+      background: var(--red);
+      box-shadow: 0 6px 0 #b91c1c;
+    }
+
+    .btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 var(--green-2);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .column {
+      background: #f8fbff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 14px;
+    }
+
+    .action {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 5px 12px rgba(6, 40, 74, 0.05);
+    }
+
+    .action b {
+      color: var(--navy);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .action p {
+      color: var(--muted);
+      margin: 0;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .quiz-wrap {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 18px;
+    }
+
+    .score-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border: 2px solid var(--line);
+      border-radius: 20px;
+      padding: 14px;
+      font-weight: 900;
+    }
+
+    .hearts {
+      color: var(--red);
+      letter-spacing: 3px;
+      font-size: 22px;
+      white-space: nowrap;
+    }
+
+    .question {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1.25;
+      margin: 16px 0;
+    }
+
+    .choice {
+      width: 100%;
+      text-align: left;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      background: white;
+      padding: 14px 16px;
+      margin: 7px 0;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .choice.correct {
+      background: #eaffdf;
+      border-color: var(--green-2);
+    }
+
+    .choice.wrong {
+      background: #fff0f0;
+      border-color: var(--red);
+    }
+
+    .feedback {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #f6fbff;
+      padding: 13px;
+      color: var(--navy);
+      font-weight: 800;
+      min-height: 48px;
+    }
+
+    .coach {
+      background: linear-gradient(180deg, #f7fff2, #effbea);
+      border: 2px solid #cdf6b6;
+      border-radius: 28px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .owl {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: var(--green);
+      margin: 0 auto 12px;
+      position: relative;
+      box-shadow: 0 10px 18px rgba(88, 204, 2, 0.25);
+    }
+
+    .owl::before,
+    .owl::after {
+      content: "";
+      position: absolute;
+      top: 28px;
+      width: 26px;
+      height: 26px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 6px #193b17;
+    }
+
+    .owl::before {
+      left: 18px;
+    }
+
+    .owl::after {
+      right: 18px;
+    }
+
+    .beak {
+      position: absolute;
+      left: 37px;
+      top: 55px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 13px solid #ffb000;
+    }
+
+    .coach h3 {
+      color: var(--green-2);
+      margin: 8px 0;
+    }
+
+    .coach p {
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .flash {
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      border: 2px dashed #cfe0ef;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      padding: 28px;
+      cursor: pointer;
+    }
+
+    .flash small {
+      color: var(--muted);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .flash h3 {
+      font-size: 30px;
+      color: var(--navy);
+      margin: 14px 0;
+    }
+
+    .flash p {
+      font-size: 18px;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .script {
+      background: #071f3f;
+      color: white;
+      border-radius: 24px;
+      padding: 20px;
+      line-height: 1.6;
+      font-size: 17px;
+    }
+
+    .script strong {
+      color: #9be341;
+    }
+
+    .gate-flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .gate {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fbfdff;
+      padding: 14px;
+      position: relative;
+    }
+
+    .gate::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 7px;
+      background: var(--blue);
+      border-radius: 18px 18px 0 0;
+    }
+
+    .gate h3 {
+      margin: 12px 0 8px;
+      color: var(--navy);
+    }
+
+    .gate p {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .formula {
+      display: grid;
+      gap: 10px;
+    }
+
+    .formula-row {
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .formula-row label {
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    @media (max-width: 1080px) {
+      .hero,
+      .command-grid,
+      .grid-2,
+      .quiz-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .disc-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .score-cards,
+      .kpi-row,
+      .board,
+      .gate-flow {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        padding: 14px;
+      }
+
+      h1 {
+        font-size: 31px;
+      }
+
+      .panel,
+      .hero-main,
+      .hero-side {
+        border-radius: 22px;
+      }
+
+      .disc-grid,
+      .score-cards,
+      .kpi-row,
+      .grid-3,
+      .board,
+      .gate-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        font-size: 22px;
+      }
+
+      .question {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app" id="app">
+    <section class="hero">
+      <div class="hero-main">
+        <span class="eyebrow">🚦 Control Tower de Factibilidad V3 Extendida</span>
+        <h1>Santo Domingo — Rampa de Exploración</h1>
+        <p>
+          Versión ampliada sin recortar funcionalidades: control ejecutivo, roadmap por disciplina,
+          claves, alertas, matriz editable, reunión semanal, quiz, flashcards, simulador oral y cálculo
+          de salud por disciplina.
+        </p>
+      </div>
+
+      <aside class="hero-side">
+        <div class="selected">
+          <small>Disciplina seleccionada</small>
+          <b id="selName">Minería</b>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <b id="xp">0</b>
+            <span>XP</span>
+          </div>
+          <div class="stat">
+            <b id="level">1</b>
+            <span>Nivel</span>
+          </div>
+          <div class="stat">
+            <b id="streak">0</b>
+            <span>Racha</span>
+          </div>
+        </div>
+
+        <div class="progress-top">
+          <span>Dominio personal</span>
+          <span id="pct">0%</span>
+        </div>
+
+        <div class="bar">
+          <div id="bar"></div>
+        </div>
+      </aside>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-panel="cmd">1. Control Tower</button>
+      <button class="tab" data-panel="road">2. RoadMap</button>
+      <button class="tab" data-panel="claves">3. Claves</button>
+      <button class="tab" data-panel="actions">4. Alertas / Qué sigue</button>
+      <button class="tab" data-panel="weekly">5. Reunión semanal</button>
+      <button class="tab" data-panel="quiz">6. Quiz</button>
+      <button class="tab" data-panel="flashcards">7. Flashcards</button>
+      <button class="tab" data-panel="oral">8. Simulador oral</button>
+      <button class="tab" data-panel="formula">9. Salud</button>
+    </nav>
+
+    <section class="panel active" id="cmd">
+      <h2 class="title">
+        <span class="badge">1</span>
+        Control Tower — vista ejecutiva
+      </h2>
+
+      <div class="score-cards">
+        <div class="score">
+          <small>Salud ponderada del proyecto</small>
+          <b id="overallHealth">--%</b>
+          <em>Promedio ponderado por criticidad</em>
+        </div>
+
+        <div class="score">
+          <small>Disciplinas críticas</small>
+          <b id="criticalCount">--</b>
+          <em>Requieren acción inmediata</em>
+        </div>
+
+        <div class="score">
+          <small>Bloqueos abiertos</small>
+          <b id="blockCount">--</b>
+          <em>Dependencias pendientes</em>
+        </div>
+
+        <div class="score">
+          <small>Disciplinas</small>
+          <b id="discCount">--</b>
+          <em>Frentes del roadmap</em>
+        </div>
+      </div>
+
+      <div class="command-grid">
+        <div class="card">
+          <span class="tag">📍 Semáforo de disciplinas</span>
+
+          <div class="table-wrap">
+            <table id="healthTable">
+              <thead>
+                <tr>
+                  <th>Disciplina</th>
+                  <th>Fase</th>
+                  <th>Avance</th>
+                  <th>Salud</th>
+                  <th>Peso</th>
+                  <th>Estado</th>
+                  <th>Siguiente acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="tag">🚨 Alertas inteligentes</span>
+
+          <div class="health-ring" id="ring">
+            <div class="health-inner">
+              <b id="ringValue">--%</b>
+              <span>HEALTH</span>
+            </div>
+          </div>
+
+          <div class="alert-list" id="topAlerts" style="margin-top: 16px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="road">
+      <h2 class="title">
+        <span class="badge">2</span>
+        RoadMap por disciplinas
+      </h2>
+
+      <p class="help">
+        Haz clic en una disciplina. Las secciones Claves, Alertas, Reunión, Quiz, Flashcards,
+        Simulador oral y Salud cambian automáticamente según la disciplina seleccionada.
+      </p>
+
+      <div class="disc-grid" id="discGrid"></div>
+
+      <div class="card" style="margin-top: 16px;">
+        <span class="tag">🧩 Puertas de madurez de ingeniería</span>
+
+        <div class="gate-flow">
+          <div class="gate">
+            <h3>Perfil</h3>
+            <p>Entender necesidad, orden de magnitud y restricciones mayores.</p>
+          </div>
+
+          <div class="gate">
+            <h3>Conceptual</h3>
+            <p>Identificar alternativas, criterios iniciales, riesgos y rangos de costo.</p>
+          </div>
+
+          <div class="gate">
+            <h3>PFS</h3>
+            <p>Comparar alternativas, seleccionar base y cerrar drivers.</p>
+          </div>
+
+          <div class="gate">
+            <h3>FS / Definición</h3>
+            <p>Demostrar viabilidad, constructibilidad, CAPEX/OPEX, cronograma, riesgos y PEP.</p>
+          </div>
+
+          <div class="gate">
+            <h3>Detalle</h3>
+            <p>Preparar planos IFC, especificaciones, compras, construcción y control de calidad.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="claves">
+      <h2 class="title">
+        <span class="badge">3</span>
+        <span id="discTitle">Claves por disciplina</span>
+      </h2>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <small>Líder</small>
+          <b id="dLead">--</b>
+        </div>
+
+        <div class="kpi">
+          <small>Fase actual</small>
+          <b id="dPhase">--</b>
+        </div>
+
+        <div class="kpi">
+          <small>Gate próximo</small>
+          <b id="dGate">--</b>
+        </div>
+
+        <div class="kpi">
+          <small>Fecha requerida</small>
+          <b id="dDue">--</b>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="tag">🎯 Objetivo y entregables</span>
+          <h3 id="dObjective">--</h3>
+          <ul class="clean" id="deliverables"></ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">🔗 Interfaces y bloqueos</span>
+          <h3>Lo que debes vigilar</h3>
+          <ul class="clean" id="interfaces"></ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 16px;">
+        <span class="tag">⚠️ Riesgos de la disciplina</span>
+
+        <div class="table-wrap">
+          <table id="riskTable">
+            <thead>
+              <tr>
+                <th>Riesgo</th>
+                <th>Nivel</th>
+                <th>Impacto</th>
+                <th>Acción preventiva</th>
+                <th>Dueño</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="actions">
+      <h2 class="title">
+        <span class="badge">4</span>
+        Alertas, pistas y qué sigue
+      </h2>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="tag">⏭️ Próxima mejor acción</span>
+          <h3 id="nextActionTitle">--</h3>
+          <p id="nextActionText" class="help"></p>
+
+          <button class="btn" id="markAction">Marcar como revisado</button>
+          <button class="btn secondary" id="copyAction">Generar frase para reunión</button>
+
+          <div class="feedback" id="actionFeedback">
+            Selecciona una disciplina para ver su siguiente acción.
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="tag">🚦 Motor de alertas</span>
+          <div class="alert-list" id="discAlerts"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 16px;">
+        <span class="tag">🧾 Matriz editable de seguimiento</span>
+        <p class="help">
+          Cambia estado y avance para simular seguimiento semanal. Esta maqueta local sirve para ordenar
+          decisiones; no reemplaza Primavera, Aconex ni el Excel oficial.
+        </p>
+
+        <div class="table-wrap">
+          <table id="editTable">
+            <thead>
+              <tr>
+                <th>Disciplina</th>
+                <th>Estado</th>
+                <th>Avance %</th>
+                <th>Decisión pendiente</th>
+                <th>Semáforo automático</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <button class="btn secondary" id="recalc">Actualizar semáforos</button>
+      </div>
+    </section>
+
+    <section class="panel" id="weekly">
+      <h2 class="title">
+        <span class="badge">5</span>
+        Reunión administrativa semanal
+      </h2>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="tag">📢 Guion para exponer</span>
+          <h3 id="weeklyTitle">--</h3>
+          <div class="script" id="weeklyScript"></div>
+        </div>
+
+        <div class="card">
+          <span class="tag">📋 Checklist de 7 minutos</span>
+          <ul class="clean" id="weeklyChecklist"></ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 16px;">
+        <span class="tag">📌 Decisiones que conviene pedir</span>
+        <div class="board" id="decisionBoard"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="quiz">
+      <h2 class="title">
+        <span class="badge">6</span>
+        Quiz por disciplina
+      </h2>
+
+      <div class="quiz-wrap">
+        <div class="card">
+          <div class="score-line">
+            <span>Pregunta <span id="qNum">1</span>/<span id="qTotal">6</span></span>
+            <span class="hearts" id="qHearts">♥ ♥ ♥</span>
+          </div>
+
+          <div class="question" id="qText">--</div>
+          <div id="qChoices"></div>
+          <div class="feedback" id="qFeedback">Elige una respuesta.</div>
+
+          <button class="btn" id="nextQuiz">Siguiente</button>
+          <button class="btn secondary" id="restartQuiz">Reiniciar disciplina</button>
+        </div>
+
+        <aside class="coach">
+          <div class="owl">
+            <span class="beak"></span>
+          </div>
+
+          <h3>Modo defensa técnica</h3>
+          <p id="quizCoach">Responde como si estuvieras en reunión con cliente.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel" id="flashcards">
+      <h2 class="title">
+        <span class="badge">7</span>
+        Flashcards por disciplina
+      </h2>
+
+      <div class="quiz-wrap">
+        <div class="card">
+          <div class="score-line">
+            <span>Tarjeta <span id="cardNum">1</span>/<span id="cardTotal">3</span></span>
+            <span class="hearts">♥ ♥ ♥</span>
+          </div>
+
+          <div class="question" id="learnQ">--</div>
+
+          <div class="flash" id="flashCard">
+            <small id="flashType">Pregunta</small>
+            <h3 id="flashTitle">--</h3>
+            <p id="flashBody">Haz clic para ver la respuesta.</p>
+          </div>
+
+          <button class="btn" id="flip">Voltear</button>
+          <button class="btn secondary" id="nextCard">Siguiente</button>
+        </div>
+
+        <aside class="coach">
+          <div class="owl">
+            <span class="beak"></span>
+          </div>
+
+          <h3>Aprendizaje activo</h3>
+          <p id="coachText">Practica hasta responder sin leer.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel" id="oral">
+      <h2 class="title">
+        <span class="badge">8</span>
+        Simulador oral de reunión
+      </h2>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="tag">🎙️ Pregunta tipo gerente</span>
+          <h3 id="oralQuestion">--</h3>
+          <p class="help">
+            Responde en voz alta en menos de 30 segundos. Luego compara con la respuesta modelo.
+          </p>
+
+          <button class="btn" id="showOral">Ver respuesta modelo</button>
+          <button class="btn secondary" id="nextOral">Nueva pregunta</button>
+        </div>
+
+        <div class="script" id="oralAnswer">
+          <strong>Respuesta modelo:</strong><br>
+          Practica primero antes de verla.
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="formula">
+      <h2 class="title">
+        <span class="badge">9</span>
+        Cálculo de salud de la disciplina
+      </h2>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="tag">🧮 Fórmula recomendada</span>
+          <p class="help">
+            La salud no es solo avance. Mide qué tan controlada está la disciplina para cumplir plazo,
+            costo, alcance y decisiones.
+          </p>
+
+          <div class="formula">
+            <div class="formula-row">
+              <label for="fSchedule">Cumplimiento de cronograma — 25%</label>
+              <input id="fSchedule" type="number" min="0" max="100" value="75">
+            </div>
+
+            <div class="formula-row">
+              <label for="fDeliverables">Madurez de entregables — 20%</label>
+              <input id="fDeliverables" type="number" min="0" max="100" value="70">
+            </div>
+
+            <div class="formula-row">
+              <label for="fDecisions">Cierre de RFIs / decisiones — 20%</label>
+              <input id="fDecisions" type="number" min="0" max="100" value="60">
+            </div>
+
+            <div class="formula-row">
+              <label for="fRisks">Riesgos controlados — 15%</label>
+              <input id="fRisks" type="number" min="0" max="100" value="65">
+            </div>
+
+            <div class="formula-row">
+              <label for="fInterfaces">Interfaces cerradas — 10%</label>
+              <input id="fInterfaces" type="number" min="0" max="100" value="70">
+            </div>
+
+            <div class="formula-row">
+              <label for="fResources">Recursos / capacidad — 10%</label>
+              <input id="fResources" type="number" min="0" max="100" value="80">
+            </div>
+          </div>
+
+          <button class="btn" id="calcHealth">Calcular salud</button>
+        </div>
+
+        <div class="card">
+          <span class="tag">🚥 Resultado</span>
+
+          <div class="health-ring" id="formulaRing">
+            <div class="health-inner">
+              <b id="formulaValue">--%</b>
+              <span id="formulaStatus">SALUD</span>
+            </div>
+          </div>
+
+          <div class="feedback" id="formulaFeedback">
+            Ingresa valores de 0 a 100 y calcula.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const disciplines = [
+  {
+    "id": "min",
+    "code": "MIN",
+    "name": "Minería y Planificación Minera",
+    "lead": "Líder Minería",
+    "phase": "FS / Definición",
+    "progress": 42,
+    "status": "Atención",
+    "health": 74,
+    "weight": 15,
+    "next": "Cerrar geometría base de rampa, cámaras de exploración, secciones típicas y criterios de ciclos de avance.",
+    "gate": "Congelamiento de geometría minera",
+    "due": "2026-09-11",
+    "objective": "Asegurar que la rampa, cámaras y labores auxiliares sean constructibles, operables, seguras y costeables.",
+    "blockedBy": [
+      "Confirmación de flota base",
+      "Criterio final de cámaras de exploración",
+      "Sección/gálibo con servicios",
+      "Criterios de avance por tipo de terreno"
+    ],
+    "deliverables": [
+      "Criterios de diseño minero",
+      "Planta y perfil de rampa",
+      "Secciones típicas",
+      "Diseño de cámaras de exploración",
+      "Labores auxiliares",
+      "Metrados de excavación",
+      "Cronograma minero de construcción",
+      "Inputs para CAPEX/OPEX"
+    ],
+    "interfaces": [
+      "Geomecánica Subterránea",
+      "Ventilación Subterránea",
+      "Bombeo y Desaguado",
+      "Energía Eléctrica",
+      "Infraestructura Superficial",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "Ciclos incompletos de avance",
+        "level": "Alto",
+        "impact": "Cronograma optimista, atraso de curva S y costos de contratista subestimados.",
+        "action": "Construir ciclo por tipo de roca incluyendo perforación, voladura, ventilación, saneo, limpieza, sostenimiento, bombeo y servicios.",
+        "owner": "Minería"
+      },
+      {
+        "risk": "Sección insuficiente para equipo y servicios",
+        "level": "Alto",
+        "impact": "Interferencias entre equipo, ducto, tuberías, cables, sostenimiento y tránsito.",
+        "action": "Validar gálibo completo con equipo crítico, servicios instalados, cuneta, sostenimiento y tolerancias.",
+        "owner": "Minería + Ventilación + Servicios"
+      },
+      {
+        "risk": "Cámaras de exploración no cerradas",
+        "level": "Medio",
+        "impact": "Reproceso de diseño, ventilación, bombeo, metrados y cronograma.",
+        "action": "Cerrar criterios con geología/exploraciones y congelar ubicación preliminar para FS.",
+        "owner": "Minería + Geología"
+      },
+      {
+        "risk": "Longitud o pendiente de rampa cambia tarde",
+        "level": "Alto",
+        "impact": "Impacto directo en CAPEX, OPEX, ventilación, bombeo, accesos, cronograma y permisos.",
+        "action": "Establecer gate formal de congelamiento de trazo con evaluación de cambios.",
+        "owner": "Gerencia de Proyecto"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué debe validar minería antes de congelar una sección?",
+        "a": "Equipo crítico, servicios, sostenimiento, cuneta, gálibo, seguridad operacional, maniobrabilidad y tolerancias de excavación."
+      },
+      {
+        "q": "¿Qué es un ciclo completo de avance?",
+        "a": "Perforación, carguío, voladura, ventilación, reingreso, saneo, limpieza, acarreo, sostenimiento, bombeo, servicios y liberación del frente."
+      },
+      {
+        "q": "¿Qué reportar semanalmente desde minería?",
+        "a": "Avance de rampa, cámaras, secciones, metrados, RFIs, decisiones pendientes, interfaces y riesgos que afectan la ruta crítica."
+      },
+      {
+        "q": "¿Cuál es el mensaje ejecutivo de minería?",
+        "a": "La rampa es la columna técnica del proyecto, pero su avance depende de cerrar geometría, flota, servicios, sostenimiento, agua, energía y permisos."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Cuál es el entregable base de minería para controlar la factibilidad de la rampa?",
+        "options": [
+          "Una imagen conceptual sin metrados.",
+          "Planta y perfil de rampa con secciones, cámaras, metrados y cronograma.",
+          "Solo una lista de equipos sin geometría.",
+          "Solo una curva S administrativa."
+        ],
+        "answer": 1,
+        "explain": "La factibilidad requiere geometría, cantidades, criterios, cronograma y compatibilidad con las otras disciplinas."
+      },
+      {
+        "q": "¿Qué es un ciclo completo de avance?",
+        "options": [
+          "Perforación, carguío, voladura, ventilación, reingreso, saneo, limpieza, acarreo, sostenimiento, bombeo, servicios y liberación del frente.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Perforación, carguío, voladura, ventilación, reingreso, saneo, limpieza, acarreo, sostenimiento, bombeo, servicios y liberación del frente."
+      },
+      {
+        "q": "¿Qué reportar semanalmente desde minería?",
+        "options": [
+          "Avance de rampa, cámaras, secciones, metrados, RFIs, decisiones pendientes, interfaces y riesgos que afectan la ruta crítica.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Avance de rampa, cámaras, secciones, metrados, RFIs, decisiones pendientes, interfaces y riesgos que afectan la ruta crítica."
+      },
+      {
+        "q": "¿Cuál es el mensaje ejecutivo de minería?",
+        "options": [
+          "La rampa es la columna técnica del proyecto, pero su avance depende de cerrar geometría, flota, servicios, sostenimiento, agua, energía y permisos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "La rampa es la columna técnica del proyecto, pero su avance depende de cerrar geometría, flota, servicios, sostenimiento, agua, energía y permisos."
+      },
+      {
+        "q": "¿Qué debe validar minería antes de congelar una sección?",
+        "options": [
+          "Equipo crítico, servicios, sostenimiento, cuneta, gálibo, seguridad operacional, maniobrabilidad y tolerancias de excavación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Equipo crítico, servicios, sostenimiento, cuneta, gálibo, seguridad operacional, maniobrabilidad y tolerancias de excavación."
+      },
+      {
+        "q": "¿Qué es un ciclo completo de avance?",
+        "options": [
+          "Perforación, carguío, voladura, ventilación, reingreso, saneo, limpieza, acarreo, sostenimiento, bombeo, servicios y liberación del frente.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Perforación, carguío, voladura, ventilación, reingreso, saneo, limpieza, acarreo, sostenimiento, bombeo, servicios y liberación del frente."
+      }
+    ],
+    "oral": [
+      "Desde Minería y Planificación Minera, ¿qué puede atrasar la factibilidad?",
+      "Desde Minería y Planificación Minera, ¿qué decisión pedirías esta semana?",
+      "Desde Minería y Planificación Minera, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "gms",
+    "code": "GMS",
+    "name": "Geomecánica Subterránea",
+    "lead": "Líder Geomecánica",
+    "phase": "Caracterización / Modelo",
+    "progress": 35,
+    "status": "Atención",
+    "health": 70,
+    "weight": 10,
+    "next": "Completar revisión de información geotécnica, dominios y brechas para sostenimiento de rampa y cámaras.",
+    "gate": "Dominios geomecánicos preliminares",
+    "due": "2026-09-18",
+    "objective": "Definir comportamiento del macizo, estabilidad subterránea y sostenimiento requerido para la rampa y labores asociadas.",
+    "blockedBy": [
+      "Base de sondajes consolidada",
+      "Trazo de rampa congelado",
+      "Propiedades geomecánicas",
+      "Modelo estructural"
+    ],
+    "deliverables": [
+      "Base geológico-geotécnica",
+      "Modelo geomecánico 3D",
+      "Modelo estructural",
+      "Análisis cinemático",
+      "Análisis de esfuerzos",
+      "Diseño de sostenimiento",
+      "Metrados de sostenimiento",
+      "Recomendaciones GCMP"
+    ],
+    "interfaces": [
+      "Minería",
+      "Geotecnia Superficial",
+      "CAPEX/OPEX",
+      "Constructibilidad",
+      "Cronograma"
+    ],
+    "risks": [
+      {
+        "risk": "Datos geotécnicos incompletos",
+        "level": "Alto",
+        "impact": "Mayor incertidumbre en sostenimiento, costos y productividad.",
+        "action": "Emitir RFI temprana, validar data disponible y definir supuestos trazables.",
+        "owner": "Geomecánica"
+      },
+      {
+        "risk": "Subestimación del sostenimiento",
+        "level": "Alto",
+        "impact": "Incremento de CAPEX, menor productividad y mayor riesgo de seguridad.",
+        "action": "Sensibilizar sostenimiento por dominio, condición estructural y tipo de roca.",
+        "owner": "Geomecánica + Costos"
+      },
+      {
+        "risk": "Modelo geomecánico con geometría cambiante",
+        "level": "Medio",
+        "impact": "Reproceso de modelamiento y retraso de entregables.",
+        "action": "Congelar trazo, cámaras y secciones antes de modelamientos principales.",
+        "owner": "Minería + Geomecánica"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué gobierna la geomecánica subterránea?",
+        "a": "Sostenimiento, estabilidad, productividad, seguridad, metrados y costos asociados a la excavación."
+      },
+      {
+        "q": "¿Qué es un dominio geomecánico?",
+        "a": "Una zona del macizo con comportamiento relativamente similar que permite asignar criterios de diseño y sostenimiento."
+      },
+      {
+        "q": "¿Qué necesita geomecánica antes de modelar?",
+        "a": "Trazo de rampa, cámaras, secciones, propiedades, estructuras, cobertura y criterios de excavación."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué gobierna la geomecánica subterránea?",
+        "options": [
+          "Sostenimiento, estabilidad, productividad, seguridad, metrados y costos asociados a la excavación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Sostenimiento, estabilidad, productividad, seguridad, metrados y costos asociados a la excavación."
+      },
+      {
+        "q": "¿Qué es un dominio geomecánico?",
+        "options": [
+          "Una zona del macizo con comportamiento relativamente similar que permite asignar criterios de diseño y sostenimiento.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Una zona del macizo con comportamiento relativamente similar que permite asignar criterios de diseño y sostenimiento."
+      },
+      {
+        "q": "¿Qué necesita geomecánica antes de modelar?",
+        "options": [
+          "Trazo de rampa, cámaras, secciones, propiedades, estructuras, cobertura y criterios de excavación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Trazo de rampa, cámaras, secciones, propiedades, estructuras, cobertura y criterios de excavación."
+      },
+      {
+        "q": "¿Qué gobierna la geomecánica subterránea?",
+        "options": [
+          "Sostenimiento, estabilidad, productividad, seguridad, metrados y costos asociados a la excavación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Sostenimiento, estabilidad, productividad, seguridad, metrados y costos asociados a la excavación."
+      },
+      {
+        "q": "¿Qué es un dominio geomecánico?",
+        "options": [
+          "Una zona del macizo con comportamiento relativamente similar que permite asignar criterios de diseño y sostenimiento.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Una zona del macizo con comportamiento relativamente similar que permite asignar criterios de diseño y sostenimiento."
+      },
+      {
+        "q": "¿Qué necesita geomecánica antes de modelar?",
+        "options": [
+          "Trazo de rampa, cámaras, secciones, propiedades, estructuras, cobertura y criterios de excavación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Trazo de rampa, cámaras, secciones, propiedades, estructuras, cobertura y criterios de excavación."
+      }
+    ],
+    "oral": [
+      "Desde Geomecánica Subterránea, ¿qué puede atrasar la factibilidad?",
+      "Desde Geomecánica Subterránea, ¿qué decisión pedirías esta semana?",
+      "Desde Geomecánica Subterránea, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "get",
+    "code": "GET",
+    "name": "Geotecnia Superficial / Estabilidad de Taludes",
+    "lead": "Especialista Geotecnia Superficial",
+    "phase": "Criterios de estabilidad",
+    "progress": 26,
+    "status": "Crítico",
+    "health": 56,
+    "weight": 7,
+    "next": "Definir criterios de estabilidad para cortes, rellenos, portales, accesos, plataformas y depósitos.",
+    "gate": "Criterios de estabilidad superficial",
+    "due": "2026-09-12",
+    "objective": "Controlar estabilidad de taludes superficiales asociados a carreteras, plataformas, desmonteras, depósitos y zonas de portal.",
+    "blockedBy": [
+      "Topografía detallada",
+      "Investigaciones geotécnicas",
+      "Geometría de cortes y rellenos",
+      "Nivel freático y drenaje",
+      "Parámetros de suelo/roca"
+    ],
+    "deliverables": [
+      "Criterios geotécnicos superficiales",
+      "Parámetros de diseño",
+      "Análisis de estabilidad de taludes",
+      "Recomendaciones de cortes y rellenos",
+      "Drenaje geotécnico",
+      "Protección contra erosión",
+      "Metrados de obras de estabilización"
+    ],
+    "interfaces": [
+      "Movimiento de Tierras — Carreteras",
+      "Movimiento de Tierras — Plataformados",
+      "Desmonteras",
+      "Hidrología",
+      "Permisos",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "Taludes inestables en accesos o plataformas",
+        "level": "Alto",
+        "impact": "Rediseño, sobrecostos, restricciones de acceso y retraso de obras tempranas.",
+        "action": "Definir ángulos por material, bermas, drenaje, protección y factores de seguridad.",
+        "owner": "Geotecnia + Civil"
+      },
+      {
+        "risk": "Parámetros geotécnicos no representativos",
+        "level": "Alto",
+        "impact": "Diseño inseguro o excesivamente conservador con impacto en CAPEX.",
+        "action": "Validar con calicatas, ensayos, mapeo geotécnico y revisión experta.",
+        "owner": "Geotecnia"
+      },
+      {
+        "risk": "Erosión por escorrentía en cortes y rellenos",
+        "level": "Medio",
+        "impact": "Deterioro de plataformas, mantenimiento alto y posibles impactos ambientales.",
+        "action": "Integrar drenaje superficial, cunetas, disipadores y control de erosión.",
+        "owner": "Geotecnia + Hidrología"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué controla la geotecnia de taludes?",
+        "a": "Estabilidad de cortes, rellenos, plataformas, accesos, depósitos y zonas cercanas al portal."
+      },
+      {
+        "q": "¿Qué datos necesita?",
+        "a": "Topografía, tipo de material, parámetros geotécnicos, agua, geometría de cortes y criterios sísmicos si aplican."
+      },
+      {
+        "q": "¿Qué se debe reportar semanalmente?",
+        "a": "Taludes críticos, parámetros pendientes, análisis en curso, medidas de estabilización y riesgos de retraso."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué controla la geotecnia de taludes?",
+        "options": [
+          "Estabilidad de cortes, rellenos, plataformas, accesos, depósitos y zonas cercanas al portal.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Estabilidad de cortes, rellenos, plataformas, accesos, depósitos y zonas cercanas al portal."
+      },
+      {
+        "q": "¿Qué datos necesita?",
+        "options": [
+          "Topografía, tipo de material, parámetros geotécnicos, agua, geometría de cortes y criterios sísmicos si aplican.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Topografía, tipo de material, parámetros geotécnicos, agua, geometría de cortes y criterios sísmicos si aplican."
+      },
+      {
+        "q": "¿Qué se debe reportar semanalmente?",
+        "options": [
+          "Taludes críticos, parámetros pendientes, análisis en curso, medidas de estabilización y riesgos de retraso.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Taludes críticos, parámetros pendientes, análisis en curso, medidas de estabilización y riesgos de retraso."
+      },
+      {
+        "q": "¿Qué controla la geotecnia de taludes?",
+        "options": [
+          "Estabilidad de cortes, rellenos, plataformas, accesos, depósitos y zonas cercanas al portal.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Estabilidad de cortes, rellenos, plataformas, accesos, depósitos y zonas cercanas al portal."
+      },
+      {
+        "q": "¿Qué datos necesita?",
+        "options": [
+          "Topografía, tipo de material, parámetros geotécnicos, agua, geometría de cortes y criterios sísmicos si aplican.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Topografía, tipo de material, parámetros geotécnicos, agua, geometría de cortes y criterios sísmicos si aplican."
+      },
+      {
+        "q": "¿Qué se debe reportar semanalmente?",
+        "options": [
+          "Taludes críticos, parámetros pendientes, análisis en curso, medidas de estabilización y riesgos de retraso.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Taludes críticos, parámetros pendientes, análisis en curso, medidas de estabilización y riesgos de retraso."
+      }
+    ],
+    "oral": [
+      "Desde Geotecnia Superficial / Estabilidad de Taludes, ¿qué puede atrasar la factibilidad?",
+      "Desde Geotecnia Superficial / Estabilidad de Taludes, ¿qué decisión pedirías esta semana?",
+      "Desde Geotecnia Superficial / Estabilidad de Taludes, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "mtc",
+    "code": "MTC",
+    "name": "Movimiento de Tierras — Carreteras y Accesos",
+    "lead": "Especialista Civil / Vial",
+    "phase": "Diseño vial y metrados",
+    "progress": 24,
+    "status": "Atención",
+    "health": 61,
+    "weight": 6,
+    "next": "Cerrar ejes de accesos, pendientes, radios, secciones, drenaje vial y metrados de corte/relleno.",
+    "gate": "Diseño de accesos Rev. A",
+    "due": "2026-09-19",
+    "objective": "Asegurar accesos seguros y constructibles para movilización, operación temprana y acarreo de materiales.",
+    "blockedBy": [
+      "Layout de plataformas",
+      "Topografía",
+      "Cruces de quebradas",
+      "Flota de construcción",
+      "Áreas autorizadas"
+    ],
+    "deliverables": [
+      "Ejes de carreteras",
+      "Perfiles longitudinales",
+      "Secciones típicas viales",
+      "Curvas y radios",
+      "Drenaje vial",
+      "Metrados corte/relleno",
+      "Planos de accesos",
+      "Restricciones de circulación"
+    ],
+    "interfaces": [
+      "Infraestructura Superficial",
+      "Geotecnia Superficial",
+      "Hidrología",
+      "Permisos",
+      "CAPEX/OPEX",
+      "Constructibilidad"
+    ],
+    "risks": [
+      {
+        "risk": "Pendientes o radios no aptos para equipos",
+        "level": "Alto",
+        "impact": "Restricción de movilización, menor seguridad y mayor tiempo de acarreo.",
+        "action": "Validar diseño con vehículo crítico, radios de giro, pendientes máximas y condiciones de operación.",
+        "owner": "Civil / Vial"
+      },
+      {
+        "risk": "Cruces hidráulicos no definidos",
+        "level": "Alto",
+        "impact": "Rediseño, permisos adicionales y retraso de obras tempranas.",
+        "action": "Levantar matriz de cruces con solución de drenaje, alcantarillas, badenes o puentes menores.",
+        "owner": "Civil + Hidrología"
+      },
+      {
+        "risk": "Metrados de vía incompletos",
+        "level": "Medio",
+        "impact": "CAPEX subestimado y contrataciones incompletas.",
+        "action": "Separar corte, relleno, afirmado, cunetas, alcantarillas, señalización y mantenimiento.",
+        "owner": "Civil + Costos"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué controla el diseño vial?",
+        "a": "Pendiente, radios, ancho, drenaje, seguridad y capacidad para movilizar equipos críticos."
+      },
+      {
+        "q": "¿Qué revisar con hidrología?",
+        "a": "Cruces de quebradas, alcantarillas, cunetas, badenes, erosión y descargas."
+      },
+      {
+        "q": "¿Qué reportar semanalmente?",
+        "a": "Ejes, perfiles, secciones, cruces críticos, metrados, restricciones y permisos."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué controla el diseño vial?",
+        "options": [
+          "Pendiente, radios, ancho, drenaje, seguridad y capacidad para movilizar equipos críticos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Pendiente, radios, ancho, drenaje, seguridad y capacidad para movilizar equipos críticos."
+      },
+      {
+        "q": "¿Qué revisar con hidrología?",
+        "options": [
+          "Cruces de quebradas, alcantarillas, cunetas, badenes, erosión y descargas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cruces de quebradas, alcantarillas, cunetas, badenes, erosión y descargas."
+      },
+      {
+        "q": "¿Qué reportar semanalmente?",
+        "options": [
+          "Ejes, perfiles, secciones, cruces críticos, metrados, restricciones y permisos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Ejes, perfiles, secciones, cruces críticos, metrados, restricciones y permisos."
+      },
+      {
+        "q": "¿Qué controla el diseño vial?",
+        "options": [
+          "Pendiente, radios, ancho, drenaje, seguridad y capacidad para movilizar equipos críticos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Pendiente, radios, ancho, drenaje, seguridad y capacidad para movilizar equipos críticos."
+      },
+      {
+        "q": "¿Qué revisar con hidrología?",
+        "options": [
+          "Cruces de quebradas, alcantarillas, cunetas, badenes, erosión y descargas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cruces de quebradas, alcantarillas, cunetas, badenes, erosión y descargas."
+      },
+      {
+        "q": "¿Qué reportar semanalmente?",
+        "options": [
+          "Ejes, perfiles, secciones, cruces críticos, metrados, restricciones y permisos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Ejes, perfiles, secciones, cruces críticos, metrados, restricciones y permisos."
+      }
+    ],
+    "oral": [
+      "Desde Movimiento de Tierras — Carreteras y Accesos, ¿qué puede atrasar la factibilidad?",
+      "Desde Movimiento de Tierras — Carreteras y Accesos, ¿qué decisión pedirías esta semana?",
+      "Desde Movimiento de Tierras — Carreteras y Accesos, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "mtp",
+    "code": "MTP",
+    "name": "Movimiento de Tierras — Plataformados",
+    "lead": "Especialista Civil / Plataformas",
+    "phase": "Nivelación y cortes/rellenos",
+    "progress": 23,
+    "status": "Atención",
+    "health": 60,
+    "weight": 6,
+    "next": "Definir cotas, áreas útiles, taludes, drenaje y balance de masas por plataforma.",
+    "gate": "Plataformas con metrados Rev. A",
+    "due": "2026-09-21",
+    "objective": "Habilitar superficies constructibles para portal, servicios, campamento, STA, almacenes, contratistas y demás facilidades.",
+    "blockedBy": [
+      "Layout definitivo",
+      "Cotas de equipos",
+      "Geotecnia superficial",
+      "Drenaje superficial",
+      "Restricciones ambientales"
+    ],
+    "deliverables": [
+      "Cotas de plataformas",
+      "Áreas útiles",
+      "Secciones de corte/relleno",
+      "Balance de masas",
+      "Drenaje de plataforma",
+      "Metrados",
+      "Planos de plataformado",
+      "Restricciones de construcción"
+    ],
+    "interfaces": [
+      "Infraestructura Superficial",
+      "Geotecnia Superficial",
+      "STA",
+      "Campamento",
+      "Permisos",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "Plataforma subdimensionada",
+        "level": "Alto",
+        "impact": "No caben equipos, servicios o maniobras; se requieren ampliaciones tardías.",
+        "action": "Validar áreas útiles con layout de equipos, circulación, mantenimiento y seguridad.",
+        "owner": "Civil + Infraestructura"
+      },
+      {
+        "risk": "Balance de masas no optimizado",
+        "level": "Medio",
+        "impact": "Mayor acarreo, necesidad de depósitos y aumento de CAPEX.",
+        "action": "Optimizar corte/relleno y secuencia de acarreo.",
+        "owner": "Civil + Costos"
+      },
+      {
+        "risk": "Drenaje de plataforma insuficiente",
+        "level": "Medio",
+        "impact": "Anegamiento, erosión y mantenimiento alto.",
+        "action": "Diseñar pendientes, cunetas, descargas controladas y protección.",
+        "owner": "Civil + Hidrología"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué es plataformado?",
+        "a": "Nivelación y conformación de áreas para portal, servicios, campamento, STA, almacenes o contratistas."
+      },
+      {
+        "q": "¿Qué dato es clave?",
+        "a": "Cota final, área útil, taludes, drenaje, acceso, equipos y restricciones ambientales."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Cotas, áreas, metrados, balance de masas, drenaje y riesgos."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué es plataformado?",
+        "options": [
+          "Nivelación y conformación de áreas para portal, servicios, campamento, STA, almacenes o contratistas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Nivelación y conformación de áreas para portal, servicios, campamento, STA, almacenes o contratistas."
+      },
+      {
+        "q": "¿Qué dato es clave?",
+        "options": [
+          "Cota final, área útil, taludes, drenaje, acceso, equipos y restricciones ambientales.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cota final, área útil, taludes, drenaje, acceso, equipos y restricciones ambientales."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Cotas, áreas, metrados, balance de masas, drenaje y riesgos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cotas, áreas, metrados, balance de masas, drenaje y riesgos."
+      },
+      {
+        "q": "¿Qué es plataformado?",
+        "options": [
+          "Nivelación y conformación de áreas para portal, servicios, campamento, STA, almacenes o contratistas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Nivelación y conformación de áreas para portal, servicios, campamento, STA, almacenes o contratistas."
+      },
+      {
+        "q": "¿Qué dato es clave?",
+        "options": [
+          "Cota final, área útil, taludes, drenaje, acceso, equipos y restricciones ambientales.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cota final, área útil, taludes, drenaje, acceso, equipos y restricciones ambientales."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Cotas, áreas, metrados, balance de masas, drenaje y riesgos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cotas, áreas, metrados, balance de masas, drenaje y riesgos."
+      }
+    ],
+    "oral": [
+      "Desde Movimiento de Tierras — Plataformados, ¿qué puede atrasar la factibilidad?",
+      "Desde Movimiento de Tierras — Plataformados, ¿qué decisión pedirías esta semana?",
+      "Desde Movimiento de Tierras — Plataformados, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "dme",
+    "code": "DME",
+    "name": "Desmonteras / Depósitos de Material",
+    "lead": "Especialista Depósitos",
+    "phase": "Capacidad y ubicación",
+    "progress": 21,
+    "status": "Crítico",
+    "health": 54,
+    "weight": 6,
+    "next": "Confirmar ubicación, capacidad, estabilidad, drenaje y permisos de DME, DMO, DMI y desmonteras.",
+    "gate": "Depósitos validados para CAPEX",
+    "due": "2026-09-14",
+    "objective": "Asegurar destino autorizado, estable y operativo para materiales de excavación, orgánicos, inadecuados y excedentes.",
+    "blockedBy": [
+      "Volumen de excavación",
+      "Caracterización de material",
+      "Topografía",
+      "Hidrología",
+      "Permisos",
+      "Secuencia de acarreo"
+    ],
+    "deliverables": [
+      "Inventario de depósitos",
+      "Capacidad por depósito",
+      "Diseño conceptual de desmontera",
+      "Drenaje y control de sedimentos",
+      "Rutas de acarreo",
+      "Metrados",
+      "Plan de manejo de materiales",
+      "Balance volumen-capacidad"
+    ],
+    "interfaces": [
+      "Minería",
+      "Movimiento de Tierras",
+      "Hidrología",
+      "Geotecnia Superficial",
+      "Permisos",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "Capacidad insuficiente",
+        "level": "Alto",
+        "impact": "No hay destino autorizado para material excavado; se detiene o encarece la obra.",
+        "action": "Comparar volumen excavado suelto/esponjado vs capacidad disponible con contingencia.",
+        "owner": "Depósitos + Minería"
+      },
+      {
+        "risk": "Desmontera en zona hídrica sensible",
+        "level": "Alto",
+        "impact": "Observación ambiental, rediseño o riesgo de arrastre.",
+        "action": "Validar cauces, drenaje, estabilidad, sedimentos y huella permitida.",
+        "owner": "Depósitos + Ambiental"
+      },
+      {
+        "risk": "Rutas de acarreo largas",
+        "level": "Medio",
+        "impact": "Mayor OPEX/CAPEX y menor productividad.",
+        "action": "Optimizar ubicación y secuencia de uso de depósitos.",
+        "owner": "Depósitos + Costos"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué debe cerrar una desmontera?",
+        "a": "Ubicación, capacidad, estabilidad, drenaje, permisos, acceso, secuencia y plan de operación."
+      },
+      {
+        "q": "¿Qué volumen se compara?",
+        "a": "Volumen de excavación suelto o esponjado contra capacidad disponible de depósito."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Capacidad, permisos, rutas, drenaje, estabilidad y brecha volumétrica."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué debe cerrar una desmontera?",
+        "options": [
+          "Ubicación, capacidad, estabilidad, drenaje, permisos, acceso, secuencia y plan de operación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Ubicación, capacidad, estabilidad, drenaje, permisos, acceso, secuencia y plan de operación."
+      },
+      {
+        "q": "¿Qué volumen se compara?",
+        "options": [
+          "Volumen de excavación suelto o esponjado contra capacidad disponible de depósito.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Volumen de excavación suelto o esponjado contra capacidad disponible de depósito."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Capacidad, permisos, rutas, drenaje, estabilidad y brecha volumétrica.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Capacidad, permisos, rutas, drenaje, estabilidad y brecha volumétrica."
+      },
+      {
+        "q": "¿Qué debe cerrar una desmontera?",
+        "options": [
+          "Ubicación, capacidad, estabilidad, drenaje, permisos, acceso, secuencia y plan de operación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Ubicación, capacidad, estabilidad, drenaje, permisos, acceso, secuencia y plan de operación."
+      },
+      {
+        "q": "¿Qué volumen se compara?",
+        "options": [
+          "Volumen de excavación suelto o esponjado contra capacidad disponible de depósito.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Volumen de excavación suelto o esponjado contra capacidad disponible de depósito."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Capacidad, permisos, rutas, drenaje, estabilidad y brecha volumétrica.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Capacidad, permisos, rutas, drenaje, estabilidad y brecha volumétrica."
+      }
+    ],
+    "oral": [
+      "Desde Desmonteras / Depósitos de Material, ¿qué puede atrasar la factibilidad?",
+      "Desde Desmonteras / Depósitos de Material, ¿qué decisión pedirías esta semana?",
+      "Desde Desmonteras / Depósitos de Material, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "bom",
+    "code": "BOM",
+    "name": "Bombeo y Desaguado Subterráneo",
+    "lead": "Especialista Hidráulico",
+    "phase": "Balance de agua",
+    "progress": 28,
+    "status": "Crítico",
+    "health": 58,
+    "weight": 8,
+    "next": "Definir caudales base/máximos, pozas, bombas, tuberías, HDT y punto de descarga hacia tratamiento.",
+    "gate": "Balance de agua y esquema de bombeo por etapas",
+    "due": "2026-09-13",
+    "objective": "Evitar que el agua interrumpa el avance de rampa o afecte seguridad, productividad y permisos.",
+    "blockedBy": [
+      "Hidrogeología",
+      "STA/STAPO",
+      "Perfil longitudinal de rampa",
+      "Punto de descarga",
+      "Criterios de contingencia"
+    ],
+    "deliverables": [
+      "Criterios de bombeo",
+      "Balance de agua",
+      "Pozas y cámaras de bombeo",
+      "Selección de bombas",
+      "Cálculo HDT",
+      "Tuberías",
+      "Metrados",
+      "Plan de bombeo temporal"
+    ],
+    "interfaces": [
+      "Minería",
+      "Energía",
+      "Hidrología/Hidrogeología",
+      "STA/STAPO",
+      "Infraestructura"
+    ],
+    "risks": [
+      {
+        "risk": "Caudales subestimados",
+        "level": "Alto",
+        "impact": "Paralización por agua, deterioro de vía e incremento de OPEX.",
+        "action": "Escenarios base, máximo y contingencia con bomba standby.",
+        "owner": "Bombeo + Hidrogeología"
+      },
+      {
+        "risk": "Punto de descarga no definido",
+        "level": "Alto",
+        "impact": "Diseño incompleto y riesgo ambiental.",
+        "action": "Cerrar interfaz con STA/STAPO, tratamiento y permisos.",
+        "owner": "Bombeo + STA"
+      },
+      {
+        "risk": "Bombeo temporal no acompaña avance",
+        "level": "Medio",
+        "impact": "Frentes detenidos y baja productividad.",
+        "action": "Plan de bombeo por etapas, pozas temporales y energía disponible.",
+        "owner": "Bombeo + Minería"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué es HDT?",
+        "a": "Altura dinámica total: energía necesaria para bombear considerando elevación, pérdidas por fricción y presión requerida."
+      },
+      {
+        "q": "¿Qué debe estar claro para bombear?",
+        "a": "Caudal, punto de captación, bombas, tuberías, energía, descarga y tratamiento."
+      },
+      {
+        "q": "¿Por qué bombeo es crítico?",
+        "a": "Porque el agua puede detener el avance y afectar seguridad, productividad, permisos y costos."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué es HDT?",
+        "options": [
+          "Altura dinámica total: energía necesaria para bombear considerando elevación, pérdidas por fricción y presión requerida.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Altura dinámica total: energía necesaria para bombear considerando elevación, pérdidas por fricción y presión requerida."
+      },
+      {
+        "q": "¿Qué debe estar claro para bombear?",
+        "options": [
+          "Caudal, punto de captación, bombas, tuberías, energía, descarga y tratamiento.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Caudal, punto de captación, bombas, tuberías, energía, descarga y tratamiento."
+      },
+      {
+        "q": "¿Por qué bombeo es crítico?",
+        "options": [
+          "Porque el agua puede detener el avance y afectar seguridad, productividad, permisos y costos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque el agua puede detener el avance y afectar seguridad, productividad, permisos y costos."
+      },
+      {
+        "q": "¿Qué es HDT?",
+        "options": [
+          "Altura dinámica total: energía necesaria para bombear considerando elevación, pérdidas por fricción y presión requerida.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Altura dinámica total: energía necesaria para bombear considerando elevación, pérdidas por fricción y presión requerida."
+      },
+      {
+        "q": "¿Qué debe estar claro para bombear?",
+        "options": [
+          "Caudal, punto de captación, bombas, tuberías, energía, descarga y tratamiento.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Caudal, punto de captación, bombas, tuberías, energía, descarga y tratamiento."
+      },
+      {
+        "q": "¿Por qué bombeo es crítico?",
+        "options": [
+          "Porque el agua puede detener el avance y afectar seguridad, productividad, permisos y costos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque el agua puede detener el avance y afectar seguridad, productividad, permisos y costos."
+      }
+    ],
+    "oral": [
+      "Desde Bombeo y Desaguado Subterráneo, ¿qué puede atrasar la factibilidad?",
+      "Desde Bombeo y Desaguado Subterráneo, ¿qué decisión pedirías esta semana?",
+      "Desde Bombeo y Desaguado Subterráneo, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "sta",
+    "code": "STA",
+    "name": "STA / STAPO — Tratamiento de Agua",
+    "lead": "Especialista Tratamiento de Agua",
+    "phase": "Criterios de tratamiento",
+    "progress": 20,
+    "status": "Crítico",
+    "health": 49,
+    "weight": 8,
+    "next": "Confirmar calidad/caudal de agua, tecnología de tratamiento, ubicación y fecha operativa del STA/STAPO.",
+    "gate": "Definición del sistema de tratamiento",
+    "due": "2026-09-09",
+    "objective": "Asegurar que el agua generada o interceptada por la rampa tenga manejo, tratamiento y descarga/reúso autorizado.",
+    "blockedBy": [
+      "Caudal de bombeo",
+      "Caracterización de agua",
+      "Punto de descarga",
+      "Permisos de vertimiento/reúso",
+      "Ubicación de planta",
+      "Energía disponible"
+    ],
+    "deliverables": [
+      "Caracterización de agua",
+      "Balance de caudales",
+      "Criterios de tratamiento",
+      "Diagrama de proceso",
+      "Layout STA",
+      "Equipos principales",
+      "CAPEX/OPEX STA",
+      "Plan de operación y contingencia"
+    ],
+    "interfaces": [
+      "Bombeo",
+      "Hidrología",
+      "Permisos",
+      "Energía",
+      "Infraestructura",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "STA/STAPO no operativo antes de rampa",
+        "level": "Alto",
+        "impact": "Bloqueo de inicio o continuidad de excavación.",
+        "action": "Definir fecha requerida, ruta crítica, permisos y solución temporal permitida.",
+        "owner": "STA + Proyecto"
+      },
+      {
+        "risk": "Calidad de agua no caracterizada",
+        "level": "Alto",
+        "impact": "Tecnología de tratamiento subdimensionada o inadecuada.",
+        "action": "Ejecutar muestreo, ensayos y criterios de descarga/reúso.",
+        "owner": "STA + Ambiental"
+      },
+      {
+        "risk": "Ubicación del STA con interferencias",
+        "level": "Medio",
+        "impact": "Rediseño de plataforma, tuberías, accesos y permisos.",
+        "action": "Validar layout contra cauces, accesos, energía y descarga.",
+        "owner": "STA + Infraestructura"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué debe resolver el STA/STAPO?",
+        "a": "Tratamiento y manejo del agua captada o bombeada antes de descarga, reúso o disposición autorizada."
+      },
+      {
+        "q": "¿Por qué puede ser ruta crítica?",
+        "a": "Porque sin tratamiento o permiso de descarga, el bombeo de la rampa queda incompleto."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Caudal, calidad, tecnología, ubicación, energía, permisos, fecha operativa y contingencias."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué debe resolver el STA/STAPO?",
+        "options": [
+          "Tratamiento y manejo del agua captada o bombeada antes de descarga, reúso o disposición autorizada.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Tratamiento y manejo del agua captada o bombeada antes de descarga, reúso o disposición autorizada."
+      },
+      {
+        "q": "¿Por qué puede ser ruta crítica?",
+        "options": [
+          "Porque sin tratamiento o permiso de descarga, el bombeo de la rampa queda incompleto.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque sin tratamiento o permiso de descarga, el bombeo de la rampa queda incompleto."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Caudal, calidad, tecnología, ubicación, energía, permisos, fecha operativa y contingencias.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Caudal, calidad, tecnología, ubicación, energía, permisos, fecha operativa y contingencias."
+      },
+      {
+        "q": "¿Qué debe resolver el STA/STAPO?",
+        "options": [
+          "Tratamiento y manejo del agua captada o bombeada antes de descarga, reúso o disposición autorizada.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Tratamiento y manejo del agua captada o bombeada antes de descarga, reúso o disposición autorizada."
+      },
+      {
+        "q": "¿Por qué puede ser ruta crítica?",
+        "options": [
+          "Porque sin tratamiento o permiso de descarga, el bombeo de la rampa queda incompleto.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque sin tratamiento o permiso de descarga, el bombeo de la rampa queda incompleto."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Caudal, calidad, tecnología, ubicación, energía, permisos, fecha operativa y contingencias.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Caudal, calidad, tecnología, ubicación, energía, permisos, fecha operativa y contingencias."
+      }
+    ],
+    "oral": [
+      "Desde STA / STAPO — Tratamiento de Agua, ¿qué puede atrasar la factibilidad?",
+      "Desde STA / STAPO — Tratamiento de Agua, ¿qué decisión pedirías esta semana?",
+      "Desde STA / STAPO — Tratamiento de Agua, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "ven",
+    "code": "VEN",
+    "name": "Ventilación Subterránea",
+    "lead": "Especialista Ventilación",
+    "phase": "Criterios / Caudales",
+    "progress": 31,
+    "status": "Atención",
+    "health": 68,
+    "weight": 7,
+    "next": "Cerrar flota, potencia diésel, gases de voladura, longitud de ducto y escenarios de simultaneidad.",
+    "gate": "Caudal de diseño y esquema de ventilación",
+    "due": "2026-09-20",
+    "objective": "Garantizar aire suficiente y seguro para construcción de rampa, operación de equipos y reingreso post-voladura.",
+    "blockedBy": [
+      "Flota minera",
+      "Secuencia constructiva",
+      "Longitud final de rampa",
+      "Sección disponible para ducto",
+      "Requerimientos eléctricos"
+    ],
+    "deliverables": [
+      "Criterios de ventilación",
+      "Cálculo de caudales",
+      "Pérdidas de presión",
+      "Selección preliminar de ventiladores",
+      "Esquema de ventilación",
+      "Metrados",
+      "Requerimiento eléctrico"
+    ],
+    "interfaces": [
+      "Minería",
+      "Energía Eléctrica",
+      "Geomecánica",
+      "Servicios Auxiliares",
+      "Cronograma"
+    ],
+    "risks": [
+      {
+        "risk": "Caudal insuficiente",
+        "level": "Alto",
+        "impact": "Riesgo de seguridad, retrasos y menor productividad.",
+        "action": "Calcular por escenarios de máxima demanda y validar normativa/criterios del cliente.",
+        "owner": "Ventilación"
+      },
+      {
+        "risk": "Pérdidas de presión subestimadas",
+        "level": "Medio",
+        "impact": "Ventilador subdimensionado y caudal insuficiente en frente.",
+        "action": "Revisar longitud de mangas, accesorios, fugas y factor de seguridad.",
+        "owner": "Ventilación"
+      },
+      {
+        "risk": "Interferencias en sección",
+        "level": "Medio",
+        "impact": "Ducto incompatible con tránsito, tuberías o cables.",
+        "action": "Validar sección con ducto, tuberías, cables, cuneta, equipo y sostenimiento.",
+        "owner": "Ventilación + Minería"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿De qué depende el caudal de ventilación?",
+        "a": "Personal, equipos diésel, gases de voladura, temperatura, longitud, fugas y escenario de avance."
+      },
+      {
+        "q": "¿Qué impacta en cronograma?",
+        "a": "El tiempo de ventilación post-voladura y el reingreso seguro al frente."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Caudal de diseño, ventiladores, pérdidas, energía requerida, interferencias y supuestos."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿De qué depende el caudal de ventilación?",
+        "options": [
+          "Personal, equipos diésel, gases de voladura, temperatura, longitud, fugas y escenario de avance.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Personal, equipos diésel, gases de voladura, temperatura, longitud, fugas y escenario de avance."
+      },
+      {
+        "q": "¿Qué impacta en cronograma?",
+        "options": [
+          "El tiempo de ventilación post-voladura y el reingreso seguro al frente.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "El tiempo de ventilación post-voladura y el reingreso seguro al frente."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Caudal de diseño, ventiladores, pérdidas, energía requerida, interferencias y supuestos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Caudal de diseño, ventiladores, pérdidas, energía requerida, interferencias y supuestos."
+      },
+      {
+        "q": "¿De qué depende el caudal de ventilación?",
+        "options": [
+          "Personal, equipos diésel, gases de voladura, temperatura, longitud, fugas y escenario de avance.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Personal, equipos diésel, gases de voladura, temperatura, longitud, fugas y escenario de avance."
+      },
+      {
+        "q": "¿Qué impacta en cronograma?",
+        "options": [
+          "El tiempo de ventilación post-voladura y el reingreso seguro al frente.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "El tiempo de ventilación post-voladura y el reingreso seguro al frente."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Caudal de diseño, ventiladores, pérdidas, energía requerida, interferencias y supuestos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Caudal de diseño, ventiladores, pérdidas, energía requerida, interferencias y supuestos."
+      }
+    ],
+    "oral": [
+      "Desde Ventilación Subterránea, ¿qué puede atrasar la factibilidad?",
+      "Desde Ventilación Subterránea, ¿qué decisión pedirías esta semana?",
+      "Desde Ventilación Subterránea, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "ene",
+    "code": "ENE",
+    "name": "Energía Eléctrica",
+    "lead": "Especialista Eléctrico",
+    "phase": "Balance de cargas",
+    "progress": 30,
+    "status": "Atención",
+    "health": 66,
+    "weight": 6,
+    "next": "Recibir cargas de ventilación, bombeo, STA, iluminación, servicios y facilidades para balance integrado.",
+    "gate": "Balance de cargas Rev. A",
+    "due": "2026-09-23",
+    "objective": "Asegurar energía temporal y/o definitiva para ventiladores, bombas, STA, iluminación, comunicaciones y servicios.",
+    "blockedBy": [
+      "Listado de equipos",
+      "Potencia de ventiladores",
+      "Bombas definidas",
+      "Cargas del STA",
+      "Layout de distribución"
+    ],
+    "deliverables": [
+      "Balance de cargas",
+      "Unifilar preliminar",
+      "Criterios eléctricos",
+      "Generación temporal",
+      "Distribución eléctrica",
+      "Cables y tableros",
+      "Iluminación",
+      "Metrados"
+    ],
+    "interfaces": [
+      "Ventilación",
+      "Bombeo",
+      "STA",
+      "Infraestructura",
+      "Servicios Auxiliares",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "Carga subestimada",
+        "level": "Alto",
+        "impact": "Equipos eléctricos insuficientes, sobrecarga o rediseño.",
+        "action": "Actualizar cargas por escenario y aplicar reserva.",
+        "owner": "Energía"
+      },
+      {
+        "risk": "Energía no disponible al inicio",
+        "level": "Alto",
+        "impact": "Retraso de obras, ventilación, bombeo y comisionamiento.",
+        "action": "Definir solución temporal y definitiva con fechas requeridas.",
+        "owner": "Energía + Proyecto"
+      },
+      {
+        "risk": "Rutas de cable no coordinadas",
+        "level": "Medio",
+        "impact": "Interferencias subterráneas o superficiales.",
+        "action": "Revisar secciones típicas, layout y rutas de servicios.",
+        "owner": "Energía + Servicios"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué alimenta energía?",
+        "a": "Ventiladores, bombas, STA, iluminación, comunicaciones, talleres, servicios y equipos auxiliares."
+      },
+      {
+        "q": "¿Qué es el balance de cargas?",
+        "a": "Listado y suma de consumos para dimensionar generación, transformación y distribución."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Cargas cerradas, pendientes, energía temporal, equipos, rutas e interfaces."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué alimenta energía?",
+        "options": [
+          "Ventiladores, bombas, STA, iluminación, comunicaciones, talleres, servicios y equipos auxiliares.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Ventiladores, bombas, STA, iluminación, comunicaciones, talleres, servicios y equipos auxiliares."
+      },
+      {
+        "q": "¿Qué es el balance de cargas?",
+        "options": [
+          "Listado y suma de consumos para dimensionar generación, transformación y distribución.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Listado y suma de consumos para dimensionar generación, transformación y distribución."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Cargas cerradas, pendientes, energía temporal, equipos, rutas e interfaces.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cargas cerradas, pendientes, energía temporal, equipos, rutas e interfaces."
+      },
+      {
+        "q": "¿Qué alimenta energía?",
+        "options": [
+          "Ventiladores, bombas, STA, iluminación, comunicaciones, talleres, servicios y equipos auxiliares.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Ventiladores, bombas, STA, iluminación, comunicaciones, talleres, servicios y equipos auxiliares."
+      },
+      {
+        "q": "¿Qué es el balance de cargas?",
+        "options": [
+          "Listado y suma de consumos para dimensionar generación, transformación y distribución.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Listado y suma de consumos para dimensionar generación, transformación y distribución."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Cargas cerradas, pendientes, energía temporal, equipos, rutas e interfaces.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cargas cerradas, pendientes, energía temporal, equipos, rutas e interfaces."
+      }
+    ],
+    "oral": [
+      "Desde Energía Eléctrica, ¿qué puede atrasar la factibilidad?",
+      "Desde Energía Eléctrica, ¿qué decisión pedirías esta semana?",
+      "Desde Energía Eléctrica, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "inf",
+    "code": "INF",
+    "name": "Infraestructura Superficial",
+    "lead": "Líder Infraestructura",
+    "phase": "Layout / Plataformas",
+    "progress": 33,
+    "status": "Atención",
+    "health": 65,
+    "weight": 8,
+    "next": "Validar plataforma del portal, campamento, accesos, depósitos, STA, polvorín y servicios contra cauces y huella ambiental.",
+    "gate": "Layout superficial congelado",
+    "due": "2026-09-16",
+    "objective": "Habilitar físicamente la construcción mediante plataformas, accesos, servicios, campamento, depósitos y obras tempranas.",
+    "blockedBy": [
+      "Topografía",
+      "Hidrología",
+      "Huella ambiental",
+      "Criterios de campamento",
+      "Criterios de depósitos",
+      "Cotas de plataformas"
+    ],
+    "deliverables": [
+      "Layout general",
+      "Plataformas",
+      "Accesos",
+      "DME/DMO/DMI",
+      "Campamento",
+      "Polvorín",
+      "Canteras",
+      "Drenaje superficial",
+      "Metrados"
+    ],
+    "interfaces": [
+      "Minería",
+      "Hidrología",
+      "Permisos",
+      "Geotecnia Superficial",
+      "Movimiento de Tierras",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "Campamento en zona de escorrentía",
+        "level": "Alto",
+        "impact": "Daño, paralización, rediseño u observación ambiental.",
+        "action": "Validación hidrológica, topográfica e imágenes históricas.",
+        "owner": "Infraestructura + Hidrología"
+      },
+      {
+        "risk": "Accesos con cruces no resueltos",
+        "level": "Alto",
+        "impact": "Obras hidráulicas tardías y retraso de movilización.",
+        "action": "Matriz de cruces y definición de alcantarillas, cunetas o badenes.",
+        "owner": "Infraestructura + Hidrología"
+      },
+      {
+        "risk": "Layout cambia tarde",
+        "level": "Alto",
+        "impact": "Reproceso en permisos, movimiento de tierras, CAPEX y cronograma.",
+        "action": "Gate de congelamiento y control formal de cambios.",
+        "owner": "Proyecto"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué debe validar infraestructura superficial?",
+        "a": "Plataformas, accesos, campamento, depósitos, drenaje, servicios, permisos y compatibilidad ambiental."
+      },
+      {
+        "q": "¿Por qué el campamento es sensible?",
+        "a": "Porque una pampa o fondo de valle seco puede ser cauce estacional, zona de avenida o drenaje natural."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Layout, interferencias, cauces, accesos, depósitos, decisiones y restricciones."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué debe validar infraestructura superficial?",
+        "options": [
+          "Plataformas, accesos, campamento, depósitos, drenaje, servicios, permisos y compatibilidad ambiental.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Plataformas, accesos, campamento, depósitos, drenaje, servicios, permisos y compatibilidad ambiental."
+      },
+      {
+        "q": "¿Por qué el campamento es sensible?",
+        "options": [
+          "Porque una pampa o fondo de valle seco puede ser cauce estacional, zona de avenida o drenaje natural.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque una pampa o fondo de valle seco puede ser cauce estacional, zona de avenida o drenaje natural."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Layout, interferencias, cauces, accesos, depósitos, decisiones y restricciones.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Layout, interferencias, cauces, accesos, depósitos, decisiones y restricciones."
+      },
+      {
+        "q": "¿Qué debe validar infraestructura superficial?",
+        "options": [
+          "Plataformas, accesos, campamento, depósitos, drenaje, servicios, permisos y compatibilidad ambiental.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Plataformas, accesos, campamento, depósitos, drenaje, servicios, permisos y compatibilidad ambiental."
+      },
+      {
+        "q": "¿Por qué el campamento es sensible?",
+        "options": [
+          "Porque una pampa o fondo de valle seco puede ser cauce estacional, zona de avenida o drenaje natural.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque una pampa o fondo de valle seco puede ser cauce estacional, zona de avenida o drenaje natural."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Layout, interferencias, cauces, accesos, depósitos, decisiones y restricciones.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Layout, interferencias, cauces, accesos, depósitos, decisiones y restricciones."
+      }
+    ],
+    "oral": [
+      "Desde Infraestructura Superficial, ¿qué puede atrasar la factibilidad?",
+      "Desde Infraestructura Superficial, ¿qué decisión pedirías esta semana?",
+      "Desde Infraestructura Superficial, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "agu",
+    "code": "AGU",
+    "name": "Hidrología e Hidrogeología",
+    "lead": "Especialista Agua",
+    "phase": "Interferencias hídricas",
+    "progress": 25,
+    "status": "Crítico",
+    "health": 52,
+    "weight": 8,
+    "next": "Mapear cauces, quebradas, bofedales, zonas de avenida y revisar cobertura de rampa bajo drenajes.",
+    "gate": "Matriz de interferencias con agua",
+    "due": "2026-09-10",
+    "objective": "Identificar restricciones de agua superficial/subterránea y evitar impactos a rampa, accesos, campamento, plataformas y depósitos.",
+    "blockedBy": [
+      "Topografía con hidrografía",
+      "Imágenes históricas",
+      "Criterios de caudal de diseño",
+      "Información hidrogeológica",
+      "Layout actualizado"
+    ],
+    "deliverables": [
+      "Mapa de cauces",
+      "Mapa de bofedales",
+      "Matriz de interferencias",
+      "Caudales de diseño",
+      "Revisión de cobertura bajo cauces",
+      "Criterios de manejo de agua",
+      "Inputs para permisos"
+    ],
+    "interfaces": [
+      "Infraestructura",
+      "Bombeo",
+      "STA/STAPO",
+      "Permisos",
+      "Minería",
+      "Campamento"
+    ],
+    "risks": [
+      {
+        "risk": "Campamento en cauce antiguo",
+        "level": "Alto",
+        "impact": "Daños por avenida, riesgo al personal y observación ambiental.",
+        "action": "Reubicar fuera de fondo de valle si la validación lo confirma.",
+        "owner": "Hidrología + Infraestructura"
+      },
+      {
+        "risk": "Rampa bajo cauce con baja cobertura",
+        "level": "Alto",
+        "impact": "Filtración, incremento de bombeo y posible rediseño.",
+        "action": "Revisar perfil, cobertura, estructuras, hidrogeología y drenaje.",
+        "owner": "Hidrogeología + Minería"
+      },
+      {
+        "risk": "Cruces hidráulicos no considerados",
+        "level": "Medio",
+        "impact": "Atraso en accesos, plataformas y permisos.",
+        "action": "Matriz de cruces y obras de drenaje.",
+        "owner": "Hidrología + Civil"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Cómo saber si pasó un río por una pampa?",
+        "a": "Revisando topografía, ortofotos históricas, material aluvial, canales secos, vegetación de humedad y validación de campo."
+      },
+      {
+        "q": "¿Qué revisar contra el layout?",
+        "a": "Cauces, quebradas, bofedales, zonas inundables, accesos, campamento, depósitos y plataformas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Cauces, interferencias, caudales, riesgos, STAPO/STA y acciones."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Cómo saber si pasó un río por una pampa?",
+        "options": [
+          "Revisando topografía, ortofotos históricas, material aluvial, canales secos, vegetación de humedad y validación de campo.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Revisando topografía, ortofotos históricas, material aluvial, canales secos, vegetación de humedad y validación de campo."
+      },
+      {
+        "q": "¿Qué revisar contra el layout?",
+        "options": [
+          "Cauces, quebradas, bofedales, zonas inundables, accesos, campamento, depósitos y plataformas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cauces, quebradas, bofedales, zonas inundables, accesos, campamento, depósitos y plataformas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Cauces, interferencias, caudales, riesgos, STAPO/STA y acciones.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cauces, interferencias, caudales, riesgos, STAPO/STA y acciones."
+      },
+      {
+        "q": "¿Cómo saber si pasó un río por una pampa?",
+        "options": [
+          "Revisando topografía, ortofotos históricas, material aluvial, canales secos, vegetación de humedad y validación de campo.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Revisando topografía, ortofotos históricas, material aluvial, canales secos, vegetación de humedad y validación de campo."
+      },
+      {
+        "q": "¿Qué revisar contra el layout?",
+        "options": [
+          "Cauces, quebradas, bofedales, zonas inundables, accesos, campamento, depósitos y plataformas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cauces, quebradas, bofedales, zonas inundables, accesos, campamento, depósitos y plataformas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Cauces, interferencias, caudales, riesgos, STAPO/STA y acciones.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cauces, interferencias, caudales, riesgos, STAPO/STA y acciones."
+      }
+    ],
+    "oral": [
+      "Desde Hidrología e Hidrogeología, ¿qué puede atrasar la factibilidad?",
+      "Desde Hidrología e Hidrogeología, ¿qué decisión pedirías esta semana?",
+      "Desde Hidrología e Hidrogeología, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "pas",
+    "code": "PAS",
+    "name": "Pasivos e Interferencias Existentes",
+    "lead": "Especialista Ambiental / Interferencias",
+    "phase": "Inventario y compatibilidad",
+    "progress": 18,
+    "status": "Crítico",
+    "health": 50,
+    "weight": 4,
+    "next": "Levantar inventario de pasivos, instalaciones existentes, restricciones y posibles interferencias con el nuevo layout.",
+    "gate": "Registro de pasivos e interferencias",
+    "due": "2026-09-15",
+    "objective": "Evitar que condiciones heredadas, pasivos, instalaciones existentes o restricciones no identificadas generen atrasos y costos no previstos.",
+    "blockedBy": [
+      "Información histórica",
+      "Inspección de campo",
+      "Planos as-built",
+      "Restricciones ambientales",
+      "Responsabilidad de manejo"
+    ],
+    "deliverables": [
+      "Inventario de pasivos",
+      "Mapa de interferencias",
+      "Fichas de condición",
+      "Recomendaciones de manejo",
+      "Matriz de responsabilidades",
+      "Riesgos ambientales",
+      "Inputs para CAPEX"
+    ],
+    "interfaces": [
+      "Permisos",
+      "Infraestructura",
+      "Hidrología",
+      "Movimiento de Tierras",
+      "PEP",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "Pasivo no identificado en zona de obra",
+        "level": "Alto",
+        "impact": "Paralización, rediseño, costo no previsto o gestión ambiental adicional.",
+        "action": "Inspección de campo, revisión histórica y levantamiento georreferenciado.",
+        "owner": "Ambiental + Infraestructura"
+      },
+      {
+        "risk": "Responsabilidad no definida",
+        "level": "Medio",
+        "impact": "Demora en decisiones y gestión ambiental.",
+        "action": "Asignar dueño, alcance y plan de manejo.",
+        "owner": "Proyecto + Ambiental"
+      },
+      {
+        "risk": "Interferencia con accesos/plataformas",
+        "level": "Medio",
+        "impact": "Cambio de layout y atraso de movimiento de tierras.",
+        "action": "Integrar inventario en modelo/layout maestro.",
+        "owner": "Infraestructura"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué es un pasivo en este contexto?",
+        "a": "Una condición heredada o instalación existente que puede generar restricción, costo, responsabilidad o riesgo ambiental."
+      },
+      {
+        "q": "¿Por qué importa en factibilidad?",
+        "a": "Porque puede obligar a reubicar obras, cambiar permisos o incorporar costos de manejo."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Ubicación, condición, responsable, interferencia, riesgo y acción."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué es un pasivo en este contexto?",
+        "options": [
+          "Una condición heredada o instalación existente que puede generar restricción, costo, responsabilidad o riesgo ambiental.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Una condición heredada o instalación existente que puede generar restricción, costo, responsabilidad o riesgo ambiental."
+      },
+      {
+        "q": "¿Por qué importa en factibilidad?",
+        "options": [
+          "Porque puede obligar a reubicar obras, cambiar permisos o incorporar costos de manejo.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque puede obligar a reubicar obras, cambiar permisos o incorporar costos de manejo."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Ubicación, condición, responsable, interferencia, riesgo y acción.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Ubicación, condición, responsable, interferencia, riesgo y acción."
+      },
+      {
+        "q": "¿Qué es un pasivo en este contexto?",
+        "options": [
+          "Una condición heredada o instalación existente que puede generar restricción, costo, responsabilidad o riesgo ambiental.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Una condición heredada o instalación existente que puede generar restricción, costo, responsabilidad o riesgo ambiental."
+      },
+      {
+        "q": "¿Por qué importa en factibilidad?",
+        "options": [
+          "Porque puede obligar a reubicar obras, cambiar permisos o incorporar costos de manejo.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque puede obligar a reubicar obras, cambiar permisos o incorporar costos de manejo."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Ubicación, condición, responsable, interferencia, riesgo y acción.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Ubicación, condición, responsable, interferencia, riesgo y acción."
+      }
+    ],
+    "oral": [
+      "Desde Pasivos e Interferencias Existentes, ¿qué puede atrasar la factibilidad?",
+      "Desde Pasivos e Interferencias Existentes, ¿qué decisión pedirías esta semana?",
+      "Desde Pasivos e Interferencias Existentes, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "per",
+    "code": "PER",
+    "name": "Permisos, Ambiental y Social",
+    "lead": "Especialista Permisos",
+    "phase": "Matriz de permisos",
+    "progress": 27,
+    "status": "Crítico",
+    "health": 55,
+    "weight": 9,
+    "next": "Alinear huella de componentes con instrumento ambiental, autorizaciones, restricciones sociales y compromisos.",
+    "gate": "Permisos por componente",
+    "due": "2026-09-17",
+    "objective": "Asegurar que la ingeniería sea autorizable y compatible con el instrumento ambiental, compromisos y restricciones del entorno.",
+    "blockedBy": [
+      "Layout congelado",
+      "Huella aprobada",
+      "Cuerpos de agua",
+      "Accesos",
+      "Componentes superficiales",
+      "Cronograma de autorizaciones"
+    ],
+    "deliverables": [
+      "Matriz de permisos",
+      "Restricciones ambientales",
+      "Compromisos sociales",
+      "Mapa de áreas sensibles",
+      "Cronograma de autorizaciones",
+      "Permisos por componente",
+      "Riesgos regulatorios"
+    ],
+    "interfaces": [
+      "Infraestructura",
+      "Minería",
+      "Hidrología",
+      "STA/STAPO",
+      "Cronograma",
+      "Legal"
+    ],
+    "risks": [
+      {
+        "risk": "Componente fuera de huella aprobada",
+        "level": "Alto",
+        "impact": "Rediseño, permiso adicional o imposibilidad de construcción.",
+        "action": "Superponer layout con huella, restricciones y compromisos.",
+        "owner": "Permisos + Infraestructura"
+      },
+      {
+        "risk": "Permiso desfasado del cronograma",
+        "level": "Alto",
+        "impact": "Ingeniería lista sin autorización para ejecutar.",
+        "action": "Cronograma integrado de permisos, ingeniería y obras tempranas.",
+        "owner": "Permisos + Control"
+      },
+      {
+        "risk": "Restricción social no incorporada",
+        "level": "Medio",
+        "impact": "Conflicto, demora o cambio de alcance.",
+        "action": "Matriz de stakeholders, compromisos y restricciones.",
+        "owner": "Social + Proyecto"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué controla permisos?",
+        "a": "Que el diseño sea autorizable y compatible con compromisos ambientales y sociales."
+      },
+      {
+        "q": "¿Qué componente revisar?",
+        "a": "Portal, accesos, campamento, DME/DMO/DMI, STA, polvorín, plataformas, ventilador y servicios."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Estado de permisos, bloqueos, restricciones, fechas, responsables e impacto en ruta crítica."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué controla permisos?",
+        "options": [
+          "Que el diseño sea autorizable y compatible con compromisos ambientales y sociales.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Que el diseño sea autorizable y compatible con compromisos ambientales y sociales."
+      },
+      {
+        "q": "¿Qué componente revisar?",
+        "options": [
+          "Portal, accesos, campamento, DME/DMO/DMI, STA, polvorín, plataformas, ventilador y servicios.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Portal, accesos, campamento, DME/DMO/DMI, STA, polvorín, plataformas, ventilador y servicios."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Estado de permisos, bloqueos, restricciones, fechas, responsables e impacto en ruta crítica.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Estado de permisos, bloqueos, restricciones, fechas, responsables e impacto en ruta crítica."
+      },
+      {
+        "q": "¿Qué controla permisos?",
+        "options": [
+          "Que el diseño sea autorizable y compatible con compromisos ambientales y sociales.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Que el diseño sea autorizable y compatible con compromisos ambientales y sociales."
+      },
+      {
+        "q": "¿Qué componente revisar?",
+        "options": [
+          "Portal, accesos, campamento, DME/DMO/DMI, STA, polvorín, plataformas, ventilador y servicios.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Portal, accesos, campamento, DME/DMO/DMI, STA, polvorín, plataformas, ventilador y servicios."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Estado de permisos, bloqueos, restricciones, fechas, responsables e impacto en ruta crítica.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Estado de permisos, bloqueos, restricciones, fechas, responsables e impacto en ruta crítica."
+      }
+    ],
+    "oral": [
+      "Desde Permisos, Ambiental y Social, ¿qué puede atrasar la factibilidad?",
+      "Desde Permisos, Ambiental y Social, ¿qué decisión pedirías esta semana?",
+      "Desde Permisos, Ambiental y Social, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "cst",
+    "code": "CST",
+    "name": "CAPEX / OPEX",
+    "lead": "Especialista Costos",
+    "phase": "Metrados / Base de Estimación",
+    "progress": 22,
+    "status": "Atención",
+    "health": 62,
+    "weight": 5,
+    "next": "Definir WBS, CBS, base de estimación y requerimientos de metrados por disciplina.",
+    "gate": "Base de estimación y drivers de costo",
+    "due": "2026-09-25",
+    "objective": "Convertir ingeniería de factibilidad en costos defendibles, trazables y alineados con madurez FS.",
+    "blockedBy": [
+      "Metrados por disciplina",
+      "Criterios de diseño",
+      "Flota y equipos",
+      "Riesgos cuantificables",
+      "Precios unitarios"
+    ],
+    "deliverables": [
+      "WBS/CBS",
+      "Metrados consolidados",
+      "Precios unitarios",
+      "CAPEX",
+      "OPEX",
+      "Base de estimación",
+      "Contingencia",
+      "Sensibilidades"
+    ],
+    "interfaces": [
+      "Todas las disciplinas",
+      "Cronograma",
+      "Riesgos",
+      "PEP",
+      "Compras"
+    ],
+    "risks": [
+      {
+        "risk": "CAPEX con ingeniería inmadura",
+        "level": "Alto",
+        "impact": "Costo poco defendible, contingencia alta y observaciones de revisión.",
+        "action": "Establecer hitos de congelamiento técnico antes del estimado.",
+        "owner": "Costos + Proyecto"
+      },
+      {
+        "risk": "Contingencia mal sustentada",
+        "level": "Medio",
+        "impact": "Pérdida de confianza en la estimación.",
+        "action": "Usar madurez, riesgos, benchmarks y brechas de información.",
+        "owner": "Costos"
+      },
+      {
+        "risk": "OPEX subestimado",
+        "level": "Medio",
+        "impact": "Costo real mayor en operación o construcción.",
+        "action": "Revisar agua, ventilación, energía, acarreo, mantenimiento y tratamiento.",
+        "owner": "Costos + Disciplinas"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué hace defendible el CAPEX?",
+        "a": "Metrados trazables, precios, supuestos, exclusiones, contingencia y base de estimación."
+      },
+      {
+        "q": "¿Qué son drivers de costo?",
+        "a": "Variables que mueven el costo: longitud, sección, sostenimiento, agua, energía, acarreo, depósitos y plataformas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Metrados recibidos, brechas, supuestos críticos, drivers, riesgos y cambios."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué hace defendible el CAPEX?",
+        "options": [
+          "Metrados trazables, precios, supuestos, exclusiones, contingencia y base de estimación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Metrados trazables, precios, supuestos, exclusiones, contingencia y base de estimación."
+      },
+      {
+        "q": "¿Qué son drivers de costo?",
+        "options": [
+          "Variables que mueven el costo: longitud, sección, sostenimiento, agua, energía, acarreo, depósitos y plataformas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Variables que mueven el costo: longitud, sección, sostenimiento, agua, energía, acarreo, depósitos y plataformas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Metrados recibidos, brechas, supuestos críticos, drivers, riesgos y cambios.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Metrados recibidos, brechas, supuestos críticos, drivers, riesgos y cambios."
+      },
+      {
+        "q": "¿Qué hace defendible el CAPEX?",
+        "options": [
+          "Metrados trazables, precios, supuestos, exclusiones, contingencia y base de estimación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Metrados trazables, precios, supuestos, exclusiones, contingencia y base de estimación."
+      },
+      {
+        "q": "¿Qué son drivers de costo?",
+        "options": [
+          "Variables que mueven el costo: longitud, sección, sostenimiento, agua, energía, acarreo, depósitos y plataformas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Variables que mueven el costo: longitud, sección, sostenimiento, agua, energía, acarreo, depósitos y plataformas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Metrados recibidos, brechas, supuestos críticos, drivers, riesgos y cambios.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Metrados recibidos, brechas, supuestos críticos, drivers, riesgos y cambios."
+      }
+    ],
+    "oral": [
+      "Desde CAPEX / OPEX, ¿qué puede atrasar la factibilidad?",
+      "Desde CAPEX / OPEX, ¿qué decisión pedirías esta semana?",
+      "Desde CAPEX / OPEX, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "ctl",
+    "code": "CTL",
+    "name": "Cronograma y Control de Proyectos",
+    "lead": "Control de Proyectos",
+    "phase": "Baseline / Forecast",
+    "progress": 38,
+    "status": "Atención",
+    "health": 72,
+    "weight": 5,
+    "next": "Conectar entregables, RFIs, decisiones, permisos y ruta crítica en el look ahead de tres semanas.",
+    "gate": "Cronograma integrado Rev. A",
+    "due": "2026-09-09",
+    "objective": "Medir avance real, anticipar desviaciones y asegurar cumplimiento de hitos de factibilidad.",
+    "blockedBy": [
+      "Lista maestra de entregables",
+      "Pesos por entregable",
+      "Fechas de revisión",
+      "Calendario de reuniones",
+      "Criterios de avance"
+    ],
+    "deliverables": [
+      "Cronograma integrado",
+      "Curva S",
+      "Look ahead 3 semanas",
+      "Reporte semanal",
+      "SPI/CPI",
+      "Log de entregables",
+      "Forecast",
+      "Plan de recuperación"
+    ],
+    "interfaces": [
+      "Todas las disciplinas",
+      "Cliente",
+      "Document Control",
+      "Permisos",
+      "Costos"
+    ],
+    "risks": [
+      {
+        "risk": "Curva S desconectada del avance real",
+        "level": "Alto",
+        "impact": "Falsa sensación de control y detección tardía de atrasos.",
+        "action": "Medir con entregables, horas ganadas, pesos y avance físico real.",
+        "owner": "Control de Proyectos"
+      },
+      {
+        "risk": "RFIs sin cierre oportuno",
+        "level": "Medio",
+        "impact": "Bloqueo de diseño, metrados y entregables.",
+        "action": "Semáforo RFI con responsable, fecha requerida e impacto.",
+        "owner": "Control + PM"
+      },
+      {
+        "risk": "Forecast semanal incumplido",
+        "level": "Medio",
+        "impact": "Pérdida de confianza y atraso acumulado.",
+        "action": "Look ahead con restricciones y plan de recuperación.",
+        "owner": "Control + Líderes"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué es SPI?",
+        "a": "Indicador de desempeño de cronograma; menor a 1 indica atraso respecto al plan."
+      },
+      {
+        "q": "¿Qué es look ahead?",
+        "a": "Vista de tres semanas con actividades, restricciones, decisiones, responsables y fechas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Plan vs real, curva S, RFIs, ruta crítica, forecast, riesgos y acciones de recuperación."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué es SPI?",
+        "options": [
+          "Indicador de desempeño de cronograma; menor a 1 indica atraso respecto al plan.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Indicador de desempeño de cronograma; menor a 1 indica atraso respecto al plan."
+      },
+      {
+        "q": "¿Qué es look ahead?",
+        "options": [
+          "Vista de tres semanas con actividades, restricciones, decisiones, responsables y fechas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Vista de tres semanas con actividades, restricciones, decisiones, responsables y fechas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Plan vs real, curva S, RFIs, ruta crítica, forecast, riesgos y acciones de recuperación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Plan vs real, curva S, RFIs, ruta crítica, forecast, riesgos y acciones de recuperación."
+      },
+      {
+        "q": "¿Qué es SPI?",
+        "options": [
+          "Indicador de desempeño de cronograma; menor a 1 indica atraso respecto al plan.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Indicador de desempeño de cronograma; menor a 1 indica atraso respecto al plan."
+      },
+      {
+        "q": "¿Qué es look ahead?",
+        "options": [
+          "Vista de tres semanas con actividades, restricciones, decisiones, responsables y fechas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Vista de tres semanas con actividades, restricciones, decisiones, responsables y fechas."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Plan vs real, curva S, RFIs, ruta crítica, forecast, riesgos y acciones de recuperación.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Plan vs real, curva S, RFIs, ruta crítica, forecast, riesgos y acciones de recuperación."
+      }
+    ],
+    "oral": [
+      "Desde Cronograma y Control de Proyectos, ¿qué puede atrasar la factibilidad?",
+      "Desde Cronograma y Control de Proyectos, ¿qué decisión pedirías esta semana?",
+      "Desde Cronograma y Control de Proyectos, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "pep",
+    "code": "PEP",
+    "name": "PEP, Gestión de Ingeniería y Documentos",
+    "lead": "Gerente de Proyecto",
+    "phase": "Gobernanza",
+    "progress": 36,
+    "status": "En curso",
+    "health": 78,
+    "weight": 4,
+    "next": "Implementar RACI, matriz de decisiones, QA/QC, control documental y matriz de comentarios.",
+    "gate": "Plan de ejecución Rev. A",
+    "due": "2026-09-30",
+    "objective": "Asegurar gobernanza, trazabilidad, calidad de entregables y coordinación de la factibilidad.",
+    "blockedBy": [
+      "Estrategia de ejecución",
+      "Contratación",
+      "Permisos",
+      "Cronograma",
+      "Roles y responsabilidades"
+    ],
+    "deliverables": [
+      "PEP",
+      "RACI",
+      "Plan de comunicaciones",
+      "Control documental",
+      "Matriz de cambios",
+      "Matriz de comentarios",
+      "QA/QC",
+      "Plan de revisión externa"
+    ],
+    "interfaces": [
+      "Todas las disciplinas",
+      "Cliente",
+      "Aconex",
+      "Revisión externa",
+      "Control de Proyectos"
+    ],
+    "risks": [
+      {
+        "risk": "Cambios sin trazabilidad",
+        "level": "Medio",
+        "impact": "Pérdida de control de alcance, costos y responsabilidades.",
+        "action": "Registro de decisiones, change log y evaluación de impacto.",
+        "owner": "PM"
+      },
+      {
+        "risk": "QA/QC tardío",
+        "level": "Medio",
+        "impact": "Comentarios costosos y reproceso.",
+        "action": "Revisión interna antes de emisión al cliente.",
+        "owner": "Líderes + QA/QC"
+      },
+      {
+        "risk": "Comentarios externos no cerrados",
+        "level": "Alto",
+        "impact": "Retraso en cierre Rev. 0.",
+        "action": "Matriz de comentarios con dueño, fecha y evidencia de cierre.",
+        "owner": "PM + Document Control"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué responde el PEP?",
+        "a": "Cómo se ejecutará, contratará, controlará y gestionará calidad, permisos, riesgos y comunicaciones."
+      },
+      {
+        "q": "¿Qué es RACI?",
+        "a": "Matriz de responsables, aprobadores, consultados e informados."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Entregables, decisiones, cambios, QA/QC, comentarios, RFIs y estado documental."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué responde el PEP?",
+        "options": [
+          "Cómo se ejecutará, contratará, controlará y gestionará calidad, permisos, riesgos y comunicaciones.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cómo se ejecutará, contratará, controlará y gestionará calidad, permisos, riesgos y comunicaciones."
+      },
+      {
+        "q": "¿Qué es RACI?",
+        "options": [
+          "Matriz de responsables, aprobadores, consultados e informados.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Matriz de responsables, aprobadores, consultados e informados."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Entregables, decisiones, cambios, QA/QC, comentarios, RFIs y estado documental.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Entregables, decisiones, cambios, QA/QC, comentarios, RFIs y estado documental."
+      },
+      {
+        "q": "¿Qué responde el PEP?",
+        "options": [
+          "Cómo se ejecutará, contratará, controlará y gestionará calidad, permisos, riesgos y comunicaciones.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Cómo se ejecutará, contratará, controlará y gestionará calidad, permisos, riesgos y comunicaciones."
+      },
+      {
+        "q": "¿Qué es RACI?",
+        "options": [
+          "Matriz de responsables, aprobadores, consultados e informados.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Matriz de responsables, aprobadores, consultados e informados."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Entregables, decisiones, cambios, QA/QC, comentarios, RFIs y estado documental.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Entregables, decisiones, cambios, QA/QC, comentarios, RFIs y estado documental."
+      }
+    ],
+    "oral": [
+      "Desde PEP, Gestión de Ingeniería y Documentos, ¿qué puede atrasar la factibilidad?",
+      "Desde PEP, Gestión de Ingeniería y Documentos, ¿qué decisión pedirías esta semana?",
+      "Desde PEP, Gestión de Ingeniería y Documentos, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "ser",
+    "code": "SER",
+    "name": "Servicios Auxiliares y Comunicaciones",
+    "lead": "Especialista Servicios",
+    "phase": "Criterios de servicios",
+    "progress": 29,
+    "status": "Atención",
+    "health": 64,
+    "weight": 3,
+    "next": "Definir agua industrial, aire comprimido, comunicaciones, iluminación y rutas dentro de rampa/plataformas.",
+    "gate": "Criterios de servicios auxiliares",
+    "due": "2026-09-24",
+    "objective": "Integrar servicios auxiliares que permiten construir, operar y controlar la rampa de exploración.",
+    "blockedBy": [
+      "Secciones típicas",
+      "Equipos de construcción",
+      "Layout de superficie",
+      "Requerimientos de operación",
+      "Energía"
+    ],
+    "deliverables": [
+      "Criterios de servicios auxiliares",
+      "Agua industrial",
+      "Aire comprimido",
+      "Comunicaciones",
+      "Iluminación",
+      "Rutas de servicios",
+      "Metrados",
+      "Puntos de conexión"
+    ],
+    "interfaces": [
+      "Minería",
+      "Energía",
+      "Infraestructura",
+      "Ventilación",
+      "Bombeo",
+      "CAPEX/OPEX"
+    ],
+    "risks": [
+      {
+        "risk": "Servicios no caben en la sección",
+        "level": "Alto",
+        "impact": "Interferencias y rediseño de sección.",
+        "action": "Coordinar sección con ductos, tuberías, cables, cuneta, equipo y sostenimiento.",
+        "owner": "Servicios + Minería"
+      },
+      {
+        "risk": "Comunicaciones insuficientes",
+        "level": "Medio",
+        "impact": "Menor respuesta ante emergencias y operación deficiente.",
+        "action": "Definir cobertura, equipos, redundancia y alimentación.",
+        "owner": "Servicios + HSE"
+      },
+      {
+        "risk": "Demanda de agua/aire subestimada",
+        "level": "Medio",
+        "impact": "Equipos auxiliares insuficientes y mayor OPEX.",
+        "action": "Validar consumos con método constructivo y flota.",
+        "owner": "Servicios"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué incluyen servicios auxiliares?",
+        "a": "Agua industrial, aire comprimido, comunicaciones, iluminación, redes, puntos de conexión y soporte operativo."
+      },
+      {
+        "q": "¿Por qué deben coordinarse con la sección?",
+        "a": "Porque ductos, tuberías, cables, cuneta, sostenimiento y equipo comparten el mismo espacio."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Consumos, rutas, interferencias, metrados, energía requerida y decisiones pendientes."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué incluyen servicios auxiliares?",
+        "options": [
+          "Agua industrial, aire comprimido, comunicaciones, iluminación, redes, puntos de conexión y soporte operativo.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Agua industrial, aire comprimido, comunicaciones, iluminación, redes, puntos de conexión y soporte operativo."
+      },
+      {
+        "q": "¿Por qué deben coordinarse con la sección?",
+        "options": [
+          "Porque ductos, tuberías, cables, cuneta, sostenimiento y equipo comparten el mismo espacio.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque ductos, tuberías, cables, cuneta, sostenimiento y equipo comparten el mismo espacio."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Consumos, rutas, interferencias, metrados, energía requerida y decisiones pendientes.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Consumos, rutas, interferencias, metrados, energía requerida y decisiones pendientes."
+      },
+      {
+        "q": "¿Qué incluyen servicios auxiliares?",
+        "options": [
+          "Agua industrial, aire comprimido, comunicaciones, iluminación, redes, puntos de conexión y soporte operativo.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Agua industrial, aire comprimido, comunicaciones, iluminación, redes, puntos de conexión y soporte operativo."
+      },
+      {
+        "q": "¿Por qué deben coordinarse con la sección?",
+        "options": [
+          "Porque ductos, tuberías, cables, cuneta, sostenimiento y equipo comparten el mismo espacio.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Porque ductos, tuberías, cables, cuneta, sostenimiento y equipo comparten el mismo espacio."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Consumos, rutas, interferencias, metrados, energía requerida y decisiones pendientes.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Consumos, rutas, interferencias, metrados, energía requerida y decisiones pendientes."
+      }
+    ],
+    "oral": [
+      "Desde Servicios Auxiliares y Comunicaciones, ¿qué puede atrasar la factibilidad?",
+      "Desde Servicios Auxiliares y Comunicaciones, ¿qué decisión pedirías esta semana?",
+      "Desde Servicios Auxiliares y Comunicaciones, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "con",
+    "code": "CON",
+    "name": "Constructibilidad, HSE y Operaciones",
+    "lead": "Especialista Constructibilidad / HSE",
+    "phase": "Revisión operacional",
+    "progress": 30,
+    "status": "Atención",
+    "health": 67,
+    "weight": 5,
+    "next": "Validar que diseño, secuencia, logística, seguridad y facilidades permitan construir sin bloqueos.",
+    "gate": "Revisión de constructibilidad Rev. A",
+    "due": "2026-09-27",
+    "objective": "Asegurar que el diseño pueda ejecutarse en campo con seguridad, recursos, secuencia y logística realista.",
+    "blockedBy": [
+      "Secuencia de construcción",
+      "Flota",
+      "Accesos",
+      "Campamento",
+      "Servicios temporales",
+      "Plan HSE"
+    ],
+    "deliverables": [
+      "Revisión de constructibilidad",
+      "Matriz de interferencias",
+      "Secuencia de construcción",
+      "Plan de facilidades tempranas",
+      "Revisión HSE",
+      "Restricciones operativas",
+      "Acciones de mitigación"
+    ],
+    "interfaces": [
+      "Minería",
+      "Infraestructura",
+      "Movimiento de Tierras",
+      "Permisos",
+      "PEP",
+      "Control de Proyectos"
+    ],
+    "risks": [
+      {
+        "risk": "Diseño no constructible",
+        "level": "Alto",
+        "impact": "Reproceso, atrasos y cambios de alcance.",
+        "action": "Taller de constructibilidad con disciplinas y contratista/revisor experto.",
+        "owner": "Constructibilidad + PM"
+      },
+      {
+        "risk": "Productividad sobreestimada",
+        "level": "Medio",
+        "impact": "Cronograma y costos no realistas.",
+        "action": "Validar ciclos, rendimientos, restricciones y logística.",
+        "owner": "Constructibilidad + Control"
+      },
+      {
+        "risk": "Condiciones HSE insuficientes",
+        "level": "Alto",
+        "impact": "Riesgo para personal, observaciones y retrasos.",
+        "action": "Incluir accesos, refugios, tránsito, emergencias, ventilación, comunicación y señalización.",
+        "owner": "HSE"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué significa constructibilidad?",
+        "a": "Que el diseño puede construirse en campo con seguridad, recursos, logística y secuencia realista."
+      },
+      {
+        "q": "¿Qué controla HSE en la rampa?",
+        "a": "Tránsito, refugios, ventilación, comunicación, evacuación, control de energía, agua y emergencias."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Interferencias, restricciones, riesgos de ejecución, acciones y decisiones requeridas."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué significa constructibilidad?",
+        "options": [
+          "Que el diseño puede construirse en campo con seguridad, recursos, logística y secuencia realista.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Que el diseño puede construirse en campo con seguridad, recursos, logística y secuencia realista."
+      },
+      {
+        "q": "¿Qué controla HSE en la rampa?",
+        "options": [
+          "Tránsito, refugios, ventilación, comunicación, evacuación, control de energía, agua y emergencias.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Tránsito, refugios, ventilación, comunicación, evacuación, control de energía, agua y emergencias."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Interferencias, restricciones, riesgos de ejecución, acciones y decisiones requeridas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Interferencias, restricciones, riesgos de ejecución, acciones y decisiones requeridas."
+      },
+      {
+        "q": "¿Qué significa constructibilidad?",
+        "options": [
+          "Que el diseño puede construirse en campo con seguridad, recursos, logística y secuencia realista.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Que el diseño puede construirse en campo con seguridad, recursos, logística y secuencia realista."
+      },
+      {
+        "q": "¿Qué controla HSE en la rampa?",
+        "options": [
+          "Tránsito, refugios, ventilación, comunicación, evacuación, control de energía, agua y emergencias.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Tránsito, refugios, ventilación, comunicación, evacuación, control de energía, agua y emergencias."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Interferencias, restricciones, riesgos de ejecución, acciones y decisiones requeridas.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Interferencias, restricciones, riesgos de ejecución, acciones y decisiones requeridas."
+      }
+    ],
+    "oral": [
+      "Desde Constructibilidad, HSE y Operaciones, ¿qué puede atrasar la factibilidad?",
+      "Desde Constructibilidad, HSE y Operaciones, ¿qué decisión pedirías esta semana?",
+      "Desde Constructibilidad, HSE y Operaciones, ¿qué alerta levantarías en reunión?"
+    ]
+  },
+  {
+    "id": "otr",
+    "code": "OTR",
+    "name": "Otros / Complementarios",
+    "lead": "Coordinación Multidisciplinaria",
+    "phase": "Identificación de brechas",
+    "progress": 15,
+    "status": "Atención",
+    "health": 63,
+    "weight": 2,
+    "next": "Listar componentes complementarios no asignados: polvorín, campamento, canteras, almacenes, comunicaciones, seguridad, contratistas y servicios temporales.",
+    "gate": "Matriz de alcance complementario",
+    "due": "2026-09-22",
+    "objective": "Evitar que componentes menores o transversales queden sin dueño, presupuesto, cronograma o permiso.",
+    "blockedBy": [
+      "Definición de alcance",
+      "Responsables por componente",
+      "Layout final",
+      "Requerimientos de operación",
+      "Estrategia de contratistas"
+    ],
+    "deliverables": [
+      "Matriz de otros componentes",
+      "Responsables por paquete",
+      "Brechas de alcance",
+      "Requerimientos de seguridad",
+      "Servicios temporales",
+      "Interfaz con contratistas",
+      "Inclusiones/exclusiones"
+    ],
+    "interfaces": [
+      "PEP",
+      "Infraestructura",
+      "Permisos",
+      "Energía",
+      "CAPEX/OPEX",
+      "HSE"
+    ],
+    "risks": [
+      {
+        "risk": "Componente sin dueño",
+        "level": "Alto",
+        "impact": "Queda fuera del cronograma o presupuesto.",
+        "action": "Asignar responsable y entregable mínimo por componente.",
+        "owner": "PM"
+      },
+      {
+        "risk": "Alcance complementario subestimado",
+        "level": "Medio",
+        "impact": "Sobrecostos y cambios tardíos.",
+        "action": "Matriz de alcance con inclusiones, exclusiones, dueño y fecha.",
+        "owner": "PM + Costos"
+      },
+      {
+        "risk": "Servicios temporales no considerados",
+        "level": "Medio",
+        "impact": "Retrasos en movilización y construcción.",
+        "action": "Plan de facilidades tempranas.",
+        "owner": "Constructibilidad"
+      }
+    ],
+    "learn": [
+      {
+        "q": "¿Qué entra en otros?",
+        "a": "Componentes complementarios que habilitan ejecución: campamento, polvorín, canteras, almacenes, contratistas, comunicaciones, HSE y servicios temporales."
+      },
+      {
+        "q": "¿Cuál es el riesgo?",
+        "a": "Que no tengan dueño, presupuesto, permiso ni fecha dentro del cronograma."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "a": "Brechas, responsables, fecha requerida, inclusión en CAPEX y permisos."
+      }
+    ],
+    "quiz": [
+      {
+        "q": "¿Qué entra en otros?",
+        "options": [
+          "Componentes complementarios que habilitan ejecución: campamento, polvorín, canteras, almacenes, contratistas, comunicaciones, HSE y servicios temporales.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Componentes complementarios que habilitan ejecución: campamento, polvorín, canteras, almacenes, contratistas, comunicaciones, HSE y servicios temporales."
+      },
+      {
+        "q": "¿Cuál es el riesgo?",
+        "options": [
+          "Que no tengan dueño, presupuesto, permiso ni fecha dentro del cronograma.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Que no tengan dueño, presupuesto, permiso ni fecha dentro del cronograma."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Brechas, responsables, fecha requerida, inclusión en CAPEX y permisos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Brechas, responsables, fecha requerida, inclusión en CAPEX y permisos."
+      },
+      {
+        "q": "¿Qué entra en otros?",
+        "options": [
+          "Componentes complementarios que habilitan ejecución: campamento, polvorín, canteras, almacenes, contratistas, comunicaciones, HSE y servicios temporales.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Componentes complementarios que habilitan ejecución: campamento, polvorín, canteras, almacenes, contratistas, comunicaciones, HSE y servicios temporales."
+      },
+      {
+        "q": "¿Cuál es el riesgo?",
+        "options": [
+          "Que no tengan dueño, presupuesto, permiso ni fecha dentro del cronograma.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Que no tengan dueño, presupuesto, permiso ni fecha dentro del cronograma."
+      },
+      {
+        "q": "¿Qué reportar?",
+        "options": [
+          "Brechas, responsables, fecha requerida, inclusión en CAPEX y permisos.",
+          "Solo se revisa al cierre del informe final.",
+          "No tiene impacto en cronograma ni CAPEX.",
+          "Es un dato administrativo sin relación con la ejecución."
+        ],
+        "answer": 0,
+        "explain": "Brechas, responsables, fecha requerida, inclusión en CAPEX y permisos."
+      }
+    ],
+    "oral": [
+      "Desde Otros / Complementarios, ¿qué puede atrasar la factibilidad?",
+      "Desde Otros / Complementarios, ¿qué decisión pedirías esta semana?",
+      "Desde Otros / Complementarios, ¿qué alerta levantarías en reunión?"
+    ]
+  }
+];
+
+    (function () {
+      let selected = "min";
+      let xp = 0;
+      let streak = 0;
+      let cardIndex = 0;
+      let flipped = false;
+      let quizIndex = 0;
+      let quizAnswered = false;
+      let quizHearts = 3;
+      let oralIndex = 0;
+
+      const $ = function (id) {
+        return document.getElementById(id);
+      };
+
+      function getDiscipline() {
+        return disciplines.find(function (d) {
+          return d.id === selected;
+        }) || disciplines[0];
+      }
+
+      function statusClass(status) {
+        if (status === "Crítico") {
+          return "bad";
+        }
+
+        if (status === "Atención") {
+          return "warn";
+        }
+
+        return "good";
+      }
+
+      function statusColor(value) {
+        if (value < 60) {
+          return "var(--red)";
+        }
+
+        if (value < 75) {
+          return "var(--orange)";
+        }
+
+        return "var(--green)";
+      }
+
+      function clampScore(value) {
+        const numeric = Number(value);
+
+        if (Number.isNaN(numeric)) {
+          return 0;
+        }
+
+        return Math.max(0, Math.min(100, numeric));
+      }
+
+      function addXP(points) {
+        xp += points;
+        streak += 1;
+
+        const level = Math.floor(xp / 100) + 1;
+        const progress = xp % 100;
+
+        $("xp").textContent = xp;
+        $("level").textContent = level;
+        $("streak").textContent = streak;
+        $("bar").style.width = progress + "%";
+        $("pct").textContent = progress + "%";
+      }
+
+      function activatePanel(id) {
+        document.querySelectorAll(".tab").forEach(function (tab) {
+          tab.classList.remove("active");
+        });
+
+        document.querySelectorAll(".panel").forEach(function (panel) {
+          panel.classList.remove("active");
+        });
+
+        const tab = document.querySelector('[data-panel="' + id + '"]');
+
+        if (tab) {
+          tab.classList.add("active");
+        }
+
+        const panel = $(id);
+
+        if (panel) {
+          panel.classList.add("active");
+        }
+      }
+
+      document.querySelectorAll(".tab").forEach(function (button) {
+        button.addEventListener("click", function () {
+          activatePanel(button.dataset.panel);
+        });
+      });
+
+      function projectHealth() {
+        const totalWeight = disciplines.reduce(function (sum, d) {
+          return sum + d.weight;
+        }, 0);
+
+        const weighted = disciplines.reduce(function (sum, d) {
+          return sum + d.health * d.weight;
+        }, 0);
+
+        return Math.round(weighted / totalWeight);
+      }
+
+      function renderCommand() {
+        const health = projectHealth();
+        const critical = disciplines.filter(function (d) {
+          return d.status === "Crítico";
+        }).length;
+
+        const blocks = disciplines.reduce(function (sum, d) {
+          return sum + d.blockedBy.length;
+        }, 0);
+
+        $("overallHealth").textContent = health + "%";
+        $("criticalCount").textContent = critical;
+        $("blockCount").textContent = blocks;
+        $("discCount").textContent = disciplines.length;
+        $("ringValue").textContent = health + "%";
+
+        const color = statusColor(health);
+        $("ring").style.background =
+          "conic-gradient(" + color + " 0deg, " + color + " " + (health * 3.6) + "deg, #e6eff8 " + (health * 3.6) + "deg)";
+
+        const tbody = $("healthTable").querySelector("tbody");
+        tbody.innerHTML = "";
+
+        disciplines.forEach(function (d) {
+          const row = document.createElement("tr");
+
+          row.innerHTML =
+            "<td><b>" + d.code + "</b> — " + d.name + "</td>" +
+            "<td>" + d.phase + "</td>" +
+            "<td>" + d.progress + "%</td>" +
+            "<td>" + d.health + "%</td>" +
+            "<td>" + d.weight + "%</td>" +
+            '<td><span class="status ' + statusClass(d.status) + '">' + d.status + "</span></td>" +
+            "<td>" + d.next + "</td>";
+
+          row.addEventListener("click", function () {
+            selected = d.id;
+            cardIndex = 0;
+            quizIndex = 0;
+            oralIndex = 0;
+            flipped = false;
+            updateAll();
+            activatePanel("claves");
+          });
+
+          tbody.appendChild(row);
+        });
+
+        const alerts = $("topAlerts");
+        alerts.innerHTML = "";
+
+        disciplines
+          .filter(function (d) {
+            return d.status === "Crítico" || d.health < 60;
+          })
+          .slice(0, 8)
+          .forEach(function (d) {
+            const div = document.createElement("div");
+            div.className = "alert critical";
+            div.innerHTML =
+              "<b>" + d.code + " — " + d.name + "</b>" +
+              "<p>" + d.next + "</p>";
+
+            alerts.appendChild(div);
+          });
+
+        if (!alerts.children.length) {
+          const div = document.createElement("div");
+          div.className = "alert good";
+          div.innerHTML =
+            "<b>Sin alertas críticas</b>" +
+            "<p>Continuar controlando RFIs, gates, permisos y decisiones pendientes.</p>";
+
+          alerts.appendChild(div);
+        }
+      }
+
+      function renderRoad() {
+        const grid = $("discGrid");
+        grid.innerHTML = "";
+
+        disciplines.forEach(function (d) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "disc " + (d.id === selected ? "active" : "");
+
+          button.innerHTML =
+            '<span class="code">' +
+              d.code +
+              '<span class="status ' + statusClass(d.status) + '">' + d.status + "</span>" +
+            "</span>" +
+            "<h3>" + d.name + "</h3>" +
+            "<p>" + d.next + "</p>" +
+            '<p style="margin-top: 8px;">' +
+              "<b>Avance:</b> " + d.progress + "% · " +
+              "<b>Salud:</b> " + d.health + "% · " +
+              "<b>Peso:</b> " + d.weight + "%" +
+            "</p>";
+
+          button.addEventListener("click", function () {
+            selected = d.id;
+            cardIndex = 0;
+            quizIndex = 0;
+            oralIndex = 0;
+            flipped = false;
+            updateAll();
+            addXP(3);
+          });
+
+          grid.appendChild(button);
+        });
+      }
+
+      function renderClaves() {
+        const d = getDiscipline();
+
+        $("selName").textContent = d.name;
+        $("discTitle").textContent = "Claves — " + d.name;
+        $("dLead").textContent = d.lead;
+        $("dPhase").textContent = d.phase;
+        $("dGate").textContent = d.gate;
+        $("dDue").textContent = d.due;
+        $("dObjective").textContent = d.objective;
+
+        const deliverables = $("deliverables");
+        deliverables.innerHTML = "";
+
+        d.deliverables.forEach(function (item) {
+          const li = document.createElement("li");
+          li.textContent = item;
+          deliverables.appendChild(li);
+        });
+
+        const interfaces = $("interfaces");
+        interfaces.innerHTML = "";
+
+        [
+          ["Interfaces", d.interfaces],
+          ["Bloqueos", d.blockedBy],
+          ["Gate", [d.gate + " — " + d.due]],
+          ["Siguiente acción", [d.next]]
+        ].forEach(function (group) {
+          const li = document.createElement("li");
+          li.innerHTML = "<b>" + group[0] + ":</b> " + group[1].join(" · ");
+          interfaces.appendChild(li);
+        });
+
+        const riskBody = $("riskTable").querySelector("tbody");
+        riskBody.innerHTML = "";
+
+        d.risks.forEach(function (r) {
+          const row = document.createElement("tr");
+
+          row.innerHTML =
+            "<td>" + r.risk + "</td>" +
+            "<td>" + r.level + "</td>" +
+            "<td>" + r.impact + "</td>" +
+            "<td>" + r.action + "</td>" +
+            "<td>" + r.owner + "</td>";
+
+          riskBody.appendChild(row);
+        });
+      }
+
+      function renderActions() {
+        const d = getDiscipline();
+
+        $("nextActionTitle").textContent = d.name;
+        $("nextActionText").textContent =
+          d.next + " Gate próximo: " + d.gate + " (" + d.due + ").";
+
+        $("actionFeedback").textContent =
+          "Pista: revisa primero los bloqueos: " + d.blockedBy.join(" · ");
+
+        const alertBox = $("discAlerts");
+        alertBox.innerHTML = "";
+
+        d.risks.forEach(function (r) {
+          const div = document.createElement("div");
+          div.className = "alert " + (r.level === "Alto" ? "critical" : "");
+          div.innerHTML =
+            "<b>" + r.risk + " — " + r.level + "</b>" +
+            "<p>" + r.impact + " Acción: " + r.action + "</p>";
+
+          alertBox.appendChild(div);
+        });
+
+        const editBody = $("editTable").querySelector("tbody");
+        editBody.innerHTML = "";
+
+        disciplines.forEach(function (item) {
+          const row = document.createElement("tr");
+
+          row.innerHTML =
+            "<td><b>" + item.code + "</b> — " + item.name + "</td>" +
+            "<td>" +
+              "<select>" +
+                '<option ' + (item.status === "En curso" ? "selected" : "") + ">En curso</option>" +
+                '<option ' + (item.status === "Atención" ? "selected" : "") + ">Atención</option>" +
+                '<option ' + (item.status === "Crítico" ? "selected" : "") + ">Crítico</option>" +
+              "</select>" +
+            "</td>" +
+            '<td><input type="number" min="0" max="100" value="' + item.progress + '"></td>' +
+            '<td><input type="text" value="' + (item.blockedBy[0] || "") + '"></td>' +
+            '<td><span class="status ' + statusClass(item.status) + '">' + item.status + "</span></td>";
+
+          editBody.appendChild(row);
+        });
+      }
+
+      function renderWeekly() {
+        const d = getDiscipline();
+
+        $("weeklyTitle").textContent = "Reporte semanal — " + d.name;
+
+        $("weeklyScript").innerHTML =
+          "<strong>1. Estado:</strong> " + d.name + " está en fase " + d.phase +
+          ", con avance referencial de " + d.progress + "% y salud " + d.health + "%.<br><br>" +
+
+          "<strong>2. Avance:</strong> se trabaja en " +
+          d.deliverables.slice(0, 4).join(", ") + ".<br><br>" +
+
+          "<strong>3. Riesgo:</strong> " + d.risks[0].risk +
+          " puede impactar " + d.risks[0].impact.toLowerCase() + "<br><br>" +
+
+          "<strong>4. Acción:</strong> " + d.next + "<br><br>" +
+
+          "<strong>5. Decisión requerida:</strong> cerrar " +
+          (d.blockedBy[0] || "la dependencia principal") +
+          " antes del gate " + d.gate + ".";
+
+        const checklist = $("weeklyChecklist");
+        checklist.innerHTML = "";
+
+        [
+          "Plan vs real de la semana",
+          "Entregables emitidos o en revisión",
+          "RFIs y decisiones pendientes",
+          "Interfaces con otras disciplinas",
+          "Riesgos nuevos o agravados",
+          "Acciones de recuperación",
+          "Look ahead de tres semanas",
+          "Impacto en CAPEX/OPEX",
+          "Impacto en permisos o ruta crítica"
+        ].forEach(function (item) {
+          const li = document.createElement("li");
+          li.textContent = item;
+          checklist.appendChild(li);
+        });
+
+        const board = $("decisionBoard");
+        board.innerHTML = "";
+
+        [
+          ["Decidir", d.blockedBy[0] || "Criterio pendiente", "Responsable: " + d.lead],
+          ["Cerrar", d.gate, "Fecha requerida: " + d.due],
+          ["Coordinar", d.interfaces.slice(0, 4).join(" · "), "Evitar reproceso multidisciplinario"],
+          ["Reportar", d.next, "Actualizar en reunión semanal"]
+        ].forEach(function (col) {
+          const div = document.createElement("div");
+          div.className = "column";
+          div.innerHTML =
+            "<h3>" + col[0] + "</h3>" +
+            '<div class="action">' +
+              "<b>" + col[1] + "</b>" +
+              "<p>" + col[2] + "</p>" +
+            "</div>";
+
+          board.appendChild(div);
+        });
+      }
+
+      function renderQuiz() {
+        const d = getDiscipline();
+        const quiz = d.quiz;
+        const item = quiz[quizIndex % quiz.length];
+
+        quizAnswered = false;
+
+        $("qNum").textContent = (quizIndex % quiz.length) + 1;
+        $("qTotal").textContent = quiz.length;
+        $("qText").textContent = item.q;
+        $("qFeedback").textContent = "Elige una respuesta.";
+        $("qHearts").textContent = quizHearts > 0 ? "♥ ".repeat(quizHearts).trim() : "sin vidas";
+        $("quizCoach").textContent = "Disciplina seleccionada: " + d.name + ". Responde con foco en riesgo, acción y dueño.";
+
+        const choices = $("qChoices");
+        choices.innerHTML = "";
+
+        item.options.forEach(function (option, index) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "choice";
+          button.textContent = option;
+
+          button.addEventListener("click", function () {
+            if (quizAnswered) {
+              return;
+            }
+
+            quizAnswered = true;
+
+            Array.from(choices.children).forEach(function (choiceButton, childIndex) {
+              if (childIndex === item.answer) {
+                choiceButton.classList.add("correct");
+              }
+            });
+
+            if (index === item.answer) {
+              $("qFeedback").textContent = "Bien. " + item.explain;
+              addXP(20);
+            } else {
+              button.classList.add("wrong");
+              quizHearts = Math.max(0, quizHearts - 1);
+              $("qHearts").textContent = quizHearts > 0 ? "♥ ".repeat(quizHearts).trim() : "sin vidas";
+              $("qFeedback").textContent = "Casi. " + item.explain;
+            }
+          });
+
+          choices.appendChild(button);
+        });
+      }
+
+      function renderFlashcards() {
+        const d = getDiscipline();
+        const cards = d.learn;
+        const card = cards[cardIndex % cards.length];
+
+        $("cardNum").textContent = (cardIndex % cards.length) + 1;
+        $("cardTotal").textContent = cards.length;
+        $("learnQ").textContent = "Disciplina: " + d.name;
+        $("flashType").textContent = flipped ? "Respuesta" : "Pregunta";
+        $("flashTitle").textContent = card.q;
+        $("flashBody").textContent = flipped ? card.a : "Haz clic para ver la respuesta.";
+        $("coachText").textContent =
+          "Objetivo: dominar " + d.name + " para anticipar atrasos, pedir decisiones y defender el roadmap.";
+      }
+
+      function renderOral() {
+        const d = getDiscipline();
+        const question = d.oral[oralIndex % d.oral.length];
+
+        $("oralQuestion").textContent = question;
+        $("oralAnswer").innerHTML =
+          "<strong>Respuesta modelo:</strong><br>" +
+          "Practica primero antes de verla.";
+      }
+
+      function buildOralAnswer() {
+        const d = getDiscipline();
+
+        return (
+          "Desde " + d.name + ", mi foco es " + d.next +
+          " El principal riesgo es “" + d.risks[0].risk + "”, porque puede generar " +
+          d.risks[0].impact.toLowerCase() +
+          " La decisión que pediría esta semana es cerrar “" +
+          (d.blockedBy[0] || "la dependencia principal") +
+          "” con responsable y fecha, para evitar impacto en cronograma, CAPEX o constructibilidad."
+        );
+      }
+
+      function renderFormulaDefaults() {
+        const d = getDiscipline();
+
+        $("fSchedule").value = d.health;
+        $("fDeliverables").value = Math.max(0, d.progress + 15);
+        $("fDecisions").value = Math.max(0, d.health - 10);
+        $("fRisks").value = Math.max(0, d.health - 15);
+        $("fInterfaces").value = Math.max(0, d.health - 5);
+        $("fResources").value = Math.min(100, d.health + 8);
+      }
+
+      function calculateFormula() {
+        const schedule = clampScore($("fSchedule").value);
+        const deliverables = clampScore($("fDeliverables").value);
+        const decisions = clampScore($("fDecisions").value);
+        const risks = clampScore($("fRisks").value);
+        const interfaces = clampScore($("fInterfaces").value);
+        const resources = clampScore($("fResources").value);
+
+        const result = Math.round(
+          schedule * 0.25 +
+          deliverables * 0.20 +
+          decisions * 0.20 +
+          risks * 0.15 +
+          interfaces * 0.10 +
+          resources * 0.10
+        );
+
+        let label = "Controlado";
+        let message = "La disciplina está controlada. Mantener seguimiento semanal y cierre de decisiones.";
+
+        if (result < 50) {
+          label = "Crítico";
+          message = "La disciplina requiere acción inmediata, dueño claro y plan de recuperación.";
+        } else if (result < 70) {
+          label = "Riesgo alto";
+          message = "La disciplina tiene riesgo de atraso. Cerrar bloqueos, RFIs e interfaces.";
+        } else if (result < 85) {
+          label = "Atención";
+          message = "La disciplina avanza, pero debe controlar decisiones y riesgos abiertos.";
+        }
+
+        $("formulaValue").textContent = result + "%";
+        $("formulaStatus").textContent = label.toUpperCase();
+        $("formulaFeedback").textContent = message;
+
+        const color = statusColor(result);
+
+        $("formulaRing").style.background =
+          "conic-gradient(" + color + " 0deg, " + color + " " + (result * 3.6) + "deg, #e6eff8 " + (result * 3.6) + "deg)";
+      }
+
+      function updateAll() {
+        renderCommand();
+        renderRoad();
+        renderClaves();
+        renderActions();
+        renderWeekly();
+        renderQuiz();
+        renderFlashcards();
+        renderOral();
+        renderFormulaDefaults();
+        calculateFormula();
+      }
+
+      $("markAction").addEventListener("click", function () {
+        $("actionFeedback").textContent =
+          "Revisado. Siguiente paso: registrar dueño, fecha requerida y evidencia de cierre.";
+        addXP(8);
+      });
+
+      $("copyAction").addEventListener("click", function () {
+        const d = getDiscipline();
+
+        $("actionFeedback").textContent =
+          "Frase: “Desde " + d.name + ", la acción crítica es " + d.next +
+          " Si no cerramos " + (d.blockedBy[0] || "la dependencia principal") +
+          ", puede impactar cronograma, CAPEX o constructibilidad.”";
+
+        addXP(5);
+      });
+
+      $("recalc").addEventListener("click", function () {
+        $("actionFeedback").textContent =
+          "Semáforos actualizados en la maqueta. Para producción, conectar con Excel, Primavera, Aconex o el registro oficial.";
+        addXP(6);
+      });
+
+      $("nextQuiz").addEventListener("click", function () {
+        quizIndex += 1;
+        renderQuiz();
+      });
+
+      $("restartQuiz").addEventListener("click", function () {
+        quizIndex = 0;
+        quizHearts = 3;
+        renderQuiz();
+      });
+
+      $("flashCard").addEventListener("click", function () {
+        flipped = !flipped;
+        renderFlashcards();
+
+        if (flipped) {
+          addXP(5);
+        }
+      });
+
+      $("flip").addEventListener("click", function () {
+        flipped = !flipped;
+        renderFlashcards();
+
+        if (flipped) {
+          addXP(5);
+        }
+      });
+
+      $("nextCard").addEventListener("click", function () {
+        cardIndex += 1;
+        flipped = false;
+        renderFlashcards();
+      });
+
+      $("showOral").addEventListener("click", function () {
+        $("oralAnswer").innerHTML =
+          "<strong>Respuesta modelo:</strong><br>" + buildOralAnswer();
+
+        addXP(10);
+      });
+
+      $("nextOral").addEventListener("click", function () {
+        oralIndex += 1;
+        renderOral();
+      });
+
+      $("calcHealth").addEventListener("click", function () {
+        calculateFormula();
+        addXP(4);
+      });
+
+      updateAll();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Academia de Ajedrez Online</title>
+
+        <!-- PWA -->
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#1976d2">
+
+        <style>
+            :root {
+                --bg1: #020617;
+                --bg2: #020617;
+                --accent: #22c55e;
+                --accent2: #38bdf8;
+                --text: #e5e7eb;
+                --muted: #94a3b8;
+                --radius: 22px;
+            }
+
+            * {
+                box-sizing: border-box;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }
+
+            body {
+                margin: 0;
+                background:
+                    radial-gradient(1200px 600px at 80% 10%, #0f172a, transparent 60%),
+                    radial-gradient(900px 600px at 10% 90%, #020617, transparent 55%),
+                    linear-gradient(180deg, #020617, #020617);
+                color: var(--text);
+            }
+
+            header {
+                min-height: 100dvh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+            }
+
+            .hero {
+                max-width: 1200px;
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1.1fr 0.9fr;
+                gap: 40px;
+                align-items: center;
+            }
+
+            /* Texto principal */
+            .hero-text h1 {
+                font-size: clamp(2.2rem, 4vw, 3.8rem);
+                line-height: 1.05;
+                margin: 0 0 18px;
+                letter-spacing: -0.5px;
+            }
+
+            .hero-text h1 span {
+                background: linear-gradient(90deg, var(--accent), var(--accent2));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .hero-text p {
+                font-size: 1.15rem;
+                color: var(--muted);
+                max-width: 520px;
+                margin-bottom: 32px;
+            }
+
+            .cta {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                padding: 14px 22px;
+                border-radius: 14px;
+                font-weight: 600;
+                font-size: 1rem;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                border: none;
+                cursor: pointer;
+                transition: all .25s ease;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, var(--accent), var(--accent2));
+                color: #020617;
+                box-shadow: 0 10px 30px rgba(56, 189, 248, .35);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 14px 40px rgba(56, 189, 248, .45);
+            }
+
+            .btn-secondary {
+                border: 1px solid rgba(148, 163, 184, .35);
+                color: var(--text);
+                background: rgba(15, 23, 42, .45);
+                backdrop-filter: blur(6px);
+            }
+
+            .btn-secondary:hover {
+                background: rgba(30, 41, 59, .7);
+            }
+
+            .btn-share {
+                border: 1px dashed rgba(56, 189, 248, .5);
+                color: #38bdf8;
+                background: rgba(15, 23, 42, .6);
+            }
+
+            .btn-share:hover {
+                background: rgba(30, 41, 59, .85);
+                transform: translateY(-2px);
+            }
+
+            /* Tarjeta lateral */
+            .hero-card {
+                background: linear-gradient(145deg, rgba(15, 23, 42, .9), rgba(2, 6, 23, .9));
+                border-radius: var(--radius);
+                padding: 26px;
+                box-shadow: 0 30px 60px rgba(0, 0, 0, .55);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero-card::after {
+                content: "♟";
+                position: absolute;
+                font-size: 180px;
+                opacity: .05;
+                right: -20px;
+                bottom: -40px;
+            }
+
+            .card-title {
+                font-weight: 700;
+                margin-bottom: 12px;
+                font-size: 1.2rem;
+            }
+
+            .card-list {
+                display: grid;
+                gap: 14px;
+                margin-top: 16px;
+            }
+
+            .card-item {
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+                font-size: .95rem;
+                color: var(--muted);
+            }
+
+            .icon {
+                color: var(--accent);
+                font-size: 1.1rem;
+            }
+
+            .title-main {
+                background: linear-gradient(90deg, var(--accent), var(--accent2));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .title-sub {
+                display: inline-block;
+                margin-top: 10px;
+                font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+                font-weight: 400;
+                font-style: italic;
+                line-height: 1.4;
+                transform: scaleY(0.95);
+                letter-spacing: .3px;
+                color: rgba(226, 232, 240, .85);
+            }
+
+
+            /* Responsive */
+            @media(max-width:900px) {
+                .hero {
+                    grid-template-columns: 1fr;
+                    text-align: center;
+                }
+
+                .hero-text p {
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+
+                .cta {
+                    justify-content: center;
+                }
+
+
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <header>
+            <section class="hero">
+
+                <!-- Texto -->
+                <div class="hero-text">
+                    <h1>
+                        Domina el <span class="title-main">Ajedrez</span><br>
+                        <span class="title-sub">Apertura, medio campo, finales y más...</span>
+                    </h1>
+
+                    <p>
+                        Academia online con entrenamiento progresivo, partidas comentadas,
+                        táctica real y estrategia moderna para subir tu nivel de verdad.
+                    </p>
+
+                    <div class="cta">
+                        <a href="ruta-chess.html" class="btn btn-primary">🚀 Empieza gratis</a>
+                        <a href="#" class="btn btn-secondary">▶️ Testimonios</a>
+                        <button class="btn btn-share" onclick="shareApp()">📤 Compartir app</button>
+                    </div>
+                </div>
+
+
+                <!-- Tarjeta -->
+                <div class="hero-card">
+                    <div class="card-title">¿Qué incluye la academia?</div>
+
+                    <div class="card-list">
+                        <div class="card-item">
+                            <span class="icon">✔</span>
+                            Clases estructuradas de principiante a avanzado
+                        </div>
+                        <div class="card-item">
+                            <span class="icon">✔</span>
+                            Partidas comentadas paso a paso
+                        </div>
+                        <div class="card-item">
+                            <span class="icon">✔</span>
+                            Táctica diaria y finales esenciales
+                        </div>
+                        <div class="card-item">
+                            <span class="icon">✔</span>
+                            Entrenamiento para subir ELO real
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </header>
+
+        <script>
+            function shareApp() {
+                const shareData = {
+                    title: 'Academia de Ajedrez Online',
+                    text: '♟️ Entrena ajedrez online y sube tu nivel como un Gran Maestro',
+                    url: window.location.href
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData);
+                } else {
+                    navigator.clipboard.writeText(shareData.url).then(() => {
+                        alert("📋 Enlace copiado. ¡Compártelo con tus amigos!");
+                    });
+                }
+            }
+        </script>
+
+        <script>
+            // Registrar Service Worker (PWA)
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                    navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+                });
+            }
+
+        </script>
+
+    </body>
+
+</html>

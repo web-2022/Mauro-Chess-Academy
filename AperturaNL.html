@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academia de Ajedrez Mauro • Apertura Nimzo-Larsen (1.b3) • Guía Paso a Paso</title>
+
+  <style>
+    :root{
+      --bg1:#020617;
+      --bg2:#0b1226;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.085);
+      --stroke:rgba(255,255,255,.12);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --accent:#22c55e;
+      --accent2:#38bdf8;
+      --warn:#f59e0b;
+      --bad:#fb7185;
+      --radius:22px;
+      --shadow: 0 18px 45px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+    html{-webkit-text-size-adjust:100%}
+    body{
+      margin:0;
+      min-height:100dvh;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,.18) 0%, transparent 60%),
+        radial-gradient(900px 700px at 85% 20%, rgba(34,197,94,.14) 0%, transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      padding:22px;
+    }
+    .wrap{max-width:1100px;margin:0 auto}
+    header{
+      display:flex;gap:14px;align-items:center;justify-content:space-between;
+      padding:16px 18px;border:1px solid var(--stroke);border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+    }
+    .brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+    .brand .top{
+      display:flex;gap:10px;align-items:baseline;flex-wrap:wrap
+    }
+    .logo{
+      width:38px;height:38px;border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg, rgba(34,197,94,.2), rgba(56,189,248,.22));
+      border:1px solid rgba(255,255,255,.16);
+      flex:0 0 auto;
+    }
+    .title{
+      font-size:18px;font-weight:800;letter-spacing:.2px;line-height:1.1;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+    }
+    .subtitle{color:var(--muted);font-size:13px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      font-size:12.5px;
+      white-space:nowrap;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap:16px;
+      margin-top:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background:rgba(255,255,255,.05);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card h2, .card h3{
+      margin:0;
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .card h2{font-size:16px}
+    .card h3{font-size:14px;color:#dbeafe}
+    .pad{padding:16px}
+    .muted{color:var(--muted)}
+    .kpi{
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:10px;margin-top:12px;
+    }
+    .mini{
+      padding:12px;border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+    }
+    .mini b{display:block;font-size:13px}
+    .mini span{color:var(--muted);font-size:12.5px}
+    .btnRow{
+      display:flex;flex-wrap:wrap;gap:10px;margin-top:14px
+    }
+    button{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:700;
+      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    button:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.22)}
+    button:active{transform:scale(.99)}
+    .primary{
+      background:linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.18));
+      border-color:rgba(56,189,248,.22);
+    }
+    .primary:hover{border-color:rgba(56,189,248,.35)}
+    .danger{border-color:rgba(251,113,133,.25)}
+    .danger:hover{border-color:rgba(251,113,133,.45)}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{
+      font-size:12px;color:var(--muted);
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+    }
+
+    /* "Tablero" simple (no motor): */
+    .boardWrap{padding:14px}
+    .board{
+      width:100%;
+      max-width:392px;
+      margin:0 auto;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.18);
+    }
+    .coords{
+      display:grid;
+      grid-template-columns: 22px 1fr;
+      align-items:stretch;
+    }
+    .rankLabels{
+      display:grid;
+      grid-template-rows: repeat(8, 1fr);
+      background:rgba(255,255,255,.04);
+      border-right:1px solid rgba(255,255,255,.10);
+    }
+    .rankLabels div{
+      display:grid;place-items:center;
+      font-size:12px;color:rgba(255,255,255,.55);
+    }
+    .squares{
+      display:grid;
+      grid-template-columns: repeat(8, 1fr);
+    }
+    .sq{
+      aspect-ratio:1/1;
+      display:grid;place-items:center;
+      font-size:22px;
+      user-select:none;
+    }
+    .light{background:rgba(226,232,240,.12)}
+    .dark{background:rgba(30,41,59,.55)}
+    .sq.hl{outline:2px solid rgba(34,197,94,.75); outline-offset:-2px}
+    .sq.h2{outline:2px solid rgba(56,189,248,.75); outline-offset:-2px}
+    .fileLabels{
+      display:grid;
+      grid-template-columns: 22px repeat(8, 1fr);
+      background:rgba(255,255,255,.04);
+      border-top:1px solid rgba(255,255,255,.10);
+    }
+    .fileLabels div{
+      display:grid;place-items:center;
+      font-size:12px;color:rgba(255,255,255,.55);
+      padding:6px 0;
+    }
+
+    /* Paso a paso */
+    .stepHead{
+      display:flex;gap:10px;align-items:flex-start;justify-content:space-between;
+      padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .stepHead .left{min-width:0}
+    .stepNo{
+      display:inline-flex;align-items:center;gap:8px;
+      font-weight:900;font-size:14px;
+    }
+    .badge{
+      font-size:12px;font-weight:800;
+      padding:5px 9px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+    }
+    .moveLine{
+      margin-top:6px;
+      font-size:14px;
+      color:#e2e8f0;
+      display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+    }
+    .move{
+      font-weight:900;
+      padding:6px 10px;border-radius:12px;
+      border:1px solid rgba(56,189,248,.22);
+      background:rgba(56,189,248,.10);
+    }
+    .desc{
+      padding:16px;
+    }
+    .bul{
+      margin:10px 0 0 0;
+      padding-left:18px;
+      color:var(--muted);
+    }
+    .bul li{margin:6px 0}
+    .hint{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(245,158,11,.25);
+      background:rgba(245,158,11,.10);
+      color:#fde68a;
+      font-size:13px;
+    }
+    .dangerBox{
+      margin-top:12px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(251,113,133,.25);
+      background:rgba(251,113,133,.10);
+      color:#fecdd3;
+      font-size:13px;
+    }
+    .foot{
+      margin-top:14px;
+      color:rgba(255,255,255,.50);
+      font-size:12.5px;
+      padding:0 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="top">
+          <div class="logo" aria-hidden="true">♟️</div>
+          <div class="title">Academia de Ajedrez Mauro</div>
+        </div>
+        <div class="subtitle">Guía paso a paso • Apertura Nimzo-Larsen (1.b3)</div>
+      </div>
+      <div class="pill">📌 Idea: presión en e5 + desarrollo flexible</div>
+    </header>
+
+    <div class="grid">
+      <!-- LADO IZQUIERDO: idea + tablero -->
+      <section class="card">
+        <h2>La idea de la Nimzo-Larsen</h2>
+        <div class="pad">
+          <p class="muted" style="margin:0">
+            La Nimzo-Larsen comienza con <b>1.b3</b> para desarrollar el alfil por <b>b2</b> y presionar el centro,
+            especialmente la casilla <b>e5</b>. Es una apertura <b>flexible</b>: eliges el plan según la respuesta del rival.
+          </p>
+
+          <div class="kpi">
+            <div class="mini">
+              <b>Plan principal</b>
+              <span>Ab2 → presión en e5 / diagonal larga</span>
+            </div>
+            <div class="mini">
+              <b>Desarrollo típico</b>
+              <span>Nf3, e3, Bb5 (a veces), Be2, 0-0</span>
+            </div>
+            <div class="mini">
+              <b>Centro</b>
+              <span>No lo ocupas de golpe: lo atacas y lo socavas</span>
+            </div>
+            <div class="mini">
+              <b>Estilo</b>
+              <span>Juego posicional con tácticas por diagonales</span>
+            </div>
+          </div>
+
+          <div class="chips" aria-label="Temas clave">
+            <span class="chip">Diagonal a1–h8</span>
+            <span class="chip">Presión en e5</span>
+            <span class="chip">Flexibilidad</span>
+            <span class="chip">Transposiciones</span>
+            <span class="chip">Ataques en el flanco</span>
+          </div>
+
+          <div class="btnRow">
+            <button class="primary" id="btnPrev">⬅ Anterior</button>
+            <button class="primary" id="btnNext">Siguiente ➜</button>
+            <button id="btnReset" class="danger">Reiniciar</button>
+          </div>
+
+          <p class="foot">Tip: usa “Siguiente” y mira cómo cambian las casillas resaltadas en el tablero.</p>
+        </div>
+
+        <h3>Tablero (visual simple)</h3>
+        <div class="boardWrap">
+          <div class="board" role="img" aria-label="Tablero de ajedrez con piezas y resaltados">
+            <div class="coords">
+              <div class="rankLabels" aria-hidden="true">
+                <div>8</div><div>7</div><div>6</div><div>5</div><div>4</div><div>3</div><div>2</div><div>1</div>
+              </div>
+              <div class="squares" id="squares"></div>
+            </div>
+            <div class="fileLabels" aria-hidden="true">
+              <div></div>
+              <div>a</div><div>b</div><div>c</div><div>d</div><div>e</div><div>f</div><div>g</div><div>h</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LADO DERECHO: pasos -->
+      <section class="card" id="stepCard">
+        <div class="stepHead">
+          <div class="left">
+            <div class="stepNo">
+              <span id="stepTitle">Paso 1</span>
+              <span class="badge" id="stepTheme">Idea</span>
+            </div>
+            <div class="moveLine">
+              <span class="move" id="stepMove">1.b3</span>
+              <span class="muted" id="stepLineHint">— Preparar Ab2</span>
+            </div>
+          </div>
+          <span class="badge" id="stepCounter">1 / 8</span>
+        </div>
+
+        <div class="desc">
+          <div id="stepText" class="muted"></div>
+
+          <ul class="bul" id="stepBullets"></ul>
+
+          <div class="hint" id="stepHint" style="display:none"></div>
+          <div class="dangerBox" id="stepDanger" style="display:none"></div>
+
+          <div class="foot" id="stepFooter"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    /* -----------------------------
+       TABLERO (posición simplificada)
+       - No es motor. Solo muestra piezas clave típicas.
+       - Resaltamos casillas relacionadas a la idea del paso.
+    ------------------------------ */
+
+    const files = ["a","b","c","d","e","f","g","h"];
+    const ranks = [8,7,6,5,4,3,2,1];
+
+    // Piezas unicode
+    const P = { wK:"♔", wQ:"♕", wR:"♖", wB:"♗", wN:"♘", wP:"♙",
+                bK:"♚", bQ:"♛", bR:"♜", bB:"♝", bN:"♞", bP:"♟︎" };
+
+    // Posición base: piezas mínimas + peones principales (inicio)
+    // Clave: "e2" etc.
+    const basePosition = {
+      // Blancas
+      "e1": P.wK, "d1": P.wQ, "a1": P.wR, "h1": P.wR,
+      "c1": P.wB, "f1": P.wB, "b1": P.wN, "g1": P.wN,
+      "a2": P.wP, "b2": P.wP, "c2": P.wP, "d2": P.wP,
+      "e2": P.wP, "f2": P.wP, "g2": P.wP, "h2": P.wP,
+
+      // Negras
+      "e8": P.bK, "d8": P.bQ, "a8": P.bR, "h8": P.bR,
+      "c8": P.bB, "f8": P.bB, "b8": P.bN, "g8": P.bN,
+      "a7": P.bP, "b7": P.bP, "c7": P.bP, "d7": P.bP,
+      "e7": P.bP, "f7": P.bP, "g7": P.bP, "h7": P.bP
+    };
+
+    // Render de tablero
+    const squaresEl = document.getElementById("squares");
+    const sqMap = new Map(); // "e4" => div
+
+    function buildBoard(){
+      squaresEl.innerHTML = "";
+      sqMap.clear();
+
+      for (let r = 0; r < ranks.length; r++){
+        for (let f = 0; f < files.length; f++){
+          const file = files[f];
+          const rank = ranks[r];
+          const sq = file + rank;
+
+          const div = document.createElement("div");
+          div.className = "sq " + (((r + f) % 2 === 0) ? "dark" : "light");
+          div.dataset.sq = sq;
+          div.textContent = basePosition[sq] || "";
+          squaresEl.appendChild(div);
+          sqMap.set(sq, div);
+        }
+      }
+    }
+
+    // Helpers para aplicar "movimientos" pedagógicos (no legalidad estricta, solo ilustración)
+    function setPiece(sq, piece){
+      if (!sqMap.has(sq)) return;
+      sqMap.get(sq).textContent = piece || "";
+    }
+
+    function clearHighlights(){
+      for (const div of sqMap.values()){
+        div.classList.remove("hl","h2");
+      }
+    }
+
+    function highlight(sqList, cls="hl"){
+      sqList.forEach(sq=>{
+        const d = sqMap.get(sq);
+        if (d) d.classList.add(cls);
+      });
+    }
+
+    // Estado de piezas (para la demo)
+    let pos = {};
+    function resetPosition(){
+      pos = JSON.parse(JSON.stringify(basePosition));
+      buildBoard();
+    }
+
+    // Aplicar una lista de cambios: [{from,to,piece(optional)}]
+    function applyChanges(changes){
+      // sincroniza pos + UI
+      changes.forEach(ch=>{
+        if (ch.from){
+          pos[ch.from] = "";
+          setPiece(ch.from, "");
+        }
+        if (ch.to){
+          const piece = ch.piece ?? (ch.from ? basePosition[ch.from] : "");
+          pos[ch.to] = piece;
+          setPiece(ch.to, piece);
+        }
+      });
+    }
+
+    /* -----------------------------
+       PASOS (ruta típica vs ...e5)
+       1) b3   1...e5
+       2) Bb2  2...Nc6
+       3) e3   3...Nf6
+       4) Bb5  4...Bd6 (idea simple)
+       5) f4   (plan: presión e5)
+       6) Nf3  (desarrollo/seguridad)
+       7) 0-0  (enroque)
+       8) d3 + Nd2 (consolidar y elegir plan)
+    ------------------------------ */
+
+    const steps = [
+      {
+        title: "Paso 1",
+        theme: "Idea",
+        move: "1.b3",
+        lineHint: "Preparar Ab2 y presión en e5",
+        text: `
+          En la Nimzo-Larsen, <b>1.b3</b> no ocupa el centro de inmediato: prepara el alfil para salir por <b>b2</b>
+          y apuntar al centro (sobre todo <b>e5</b>).
+        `,
+        bullets: [
+          "<b>Objetivo:</b> desarrollar rápido el alfil de c1 por b2.",
+          "<b>Ventaja:</b> flexibilidad (puedes jugar e3/d3, Nf3, Bb5, etc.).",
+          "<b>Concepto:</b> en vez de “poner peones en el centro”, atacas el centro desde lejos."
+        ],
+        hint: "Piensa en el alfil como un “láser” por la diagonal a1–h8.",
+        danger: "",
+        highlights: { hl:["b3","b2","e5","a1","h8"], h2:["c1"] },
+        changes: [
+          // mover peón b2 a b3
+          { from:"b2", to:"b3", piece: P.wP }
+        ],
+        footer: "Recuerda: en aperturas hipermodernas, el control del centro puede ser a distancia."
+      },
+
+      {
+        title: "Paso 2",
+        theme: "Desarrollo",
+        move: "2.Bb2",
+        lineHint: "Activar la diagonal larga",
+        text: `
+          Ahora el alfil sale a <b>b2</b>. Su mirada típica es <b>e5</b> (si el negro puso un peón ahí),
+          y muchas veces también presiona el flanco de rey si se abre la diagonal.
+        `,
+        bullets: [
+          "<b>Alfil en b2:</b> pieza clave de la apertura.",
+          "<b>Idea:</b> presionar e5 y castigar descuidos en la diagonal.",
+          "<b>Plan:</b> completar desarrollo: e3, Nf3, Be2, 0-0."
+        ],
+        hint: "Si el negro juega ...e5, tu alfil ya está listo para presionarlo.",
+        danger: "",
+        highlights: { hl:["b2","e5","f6","g7","h8"], h2:["b3"] },
+        changes: [
+          { from:"c1", to:"b2", piece: P.wB }
+        ],
+        footer: "En Nimzo-Larsen, el alfil de b2 suele ser tu mejor “arma posicional”."
+      },
+
+      {
+        title: "Paso 3",
+        theme: "Centro flexible",
+        move: "3.e3",
+        lineHint: "Abrir camino a Be2 y enroque",
+        text: `
+          Con <b>e3</b> construyes una base sólida: habilitas <b>Be2</b> y el enroque, y preparas
+          un posible <b>d4</b> en el momento adecuado.
+        `,
+        bullets: [
+          "<b>Seguridad:</b> tu rey puede enrocarse rápido.",
+          "<b>Centro:</b> e3 apoya d4 (si decides ocupar el centro luego).",
+          "<b>Plan típico:</b> Nf3 → Be2 → 0-0."
+        ],
+        hint: "La Nimzo-Larsen no es “lenta”: es flexible y segura si desarrollas ordenado.",
+        danger: "",
+        highlights: { hl:["e3","e2","f1","e1","g1"], h2:["b2"] },
+        changes: [
+          { from:"e2", to:"e3", piece: P.wP }
+        ],
+        footer: "Muchos errores vienen por querer atacar sin enrocar. Aquí, primero estructura."
+      },
+
+      {
+        title: "Paso 4",
+        theme: "Presión y molestia",
+        move: "4.Bb5",
+        lineHint: "Clavar o incomodar el caballo (si aparece en c6)",
+        text: `
+          Una idea frecuente es <b>Bb5</b>: molestas el desarrollo negro y a veces provocas
+          debilidades. Si hay un caballo en <b>c6</b>, puede haber <b>clavada</b> o presión indirecta.
+        `,
+        bullets: [
+          "<b>¿Qué buscas?</b> incomodar ...Nc6, o forzar ...Bd6/...Be7.",
+          "<b>Plan:</b> seguir con Nf3 y 0-0.",
+          "<b>Alternativa:</b> si no te gusta Bb5, puedes jugar Nf3 directo."
+        ],
+        hint: "Bb5 es una forma “simple y fuerte” de poner una pregunta al rival.",
+        danger: "No conviertas Bb5 en una “pérdida de tiempos”: si te persiguen con ...a6 y ...b5, reubica con sentido.",
+        highlights: { hl:["b5","c6","d7","e8"], h2:["b2"] },
+        changes: [
+          { from:"f1", to:"b5", piece: P.wB }
+        ],
+        footer: "El ajedrez práctico: si tu rival no sabe el plan, se puede incomodar rápido."
+      },
+
+      {
+        title: "Paso 5",
+        theme: "Ataque al centro",
+        move: "5.f4",
+        lineHint: "Presionar e5 (plan tipo Bird/Dutch ideas)",
+        text: `
+          Si el negro tiene un peón en <b>e5</b>, una forma agresiva de atacarlo es <b>f4</b>.
+          Esto aumenta la presión sobre e5 y puede generar iniciativa en el flanco de rey.
+        `,
+        bullets: [
+          "<b>Objetivo:</b> atacar el peón e5 (f4 + alfil b2).",
+          "<b>Riesgo:</b> debilitas un poco tu rey: por eso es importante enrocar pronto.",
+          "<b>Regla:</b> si avanzas peones del rey, compensa con desarrollo."
+        ],
+        hint: "Este plan combina muy bien con Nf3 y 0-0.",
+        danger: "Si juegas f4, evita quedarte con el rey en el centro mucho tiempo.",
+        highlights: { hl:["f4","e5","f3","g2"], h2:["b2"] },
+        changes: [
+          { from:"f2", to:"f4", piece: P.wP }
+        ],
+        footer: "No siempre es necesario f4, pero es una idea potente para “pelear e5”."
+      },
+
+      {
+        title: "Paso 6",
+        theme: "Desarrollo",
+        move: "6.Nf3",
+        lineHint: "Controlar e5/d4 y preparar enroque",
+        text: `
+          <b>Nf3</b> es el caballo más natural: controla <b>e5</b> y <b>d4</b>, defiende tu rey,
+          y permite enrocar sin problemas.
+        `,
+        bullets: [
+          "<b>Control:</b> e5 y d4.",
+          "<b>Seguridad:</b> ayuda al enroque y al orden del juego.",
+          "<b>Plan:</b> Be2 y 0-0."
+        ],
+        hint: "En aperturas flexibles, el caballo a f3 casi siempre es “buena jugada”.",
+        danger: "",
+        highlights: { hl:["f3","e5","g1","e1"], h2:["b2"] },
+        changes: [
+          { from:"g1", to:"f3", piece: P.wN }
+        ],
+        footer: "La apertura no es solo “movidas”: es un orden de prioridades."
+      },
+
+      {
+        title: "Paso 7",
+        theme: "Seguridad",
+        move: "7.0-0",
+        lineHint: "Rey a salvo, torre activa",
+        text: `
+          Enrocar es clave: tu rey queda seguro y tu torre entra al juego.
+          Con el rey a salvo, tus planes (presión en e5, juego por diagonales) son más fuertes.
+        `,
+        bullets: [
+          "<b>Regla práctica:</b> ataca con el rey seguro.",
+          "<b>Torre:</b> puede apoyar f4/f5 o el centro según el plan.",
+          "<b>Evitas:</b tácticas contra el rey en el centro."
+        ],
+        hint: "Muchos puntos se ganan solo por enrocar a tiempo.",
+        danger: "",
+        highlights: { hl:["g1","f1","g2","f2"], h2:["b2"] },
+        changes: [
+          { from:"e1", to:"g1", piece: P.wK },
+          { from:"h1", to:"f1", piece: P.wR }
+        ],
+        footer: "Con el rey seguro, es más fácil jugar planes agresivos (como f4)."
+      },
+
+      {
+        title: "Paso 8",
+        theme: "Consolidación",
+        move: "8.d3 y Nd2 (idea)",
+        lineHint: "Estructura sólida + decidir el plan",
+        text: `
+          En Nimzo-Larsen, después de desarrollar, sueles <b>consolidar</b>.
+          <b>d3</b> es una base segura (y luego Nd2/Re1). Desde ahí decides:
+          jugar d4, atacar el centro, o jugar por flanco según la posición.
+        `,
+        bullets: [
+          "<b>Plan A:</b> preparar <b>d4</b> (ocupar el centro en el momento correcto).",
+          "<b>Plan B:</b> mantener centro flexible y atacar e5.",
+          "<b>Plan C:</b> jugar por el flanco (según debilidades del rival)."
+        ],
+        hint: "La Nimzo-Larsen se trata de elegir el plan correcto, no de memorizar 20 jugadas.",
+        danger: "",
+        highlights: { hl:["d3","d4","e4","e5"], h2:["b2"] },
+        changes: [
+          { from:"d2", to:"d3", piece: P.wP }
+        ],
+        footer: "Siguiente paso: podemos hacer otra página para “respuestas del negro”: vs ...e5, ...d5, ...c5, ...Nf6, ...g6."
+      }
+    ];
+
+    let idx = 0;
+
+    function renderStep(){
+      const s = steps[idx];
+
+      document.getElementById("stepTitle").textContent = s.title;
+      document.getElementById("stepTheme").textContent = s.theme;
+      document.getElementById("stepMove").textContent = s.move;
+      document.getElementById("stepLineHint").textContent = "— " + s.lineHint;
+      document.getElementById("stepCounter").textContent = `${idx+1} / ${steps.length}`;
+
+      const stepText = document.getElementById("stepText");
+      stepText.innerHTML = s.text;
+
+      const bul = document.getElementById("stepBullets");
+      bul.innerHTML = "";
+      s.bullets.forEach(b=>{
+        const li = document.createElement("li");
+        li.innerHTML = b;
+        bul.appendChild(li);
+      });
+
+      const hint = document.getElementById("stepHint");
+      if (s.hint){
+        hint.style.display = "block";
+        hint.innerHTML = "💡 " + s.hint;
+      } else {
+        hint.style.display = "none";
+      }
+
+      const danger = document.getElementById("stepDanger");
+      if (s.danger){
+        danger.style.display = "block";
+        danger.innerHTML = "⚠️ " + s.danger;
+      } else {
+        danger.style.display = "none";
+      }
+
+      document.getElementById("stepFooter").textContent = s.footer || "";
+
+      // Posición y resaltados: para que sea consistente, reiniciamos y aplicamos cambios hasta idx
+      resetPosition();
+      clearHighlights();
+
+      for (let i=0; i<=idx; i++){
+        applyChanges(steps[i].changes || []);
+      }
+
+      // Resaltado
+      const H = s.highlights || {};
+      if (H.hl) highlight(H.hl, "hl");
+      if (H.h2) highlight(H.h2, "h2");
+
+      // Botones
+      document.getElementById("btnPrev").disabled = (idx === 0);
+      document.getElementById("btnNext").disabled = (idx === steps.length - 1);
+    }
+
+    document.getElementById("btnPrev").addEventListener("click", ()=>{
+      if (idx > 0){ idx--; renderStep(); }
+    });
+    document.getElementById("btnNext").addEventListener("click", ()=>{
+      if (idx < steps.length - 1){ idx++; renderStep(); }
+    });
+    document.getElementById("btnReset").addEventListener("click", ()=>{
+      idx = 0; renderStep();
+    });
+
+    // Init
+    resetPosition();
+    renderStep();
+  </script>
+</body>
+</html>

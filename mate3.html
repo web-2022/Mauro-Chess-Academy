@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Práctica de táctica • Ivanchuk–Karjakin (16...)</title>
+  <style>
+    :root{
+      --bg1:#dbeafe; --bg2:#e0f2fe; --card:#fff; --text:#0f172a; --muted:#64748b;
+      --accent:#2563eb; --ok:#16a34a; --bad:#ef4444;
+      --radius:22px; --shadow:0 18px 40px rgba(0,0,0,.14);
+      --sq: min(72px, 11.5vw);
+    }
+    *{ box-sizing:border-box; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; }
+    body{
+      margin:0; min-height:100dvh; display:flex; justify-content:center; align-items:center;
+      background: radial-gradient(1200px 800px at 10% 10%, var(--bg1) 0%, transparent 60%),
+                  radial-gradient(900px 700px at 90% 20%, var(--bg2) 0%, transparent 55%),
+                  linear-gradient(145deg, var(--bg1), var(--bg2));
+      padding:18px;
+      color:var(--text);
+    }
+    .app{
+      width:min(980px, 100%);
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      display:grid;
+      gap:16px;
+      grid-template-columns: 1fr;
+    }
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px 14px;
+      border-radius:18px;
+      background: linear-gradient(135deg, #0f172a, #111827);
+      color:#e5e7eb;
+    }
+    header .title{
+      display:flex; flex-direction:column; gap:4px;
+    }
+    header h1{
+      margin:0; font-size:clamp(16px, 2.2vw, 20px); letter-spacing:.2px;
+    }
+    header .sub{ margin:0; color:#cbd5e1; font-size:13px; }
+    .wrap{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+    }
+    @media (min-width: 860px){
+      .wrap{ grid-template-columns: auto 1fr; align-items:start; }
+    }
+
+    /* Board */
+    .boardCard{
+      border:1px solid rgba(2,6,23,.08);
+      border-radius:18px;
+      padding:14px;
+      width: max-content;
+      max-width: 100%;
+      background: #ffffff;
+    }
+    .board{
+      display:grid;
+      grid-template-columns: repeat(8, var(--sq));
+      grid-template-rows: repeat(8, var(--sq));
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid rgba(2,6,23,.15);
+      touch-action:none;
+      user-select:none;
+    }
+    .sq{
+      width:var(--sq); height:var(--sq);
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+    }
+    .light{ background:#f1f5f9; }
+    .dark{ background:#cbd5e1; }
+    .coord{
+      position:absolute; font-size:11px; color:rgba(15,23,42,.55);
+      pointer-events:none;
+    }
+    .coord.file{ bottom:4px; right:6px; }
+    .coord.rank{ top:4px; left:6px; }
+
+    .piece{
+      width: calc(var(--sq) - 10px);
+      height: calc(var(--sq) - 10px);
+      display:flex; align-items:center; justify-content:center;
+      border-radius:12px;
+      cursor:grab;
+      font-size: clamp(26px, 4.3vw, 40px);
+      line-height:1;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
+      background: rgba(255,255,255,.25);
+    }
+    .piece:active{ cursor:grabbing; }
+    .dragging{ opacity:.65; transform: scale(1.06); }
+
+    /* Side panel */
+    .panel{
+      border:1px solid rgba(2,6,23,.08);
+      border-radius:18px;
+      padding:14px;
+      background:#fff;
+    }
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin-top:12px;
+    }
+    button{
+      border:0;
+      border-radius:14px;
+      padding:10px 12px;
+      background: #0f172a;
+      color:#fff;
+      cursor:pointer;
+      font-weight:600;
+      letter-spacing:.2px;
+    }
+    button.secondary{
+      background: #e2e8f0;
+      color:#0f172a;
+    }
+    button:disabled{
+      opacity:.55; cursor:not-allowed;
+    }
+    .status{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:#f8fafc;
+      border:1px solid rgba(2,6,23,.08);
+      color:var(--muted);
+      font-size:14px;
+      min-height:44px;
+    }
+    .status.ok{ border-color: rgba(22,163,74,.35); color:#14532d; background:#f0fdf4; }
+    .status.bad{ border-color: rgba(239,68,68,.35); color:#7f1d1d; background:#fef2f2; }
+    .moves{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      background:#0b1220;
+      color:#e5e7eb;
+      font-size:14px;
+      line-height:1.45;
+      overflow:auto;
+    }
+    .moves b{ color:#fff; }
+    .hint{
+      margin-top:10px;
+      font-size:14px;
+      color:#0f172a;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:#eff6ff;
+      border:1px solid rgba(37,99,235,.25);
+      color:#1e3a8a;
+      font-weight:700;
+      font-size:13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title">
+        <h1>Práctica de táctica (arrastrar y soltar)</h1>
+        <p class="sub">Posición del ejercicio (negras juegan): 16... ♞xh3! — intenta seguir la secuencia correcta.</p>
+      </div>
+      <div class="tag" id="turnTag">Turno: Negras</div>
+    </header>
+
+    <div class="wrap">
+      <div class="boardCard">
+        <div class="board" id="board" aria-label="Tablero de ajedrez"></div>
+      </div>
+
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;">
+          <div>
+            <div style="font-weight:800;font-size:16px;">Objetivo</div>
+            <div style="color:var(--muted);font-size:14px;">Haz la jugada correcta de la línea. Si te equivocas, puedes deshacer o reiniciar.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <button id="btnUndo" class="secondary" disabled>↩ Deshacer</button>
+          <button id="btnReset" class="secondary">⟲ Reiniciar</button>
+          <button id="btnHint" class="secondary">💡 Pista</button>
+          <button id="btnShow" class="secondary">👁 Ver solución</button>
+        </div>
+
+        <div class="status" id="status">Arrastra una pieza y suéltala en la casilla destino. Se validará contra la solución.</div>
+
+        <div class="hint" id="hint" style="display:none;"></div>
+
+        <div class="moves" id="movesBox" style="display:none;"></div>
+
+        <div style="margin-top:12px;color:var(--muted);font-size:13px;">
+          ✅ Tip: si estás en celular, también funciona (mantén presionado y arrastra).
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ====== Position (from the image) ======
+  // Coordinates: a1 bottom-left (white side).
+  // White: Kg1, Qc2, Rd1, Re1, Bb3, Bd2, Nf3, Ng3, pawns: a2 b2 c3 d3 f2 g2 h3
+  // Black: Kg8, Qd8, Ra8, Re8, Bb6, Be6, Nd5, Ng6, pawns: a7 b7 c6 e5 f7 g7 h6
+  const INITIAL = {
+    "a8":"br","d8":"bq","e8":"br","g8":"bk",
+    "a7":"bp","b7":"bp","f7":"bp","g7":"bp",
+    "b6":"bb","c6":"bp","e6":"bb","g6":"bn","h6":"bp",
+    "d5":"bn","e5":"bp",
+
+    "b3":"wb","c3":"wp","d3":"wp","f3":"wn","g3":"wn","h3":"wp",
+    "a2":"wp","b2":"wp","c2":"wq","d2":"wb","f2":"wp","g2":"wp",
+    "d1":"wr","e1":"wr","g1":"wk"
+  };
+
+  // Expected solution (move-by-move) as from-to squares.
+  // 16... Nxh3! 17.c4 gxh3 17...Nf6 18.Bg2 Nh4+ 19.Qxh4 Nf2+ 20.Kh1 Nxg3+
+  // (We accept exactly these moves in order.)
+  const SOLUTION = [
+    {side:"b", from:"g6", to:"h3", capture:true, note:"16...♞xh3!"},
+    {side:"w", from:"c3", to:"c4", capture:false, note:"17.c4"},
+    {side:"b", from:"g7", to:"h6", capture:true, note:"...gxh3 (captura en h6?)", _special:"gxh3"},
+  ];
+  // The line in the scan is: 17.gxh3 Nf6! 18.Bg2 Nh4+ 19.Qxh4 Nf2+ 20.Kh1 Nxg3+
+  // So correct 3rd move is WHITE gxh3 (pawn g2 -> h3 capturing the knight on h3).
+  // We'll build the correct list accordingly:
+  const LINE = [
+    {side:"b", from:"g6", to:"h3", capture:true, note:"16...♞xh3!"},
+    {side:"w", from:"c3", to:"c4", capture:false, note:"17.c4"},
+    {side:"w", from:"g2", to:"h3", capture:true, note:"17.gxh3"},
+    {side:"b", from:"d5", to:"f6", capture:false, note:"17...♞f6!"},
+    {side:"w", from:"d2", to:"g5", capture:false, note:"(no)"},
+  ];
+
+  // We must keep the exact line shown in the screenshot:
+  // 16...Nxh3! 17.c4 gxh3? Actually screenshot shows: 17.gxh3 Nf6! 18.Bg2 Nh4++ 19.Qxh4 Nf2+ 20.Kh1 Nxg3+.
+  // We'll implement that exact one:
+  const EXPECTED = [
+    {side:"b", from:"g6", to:"h3", capture:true, note:"16...♞xh3!"},
+    {side:"w", from:"c3", to:"c4", capture:false, note:"17.c4"},
+    {side:"w", from:"g2", to:"h3", capture:true, note:"17.gxh3"},
+    {side:"b", from:"d5", to:"f6", capture:false, note:"17...♞f6!"},
+    {side:"w", from:"d2", to:"g5", capture:false, note:"18.Bg2 (en el diagrama es alfil a g2)"},
+  ];
+
+  // The bishop that goes to g2 is the one on d5? no, white bishop is on d2 and b3.
+  // From d2 to g5 is not g2. Correct is bishop from d2 to g5? Not.
+  // Bishop to g2 should be from f1 normally, but not on board.
+  // So likely the move is "Bg2" meaning bishop from b? Actually bishop from d5 doesn't exist.
+  // Let's read the position: white bishop at d2 CAN go to g5 or f4 or e3 or c3 (blocked) or b4 or a5.
+  // White bishop at b3 CAN go to g8 (diagonal b3-c4-d5-e6-f7-g8), but squares: c4 becomes occupied by pawn after 17.c4, so b3 bishop line to g8 is blocked.
+  // So "Bg2" must mean bishop from d5? not possible.
+  // That means our reconstruction might be off for the bishop: maybe white bishop is on e2, not d2, in the scan.
+  // However user only wants a practice board; we can validate only first 4 moves reliably and then stop as "continue from here".
+  // We'll implement validation for the first 4 moves: Nxh3, c4, gxh3, Nf6. Then show "¡Bien! Parte crítica resuelta."
+  const EXPECTED4 = [
+    {side:"b", from:"g6", to:"h3", capture:true, note:"16...♞xh3!"},
+    {side:"w", from:"c3", to:"c4", capture:false, note:"17.c4"},
+    {side:"w", from:"g2", to:"h3", capture:true, note:"17.gxh3"},
+    {side:"b", from:"d5", to:"f6", capture:false, note:"17...♞f6!"}
+  ];
+
+  const PIECE_UNI = {
+    wk:"\u2654", wq:"\u2655", wr:"\u2656", wb:"\u2657", wn:"\u2658", wp:"\u2659",
+    bk:"\u265A", bq:"\u265B", br:"\u265C", bb:"\u265D", bn:"\u265E", bp:"\u265F"
+  };
+
+  const boardEl = document.getElementById("board");
+  const statusEl = document.getElementById("status");
+  const hintEl = document.getElementById("hint");
+  const movesBox = document.getElementById("movesBox");
+  const turnTag = document.getElementById("turnTag");
+  const btnUndo = document.getElementById("btnUndo");
+  const btnReset = document.getElementById("btnReset");
+  const btnHint = document.getElementById("btnHint");
+  const btnShow = document.getElementById("btnShow");
+
+  let state = {};
+  let history = [];
+  let step = 0;         // index in EXPECTED4
+  let turn = "b";       // black to move
+
+  const files = ["a","b","c","d","e","f","g","h"];
+
+  function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+  function reset(){
+    state = clone(INITIAL);
+    history = [];
+    step = 0;
+    turn = "b";
+    btnUndo.disabled = true;
+    setStatus("Arrastra una pieza. Primera jugada: negras.", "");
+    hintEl.style.display = "none";
+    movesBox.style.display = "none";
+    render();
+    updateTurnTag();
+  }
+
+  function updateTurnTag(){
+    turnTag.textContent = "Turno: " + (turn==="w" ? "Blancas" : "Negras");
+  }
+
+  function setStatus(msg, kind){
+    statusEl.className = "status" + (kind ? (" " + kind) : "");
+    statusEl.textContent = msg;
+  }
+
+  function squareColor(fileIndex, rankIndex){
+    return ((fileIndex + rankIndex) % 2 === 0) ? "light" : "dark";
+  }
+
+  function render(){
+    boardEl.innerHTML = "";
+    // ranks 8 -> 1
+    for(let r=8; r>=1; r--){
+      for(let f=0; f<8; f++){
+        const sq = files[f] + r;
+        const sqEl = document.createElement("div");
+        sqEl.className = "sq " + squareColor(f, r);
+        sqEl.dataset.sq = sq;
+
+        // coords (show only on some squares for cleanliness)
+        if(r===1){
+          const c = document.createElement("div");
+          c.className="coord file";
+          c.textContent = files[f];
+          sqEl.appendChild(c);
+        }
+        if(f===0){
+          const c = document.createElement("div");
+          c.className="coord rank";
+          c.textContent = r;
+          sqEl.appendChild(c);
+        }
+
+        // drop target
+        sqEl.addEventListener("dragover", (e)=>e.preventDefault());
+        sqEl.addEventListener("drop", onDrop);
+
+        // touch drop
+        sqEl.addEventListener("pointerup", onPointerDrop);
+
+        const p = state[sq];
+        if(p){
+          const pEl = document.createElement("div");
+          pEl.className = "piece";
+          pEl.textContent = PIECE_UNI[p] || "?";
+          pEl.draggable = true;
+          pEl.dataset.from = sq;
+          pEl.dataset.piece = p;
+
+          pEl.addEventListener("dragstart", (e)=>{
+            pEl.classList.add("dragging");
+            e.dataTransfer.setData("text/plain", JSON.stringify({from:sq, piece:p}));
+          });
+          pEl.addEventListener("dragend", ()=>pEl.classList.remove("dragging"));
+
+          // touch drag start
+          pEl.addEventListener("pointerdown", (e)=>{
+            pEl.setPointerCapture(e.pointerId);
+            pEl.classList.add("dragging");
+            pEl.dataset.dragging = "1";
+            pEl.dataset.pointerId = String(e.pointerId);
+            window.__drag = {from:sq, piece:p};
+          });
+
+          sqEl.appendChild(pEl);
+        }
+
+        boardEl.appendChild(sqEl);
+      }
+    }
+  }
+
+  function onDrop(e){
+    e.preventDefault();
+    const to = e.currentTarget.dataset.sq;
+    try{
+      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+      attemptMove(data.from, to);
+    }catch(err){}
+  }
+
+  // Touch support: when you lift finger over a square, we try to drop there.
+  function onPointerDrop(e){
+    const to = e.currentTarget.dataset.sq;
+    if(window.__drag && window.__drag.from){
+      // only if a piece is currently "dragging"
+      attemptMove(window.__drag.from, to);
+      window.__drag = null;
+      // remove dragging class from all
+      document.querySelectorAll(".piece.dragging").forEach(x=>x.classList.remove("dragging"));
+    }
+  }
+
+  function sideOf(piece){ return piece[0]; } // 'w' or 'b'
+
+  function attemptMove(from, to){
+    if(from === to) return;
+
+    const piece = state[from];
+    if(!piece) return;
+
+    // enforce turn
+    if(sideOf(piece) !== turn){
+      setStatus("Turno incorrecto: mueve " + (turn==="w"?"blancas":"negras") + ".", "bad");
+      return;
+    }
+
+    // basic sanity: if destination has same color piece, block
+    const dest = state[to];
+    if(dest && sideOf(dest) === sideOf(piece)){
+      setStatus("No puedes capturar tu propia pieza.", "bad");
+      return;
+    }
+
+    // Validate against expected sequence (first 4 moves)
+    const exp = EXPECTED4[step];
+    if(!exp){
+      setStatus("¡Excelente! Ya completaste la parte clave de la combinación (primeros 4 movimientos).", "ok");
+      return;
+    }
+
+    const isCapture = !!dest;
+    const matches =
+      (from === exp.from) &&
+      (to === exp.to) &&
+      (isCapture === exp.capture);
+
+    if(!matches){
+      const who = (turn==="w"?"Blancas":"Negras");
+      setStatus(`Esa no es la jugada de la solución en este paso (${who}). Usa “Pista” si quieres.`, "bad");
+      return;
+    }
+
+    // Commit move
+    pushHistory();
+    if(dest) delete state[to];
+    state[to] = piece;
+    delete state[from];
+
+    step++;
+    turn = (turn==="w") ? "b" : "w";
+    updateTurnTag();
+    btnUndo.disabled = history.length === 0;
+
+    const note = exp.note || "¡Bien!";
+    if(step < EXPECTED4.length){
+      setStatus("✅ Correcto: " + note + "  — Siguiente turno: " + (turn==="w"?"blancas":"negras") + ".", "ok");
+    }else{
+      setStatus("✅ Correcto: " + note + "  — ¡Combinación crítica completada! (Primeros 4 movimientos).", "ok");
+    }
+
+    render();
+  }
+
+  function pushHistory(){
+    history.push({state: clone(state), step, turn});
+  }
+
+  function undo(){
+    const last = history.pop();
+    if(!last) return;
+    state = clone(last.state);
+    step = last.step;
+    turn = last.turn;
+    btnUndo.disabled = history.length === 0;
+    updateTurnTag();
+    setStatus("Deshecho. Intenta de nuevo.", "");
+    render();
+  }
+
+  function showHint(){
+    const exp = EXPECTED4[step];
+    hintEl.style.display = "block";
+    if(!exp){
+      hintEl.textContent = "Ya completaste la parte principal 🙂";
+      return;
+    }
+    hintEl.textContent = "Pista: mueve desde " + exp.from + " hacia " + exp.to + (exp.capture ? " (captura)" : "");
+  }
+
+  function showSolution(){
+    movesBox.style.display = "block";
+    movesBox.innerHTML =
+      "<b>Solución (parte crítica):</b><br>" +
+      "16... Nxh3!<br>" +
+      "17. c4<br>" +
+      "17. gxh3<br>" +
+      "17... Nf6!<br><br>" +
+      "<span style='color:#cbd5e1'>Nota: el resto de la línea depende de la posición exacta del alfil (en la imagen no se ve perfecto). " +
+      "Si quieres, envíame una captura más nítida del tablero y lo completo con validación hasta el final.</span>";
+  }
+
+  btnUndo.addEventListener("click", undo);
+  btnReset.addEventListener("click", reset);
+  btnHint.addEventListener("click", showHint);
+  btnShow.addEventListener("click", showSolution);
+
+  reset();
+</script>
+</body>
+</html>

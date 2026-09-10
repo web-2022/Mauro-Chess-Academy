@@ -1,0 +1,831 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#22c55e" />
+  <meta name="description" content="Academia Mauro - Calentamiento mental de ajedrez de 5 minutos antes de jugar." />
+  <title>Academia Mauro | Calentamiento mental</title>
+
+  <style>
+    * { box-sizing: border-box; }
+    :root{
+      --green:#22c55e;
+      --sky:#38bdf8;
+      --blue:#2563eb;
+      --blue-soft:#eff6ff;
+      --blue-border:#bfdbfe;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --surface:#ffffff;
+      --card:#f8fafc;
+      --line:#e5e7eb;
+      --good:#16a34a;
+      --bad:#ef4444;
+      --warn:#f59e0b;
+      --light-square:#f8fbff;
+      --dark-square:#9ec5fe;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(56,189,248,.18), transparent 34%),
+        radial-gradient(circle at 85% 0%, rgba(34,197,94,.16), transparent 30%),
+        #eef5fb;
+      color:var(--ink);
+      padding:clamp(12px, 4vw, 20px);
+    }
+
+    button{ font:inherit; }
+
+    .app{
+      width:100%;
+      max-width:560px;
+      margin:0 auto;
+      background:var(--surface);
+      padding:18px;
+      border-radius:24px;
+      box-shadow:0 16px 40px rgba(15,23,42,.12);
+    }
+
+    .brand-header{
+      padding:14px;
+      border-radius:22px;
+      margin-bottom:12px;
+      background:linear-gradient(90deg, var(--green), var(--sky));
+      color:#020617;
+    }
+
+    .brand-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .brand-badge{
+      width:54px;
+      height:54px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      font-size:1.75rem;
+      background:rgba(255,255,255,.28);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);
+    }
+
+    .brand-copy{ flex:1; min-width:190px; }
+    .brand-name{ font-weight:950; font-size:1.18rem; line-height:1.05; }
+    .brand-sub{ font-size:.82rem; font-weight:750; opacity:.78; margin-top:3px; }
+
+    .class-pill{
+      background:rgba(255,255,255,.28);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.78rem;
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    h1{
+      margin:8px 0 4px;
+      text-align:center;
+      font-size:clamp(1.3rem, 4vw, 1.7rem);
+      line-height:1.15;
+    }
+
+    .subtitle{
+      margin:0 auto 12px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.94rem;
+      max-width:460px;
+    }
+
+    .status-bar{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:7px;
+      margin-bottom:8px;
+    }
+
+    .status-chip{
+      text-align:center;
+      padding:8px 7px;
+      border-radius:14px;
+      background:var(--blue-soft);
+      border:1px solid var(--blue-border);
+      font-size:.82rem;
+      font-weight:800;
+    }
+
+    .progress{
+      height:10px;
+      background:var(--line);
+      border-radius:999px;
+      overflow:hidden;
+      margin-bottom:10px;
+    }
+
+    .progress-inner{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--blue), var(--sky));
+      transition:width .35s ease;
+    }
+
+    .intro-card,
+    .exercise-card,
+    .finish-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+    }
+
+    .intro-card{ text-align:center; }
+
+    .mental-sequence{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      flex-wrap:wrap;
+      margin:14px 0;
+    }
+
+    .mental-sequence span{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:.78rem;
+      font-weight:850;
+    }
+
+    .arrow{ color:var(--blue); font-weight:950; }
+
+    .stage-kicker{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .stage-label{
+      font-weight:950;
+      font-size:.82rem;
+      color:var(--blue);
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    .stage-time{
+      font-size:.78rem;
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    .question{
+      font-size:1.06rem;
+      font-weight:900;
+      text-align:center;
+      margin:6px 0 12px;
+      line-height:1.3;
+    }
+
+    .hint{
+      font-size:.82rem;
+      color:var(--muted);
+      text-align:center;
+      margin:-4px 0 12px;
+    }
+
+    .board-wrap{
+      width:min(100%, 390px);
+      margin:0 auto 14px;
+      position:relative;
+    }
+
+    .board{
+      width:100%;
+      aspect-ratio:1/1;
+      display:grid;
+      grid-template-columns:repeat(8, 1fr);
+      grid-template-rows:repeat(8, 1fr);
+      border:3px solid #60a5fa;
+      border-radius:18px;
+      overflow:hidden;
+      background:#60a5fa;
+      box-shadow:0 10px 22px rgba(37,99,235,.10);
+    }
+
+    .sq{
+      display:grid;
+      place-items:center;
+      position:relative;
+      font-size:clamp(1.65rem, 7.6vw, 2.65rem);
+      line-height:1;
+      user-select:none;
+    }
+
+    .sq.light{ background:var(--light-square); }
+    .sq.dark{ background:var(--dark-square); }
+
+    .coord-file,
+    .coord-rank{
+      position:absolute;
+      font-size:.52rem;
+      font-weight:900;
+      opacity:.62;
+      line-height:1;
+    }
+    .coord-file{ right:3px; bottom:2px; }
+    .coord-rank{ left:3px; top:3px; }
+
+    .piece-white{
+      color:#fff;
+      text-shadow:
+        0 1px 0 #0f172a,
+        1px 0 0 #0f172a,
+        -1px 0 0 #0f172a,
+        0 -1px 0 #0f172a,
+        0 2px 4px rgba(15,23,42,.35);
+    }
+
+    .piece-black{
+      color:#0f172a;
+      text-shadow:0 1px 2px rgba(255,255,255,.25);
+    }
+
+    .answers{
+      display:grid;
+      gap:9px;
+      margin-top:4px;
+    }
+
+    .answer-btn{
+      width:100%;
+      border:1px solid #dbe3ec;
+      background:#fff;
+      border-radius:14px;
+      padding:11px 12px;
+      text-align:left;
+      cursor:pointer;
+      font-weight:800;
+      color:var(--ink);
+      transition:.15s ease;
+      min-height:46px;
+    }
+
+    .answer-btn:hover{
+      transform:translateY(-1px);
+      border-color:#93c5fd;
+      box-shadow:0 7px 14px rgba(37,99,235,.08);
+    }
+
+    .answer-btn.correct{
+      border-color:#86efac;
+      background:#f0fdf4;
+      color:#166534;
+    }
+
+    .answer-btn.wrong{
+      border-color:#fecaca;
+      background:#fef2f2;
+      color:#991b1b;
+    }
+
+    .answer-btn:disabled{
+      cursor:default;
+      transform:none;
+    }
+
+    .feedback{
+      min-height:52px;
+      margin-top:10px;
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fff;
+      border:1px dashed #dbe3ec;
+      font-size:.86rem;
+      line-height:1.35;
+    }
+
+    .feedback.good{ border-color:#86efac; color:#166534; background:#f0fdf4; }
+    .feedback.bad{ border-color:#fecaca; color:#991b1b; background:#fef2f2; }
+
+    .controls{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .main-btn,
+    .secondary-btn{
+      border:none;
+      border-radius:999px;
+      padding:11px 16px;
+      font-weight:900;
+      cursor:pointer;
+      min-height:44px;
+    }
+
+    .main-btn{
+      background:var(--blue);
+      color:#fff;
+      flex:1;
+      max-width:230px;
+      min-width:160px;
+    }
+
+    .secondary-btn{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    .main-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .timer{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-variant-numeric:tabular-nums;
+    }
+
+    .finish-card{
+      text-align:center;
+    }
+
+    .finish-icon{ font-size:3rem; margin-bottom:4px; }
+    .score-big{ font-size:2.3rem; font-weight:950; margin:4px 0; color:var(--blue); }
+    .finish-text{ color:var(--muted); margin:0 auto 12px; max-width:430px; }
+
+    .result-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:8px;
+      margin:12px 0;
+    }
+
+    .result-box{
+      padding:10px;
+      border-radius:14px;
+      background:#fff;
+      border:1px solid var(--line);
+    }
+
+    .result-box b{ display:block; font-size:1.1rem; }
+    .result-box span{ color:var(--muted); font-size:.76rem; }
+
+    .ready-banner{
+      margin-top:12px;
+      padding:12px;
+      border-radius:16px;
+      background:linear-gradient(90deg, rgba(34,197,94,.14), rgba(56,189,248,.15));
+      border:1px solid #bae6fd;
+      font-weight:900;
+    }
+
+    .tiny-note{
+      margin-top:10px;
+      font-size:.72rem;
+      color:#94a3b8;
+      text-align:center;
+    }
+
+    .hidden{ display:none !important; }
+
+    @media (max-width:430px){
+      .app{ padding:14px; border-radius:20px; }
+      .brand-header{ padding:12px; }
+      .brand-badge{ width:48px; height:48px; }
+      .class-pill{ width:100%; text-align:center; }
+      .status-chip{ font-size:.75rem; padding:7px 4px; }
+      .exercise-card{ padding:13px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="brand-header">
+      <div class="brand-row">
+        <div class="brand-badge">♞</div>
+        <div class="brand-copy">
+          <div class="brand-name">Academia Mauro</div>
+          <div class="brand-sub">Entrena · Piensa · Compite</div>
+        </div>
+        <div class="class-pill">Clase especial · 5 min</div>
+      </div>
+    </header>
+
+    <h1>🧠 Calentamiento mental antes de jugar</h1>
+    <p class="subtitle">
+      Activa visión, táctica, cálculo y planificación antes de tu primera partida.
+    </p>
+
+    <section id="statusArea" class="hidden">
+      <div class="status-bar">
+        <div class="status-chip">🔥 Etapa <b id="stageNum">1</b>/5</div>
+        <div class="status-chip">✅ <b id="scoreNow">0</b> puntos</div>
+        <div class="status-chip timer">⏱️ <b id="timer">05:00</b></div>
+      </div>
+      <div class="progress"><div id="bar" class="progress-inner"></div></div>
+    </section>
+
+    <section id="intro" class="intro-card">
+      <div style="font-size:2.6rem">♟️⚡</div>
+      <h2 style="margin:4px 0 6px">Enciende tu cerebro antes de competir</h2>
+      <p style="margin:0;color:var(--muted);font-size:.9rem">
+        No vamos a jugar una partida. Solo haremos cinco activaciones cortas.
+      </p>
+
+      <div class="mental-sequence">
+        <span>Amenaza</span><b class="arrow">→</b>
+        <span>Táctica</span><b class="arrow">→</b>
+        <span>Cálculo</span><b class="arrow">→</b>
+        <span>Pieza peor</span><b class="arrow">→</b>
+        <span>Jugada</span>
+      </div>
+
+      <div class="controls">
+        <button class="main-btn" onclick="startWarmup()">▶ Iniciar calentamiento</button>
+        <button class="secondary-btn" onclick="speakText('Amenaza, táctica, cálculo, pieza peor, jugada.')">🔊 Escuchar</button>
+      </div>
+
+      <div class="tiny-note">El cronómetro orienta; no bloquea la clase si llegas a 0:00.</div>
+    </section>
+
+    <section id="exercise" class="exercise-card hidden">
+      <div class="stage-kicker">
+        <div id="stageLabel" class="stage-label"></div>
+        <div id="stageTime" class="stage-time"></div>
+      </div>
+
+      <div id="question" class="question"></div>
+      <div id="hint" class="hint"></div>
+
+      <div class="board-wrap">
+        <div id="board" class="board" aria-label="Tablero de ajedrez"></div>
+      </div>
+
+      <div id="answers" class="answers"></div>
+      <div id="feedback" class="feedback">Observa primero. Después responde.</div>
+
+      <div class="controls">
+        <button class="secondary-btn" onclick="repeatQuestion()">🔊 Repetir</button>
+        <button id="nextBtn" class="main-btn" onclick="nextStage()" disabled>Siguiente →</button>
+      </div>
+    </section>
+
+    <section id="finish" class="finish-card hidden">
+      <div class="finish-icon">🏁</div>
+      <h2 style="margin:0">Calentamiento completado</h2>
+      <div id="scoreFinal" class="score-big">0/5</div>
+      <p id="finishMessage" class="finish-text"></p>
+
+      <div class="result-grid">
+        <div class="result-box">
+          <b id="elapsedFinal">00:00</b>
+          <span>Tiempo usado</span>
+        </div>
+        <div class="result-box">
+          <b id="sessionsFinal">1</b>
+          <span>Calentamientos en este dispositivo</span>
+        </div>
+      </div>
+
+      <div class="ready-banner">
+        Amenaza → Táctica → Cálculo → Pieza peor → Jugada
+      </div>
+
+      <div class="controls">
+        <button class="main-btn" onclick="restartWarmup()">↻ Repetir calentamiento</button>
+      </div>
+
+      <div class="tiny-note">Ahora sí: entra a tu primera partida con el cerebro ya activado.</div>
+    </section>
+  </main>
+
+<script>
+  const PIECES = {
+    "K":"♔","Q":"♕","R":"♖","B":"♗","N":"♘","P":"♙",
+    "k":"♚","q":"♛","r":"♜","b":"♝","n":"♞","p":"♟"
+  };
+
+  const exercises = [
+    {
+      label:"Minuto 1 · Visión rápida",
+      stageTime:"Objetivo: detectar la amenaza",
+      fen:"rnb1k2r/pppp1ppp/5n2/2b1p3/2B1P2q/8/PPPP1PPP/RNBQ1RK1 w kq - 2 5",
+      question:"Antes de pensar en tu jugada: ¿qué está atacando directamente la dama negra desde h4?",
+      hint:"No calcules todavía. Solo mira líneas de ataque.",
+      options:[
+        "El peón de f2",
+        "La torre de f1",
+        "El caballo de b1"
+      ],
+      correct:0,
+      explain:"Correcto. La dama en h4 apunta por la diagonal h4–g3–f2. Primero debes ver qué amenaza el rival.",
+      voice:"Minuto uno. Visión rápida. ¿Qué está atacando directamente la dama negra desde h4?"
+    },
+    {
+      label:"Minuto 2 · Táctica",
+      stageTime:"Objetivo: jaques, capturas y amenazas",
+      fen:"r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4",
+      question:"Juegan blancas. ¿Cuál es la jugada forzante?",
+      hint:"Orden mental: JAQUES → CAPTURAS → AMENAZAS.",
+      options:[
+        "Qxf7#",
+        "Qh3",
+        "d3"
+      ],
+      correct:0,
+      explain:"Muy bien. Qxf7# es mate. El calentamiento táctico busca que tu cerebro revise primero las jugadas forzantes.",
+      voice:"Minuto dos. Táctica. Juegan blancas. Busca primero jaques, capturas y amenazas. ¿Cuál es la jugada forzante?"
+    },
+    {
+      label:"Minuto 3 · Cálculo corto",
+      stageTime:"Objetivo: imaginar la respuesta rival",
+      fen:"3qr1k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1",
+      question:"Si juegas 1.Rxe8+ ¿qué respuesta debes calcular primero?",
+      hint:"No te quedes en tu jugada. Oblígate a ver la respuesta rival.",
+      options:[
+        "1...Qxe8",
+        "1...Kh7",
+        "1...Kf8"
+      ],
+      correct:0,
+      explain:"Exacto. Tras 1.Rxe8+ la dama negra puede recapturar con 1...Qxe8. La idea es acostumbrarte a pensar: «juego yo → responde él → continúo yo».",
+      voice:"Minuto tres. Cálculo corto. Si juegas torre por e ocho jaque, ¿qué respuesta rival debes calcular primero?"
+    },
+    {
+      label:"Minuto 4 · Posición",
+      stageTime:"Objetivo: encontrar tu pieza peor",
+      fen:"r1bq1rk1/pppp1ppp/2n2n2/4p3/2B1P3/N4N2/PPPP1PPP/R1BQ1RK1 w - - 0 7",
+      question:"¿Qué pieza blanca tiene menos actividad en esta posición?",
+      hint:"Busca la pieza peor colocada antes de inventar un ataque.",
+      options:[
+        "El caballo de a3",
+        "El alfil de c4",
+        "La torre de f1"
+      ],
+      correct:0,
+      explain:"Bien. El caballo de a3 está en el borde y tiene poca influencia. Una buena pregunta práctica es: «¿cómo mejoro mi peor pieza?»",
+      voice:"Minuto cuatro. Posición. ¿Qué pieza blanca tiene menos actividad?"
+    },
+    {
+      label:"Minuto 5 · Modo partida",
+      stageTime:"Objetivo: decidir con el cerebro activado",
+      fen:"4r1k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1",
+      question:"Juegan blancas. Tras revisar amenaza y táctica, ¿cuál es la mejor jugada?",
+      hint:"Última activación: Amenaza → Táctica → Pieza peor → Jugada.",
+      options:[
+        "Rxe8#",
+        "h3",
+        "Kf1"
+      ],
+      correct:0,
+      explain:"Excelente. Rxe8# elimina la torre negra y da mate en la octava fila. Tu cerebro ya pasó por amenaza, táctica, cálculo, posición y decisión.",
+      voice:"Minuto cinco. Modo partida. Juegan blancas. ¿Cuál es la mejor jugada?"
+    }
+  ];
+
+  let current = 0;
+  let score = 0;
+  let answered = false;
+  let startTime = null;
+  let timerId = null;
+  let secondsLeft = 300;
+
+  function speakText(text){
+    if(!("speechSynthesis" in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "es-PE";
+    u.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+
+  function startWarmup(){
+    current = 0;
+    score = 0;
+    answered = false;
+    secondsLeft = 300;
+    startTime = Date.now();
+
+    document.getElementById("intro").classList.add("hidden");
+    document.getElementById("finish").classList.add("hidden");
+    document.getElementById("exercise").classList.remove("hidden");
+    document.getElementById("statusArea").classList.remove("hidden");
+
+    updateStatus();
+    renderExercise();
+    runTimer();
+  }
+
+  function runTimer(){
+    clearInterval(timerId);
+    updateTimerText();
+    timerId = setInterval(() => {
+      if(secondsLeft > 0) secondsLeft--;
+      updateTimerText();
+    }, 1000);
+  }
+
+  function updateTimerText(){
+    const min = String(Math.floor(secondsLeft / 60)).padStart(2,"0");
+    const sec = String(secondsLeft % 60).padStart(2,"0");
+    document.getElementById("timer").textContent = `${min}:${sec}`;
+  }
+
+  function updateStatus(){
+    document.getElementById("stageNum").textContent = Math.min(current + 1, 5);
+    document.getElementById("scoreNow").textContent = score;
+    document.getElementById("bar").style.width = `${(current / exercises.length) * 100}%`;
+  }
+
+  function renderExercise(){
+    answered = false;
+    const ex = exercises[current];
+
+    document.getElementById("stageLabel").textContent = ex.label;
+    document.getElementById("stageTime").textContent = ex.stageTime;
+    document.getElementById("question").textContent = ex.question;
+    document.getElementById("hint").textContent = ex.hint;
+    document.getElementById("feedback").className = "feedback";
+    document.getElementById("feedback").textContent = "Observa primero. Después responde.";
+    document.getElementById("nextBtn").disabled = true;
+    document.getElementById("nextBtn").textContent = current === exercises.length - 1 ? "Finalizar ✓" : "Siguiente →";
+
+    renderBoard(ex.fen);
+
+    const answers = document.getElementById("answers");
+    answers.innerHTML = "";
+    ex.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.className = "answer-btn";
+      btn.textContent = opt;
+      btn.onclick = () => answer(i, btn);
+      answers.appendChild(btn);
+    });
+
+    document.getElementById("stageNum").textContent = current + 1;
+    document.getElementById("bar").style.width = `${(current / exercises.length) * 100}%`;
+
+    setTimeout(() => speakText(ex.voice), 250);
+  }
+
+  function answer(index, clickedBtn){
+    if(answered) return;
+    answered = true;
+    const ex = exercises[current];
+    const buttons = [...document.querySelectorAll(".answer-btn")];
+    buttons.forEach(b => b.disabled = true);
+
+    if(index === ex.correct){
+      score++;
+      clickedBtn.classList.add("correct");
+      document.getElementById("feedback").className = "feedback good";
+      document.getElementById("feedback").textContent = "✅ " + ex.explain;
+      speakText("Muy bien. " + ex.explain);
+    }else{
+      clickedBtn.classList.add("wrong");
+      buttons[ex.correct].classList.add("correct");
+      document.getElementById("feedback").className = "feedback bad";
+      document.getElementById("feedback").textContent = "⚠️ " + ex.explain;
+      speakText("Cuidado. " + ex.explain);
+    }
+
+    document.getElementById("scoreNow").textContent = score;
+    document.getElementById("nextBtn").disabled = false;
+  }
+
+  function nextStage(){
+    if(!answered) return;
+    if(current < exercises.length - 1){
+      current++;
+      updateStatus();
+      renderExercise();
+    }else{
+      finishWarmup();
+    }
+  }
+
+  function repeatQuestion(){
+    speakText(exercises[current].voice);
+  }
+
+  function finishWarmup(){
+    clearInterval(timerId);
+    document.getElementById("exercise").classList.add("hidden");
+    document.getElementById("finish").classList.remove("hidden");
+    document.getElementById("bar").style.width = "100%";
+    document.getElementById("stageNum").textContent = "5";
+    document.getElementById("scoreNow").textContent = score;
+
+    const elapsed = Math.max(0, Math.round((Date.now() - startTime) / 1000));
+    const em = String(Math.floor(elapsed / 60)).padStart(2,"0");
+    const es = String(elapsed % 60).padStart(2,"0");
+
+    let sessions = Number(localStorage.getItem("mauroMentalWarmups") || 0) + 1;
+    localStorage.setItem("mauroMentalWarmups", String(sessions));
+
+    document.getElementById("scoreFinal").textContent = `${score}/5`;
+    document.getElementById("elapsedFinal").textContent = `${em}:${es}`;
+    document.getElementById("sessionsFinal").textContent = sessions;
+
+    let msg = "";
+    if(score === 5){
+      msg = "Excelente. Entraste en modo partida sin gastar una partida de calentamiento.";
+    }else if(score >= 3){
+      msg = "Buen calentamiento. Ya activaste los patrones principales; entra a jugar con la rutina mental.";
+    }else{
+      msg = "Calentamiento útil. Repite una vez si quieres activar mejor la visión antes de competir.";
+    }
+    document.getElementById("finishMessage").textContent = msg;
+
+    speakText("Calentamiento completado. Amenaza, táctica, cálculo, pieza peor, jugada. Ahora sí, a jugar.");
+  }
+
+  function restartWarmup(){
+    startWarmup();
+  }
+
+  function renderBoard(fen){
+    const board = document.getElementById("board");
+    board.innerHTML = "";
+
+    const placement = fen.split(" ")[0];
+    const ranks = placement.split("/");
+
+    for(let r = 0; r < 8; r++){
+      let fileIndex = 0;
+      for(const ch of ranks[r]){
+        if(/\d/.test(ch)){
+          const empty = Number(ch);
+          for(let i = 0; i < empty; i++){
+            addSquare(board, fileIndex, r, "");
+            fileIndex++;
+          }
+        }else{
+          addSquare(board, fileIndex, r, ch);
+          fileIndex++;
+        }
+      }
+    }
+  }
+
+  function addSquare(board, fileIndex, rankIndex, piece){
+    const files = ["a","b","c","d","e","f","g","h"];
+    const rankNumber = 8 - rankIndex;
+
+    const sq = document.createElement("div");
+    const dark = (fileIndex + rankIndex) % 2 === 1;
+    sq.className = "sq " + (dark ? "dark" : "light");
+
+    if(piece){
+      const p = document.createElement("span");
+      p.textContent = PIECES[piece] || "";
+      p.className = piece === piece.toUpperCase() ? "piece-white" : "piece-black";
+      sq.appendChild(p);
+    }
+
+    if(fileIndex === 0){
+      const rank = document.createElement("span");
+      rank.className = "coord-rank";
+      rank.textContent = rankNumber;
+      sq.appendChild(rank);
+    }
+
+    if(rankIndex === 7){
+      const file = document.createElement("span");
+      file.className = "coord-file";
+      file.textContent = files[fileIndex];
+      sq.appendChild(file);
+    }
+
+    board.appendChild(sq);
+  }
+</script>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js").catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>

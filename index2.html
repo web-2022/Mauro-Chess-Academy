@@ -2,13 +2,12 @@
 <html lang="es">
 
   <head>
-    <meta name="google-site-verification" content="t9KwBRIUgWYwkNk4A9yN5tcqE0dVzDQrztxNiC53cR8" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description"
-      content="Clases de ajedrez online para niños, jóvenes y adultos. Aprende desde cero hasta nivel competitivo con una ruta progresiva de 6 niveles y 124 temas." />
+      content="Academia de Ajedrez Mauro: formación por niveles, clases grupales, torneos, plataforma y seguimiento personalizado." />
 
-    <title>Academia de Ajedrez Online para Niños y Jóvenes | Mauro</title>
+    <title>Academia de Ajedrez Mauro | Forma tu mejor jugada</title>
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
@@ -1750,7 +1749,6 @@
           height: 42px;
           min-width: 42px;
           flex-basis: 42px;
-          transform: translateX(-10px);
         }
 
         .section {
@@ -1827,10 +1825,307 @@
           grid-template-columns: 1fr
         }
       }
+
+
+      /* ===== UX 2026 · escritorio ancho, cabecera compacta y mejor legibilidad ===== */
+      :root {
+        --container: 1680px;
+        --ui-scale: 1;
+      }
+
+      body {
+        font-size: 16px;
+      }
+
+      .container {
+        width: min(var(--container), calc(100% - clamp(28px, 5vw, 88px)));
+      }
+
+      .section {
+        padding: clamp(72px, 6vw, 96px) 0;
+      }
+
+      .section-label { font-size: .9rem; }
+      .section-copy { font-size: 1.08rem; max-width: 850px; }
+      .path-level { font-size: .84rem; }
+      .form-note { font-size: .84rem; }
+      label { font-size: .9rem; }
+
+      .nav {
+        box-shadow: 0 8px 30px rgba(0,0,0,.12);
+      }
+
+      .nav-inner {
+        min-height: 64px;
+        gap: 18px;
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+        border-radius: 13px;
+        font-size: 1.4rem;
+      }
+
+      .brand > span:last-child {
+        font-size: 1rem;
+        line-height: 1.05;
+      }
+
+      .brand small {
+        font-size: .72rem;
+        letter-spacing: .10em;
+        margin-top: 3px;
+      }
+
+      .nav-links {
+        gap: clamp(10px, 1vw, 20px);
+        font-size: .95rem;
+        font-weight: 700;
+      }
+
+      .nav-links a {
+        position: relative;
+        padding: 21px 2px 19px;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 10px;
+        height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        transform: scaleX(0);
+        transition: transform .2s ease;
+      }
+
+      .nav-links a:hover::after,
+      .nav-links a.active::after {
+        transform: scaleX(1);
+      }
+
+      .nav-links a.active { color: #fff; }
+
+      .btn-sm {
+        min-height: 40px;
+        padding: 0 15px;
+        border-radius: 12px;
+        font-size: .9rem;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 98px 0 46px;
+      }
+
+      .hero-grid {
+        grid-template-columns: minmax(0, 1.12fr) minmax(420px, .88fr);
+        gap: clamp(30px, 4vw, 72px);
+      }
+
+      h1 {
+        font-size: clamp(3.2rem, 5.4vw, 5.8rem);
+        line-height: .95;
+        max-width: 980px;
+      }
+
+      .eyebrow {
+        margin-bottom: 16px;
+        font-size: .92rem;
+        padding: 8px 12px;
+      }
+
+      .hero p {
+        font-size: 1.13rem;
+        max-width: 790px;
+        margin: 18px 0 18px;
+      }
+
+      .hero p strong { color: #fff; }
+
+      .hero-kpis {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: 0 0 20px;
+      }
+
+      .hero-kpis span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,.045);
+        color: #cbd5e1;
+        font-size: .91rem;
+      }
+
+      .hero-kpis b { color: #fff; }
+      .hero-proof { margin-top: 20px; font-size: .98rem; }
+      .chess-visual { min-height: 470px; }
+      .board-wrap { width: min(460px, 34vw); }
+
+      /* Barra de avance de página */
+      .page-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 3px;
+        z-index: 90;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        box-shadow: 0 0 14px rgba(56,189,248,.45);
+        pointer-events: none;
+      }
+
+      /* Herramientas de accesibilidad */
+      .ux-tools {
+        position: fixed;
+        right: 18px;
+        bottom: 92px;
+        z-index: 45;
+        display: grid;
+        gap: 8px;
+      }
+
+      .ux-tool {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: rgba(13,20,37,.9);
+        color: #fff;
+        backdrop-filter: blur(14px);
+        box-shadow: 0 12px 35px rgba(0,0,0,.22);
+        font-weight: 900;
+        transition: .2s ease;
+      }
+
+      .ux-tool:hover { transform: translateY(-2px); border-color: rgba(56,189,248,.5); }
+      .ux-tool[hidden] { display: none; }
+
+      .font-popover {
+        position: fixed;
+        right: 72px;
+        bottom: 142px;
+        z-index: 46;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: rgba(13,20,37,.96);
+        box-shadow: var(--shadow);
+      }
+
+      .font-popover.open { display: flex; }
+      .font-popover button {
+        min-width: 40px;
+        height: 38px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,.055);
+        color: #fff;
+        font-weight: 900;
+      }
+      .font-popover .font-reset { min-width: 70px; padding: 0 10px; }
+
+      /* Navegación rápida móvil */
+      .mobile-quicknav { display: none; }
+
+      @media (min-width: 1440px) {
+        .nav .container { width: min(1740px, calc(100% - 52px)); }
+        .hero-grid { grid-template-columns: minmax(0, 1.18fr) minmax(460px, .82fr); }
+        .cards-3 { gap: 28px; }
+      }
+
+      @media (max-width: 1180px) {
+        .nav-links { gap: 10px; font-size: .9rem; }
+        .nav-cta .btn { padding-inline: 12px; }
+      }
+
+      @media (max-width: 980px) {
+        .container { width: calc(100% - 28px); }
+        .hero { padding-top: 104px; }
+        .hero-grid { grid-template-columns: 1fr; }
+        .chess-visual { min-height: 430px; }
+        .board-wrap { width: min(500px, 86vw); }
+        .nav-links { font-size: 1rem; gap: 2px; }
+        .nav-links a { width: 100%; padding: 11px 8px; }
+        .nav-links a::after { display: none; }
+        .brand small { font-size: .68rem; }
+      }
+
+      @media (max-width: 680px) {
+        body { padding-bottom: 68px; }
+        .nav-inner { min-height: 62px; }
+        .brand > span:last-child { font-size: .94rem; }
+        .brand small { display: none; }
+        .hero { padding: 86px 0 28px; }
+        h1 { font-size: clamp(2.6rem, 13vw, 4.2rem); }
+        .hero p { font-size: 1.02rem; margin: 16px 0; }
+        .hero-kpis { gap: 7px; margin-bottom: 16px; }
+        .hero-kpis span { font-size: .84rem; padding: 6px 9px; }
+        .chess-visual { min-height: 350px; }
+        .ux-tools { right: 12px; bottom: 82px; }
+        .font-popover { right: 62px; bottom: 130px; }
+        .whatsapp { bottom: 82px; }
+
+        .mobile-quicknav {
+          position: fixed;
+          left: 8px;
+          right: 8px;
+          bottom: 8px;
+          z-index: 48;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 4px;
+          padding: 6px;
+          border: 1px solid var(--line);
+          border-radius: 18px;
+          background: rgba(7,11,22,.94);
+          backdrop-filter: blur(16px);
+          box-shadow: 0 16px 40px rgba(0,0,0,.35);
+        }
+
+        .mobile-quicknav a {
+          min-height: 48px;
+          display: grid;
+          place-items: center;
+          gap: 1px;
+          border-radius: 13px;
+          color: #cbd5e1;
+          font-size: .72rem;
+          font-weight: 800;
+          line-height: 1.05;
+        }
+
+        .mobile-quicknav a span { font-size: 1.15rem; }
+        .mobile-quicknav a:active { background: rgba(56,189,248,.12); color: #fff; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          scroll-behavior: auto !important;
+          animation-duration: .01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: .01ms !important;
+        }
+      }
+
     </style>
   </head>
 
   <body>
+    <div class="page-progress" id="pageProgress" aria-hidden="true"></div>
     <nav class="nav" id="nav">
       <div class="container nav-inner">
         <a class="brand" href="#inicio" aria-label="Academia de Ajedrez Mauro">
@@ -1840,18 +2135,17 @@
 
         <div class="nav-links" id="navLinks">
           <a href="#ruta-aprendizaje">Ruta</a>
-          <a href="#metodologia">Metodología</a>
+          <a href="#metodologia">Método</a>
           <a href="#programas">Programas</a>
           <a href="#plataforma">Plataforma</a>
-          <a href="ruta-chess.html">Mi progreso</a>
+          <a href="miProgreso.html">Mi progreso</a>
           <a href="#planes">Planes</a>
           <a href="#contacto">Contacto</a>
-          <a href="tableroDePractica.html">Tablero de práctica</a>
+          <a href="tableroDePractica.html">Tablero</a>
         </div>
 
         <div class="nav-cta">
-          <a class="btn btn-primary btn-sm" href="#contacto">Clase
-            gratuita de evaluación</a>
+          <a class="btn btn-primary btn-sm" href="#contacto">Clase gratis</a>
           <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">☰</button>
         </div>
       </div>
@@ -1863,13 +2157,19 @@
           <div class="eyebrow"><span class="pulse-dot"></span> Matrículas abiertas</div>
           <h1>Piensa mejor.<br><span class="gradient-text">Juega ajedrez con propósito.</span></h1>
           <p>
-            Academia online con entrenamiento progresivo, clases grupales, partidas comentadas, táctica real y
-            estrategia moderna. Avanza mediante una ruta de 6 niveles y 124 temas.
+            Entrenamiento online, progresivo y práctico: táctica, estrategia, partidas comentadas y seguimiento.
+            Avanza por una ruta clara de <strong>6 niveles y 124 temas</strong>.
           </p>
+
+          <div class="hero-kpis" aria-label="Resumen de la academia">
+            <span><b>6</b> niveles</span>
+            <span><b>124</b> temas</span>
+            <span><b>100%</b> online</span>
+          </div>
 
           <div class="hero-actions">
             <a class="btn btn-primary" href="#contacto">Aprende con entrenador <span>🚀</span></a>
-            <a class="btn btn-primary btn-sm" href="ruta-chess.html">Aprende a tu ritmo <span>→</span></a>
+            <a class="btn btn-primary btn-sm" href="miProgreso.html">Aprende a tu ritmo <span>→</span></a>
           </div>
 
           <div class="hero-proof">
@@ -1921,13 +2221,13 @@
         <div class="route-summary reveal">
           <div><strong>Evaluación inicial → nivel adecuado → progreso medible</strong><span>La primera clase de
               evaluación es gratis</span></div>
-          <a class="btn btn-primary btn-sm" href="ruta-chess.html">Explorar los 124 temas →</a>
+          <a class="btn btn-primary btn-sm" href="miProgreso.html">Explorar los 124 temas →</a>
         </div>
 
         <div class="route-grid">
 
           <!-- NIVEL 1: INICIAL -->
-          <a class="level-card reveal" data-piece="♙" href="ruta-chess.html?nivel=1">
+          <a class="level-card reveal" data-piece="♙" href="miProgreso.html?nivel=1">
 
             <div class="level-top">
               <span class="level-number">01</span>
@@ -1952,7 +2252,7 @@
 
 
           <!-- NIVEL 2: BÁSICO -->
-          <a class="level-card reveal" data-piece="♘" href="ruta-chess.html?nivel=2">
+          <a class="level-card reveal" data-piece="♘" href="miProgreso.html?nivel=2">
 
             <div class="level-top">
               <span class="level-number">02</span>
@@ -1977,7 +2277,7 @@
 
 
           <!-- NIVEL 3: INTERMEDIO -->
-          <a class="level-card reveal" data-piece="♗" href="ruta-chess.html?nivel=3">
+          <a class="level-card reveal" data-piece="♗" href="miProgreso.html?nivel=3">
 
             <div class="level-top">
               <span class="level-number">03</span>
@@ -2002,7 +2302,7 @@
 
 
           <!-- NIVEL 4: AVANZADO -->
-          <a class="level-card reveal" data-piece="♖" href="ruta-chess.html?nivel=4">
+          <a class="level-card reveal" data-piece="♖" href="miProgreso.html?nivel=4">
 
             <div class="level-top">
               <span class="level-number">04</span>
@@ -2027,7 +2327,7 @@
 
 
           <!-- NIVEL 5: COMPETITIVO -->
-          <a class="level-card reveal" data-piece="♕" href="ruta-chess.html?nivel=5">
+          <a class="level-card reveal" data-piece="♕" href="miProgreso.html?nivel=5">
 
             <div class="level-top">
               <span class="level-number">05</span>
@@ -2052,7 +2352,7 @@
 
 
           <!-- NIVEL 6: ENTRENAMIENTO INTEGRAL -->
-          <a class="level-card reveal" data-piece="♔" href="ruta-chess.html?nivel=6">
+          <a class="level-card reveal" data-piece="♔" href="miProgreso.html?nivel=6">
 
             <div class="level-top">
               <span class="level-number">06</span>
@@ -2269,7 +2569,8 @@
               <h3>1. Descubriendo el ajedrez</h3>
 
               <p>
-                Introducción al Ajedrez para quienes comienzan a conocer las piezas, las reglas y los primeros patrones del juego.
+                Aprende a reconocer el tablero, las piezas, sus movimientos,
+                las capturas, las reglas básicas, el jaque y el jaque mate.
               </p>
 
               <div class="tags">
@@ -2291,9 +2592,8 @@
               <h3>2. Primeras tácticas y estrategias</h3>
 
               <p>
-                Domina los principios escenciales del Ajedrez, aperturas y tácticas básicas (ataques dobles, clavadas, 
-                ataques descubiertos y mates fundamentales).
-                
+                Descubre ataques dobles, clavadas, ataques descubiertos,
+                aperturas, patrones de mate y finales básicos.
               </p>
 
               <div class="tags">
@@ -2521,7 +2821,7 @@
 
           </div>
 
-          <a href="ruta-chess.html" class="btn btn-secondary">
+          <a href="miProgreso.html" class="btn btn-secondary">
             Ver Mi Progreso
           </a>
         </div>
@@ -2920,7 +3220,7 @@
           <div class="footer-col">
             <h4>Academia</h4>
             <a href="#ruta-aprendizaje">Ruta</a>
-            <a href="#metodologia">Metodología</a>
+            <a href="#metodologia">Método</a>
             <a href="#programas">Programas</a>
             <a href="#planes">Planes</a>
           </div>
@@ -2948,6 +3248,24 @@
     </footer>
 
     <a class="whatsapp" id="whatsappBtn" href="#contacto" aria-label="Contactar por WhatsApp">✆</a>
+
+    <div class="ux-tools" aria-label="Herramientas de visualización">
+      <button class="ux-tool" id="fontTool" type="button" aria-label="Cambiar tamaño de texto" title="Tamaño de texto">Aa</button>
+      <button class="ux-tool" id="backTop" type="button" aria-label="Volver arriba" title="Volver arriba" hidden>↑</button>
+    </div>
+
+    <div class="font-popover" id="fontPopover" aria-label="Tamaño de texto">
+      <button type="button" id="fontMinus" aria-label="Reducir texto">A−</button>
+      <button type="button" class="font-reset" id="fontReset" aria-label="Tamaño normal">100%</button>
+      <button type="button" id="fontPlus" aria-label="Aumentar texto">A+</button>
+    </div>
+
+    <nav class="mobile-quicknav" aria-label="Accesos rápidos">
+      <a href="#inicio"><span>⌂</span>Inicio</a>
+      <a href="#ruta-aprendizaje"><span>♞</span>Ruta</a>
+      <a href="miProgreso.html"><span>◔</span>Progreso</a>
+      <a href="tableroDePractica.html"><span>♟</span>Tablero</a>
+    </nav>
 
     <script>
       // ===== CONFIGURACIÓN RÁPIDA =====
@@ -3072,6 +3390,70 @@ Deseo coordinar una clase de evaluación.`;
             .then(() => alert("📋 Enlace copiado. ¡Compártelo!"));
         }
       }
+    </script>
+
+
+    <script>
+      // ===== Mejoras de experiencia =====
+      (() => {
+        const root = document.documentElement;
+        const progress = document.getElementById('pageProgress');
+        const backTop = document.getElementById('backTop');
+        const fontTool = document.getElementById('fontTool');
+        const fontPopover = document.getElementById('fontPopover');
+        const fontMinus = document.getElementById('fontMinus');
+        const fontPlus = document.getElementById('fontPlus');
+        const fontReset = document.getElementById('fontReset');
+
+        let scale = Number(localStorage.getItem('mauroUiScale') || 1);
+        if (!Number.isFinite(scale)) scale = 1;
+        scale = Math.min(1.18, Math.max(.94, scale));
+
+        const applyScale = () => {
+          root.style.fontSize = Math.round(scale * 100) + '%';
+          fontReset.textContent = Math.round(scale * 100) + '%';
+          localStorage.setItem('mauroUiScale', String(scale));
+        };
+        applyScale();
+
+        fontTool?.addEventListener('click', () => {
+          fontPopover?.classList.toggle('open');
+        });
+        fontMinus?.addEventListener('click', () => { scale = Math.max(.94, +(scale - .06).toFixed(2)); applyScale(); });
+        fontPlus?.addEventListener('click', () => { scale = Math.min(1.18, +(scale + .06).toFixed(2)); applyScale(); });
+        fontReset?.addEventListener('click', () => { scale = 1; applyScale(); });
+
+        document.addEventListener('click', (e) => {
+          if (!fontPopover?.contains(e.target) && e.target !== fontTool) fontPopover?.classList.remove('open');
+        });
+
+        const updateScrollUI = () => {
+          const max = document.documentElement.scrollHeight - innerHeight;
+          const pct = max > 0 ? (scrollY / max) * 100 : 0;
+          if (progress) progress.style.width = pct + '%';
+          if (backTop) backTop.hidden = scrollY < 520;
+        };
+        updateScrollUI();
+        addEventListener('scroll', updateScrollUI, { passive: true });
+        addEventListener('resize', updateScrollUI);
+        backTop?.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Marca la sección visible en la navegación superior.
+        const sectionLinks = [...document.querySelectorAll('.nav-links a[href^="#"]')];
+        const sections = sectionLinks
+          .map(a => document.querySelector(a.getAttribute('href')))
+          .filter(Boolean);
+        const linkById = new Map(sectionLinks.map(a => [a.getAttribute('href').slice(1), a]));
+        const activeObserver = new IntersectionObserver(entries => {
+          const visible = entries
+            .filter(entry => entry.isIntersecting)
+            .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (!visible) return;
+          sectionLinks.forEach(a => a.classList.remove('active'));
+          linkById.get(visible.target.id)?.classList.add('active');
+        }, { rootMargin: '-30% 0px -55% 0px', threshold: [0, .15, .4, .7] });
+        sections.forEach(section => activeObserver.observe(section));
+      })();
     </script>
 
     <!-- PWA -->

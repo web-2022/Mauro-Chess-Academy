@@ -137,9 +137,24 @@
       }
 
       .piece {
-        font-size: clamp(3rem, 10vw, 4.5rem);
-        margin: 10px 0;
+        font-size: clamp(3.5rem, 12vw, 5rem);
+        margin: 12px 0;
+        line-height: 1;
       }
+
+      .piece.white {
+        color: #0f172a;
+        /* blanco oscuro */
+        text-shadow: 0 2px 3px rgba(0, 0, 0, .25);
+      }
+
+      .piece.black {
+        color: #020617;
+        /* negro fuerte */
+        text-shadow: 0 2px 3px rgba(255, 255, 255, .25);
+      }
+
+
 
       .options {
         display: grid;
@@ -247,13 +262,14 @@
 
     <script>
       const pieces = [
-        { name: "Rey", icon: "♔" },
-        { name: "Dama", icon: "♕" },
-        { name: "Torre", icon: "♖" },
-        { name: "Alfil", icon: "♗" },
-        { name: "Caballo", icon: "♘" },
-        { name: "Peón", icon: "♙" }
+        { name: "Rey", icon: "♔", color: "white" },
+        { name: "Dama", icon: "♕", color: "white" },
+        { name: "Torre", icon: "♖", color: "white" },
+        { name: "Alfil", icon: "♗", color: "white" },
+        { name: "Caballo", icon: "♘", color: "white" },
+        { name: "Peón", icon: "♙", color: "white" }
       ];
+
 
       let current, ok = 0, bad = 0, attempts = 0;
       const TOTAL = 10;
@@ -268,7 +284,10 @@
 
       function loadExercise() {
         current = pieces[Math.floor(Math.random() * pieces.length)];
-        document.getElementById("piece").textContent = current.icon;
+        const pieceEl = document.getElementById("piece");
+        pieceEl.textContent = current.icon;
+        pieceEl.className = "piece " + current.color;
+
         document.getElementById("feedback").textContent = "";
 
         const opts = [...pieces].sort(() => Math.random() - .5).slice(0, 4);
@@ -346,7 +365,7 @@
       // Registrar Service Worker (PWA)
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-            navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
+          //  navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
         });
       }
 

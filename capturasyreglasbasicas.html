@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajedrez • Capturas y reglas básicas</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1976d2">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(145deg, #dbeafe, #e0f2fe);
+      padding: clamp(12px, 4vw, 18px);
+    }
+
+    .app {
+      background: #fff;
+      width: 100%;
+      max-width: 520px;
+      padding: 18px;
+      border-radius: 24px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.12);
+    }
+
+    /* ===== HEADER ===== */
+    .brand-header-kids {
+      padding: 14px;
+      border-radius: 22px;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+      color: #020617;
+      pointer-events: none;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .kids-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.6rem;
+      background: rgba(255,255,255,.25);
+    }
+
+    .kids-title {
+      font-weight: 900;
+      font-size: 1.35rem;
+    }
+
+    .kids-subtitle {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    .kids-pill {
+      background: rgba(255,255,255,.25);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .kids-pill:hover {
+      background: rgba(255,255,255,.45);
+      transform: translateY(-1px);
+    }
+
+    h1 {
+      text-align: center;
+      margin: 6px 0 2px;
+      font-size: 1.2rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: .95rem;
+      color: #6b7280;
+    }
+
+    /* ===== STATUS ===== */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      font-size: .9rem;
+      margin-bottom: 8px;
+    }
+
+    .progress {
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: #2563eb;
+      transition: .3s;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    /* ===== BOARD ===== */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8,1fr);
+      grid-template-rows: repeat(8,1fr);
+      width: 100%;
+      aspect-ratio: 1/1;
+      max-width: min(360px,90vw);
+      margin: auto;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 3px solid #60a5fa;
+      background: #60a5fa;
+    }
+
+    .sq {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.4rem,4vw,1.8rem);
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .light { background: #f8fbff; }
+    .dark  { background: #9ec5fe; }
+
+    .good-sq {
+      box-shadow: inset 0 0 0 4px #22c55e;
+      background: rgba(34,197,94,.3);
+    }
+
+    .bad-sq {
+      box-shadow: inset 0 0 0 4px #ef4444;
+      background: rgba(239,68,68,.3);
+    }
+
+    .feedback {
+      margin-top: 8px;
+      font-weight: 800;
+      min-height: 24px;
+    }
+
+    .good { color: #16a34a; }
+    .bad  { color: #ef4444; }
+
+    /* ===== CONTROLS ===== */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .main-btn {
+      flex: 1;
+      min-width: 140px;
+      max-width: 220px;
+      padding: 12px;
+      border-radius: 999px;
+      border: none;
+      font-weight: 800;
+      background: #2563eb;
+      color: #fff;
+      cursor: pointer;
+      min-height: 44px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="brand-header-kids">
+    <div class="brand-row">
+      <div class="kids-badge">⚔️</div>
+      <div>
+        <div class="kids-title">Academia de Ajedrez Mauro</div>
+        <div class="kids-subtitle">
+          <span class="kids-pill" onclick="location.href='index.html'">Inicio</span>
+          <span class="kids-pill" onclick="location.href='ruta-chess.html'">Ruta de aprendizaje</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h1>Capturas y reglas básicas</h1>
+  <p class="subtitle">Turnos, capturas y piezas protegidas</p>
+
+  <div class="status-bar">
+    <div>✅ <b id="ok">0</b></div>
+    <div>❌ <b id="bad">0</b></div>
+    <div>📊 <b id="prog">0</b>/10</div>
+  </div>
+
+  <div class="progress">
+    <div class="progress-inner" id="bar"></div>
+  </div>
+
+  <div class="card">
+    <div class="board" id="board"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div class="controls">
+    <button class="main-btn" onclick="repeatVoice()">🔊 Repetir</button>
+    <button class="main-btn" onclick="next()">Siguiente</button>
+    <button class="main-btn" id="nextTopicBtn" style="display:none;background:#16a34a"
+      onclick="goNextTopic()">Siguiente tema</button>
+  </div>
+
+</div>
+
+<script>
+const files=["a","b","c","d","e","f","g","h"];
+let ok=0,bad=0,attempts=0;
+const TOTAL=10;
+let target="";
+
+function speak(t){
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang="es-PE"; u.rate=.9;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+function idx(c){
+  return files.indexOf(c[0])+(8-c[1])*8;
+}
+
+function buildBoard(){
+  const b=document.getElementById("board");
+  b.innerHTML="";
+  for(let r=8;r>=1;r--){
+    for(let f=0;f<8;f++){
+      const c=files[f]+r;
+      const d=document.createElement("div");
+      d.className="sq "+(((f+r)%2)?"dark":"light");
+      d.onclick=()=>check(c,d);
+      b.appendChild(d);
+    }
+  }
+}
+
+function setup(){
+  buildBoard();
+
+  // Torre blanca
+  document.querySelectorAll(".sq")[idx("d4")].textContent="♖";
+
+  // Peón negro sin defensa (capturable)
+  document.querySelectorAll(".sq")[idx("d6")].textContent="♟";
+  target="d6";
+
+  // Peón negro protegido
+  document.querySelectorAll(".sq")[idx("f4")].textContent="♟";
+  document.querySelectorAll(".sq")[idx("f6")].textContent="♟";
+
+  speak("Busca una pieza que puedas capturar sin perder la tuya");
+}
+
+function check(c,el){
+  if(attempts>=TOTAL) return;
+
+  document.querySelectorAll(".sq").forEach(s=>s.classList.remove("good-sq","bad-sq"));
+
+  if(c===target){
+    ok++; attempts++;
+    el.classList.add("good-sq");
+    feedback.textContent="¡Correcto! Esa pieza no está protegida.";
+    feedback.className="feedback good";
+    speak("Correcto. Esa captura es segura");
+  } else {
+    bad++; attempts++;
+    el.classList.add("bad-sq");
+    feedback.textContent="Incorrecto. Esa pieza está protegida o no se puede capturar.";
+    feedback.className="feedback bad";
+    speak("Incorrecto");
+  }
+  update();
+  if(attempts>=TOTAL) finish();
+}
+
+function update(){
+  okEl.textContent=ok;
+  badEl.textContent=bad;
+  progEl.textContent=attempts;
+  bar.style.width=(attempts/TOTAL*100)+"%";
+}
+
+function next(){
+  if(attempts<TOTAL){
+    feedback.textContent="";
+    setup();
+  }
+}
+
+function repeatVoice(){
+  speak("Busca una pieza que puedas capturar sin perder la tuya");
+}
+
+function finish(){
+  feedback.textContent="🎉 ¡Clase completada!";
+  feedback.className="feedback good";
+  speak("Excelente. Has aprendido las reglas básicas de captura.");
+  document.getElementById("nextTopicBtn").style.display="inline-block";
+}
+
+function goNextTopic(){
+  location.href="ajedrez-final-reglas.html";
+}
+
+const okEl=document.getElementById("ok");
+const badEl=document.getElementById("bad");
+const progEl=document.getElementById("prog");
+const bar=document.getElementById("bar");
+const feedback=document.getElementById("feedback");
+
+setup();
+</script>
+
+</body>
+</html>

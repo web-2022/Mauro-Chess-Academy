@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<title>Tema 18 · Piezas propias y enemigas | Academia Mauro</title>
+<style>
+:root{
+  --bg:#020617;--panel:#071124;--panel2:#0b1730;--text:#e5e7eb;--muted:#94a3b8;
+  --green:#22c55e;--green2:#86efac;--blue:#38bdf8;--blue2:#bae6fd;
+  --yellow:#facc15;--red:#fb7185;--line:rgba(148,163,184,.20);
+  --light:#dbeafe;--dark:#2563a5;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 15% 5%,rgba(34,197,94,.12),transparent 30rem),
+    radial-gradient(circle at 85% 12%,rgba(56,189,248,.12),transparent 30rem),
+    #020617;
+}
+button{font:inherit;touch-action:manipulation}
+.app{width:calc(100% - 14px);margin:auto;padding:7px 0 16px}
+.header{
+  position:sticky;top:5px;z-index:30;
+  display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  padding:8px 10px;border:1px solid var(--line);border-radius:15px;
+  background:rgba(7,17,36,.97)
+}
+.brand{display:flex;align-items:center;gap:8px}
+.logo{
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--green),var(--blue));color:#03111d;font-size:1.55rem;font-weight:900
+}
+.brand strong{display:block;font-size:.82rem}.brand small{display:block;color:var(--muted);font-size:.58rem}
+.progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.68rem;font-weight:800;margin-bottom:5px}
+.track{height:9px;border-radius:999px;overflow:hidden;background:#0f1d39}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue));transition:.3s}
+.stats{display:flex;gap:6px}.stat{padding:6px 8px;border:1px solid var(--line);border-radius:9px;background:#0f1d39;font-size:.7rem;font-weight:900}
+.main{display:grid;grid-template-columns:minmax(550px,1fr) minmax(500px,1fr);gap:10px;margin-top:8px;align-items:start}
+.card{border:1px solid var(--line);border-radius:17px;background:linear-gradient(180deg,#0b1730,#050d1f)}
+.board-card{padding:9px;position:sticky;top:66px}
+.board-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}
+.board-tools{display:flex;gap:5px;flex-wrap:wrap}
+.btn,.mini,.option{
+  border:1px solid var(--line);background:#0f1d39;color:var(--text);border-radius:10px;cursor:pointer;font-weight:800
+}
+.mini{min-height:31px;padding:5px 8px;font-size:.68rem}
+.btn{min-height:40px;padding:8px 12px;font-size:.78rem}
+.btn.primary{border:0;background:linear-gradient(90deg,var(--green),var(--blue));color:#03111d}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.board-wrap{
+  width:min(100%,calc(100vh - 145px),850px);margin:auto;padding:6px;border-radius:14px;
+  background:linear-gradient(135deg,var(--green),var(--blue))
+}
+.board{width:100%;aspect-ratio:1;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);overflow:hidden;border-radius:9px}
+.square{position:relative;display:grid;place-items:center;cursor:pointer;user-select:none}
+.light{background:var(--light)}.dark{background:var(--dark)}
+.piece{font-size:clamp(30px,5vw,68px);line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));z-index:2}
+.coord{position:absolute;font-size:10px;font-weight:900;opacity:.72;z-index:3}.coord.file{right:4px;bottom:2px}.coord.rank{left:4px;top:2px}
+.light .coord{color:#1e3a5f}.dark .coord{color:#e0f2fe}
+.square.own::after,.square.enemy::after,.square.temp::after{
+  content:"";position:absolute;inset:5%;border-radius:10%;z-index:1;pointer-events:none
+}
+.square.own::after{background:rgba(134,239,172,.28);box-shadow:inset 0 0 0 4px rgba(134,239,172,.95)}
+.square.enemy::after{background:rgba(250,204,21,.24);box-shadow:inset 0 0 0 4px rgba(250,204,21,.92)}
+.square.temp::after{background:rgba(56,189,248,.22);box-shadow:inset 0 0 0 4px rgba(56,189,248,.85)}
+.board-msg{margin-top:7px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#020617aa;color:var(--muted);font-size:.76rem}
+.board-msg strong{color:var(--blue2)}
+.lesson{padding:14px;min-height:calc(100vh - 88px)}
+.eyebrow{color:var(--green2);font-size:.66rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+h1{font-size:1.45rem;margin:5px 0 8px}p{line-height:1.5}
+.lead{color:var(--muted);font-size:.9rem;margin:0}
+.audio-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.fact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:12px}
+.fact{
+  min-height:74px;text-align:left;padding:10px;border:1px solid var(--line);border-radius:11px;
+  background:#0f1d39;color:var(--text);cursor:pointer
+}
+.fact b{display:block;color:var(--blue2);font-size:.9rem;margin-bottom:3px}.fact span{color:var(--muted);font-size:.72rem}
+.mascot{display:grid;grid-template-columns:44px 1fr;gap:9px;align-items:center;margin-top:10px;padding:9px;border:1px solid rgba(34,197,94,.28);border-radius:11px;background:rgba(34,197,94,.07)}
+.mascot .icon{font-size:1.6rem;text-align:center}.mascot p{margin:0;color:var(--green2);font-size:.78rem;font-weight:750}
+.challenge{margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:12px;background:#02061777}
+.challenge h2{font-size:1rem;margin:0 0 8px}
+.feedback{display:none;margin-top:8px;padding:9px;border-radius:10px;font-size:.77rem;font-weight:750}
+.feedback.show{display:block}.feedback.good{color:var(--green2);background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.3)}
+.feedback.try{color:#fde68a;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.3)}
+.hint{display:none;margin-top:8px;padding:9px;border-left:3px solid var(--yellow);background:rgba(250,204,21,.06);color:#fde68a;font-size:.75rem}.hint.show{display:block}
+.bottom{display:flex;justify-content:space-between;gap:8px;margin-top:14px;padding-top:10px;border-top:1px solid var(--line)}
+.summary{display:none;text-align:center}.summary.show{display:block}
+.badge{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;margin:10px auto;background:linear-gradient(135deg,var(--green),var(--blue));font-size:2.5rem}
+.test-launch{margin-top:12px;padding:12px;border:1px solid rgba(34,197,94,.3);border-radius:12px;background:rgba(34,197,94,.06)}
+.test{display:none}.test.show{display:block}
+.test-top{display:flex;justify-content:space-between;color:var(--muted);font-size:.72rem;font-weight:800}
+.test-q{font-size:1rem;font-weight:900}
+.options{display:grid;gap:7px}.option{text-align:left;min-height:48px;padding:10px 12px}.option.correct{border-color:var(--green);background:rgba(34,197,94,.13)}.option.wrong{border-color:var(--red);background:rgba(251,113,133,.1)}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.result{padding:10px;border:1px solid var(--line);border-radius:10px;background:#0f1d39}.result b{display:block;color:var(--blue2);font-size:1.2rem}.result span{font-size:.68rem;color:var(--muted)}
+@media(max-width:900px){.main{grid-template-columns:1fr}.board-card{position:static}.board-wrap{width:min(100%,650px)}.lesson{min-height:auto}}
+@media(max-width:600px){.app{width:calc(100% - 8px)}.header{grid-template-columns:auto 1fr}.brand div:last-child{display:none}.stats{grid-column:1/-1;justify-content:flex-end}.main{gap:7px}.fact-grid{grid-template-columns:1fr 1fr}.board-head{align-items:flex-start;flex-direction:column}.board-tools{display:grid;grid-template-columns:repeat(4,1fr);width:100%}.mini{font-size:.6rem;padding:4px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+  <div class="brand"><div class="logo">♞</div><div><strong>Academia Mauro</strong><small>Ajedrez & estrategia</small></div></div>
+  <div><div class="progress-label"><span id="stepLabel">Mauro · Tema 18 · Paso 1 de 7</span><span id="pct">0%</span></div><div class="track"><div id="fill" class="fill"></div></div></div>
+  <div class="stats"><div class="stat">⭐ <span id="xp">0</span> XP</div><div class="stat">❤️ ∞</div></div>
+</header>
+
+<main class="main">
+<section class="card board-card">
+  <div class="board-head">
+    <strong>♟ Tablero interactivo</strong>
+    <div class="board-tools">
+      <button class="mini" id="ownBtn">Propias</button>
+      <button class="mini" id="enemyBtn">Enemigas</button>
+      <button class="mini" id="allBtn">Todas</button>
+      <button class="mini" id="sideBtn">Cambiar bando</button>
+    </div>
+  </div>
+  <div class="board-wrap"><div id="board" class="board"></div></div>
+  <div id="boardMsg" class="board-msg"><strong>Tu bando:</strong> blancas. Toca una pieza.</div>
+</section>
+
+<section class="card lesson">
+  <div id="content"></div>
+  <div id="summary" class="summary">
+    <div class="badge">🏆</div>
+    <h1>¡Tema 18 completado!</h1>
+    <p class="lead">Ya sabes distinguir piezas propias y enemigas desde ambos lados del tablero.</p>
+    <div class="result-grid"><div class="result"><b id="sumXp">0</b><span>XP</span></div><div class="result"><b>7/7</b><span>pasos</span></div><div class="result"><b>✓</b><span>completado</span></div></div>
+    <div class="test-launch" id="testLaunch"><h2>🧠 Test interactivo</h2><p class="lead">10 retos. La mayoría se responden directamente tocando piezas del tablero.</p><button id="startTest" class="btn primary">Empezar test</button></div>
+    <div id="test" class="test"></div>
+    <div class="bottom"><button id="repeatLesson" class="btn">↻ Repetir clase</button><button class="btn primary">Tema 19 →</button></div>
+  </div>
+</section>
+</main>
+</div>
+
+<script>
+const files=['a','b','c','d','e','f','g','h'];
+const symbols={wK:'♔',wQ:'♕',wR:'♖',wB:'♗',wN:'♘',wP:'♙',bK:'♚',bQ:'♛',bR:'♜',bB:'♝',bN:'♞',bP:'♟'};
+const names={wK:'rey blanco',wQ:'dama blanca',wR:'torre blanca',wB:'alfil blanco',wN:'caballo blanco',wP:'peón blanco',bK:'rey negro',bQ:'dama negra',bR:'torre negra',bB:'alfil negro',bN:'caballo negro',bP:'peón negro'};
+const boardState={a8:'bR',b8:'bN',c8:'bB',d8:'bQ',e8:'bK',f8:'bB',g8:'bN',h8:'bR',a7:'bP',b7:'bP',c7:'bP',d7:'bP',e7:'bP',f7:'bP',g7:'bP',h7:'bP',a2:'wP',b2:'wP',c2:'wP',d2:'wP',e2:'wP',f2:'wP',g2:'wP',h2:'wP',a1:'wR',b1:'wN',c1:'wB',d1:'wQ',e1:'wK',f1:'wB',g1:'wN',h1:'wR'};
+let side='w',step=0,xp=0,testActive=false,testIndex=0,testCorrect=0,testAttempts=0,testAnswered=false;
+
+const steps=[
+ {type:'learn',title:'Dos ejércitos',text:'En ajedrez hay piezas blancas y piezas negras. Las piezas del color que tú controlas son propias. Las del otro jugador son enemigas.',audio:'En ajedrez hay dos ejércitos. Las piezas del color que tú controlas son piezas propias. Las piezas que controla el rival son piezas enemigas.',facts:[['Piezas propias','Las que tú controlas','Tus piezas propias son las piezas del color con el que estás jugando.'],['Piezas enemigas','Las que controla el rival','Las piezas enemigas pertenecen a tu adversario.'],['16 contra 16','Dos ejércitos','Al comenzar, cada jugador controla dieciséis piezas.'],['Perspectiva','Depende de tu color','Propio no significa blanco. Todo depende del color que tú controlas.']]},
+ {type:'learn',title:'Primero juegas con blancas',text:'Imagina que juegas con blancas. Todas las piezas blancas son propias y todas las negras son enemigas.',audio:'Ahora imagina que juegas con blancas. Las piezas blancas son propias y las negras son enemigas.',facts:[['Mis blancas','Propias','Si juegas con blancas, tú controlas todas las piezas blancas.'],['Negras rivales','Enemigas','Si juegas con blancas, el rival controla las negras.']]},
+ {type:'board',title:'Encuentra una pieza propia',q:'Juegas con blancas. Toca cualquier pieza propia.',accept:(p)=>p&&p[0]==='w',hint:'Tu bando es blanco.',success:'¡Correcto! Esa pieza pertenece a tu ejército.'},
+ {type:'board',title:'Encuentra una pieza enemiga',q:'Sigues con blancas. Toca cualquier pieza enemiga.',accept:(p)=>p&&p[0]==='b',hint:'El adversario controla las negras.',success:'¡Muy bien! Esa pieza pertenece al rival.'},
+ {type:'learn',title:'Ahora cambias a negras',text:'Si tú juegas con negras, la perspectiva cambia: las negras son propias y las blancas son enemigas.',audio:'Ahora tú juegas con negras. Las piezas negras son propias y las blancas son enemigas.',facts:[['Mis negras','Propias','Si juegas con negras, tú controlas las piezas negras.'],['Blancas rivales','Enemigas','Las piezas blancas ahora pertenecen al adversario.']]},
+ {type:'board',title:'Propias desde negras',q:'Ahora juegas con negras. Toca una pieza propia.',accept:(p)=>p&&p[0]==='b',hint:'Ahora tu color es negro.',success:'¡Excelente! Cambiaste correctamente de perspectiva.'},
+ {type:'board',title:'Enemigas desde negras',q:'Jugando con negras, toca una pieza enemiga.',accept:(p)=>p&&p[0]==='w',hint:'Si tú eres negras, el rival controla blancas.',success:'¡Correcto! Esa pieza es enemiga desde tu perspectiva.'}
+];
+
+const tests=[
+ {side:'w',q:'Juegas con blancas. Toca una pieza propia.',accept:p=>p&&p[0]==='w',hint:'Tu color es blanco.'},
+ {side:'w',q:'Juegas con blancas. Toca una pieza enemiga.',accept:p=>p&&p[0]==='b',hint:'El rival usa negras.'},
+ {side:'b',q:'Juegas con negras. Toca una pieza propia.',accept:p=>p&&p[0]==='b',hint:'Tu color es negro.'},
+ {side:'b',q:'Juegas con negras. Toca una pieza enemiga.',accept:p=>p&&p[0]==='w',hint:'El rival usa blancas.'},
+ {side:'w',q:'Juegas con blancas. Toca tu dama.',accept:p=>p==='wQ',hint:'Busca la dama blanca.'},
+ {side:'b',q:'Juegas con negras. Toca el rey enemigo.',accept:p=>p==='wK',hint:'El rey enemigo es blanco.'},
+ {side:'w',q:'Juegas con blancas. Toca un peón enemigo.',accept:p=>p==='bP',hint:'Busca un peón negro.'},
+ {side:'b',q:'Juegas con negras. Toca un caballo propio.',accept:p=>p==='bN',hint:'Busca un caballo negro.'},
+ {choice:true,q:'Si juegas con negras, ¿qué piezas son propias?',options:['Las blancas','Las negras','Todas'],answer:1,hint:'Propias son las que tú controlas.'},
+ {choice:true,q:'¿Qué significa pieza enemiga?',options:['Una pieza barata','Una pieza que controla el rival','Una pieza atacada'],answer:1,hint:'Piensa en quién controla la pieza.'}
+];
+
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-PE';u.rate=.92;speechSynthesis.speak(u)}
+function clearMarks(){document.querySelectorAll('.square').forEach(s=>s.classList.remove('own','enemy','temp'))}
+function renderBoard(){
+ const b=document.getElementById('board');b.innerHTML='';
+ for(let r=8;r>=1;r--)for(let i=0;i<8;i++){
+   const f=files[i],sq=f+r,p=boardState[sq],el=document.createElement('div');
+   el.className='square '+(((i+r)%2===0)?'light':'dark');el.dataset.square=sq;el.dataset.piece=p||'';
+   if(p){const pc=document.createElement('span');pc.className='piece';pc.textContent=symbols[p];el.appendChild(pc)}
+   if(r===1){const c=document.createElement('span');c.className='coord file';c.textContent=f;el.appendChild(c)}
+   if(i===0){const c=document.createElement('span');c.className='coord rank';c.textContent=r;el.appendChild(c)}
+   el.addEventListener('click',()=>squareClick(sq,p,el));b.appendChild(el)
+ }
+}
+function markSide(which){
+ clearMarks();Object.entries(boardState).forEach(([sq,p])=>{const el=document.querySelector(`[data-square="${sq}"]`);if(!el)return;
+ if(which==='all'){el.classList.add(p[0]===side?'own':'enemy')}else if(which==='own'&&p[0]===side)el.classList.add('own');else if(which==='enemy'&&p[0]!==side)el.classList.add('enemy')});
+ document.getElementById('boardMsg').innerHTML=`<strong>Tu bando:</strong> ${side==='w'?'blancas':'negras'}. Verde claro = propias; amarillo = enemigas.`;
+}
+function squareClick(sq,p,el){
+ if(testActive&&!tests[testIndex].choice){answerTestBoard(p,el);return}
+ const s=steps[step];
+ if(s.type==='board'){
+   if(s.accept(p)){xp+=10;document.getElementById('xp').textContent=xp;el.classList.add('own');feedback(true,s.success);document.getElementById('next').disabled=false;speak(s.success)}
+   else{el.classList.add('temp');setTimeout(()=>el.classList.remove('temp'),500);feedback(false,'Todavía no. Piensa qué color controlas.');speak('Todavía no. Piensa qué color controlas.')}
+   return
+ }
+ if(!p){document.getElementById('boardMsg').innerHTML=`<strong>${sq}:</strong> casilla vacía.`;return}
+ const own=p[0]===side;clearMarks();el.classList.add(own?'own':'enemy');
+ document.getElementById('boardMsg').innerHTML=`<strong>${names[p]}:</strong> ${own?'pieza propia':'pieza enemiga'}.`;
+ speak(`Esta pieza es ${names[p]}. ${own?'Es una pieza propia.':'Es una pieza enemiga.'}`)
+}
+function feedback(ok,t){const f=document.getElementById('feedback');if(!f)return;f.className='feedback show '+(ok?'good':'try');f.textContent=(ok?'✅ ':'💡 ')+t}
+function updateProgress(){document.getElementById('stepLabel').textContent=`Mauro · Tema 18 · Paso ${step+1} de 7`;const p=Math.round(step/7*100);document.getElementById('pct').textContent=p+'%';document.getElementById('fill').style.width=p+'%'}
+function renderStep(){
+ updateProgress();clearMarks();const s=steps[step],c=document.getElementById('content');
+ if(step>=4)side='b';else side='w';
+ if(s.type==='learn'){
+  c.innerHTML=`<div class="eyebrow">Aprende · Paso ${step+1}</div><h1>${s.title}</h1><p class="lead">${s.text}</p>
+  <div class="audio-row"><button id="audio" class="btn">🔊 Escuchar explicación</button></div>
+  <div class="fact-grid">${s.facts.map((f,i)=>`<button class="fact" data-f="${i}"><b>${f[0]} 🔊</b><span>${f[1]}</span></button>`).join('')}</div>
+  <div class="mascot"><div class="icon">♞</div><p>Fui creado para guiarte paso a paso. Toca los botones y experimenta directamente en el tablero.</p></div>
+  <div class="bottom"><button id="back" class="btn" ${step===0?'disabled':''}>← Retroceder</button><button id="next" class="btn primary">Continuar →</button></div>`;
+  document.getElementById('audio').onclick=()=>speak(s.audio);
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const f=s.facts[+b.dataset.f];speak(f[2]);if(f[0].includes('propias')||f[0].includes('Mis '))markSide('own');else if(f[0].includes('enemigas')||f[0].includes('rivales'))markSide('enemy');else markSide('all')});
+ }else{
+  c.innerHTML=`<div class="eyebrow">Reto · Paso ${step+1}</div><h1>${s.title}</h1><div class="challenge"><h2>${s.q}</h2><p class="lead">Responde tocando una pieza directamente en el tablero.</p><div id="feedback" class="feedback"></div><div id="hint" class="hint"></div><div class="audio-row"><button id="audio" class="btn">🔊 Escuchar</button><button id="hintBtn" class="btn">💡 Pista</button></div></div><div class="bottom"><button id="back" class="btn">← Retroceder</button><button id="next" class="btn primary" disabled>Continuar →</button></div>`;
+  document.getElementById('audio').onclick=()=>speak(s.q);document.getElementById('hintBtn').onclick=()=>{const h=document.getElementById('hint');h.classList.add('show');h.textContent='💡 '+s.hint;speak(s.hint)}
+ }
+ document.getElementById('back').onclick=()=>{if(step>0){step--;renderStep()}};
+ document.getElementById('next').onclick=()=>{step++;if(step>=steps.length)finishLesson();else renderStep()};
+ document.getElementById('boardMsg').innerHTML=`<strong>Tu bando:</strong> ${side==='w'?'blancas':'negras'}. Toca una pieza.`;
+}
+function finishLesson(){
+ document.getElementById('content').style.display='none';document.getElementById('summary').classList.add('show');document.getElementById('sumXp').textContent=xp;document.getElementById('fill').style.width='100%';document.getElementById('pct').textContent='100%';document.getElementById('stepLabel').textContent='Mauro · Tema 18 · Completado';speak('Excelente. Has completado la clase de piezas propias y enemigas.')
+}
+function startTest(){testActive=true;testIndex=0;testCorrect=0;testAttempts=0;document.getElementById('testLaunch').style.display='none';document.getElementById('test').classList.add('show');renderTest()}
+function renderTest(){
+ const t=tests[testIndex];if(t.side)side=t.side;clearMarks();
+ const box=document.getElementById('test');box.innerHTML=`<div class="test-top"><span>Pregunta ${testIndex+1} de 10</span><span>✅ ${testCorrect}</span></div><div class="track"><div class="fill" style="width:${testIndex*10}%"></div></div><p class="test-q">${t.q}</p>${t.choice?`<div class="options">${t.options.map((o,i)=>`<button class="option" data-o="${i}">${o}</button>`).join('')}</div>`:`<p class="lead">♟ Responde directamente en el tablero.</p>`}<div id="tf" class="feedback"></div><div id="th" class="hint"></div><div class="audio-row"><button id="ta" class="btn">🔊 Escuchar</button><button id="thi" class="btn">💡 Pista</button><button id="tn" class="btn primary" disabled>Siguiente →</button></div>`;
+ document.getElementById('ta').onclick=()=>speak(t.q);document.getElementById('thi').onclick=()=>{const h=document.getElementById('th');h.classList.add('show');h.textContent='💡 '+t.hint;speak(t.hint)};
+ if(t.choice)document.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{testAttempts++;if(+b.dataset.o===t.answer){testCorrect++;b.classList.add('correct');document.querySelectorAll('[data-o]').forEach(x=>x.disabled=true);document.getElementById('tf').className='feedback show good';document.getElementById('tf').textContent='✅ Correcto';document.getElementById('tn').disabled=false;speak('Correcto')}else{b.classList.add('wrong');setTimeout(()=>b.classList.remove('wrong'),500);document.getElementById('tf').className='feedback show try';document.getElementById('tf').textContent='Todavía no. Inténtalo de nuevo.'}});
+ document.getElementById('tn').onclick=()=>{if(testIndex<9){testIndex++;renderTest()}else finishTest()};speak(t.q)
+}
+function answerTestBoard(p,el){const t=tests[testIndex];testAttempts++;if(t.accept(p)){testCorrect++;clearMarks();el.classList.add('own');document.getElementById('tf').className='feedback show good';document.getElementById('tf').textContent='✅ Correcto';document.getElementById('tn').disabled=false;speak('Correcto')}else{el.classList.add('temp');setTimeout(()=>el.classList.remove('temp'),500);document.getElementById('tf').className='feedback show try';document.getElementById('tf').textContent='Todavía no. Piensa en tu bando e inténtalo otra vez.';speak('Todavía no. Inténtalo otra vez.')}}
+function finishTest(){testActive=false;const p=testCorrect*10;document.getElementById('test').innerHTML=`<div class="badge">${p===100?'🏆':'🎯'}</div><h1>Test completado</h1><div class="result-grid"><div class="result"><b>${testCorrect}/10</b><span>correctas</span></div><div class="result"><b>${p}%</b><span>resultado</span></div><div class="result"><b>${testAttempts}</b><span>intentos</span></div></div><div class="audio-row" style="justify-content:center"><button id="again" class="btn">↻ Repetir test</button></div>`;document.getElementById('again').onclick=startTest;speak(`Test completado. Obtuviste ${testCorrect} respuestas correctas de diez.`)}
+document.getElementById('ownBtn').onclick=()=>markSide('own');document.getElementById('enemyBtn').onclick=()=>markSide('enemy');document.getElementById('allBtn').onclick=()=>markSide('all');document.getElementById('sideBtn').onclick=()=>{side=side==='w'?'b':'w';clearMarks();document.getElementById('boardMsg').innerHTML=`<strong>Tu bando:</strong> ${side==='w'?'blancas':'negras'}.`;speak(`Ahora juegas con ${side==='w'?'blancas':'negras'}.`)};
+document.getElementById('startTest').onclick=startTest;document.getElementById('repeatLesson').onclick=()=>location.reload();
+renderBoard();renderStep();
+</script>
+</body>
+</html>
