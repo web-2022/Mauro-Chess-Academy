@@ -458,14 +458,14 @@ a1:'wR',b1:'wN',c1:'wB',d1:'wQ',e1:'wK',f1:'wB',g1:'wN',h1:'wR'
 const steps=[
 {
  type:'learn',title:'¿Qué es el ajedrez?',
- text:'El ajedrez es un juego de estrategia para dos jugadores. Cada jugador dirige un ejército de piezas sobre el mismo tablero.',
- audio:'El ajedrez es un juego de estrategia para dos jugadores. Cada jugador dirige un ejército de piezas sobre el mismo tablero.',
+ text:'El ajedrez es un juego de estrategia para dos jugadores que se enfrentan sobre un tablero. Cada jugador dirige un ejército de piezas sobre el mismo tablero.',
+ audio:'El ajedrez es un juego de estrategia para dos jugadores que se enfrentan sobre un tablero. Cada jugador dirige un ejército de piezas sobre el mismo tablero.',
  board:'all',
  facts:[
   ['Estrategia','Pensar antes de mover','En ajedrez no se trata solo de mover piezas. Debes observar, pensar y tomar decisiones.','none'],
   ['2 jugadores','Blancas y negras','En una partida participan dos jugadores: uno controla las piezas blancas y el otro las negras.','players'],
   ['1 tablero','El campo de juego','Los dos jugadores usan el mismo tablero de ajedrez.','allSquares'],
-  ['1 objetivo','Dar jaque mate','El objetivo principal es dar jaque mate al rey rival. Más adelante aprenderás exactamente cómo funciona.','kings']
+  ['1 objetivo','Dar jaque mate','El objetivo final de una partida es dar jaque mate al rey rival. Más adelante aprenderás exactamente qué significa jaque mate. Más adelante aprenderás exactamente cómo funciona.','kings']
  ],
  mascot:'Primero descubre las ideas esenciales. No necesitas memorizar movimientos todavía.'
 },
@@ -653,7 +653,7 @@ steps.push(
   type:'challenge',phase:'boss',title:'Boss · Misión final',
   question:'Sin pistas: toca uno de los reyes y demuestra que reconoces la pieza central del objetivo.',
   boardChallenge:'king',
-  success:'Boss completado. Reconoces al rey dentro de una posición inicial completa.',
+  success:'Boss completado. Has superado el primer desafío de la Academia Mauro. Reconoces al rey dentro de una posición inicial completa.',
   concept:'objetivo',difficulty:'Descubrir',xpValue:25,noHints:true
  }
 );
@@ -677,7 +677,7 @@ const ADAPTIVE_META={
  'Encuentra espacio libre':{concept:'tablero',difficulty:'Reconocer',visual:'allSquares',
    coach:'No busques una pieza. Busca justamente un cuadro donde no haya ninguna.'},
  'Objetivo del ajedrez':{concept:'objetivo',difficulty:'Reconocer',visual:'kings',
-   coach:'No necesitas capturar todas las piezas. Mira cuál es la pieza decisiva para terminar la partida.'},
+   coach:'Recuerda: capturar piezas puede ayudar, pero no es el objetivo final. Mira cuál es la pieza decisiva para terminar la partida.'},
  'Misión final':{concept:'objetivo',difficulty:'Reconocer',visual:'kings',
    coach:'Hay un rey por cada jugador. Busca la pieza con forma de corona/cruz en el centro de cada primera fila.'},
  'Laboratorio · El bando que empieza':{concept:'inicio',difficulty:'Aplicar',visual:'whiteArmy',
@@ -1196,15 +1196,101 @@ if(kind==='players'){
   }
 }
 
+function normalizeSpeechText(text){
+  let s=String(text ?? '');
+  s=s.replace(/<[^>]*>/g,' ');
+
+  // Símbolos y signos.
+  s=s.replace(/&times;|×/gi,' por ');
+  s=s.replace(/→|⇒/g,' luego ');
+  s=s.replace(/[–—]/g,' a ');
+  s=s.replace(/\+/g,' más ');
+  s=s.replace(/·/g,', ');
+  s=s.replace(/≠/g,' es diferente de ');
+  s=s.replace(/=/g,' es igual a ');
+
+  // Números frecuentes.
+  const numberWords={
+    '64':'sesenta y cuatro','32':'treinta y dos','16':'dieciséis',
+    '10':'diez','8':'ocho','7':'siete','6':'seis',
+    '5':'cinco','4':'cuatro','3':'tres','2':'dos','1':'uno'
+  };
+  s=s.replace(/\b(64|32|16|10|[1-8])\b/g,m=>numberWords[m]||m);
+
+  // Coordenadas si aparecen en ayudas futuras.
+  const fileNames={
+    a:'a', b:'be', c:'ce', d:'de',
+    e:'e', f:'efe', g:'ge', h:'hache'
+  };
+  const rankNames={
+    '1':'uno','2':'dos','3':'tres','4':'cuatro',
+    '5':'cinco','6':'seis','7':'siete','8':'ocho'
+  };
+  s=s.replace(/\b([a-h])([1-8])\b/gi,
+    (_,file,rank)=>fileNames[file.toLowerCase()]+' '+rankNames[rank]);
+
+  // Frases que conviene escuchar con mayor naturalidad.
+  s=s.replace(/\bjaque mate\b/gi,'jaque mate');
+  s=s.replace(/\bversus\b/gi,'contra');
+  s=s.replace(/\bVS\b/g,'contra');
+
+  // Pausas suaves oficiales.
+  s=s.replace(/\s+/g,' ').replace(/\s+([,.;:!?])/g,'$1').trim();
+  s=s.replace(/\.\s+/g,'.  ');
+  s=s.replace(/;\s+/g,';  ');
+  return s;
+}
+
+function chooseSpanishMaleVoice(){
+  const voices=speechSynthesis.getVoices().filter(v=>/^es(?:-|_)/i.test(v.lang)||/^es$/i.test(v.lang));
+  if(!voices.length) return null;
+
+  const maleNames=/\b(pablo|jorge|diego|raul|raúl|alvaro|álvaro|enrique|antonio|miguel|carlos|juan|pedro|javier|manuel|alejandro|andres|andrés|sergio|marcos|mario|fernando|ricardo|roberto|hector|héctor|luis|mateo|santiago|nicolas|nicolás|martin|martín|gonzalo|adrian|adrián|francisco|gabriel|sebastian|sebastián|daniel|david|lorenzo|tomas|tomás)\b/i;
+  const femaleNames=/\b(elena|helena|laura|lucia|lucía|monica|mónica|paulina|sabina|sofia|sofía|maria|maría|isabel|carmen|paloma|conchita|esmeralda|ximena|dalia|valentina|camila|paola|lupe)\b/i;
+
+  const score=v=>{
+    let n=0;
+
+    // Estándar oficial Mauro Coach.
+    if(/natural|neural|online/i.test(v.name)) n+=100;
+    if(/microsoft|google/i.test(v.name)) n+=25;
+
+    if(maleNames.test(v.name)) n+=80;
+    if(/male|masculin|hombre/i.test(v.name)) n+=70;
+    if(femaleNames.test(v.name)) n-=80;
+
+    if(/es-PE/i.test(v.lang)) n+=35;
+    if(/es-419|es-MX|es-CO|es-CL|es-AR|es-US/i.test(v.lang)) n+=18;
+    if(/es-ES/i.test(v.lang)) n+=8;
+
+    return n;
+  };
+
+  return voices.slice().sort((a,b)=>score(b)-score(a))[0] || voices[0];
+}
+
 function speak(text){
- if(!('speechSynthesis' in window)){toast('Tu navegador no tiene lectura por voz.');return}
- speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);
- u.lang='es-PE';u.rate=.92;u.pitch=1.02;
- const voices=speechSynthesis.getVoices();
- const preferred=voices.find(v=>/es-PE/i.test(v.lang))||voices.find(v=>/^es/i.test(v.lang));
- if(preferred) u.voice=preferred;
- speechSynthesis.speak(u);
+  if(!('speechSynthesis' in window)){
+    toast('Tu navegador no tiene lectura por voz.');
+    return;
+  }
+
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(normalizeSpeechText(text));
+  u.lang='es-PE';
+
+  // Voz oficial Mauro Coach.
+  u.rate=.82;
+  u.pitch=.94;
+  u.volume=.96;
+
+  const preferred=chooseSpanishMaleVoice();
+  if(preferred){
+    u.voice=preferred;
+    u.lang=preferred.lang || 'es-PE';
+  }
+
+  speechSynthesis.speak(u);
 }
 
 function softBuzz(){if(navigator.vibrate) navigator.vibrate(35)}
@@ -1246,7 +1332,7 @@ function updateMobileDuoConcepts(stepObj){
     b.addEventListener('click',function(){
       grid.querySelectorAll('.mobile-duo-tile').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
-      const audioText=f[2] || (f[0]+'. '+f[1]+'.');
+      const audioText=[f[0],f[1],f[2]].filter(Boolean).join('. ');
       highlightTheory(f[3]);
       speak(audioText);
     });
@@ -1292,7 +1378,7 @@ function renderStep(){
     document.querySelectorAll('[data-fact]').forEach(btn=>{
       btn.onclick=()=>{
         const f=s.facts[Number(btn.dataset.fact)];
-        const audioText=f[2] || (f[0]+'. '+f[1]+'.');
+        const audioText=[f[0],f[1],f[2]].filter(Boolean).join('. ');
         highlightTheory(f[3]);
         if(!['rows','columns','rowNumbers','columnLetters'].includes(f[3])){
           speak(audioText);
@@ -1475,7 +1561,7 @@ function finish(){
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='tema_002_el_tablero.html'}
+function goNext(){window.location.href='tema-2-el-tablero-de-ajedrez.html'}
 
 renderBoard();
 try{
