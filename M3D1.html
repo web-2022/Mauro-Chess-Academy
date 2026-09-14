@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MX OREPLANIX - Side Snap Menu | Mine Design & Planning Platform</title>
+<title>MX OREPLANIX - Project Save/Open | Mine Design & Planning Platform</title>
 <style>
 :root {
     --bg-main: #06101b;
@@ -1004,6 +1004,41 @@ body {
     }
 }
 
+
+/* =========================================================
+   ARCHIVO DE PROYECTO OREPLANIX
+========================================================= */
+.project-open-button,
+.project-save-button{
+    border-color: rgba(249,188,57,.38) !important;
+}
+
+.project-save-button{
+    background: linear-gradient(135deg,#f39c1c,#f9bc39) !important;
+    border-color: #f9bc39 !important;
+    color: #192844 !important;
+}
+
+.project-open-button{
+    background: #22365a !important;
+    color: #ffffff !important;
+}
+
+.project-save-button:hover,
+.project-open-button:hover{
+    filter: brightness(1.08);
+}
+
+.project-save-flash{
+    animation: oreplanixSaveFlash .65s ease;
+}
+
+@keyframes oreplanixSaveFlash{
+    0%   { box-shadow:0 0 0 0 rgba(249,188,57,.45); }
+    60%  { box-shadow:0 0 0 7px rgba(249,188,57,0); }
+    100% { box-shadow:none; }
+}
+
 </style>
 </head>
 <body>
@@ -1042,6 +1077,12 @@ body {
     <div class="toolbar">
         <label for="dxfInput" class="file-button primary">+ Cargar DXF</label>
         <input id="dxfInput" type="file" accept=".dxf,text/plain" multiple>
+
+        <label for="projectInput" class="file-button project-open-button" title="Abrir proyecto OREPLANIX">📂 Abrir proyecto</label>
+        <input id="projectInput" type="file" accept=".oreplanix,application/json" style="display:none">
+
+        <button class="btn project-save-button" onclick="saveOREPLANIXProject()" title="Guardar proyecto completo">💾 Guardar proyecto</button>
+
         <button class="btn" onclick="centerAllDXF()">Centrar todo</button>
         <button class="btn" id="pivotToolButton" onclick="togglePivotPick()">◎ Definir pivote</button>
         <button class="btn" onclick="resetPivot()">Restablecer pivote</button>
@@ -1113,7 +1154,7 @@ body {
     </div>
 
 
-    <div class="footer">MX OREPLANIX · Menú lateral SNAP + VISTAS · Mine Design & Planning Platform · Mining Expert</div>
+    <div class="footer">MX OREPLANIX · Proyecto autocontenido · SNAP + VISTAS · Mine Design & Planning Platform · Mining Expert</div>
 </div>
 
 <div class="right-side-dock" aria-label="Herramientas rápidas">
@@ -1152,6 +1193,15 @@ body {
 
 <script>
 const dxfFiles = [];
+
+/*
+   Contenedor maestro para los objetos creados dentro de OREPLANIX.
+   Los siguientes módulos de diseño (puntos, líneas, polilíneas,
+   ejes de rampa, polígonos, superficies, labores, etc.) deberán
+   guardar aquí sus objetos para que entren automáticamente en
+   el archivo de proyecto.
+*/
+const designObjects = [];
 
 const dxfView = {
     yaw: -0.80,
@@ -1193,6 +1243,368 @@ const categoryColors = {
 
 const viewer = document.getElementById("dxfViewer");
 
+
+/* =========================================================
+   PROYECTOS OREPLANIX
+   Formato: .oreplanix (JSON autocontenido)
+========================================================= */
+
+const OREPLANIX_PROJECT_FORMAT = "MX-OREPLANIX-PROJECT";
+const OREPLANIX_PROJECT_VERSION = 1;
+
+function sanitizeProjectFilename(name) {
+    const clean = String(name || "Proyecto_OREPLANIX")
+        .trim()
+        .replace(/[\\/:*?"<>|]+/g, "_")
+        .replace(/\s+/g, "_")
+        .replace(/_+/g, "_");
+
+    return (clean || "Proyecto_OREPLANIX") + ".oreplanix";
+}
+
+function clonePlain(value) {
+    if (value === undefined) return null;
+    return JSON.parse(JSON.stringify(value));
+}
+
+function serializeGeometryFallback(geometry) {
+    if (!geometry) return null;
+
+    return {
+        segments: geometry.segments || [],
+        points: geometry.points || [],
+        faces: geometry.faces || [],
+        layers: Array.from(geometry.layers || []),
+        entityCount: Number(geometry.entityCount || 0),
+        unsupportedSolids: Number(geometry.unsupportedSolids || 0),
+        bbox: geometry.bbox || null
+    };
+}
+
+function restoreGeometryFallback(raw) {
+    if (!raw) return null;
+
+    return {
+        segments: Array.isArray(raw.segments) ? raw.segments : [],
+        points: Array.isArray(raw.points) ? raw.points : [],
+        faces: Array.isArray(raw.faces) ? raw.faces : [],
+        layers: new Set(Array.isArray(raw.layers) ? raw.layers : []),
+        entityCount: Number(raw.entityCount || 0),
+        unsupportedSolids: Number(raw.unsupportedSolids || 0),
+        bbox: raw.bbox || null
+    };
+}
+
+function makeProjectSnapshot() {
+    const projectName =
+        document.getElementById("projectName")?.textContent?.trim() ||
+        "Nuevo Proyecto";
+
+    const files = dxfFiles.map(file => {
+        /*
+           Si existe sourceText guardamos el DXF original y NO repetimos
+           toda la geometría procesada. Al abrir el proyecto se vuelve
+           a parsear. Esto reduce mucho el tamaño del archivo.
+
+           geometryFallback existe para archivos provenientes de una
+           versión anterior que no tenga sourceText.
+        */
+        return {
+            id: file.id,
+            name: file.name,
+            category: file.category,
+            color: file.color,
+            visible: file.visible,
+            renderMode: file.renderMode,
+            opacity: file.opacity,
+            lineWidth: file.lineWidth,
+            sourceText: typeof file.sourceText === "string" ? file.sourceText : null,
+            geometryFallback:
+                typeof file.sourceText === "string"
+                    ? null
+                    : serializeGeometryFallback(file.geometry)
+        };
+    });
+
+    return {
+        format: OREPLANIX_PROJECT_FORMAT,
+        version: OREPLANIX_PROJECT_VERSION,
+        application: "MX OREPLANIX",
+        savedAt: new Date().toISOString(),
+
+        project: {
+            name: projectName
+        },
+
+        dxfFiles: files,
+
+        design: {
+            /*
+               Aquí se guardarán los futuros objetos creados por el usuario.
+               Ya queda incorporado al formato desde esta versión.
+            */
+            objects: clonePlain(designObjects)
+        },
+
+        view: {
+            yaw: dxfView.yaw,
+            pitch: dxfView.pitch,
+            zoom: dxfView.zoom,
+            boundingBox: dxfView.boundingBox,
+            showGrid: dxfView.showGrid,
+            rotationCenter: dxfView.rotationCenter,
+            currentView: dxfView.currentView,
+
+            snap: {
+                point: dxfView.snapPoint,
+                line: dxfView.snapLine,
+                face: dxfView.snapFace
+            }
+        }
+    };
+}
+
+async function saveOREPLANIXProject() {
+    try {
+        const snapshot = makeProjectSnapshot();
+        const json = JSON.stringify(snapshot);
+        const blob = new Blob([json], {
+            type: "application/json;charset=utf-8"
+        });
+
+        const filename = sanitizeProjectFilename(snapshot.project.name);
+
+        /*
+           En navegadores Chromium modernos intentamos primero el diálogo
+           nativo "Guardar como". Si no está disponible, usamos descarga.
+        */
+        if (window.showSaveFilePicker) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: filename,
+                    types: [{
+                        description: "Proyecto MX OREPLANIX",
+                        accept: {
+                            "application/json": [".oreplanix"]
+                        }
+                    }]
+                });
+
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+
+                flashProjectSaveButton();
+                return;
+            } catch (error) {
+                /*
+                   AbortError significa que el usuario canceló.
+                   No debemos iniciar una descarga adicional.
+                */
+                if (error && error.name === "AbortError") return;
+                console.warn("OREPLANIX: showSaveFilePicker no disponible:", error);
+            }
+        }
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        flashProjectSaveButton();
+
+    } catch (error) {
+        console.error(error);
+        alert("No se pudo guardar el proyecto OREPLANIX.\n\n" + error.message);
+    }
+}
+
+function flashProjectSaveButton() {
+    const btn = document.querySelector(".project-save-button");
+    if (!btn) return;
+
+    btn.classList.remove("project-save-flash");
+    void btn.offsetWidth;
+    btn.classList.add("project-save-flash");
+}
+
+async function openOREPLANIXProject(file) {
+    try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        if (!data || data.format !== OREPLANIX_PROJECT_FORMAT) {
+            throw new Error(
+                "El archivo no corresponde a un proyecto MX OREPLANIX válido."
+            );
+        }
+
+        if (Number(data.version || 0) > OREPLANIX_PROJECT_VERSION) {
+            throw new Error(
+                "Este proyecto fue creado con una versión más reciente de OREPLANIX."
+            );
+        }
+
+        const loadedFiles = [];
+
+        for (const saved of (data.dxfFiles || [])) {
+            let geometry = null;
+
+            if (typeof saved.sourceText === "string") {
+                geometry = parseDXF(saved.sourceText);
+            } else {
+                geometry = restoreGeometryFallback(saved.geometryFallback);
+            }
+
+            if (!geometry) continue;
+
+            loadedFiles.push({
+                id: saved.id || makeId(),
+                name: saved.name || "DXF recuperado",
+                category: saved.category || "Otro",
+                color: saved.color || "#d8dee9",
+                visible: saved.visible !== false,
+                renderMode: saved.renderMode || "wireframe",
+                opacity: Number.isFinite(Number(saved.opacity))
+                    ? Number(saved.opacity)
+                    : 78,
+                lineWidth: Number.isFinite(Number(saved.lineWidth))
+                    ? Number(saved.lineWidth)
+                    : 1.0,
+                sourceText:
+                    typeof saved.sourceText === "string"
+                        ? saved.sourceText
+                        : null,
+                geometry
+            });
+        }
+
+        /*
+           Solo reemplazamos el proyecto actual después de verificar
+           completamente que el archivo pudo leerse.
+        */
+        dxfFiles.length = 0;
+        dxfFiles.push(...loadedFiles);
+
+        designObjects.length = 0;
+        if (Array.isArray(data.design?.objects)) {
+            designObjects.push(...data.design.objects);
+        }
+
+        const projectName =
+            data.project?.name ||
+            file.name.replace(/\.oreplanix$/i, "");
+
+        const projectNameElement = document.getElementById("projectName");
+        if (projectNameElement) {
+            projectNameElement.textContent = projectName;
+        }
+
+        const view = data.view || {};
+
+        dxfView.yaw =
+            Number.isFinite(Number(view.yaw))
+                ? Number(view.yaw)
+                : -0.80;
+
+        dxfView.pitch =
+            Number.isFinite(Number(view.pitch))
+                ? Number(view.pitch)
+                : 0.55;
+
+        dxfView.zoom =
+            Number.isFinite(Number(view.zoom))
+                ? Number(view.zoom)
+                : 1;
+
+        dxfView.showGrid =
+            view.showGrid !== false;
+
+        dxfView.rotationCenter =
+            view.rotationCenter || null;
+
+        dxfView.currentView =
+            view.currentView || "iso";
+
+        dxfView.snapPoint =
+            view.snap?.point !== false;
+
+        dxfView.snapLine =
+            !!view.snap?.line;
+
+        dxfView.snapFace =
+            !!view.snap?.face;
+
+        /*
+           Estados transitorios nunca se restauran.
+        */
+        dxfView.dragging = false;
+        dxfView.pickingPivot = false;
+        dxfView.snapEnabled = false;
+        dxfView.snapHover = null;
+        dxfView.snapLocked = null;
+        dxfView.snapCache = null;
+
+        /*
+           Restauramos el bounding box guardado. Si no existe, lo
+           reconstruimos con los DXF visibles.
+        */
+        dxfView.boundingBox =
+            view.boundingBox ||
+            mergeBoxes(
+                dxfFiles
+                    .filter(f => f.visible)
+                    .map(f => f.geometry.bbox)
+            );
+
+        renderDXFList();
+        updateDXFStats();
+        updatePivotUI();
+        updateSnapUI();
+        updateViewUI();
+        drawDXFViewer();
+
+    } catch (error) {
+        console.error(error);
+        alert("No se pudo abrir el proyecto OREPLANIX.\n\n" + error.message);
+    }
+}
+
+document.getElementById("projectInput").addEventListener("change", async event => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+        await openOREPLANIXProject(file);
+    }
+
+    event.target.value = "";
+});
+
+/*
+   Atajos de proyecto
+   Ctrl+S = Guardar
+   Ctrl+O = Abrir
+*/
+window.addEventListener("keydown", event => {
+    if (!(event.ctrlKey || event.metaKey)) return;
+
+    const key = event.key.toLowerCase();
+
+    if (key === "s") {
+        event.preventDefault();
+        saveOREPLANIXProject();
+    }
+
+    if (key === "o") {
+        event.preventDefault();
+        document.getElementById("projectInput")?.click();
+    }
+});
+
 /* =========================================================
    CARGA
 ========================================================= */
@@ -1231,6 +1643,13 @@ document.getElementById("dxfInput").addEventListener("change", async (event) => 
                 renderMode: defaultMode,
                 opacity: category === "Topografía" ? 62 : 78,
                 lineWidth: category === "Topografía" ? 1.0 : 1.6,
+
+                /*
+                   Conservamos el DXF ASCII original dentro del proyecto.
+                   Esto hace que el .oreplanix sea transportable y no
+                   dependa de volver a buscar el DXF en el disco.
+                */
+                sourceText: text,
                 geometry
             });
         } catch (error) {

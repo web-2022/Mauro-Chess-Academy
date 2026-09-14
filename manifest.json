@@ -1,23 +1,33 @@
 {
   "id": "/Mauro-Chess-Academy/",
+
   "name": "Academia de Ajedrez Mauro",
   "short_name": "AjedrezMauro",
+
+  "description": "Aprende ajedrez desde cero hasta nivel avanzado con lecciones interactivas, Mauro Coach, ejercicios, laboratorios y desafíos.",
+
   "start_url": "/Mauro-Chess-Academy/index.html",
   "scope": "/Mauro-Chess-Academy/",
+
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1976d2",
+
+  "background_color": "#020617",
+  "theme_color": "#071124",
+
   "orientation": "portrait",
+
   "icons": [
     {
       "src": "/Mauro-Chess-Academy/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/Mauro-Chess-Academy/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

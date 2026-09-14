@@ -8,6 +8,7 @@
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="author" content="Academia Mauro">
 <link rel="canonical" href="https://web-2022.github.io/Mauro-Chess-Academy/tema-1-que-es-el-ajedrez.html">
+<link rel="next" href="https://web-2022.github.io/Mauro-Chess-Academy/tema-2-el-tablero-de-ajedrez.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_PE">
 <meta property="og:site_name" content="Academia Mauro">
@@ -16,7 +17,7 @@
 <meta property="og:url" content="https://web-2022.github.io/Mauro-Chess-Academy/tema-1-que-es-el-ajedrez.html">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="¿Qué es el ajedrez? | Academia Mauro">
-<meta name="twitter:description" content="Aprende ajedrez desde cero con 15 ejercicios interactivos.">
+<meta name="twitter:description" content="Aprende qué es el ajedrez desde cero con 21 pasos interactivos, Laboratorio Mauro, Boss, progreso adaptativo y Mauro Coach.">
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -372,6 +373,17 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
 .stage-transition.boss .stage-count{background:rgba(250,204,21,.08);border-color:rgba(250,204,21,.25);color:#fde68a}
 .stage-transition .stage-btn{min-height:46px;padding:10px 18px;border:0;border-radius:12px;background:linear-gradient(90deg,var(--green),var(--blue));color:#03111d;font-weight:900;cursor:pointer}
 </style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Academia Mauro","item":"https://web-2022.github.io/Mauro-Chess-Academy/"},
+    {"@type":"ListItem","position":2,"name":"Ruta de Aprendizaje","item":"https://web-2022.github.io/Mauro-Chess-Academy/ruta-chess.html"},
+    {"@type":"ListItem","position":3,"name":"¿Qué es el ajedrez?","item":"https://web-2022.github.io/Mauro-Chess-Academy/tema-1-que-es-el-ajedrez.html"}
+  ]
+}
+</script>
 </head>
 <body>
 <div class="app">
@@ -455,7 +467,7 @@ a2:'wP',b2:'wP',c2:'wP',d2:'wP',e2:'wP',f2:'wP',g2:'wP',h2:'wP',
 a1:'wR',b1:'wN',c1:'wB',d1:'wQ',e1:'wK',f1:'wB',g1:'wN',h1:'wR'
 };
 
-const steps=[
+var steps=[
 {
  type:'learn',title:'¿Qué es el ajedrez?',
  text:'El ajedrez es un juego de estrategia para dos jugadores que se enfrentan sobre un tablero. Cada jugador dirige un ejército de piezas sobre el mismo tablero.',
@@ -703,11 +715,11 @@ const ALT_EXAMPLES={
 };
 
 
-let step=0,xp=0,attempts=0,hintLevel=0,boardSolved=false;
-let wrongInStep=0;
-let activeStepObject=null;
+var step=0,xp=0,attempts=0,hintLevel=0,boardSolved=false;
+var wrongInStep=0;
+var activeStepObject=null;
 const ADAPTIVE_STORAGE_KEY='mauro_chess_topic1_adaptive_v1';
-let adaptiveState=loadAdaptiveState();
+var adaptiveState=loadAdaptiveState();
 
 function loadAdaptiveState(){
   try{
@@ -1570,14 +1582,12 @@ try{
 }catch(e){}
 renderStep();
 </script>
-<script>
-      // Registrar Service Worker (PWA)
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          //  navigator.serviceWorker.register("/Mauro-Chess-Academy/service-worker.js");
-        });
-      }
-
-    </script>
+<!-- Academia Mauro v2: progreso, perfil, analítica, PWA y sincronización -->
+<script src="js/mauro-config.js"></script>
+<script src="js/mauro-analytics.js"></script>
+<script src="js/mauro-core.js"></script>
+<script src="js/mauro-profile.js"></script>
+<script src="js/mauro-pwa.js"></script>
+<script src="js/mauro-topic1-v2.js"></script>
 </body>
 </html>
