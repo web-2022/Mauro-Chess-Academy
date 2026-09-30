@@ -1,0 +1,433 @@
+const ACCESO = {
+  HOJA: "ALUMNOS",
+
+  // Columnas
+  ID: 1,
+  FECHA: 2,
+  NOMBRE: 3,
+  CORREO: 4,
+  WHATSAPP: 5,
+  MODULO: 6,
+  CODIGO: 7,
+  ESTADO: 8,
+  VENCIMIENTO: 9,
+  ULTIMO_ACCESO: 10,
+  OBSERVACIONES: 11,
+
+  PLAN: 12,
+  IMPORTE: 13,
+  FECHA_PAGO: 14,
+  ID_CULQI: 15,
+
+  ACTIVAR_MENSUAL: 16,
+  ACTIVAR_ANUAL: 17,
+
+  MENSAJE: 18,
+  LINK_WHATSAPP: 19
+};
+
+
+/* =====================================================
+   EJECUTAR UNA SOLA VEZ
+   Crea casillas en P y Q
+===================================================== */
+
+function prepararActivaciones() {
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const hoja = ss.getSheetByName(ACCESO.HOJA);
+
+  if (!hoja) {
+    throw new Error("No existe la hoja ALUMNOS.");
+  }
+
+  // Encabezados nuevos
+  const encabezados = [
+    "PLAN",
+    "IMPORTE",
+    "FECHA_ULTIMO_PAGO",
+    "ID_OPERACION_CULQI",
+    "ACTIVAR_MENSUAL",
+    "ACTIVAR_ANUAL",
+    "MENSAJE_ACCESO",
+    "ENVIAR_WHATSAPP"
+  ];
+
+  hoja
+    .getRange(1, 12, 1, encabezados.length)
+    .setValues([encabezados]);
+
+  // Casillas desde fila 2 hasta 1000
+  hoja
+    .getRange("P2:Q1000")
+    .insertCheckboxes();
+
+  hoja.setFrozenRows(1);
+
+  return "Sistema de activaciones preparado.";
+}
+
+/* =====================================================
+   ACTIVACIÓN AUTOMÁTICA DESDE LAS CASILLAS P Y Q
+===================================================== */
+
+function onEdit(e) {
+
+  if (!e || !e.range) return;
+
+  const hoja = e.range.getSheet();
+
+  // Solo trabajar en ALUMNOS
+  if (hoja.getName() !== ACCESO.HOJA) return;
+
+  const fila = e.range.getRow();
+  const columna = e.range.getColumn();
+
+  // No trabajar sobre encabezados
+  if (fila < 2) return;
+
+  // Solo actuar cuando se MARCA la casilla
+  if (e.value !== "TRUE") return;
+
+
+  // ==========================================
+  // PLAN MENSUAL
+  // ==========================================
+  if (columna === ACCESO.ACTIVAR_MENSUAL) {
+
+    try {
+
+      activarAlumno_(hoja, fila, "MENSUAL", 25, 1);
+
+    } catch (error) {
+
+      hoja
+        .getRange(fila, ACCESO.OBSERVACIONES)
+        .setValue("ERROR: " + error.message);
+
+    } finally {
+
+      hoja
+        .getRange(fila, ACCESO.ACTIVAR_MENSUAL)
+        .setValue(false);
+
+    }
+
+  }
+
+
+  // ==========================================
+  // PLAN ANUAL
+  // ==========================================
+  if (columna === ACCESO.ACTIVAR_ANUAL) {
+
+    try {
+
+      activarAlumno_(hoja, fila, "ANUAL", 199, 12);
+
+    } catch (error) {
+
+      hoja
+        .getRange(fila, ACCESO.OBSERVACIONES)
+        .setValue("ERROR: " + error.message);
+
+    } finally {
+
+      hoja
+        .getRange(fila, ACCESO.ACTIVAR_ANUAL)
+        .setValue(false);
+
+    }
+
+  }
+
+}
+
+
+/* =====================================================
+   ACTIVAR O RENOVAR ALUMNO
+===================================================== */
+
+function activarAlumno_(hoja, fila, plan, importe, meses) {
+
+  const nombre = String(
+    hoja.getRange(fila, ACCESO.NOMBRE).getValue()
+  ).trim();
+
+  const correo = String(
+    hoja.getRange(fila, ACCESO.CORREO).getValue()
+  ).trim().toLowerCase();
+
+  const whatsapp = String(
+    hoja.getRange(fila, ACCESO.WHATSAPP).getDisplayValue()
+  ).trim();
+
+  const idCulqi = String(
+    hoja.getRange(fila, ACCESO.ID_CULQI).getValue()
+  ).trim();
+
+
+  // ===========================
+  // VALIDACIONES
+  // ===========================
+
+  if (!nombre) {
+    throw new Error("Falta el nombre del alumno.");
+  }
+
+  if (!correo) {
+    throw new Error("Falta el correo del alumno.");
+  }
+
+  if (!whatsapp) {
+    throw new Error("Falta el WhatsApp del alumno.");
+  }
+
+  if (!idCulqi) {
+    throw new Error("Falta el ID de operación Culqi.");
+  }
+
+
+  // ===========================
+  // CÓDIGO DEL ALUMNO
+  // ===========================
+
+  let codigo = String(
+    hoja.getRange(fila, ACCESO.CODIGO).getValue()
+  ).trim();
+
+  // Si es alumno nuevo genera código.
+  // Si es renovación conserva el código existente.
+  if (!codigo) {
+    codigo = generarCodigoAlumno_(hoja);
+  }
+
+
+  // ===========================
+  // VENCIMIENTO
+  // ===========================
+
+  const ahora = new Date();
+
+  const vencimientoActual =
+    hoja.getRange(fila, ACCESO.VENCIMIENTO).getValue();
+
+  let fechaBase = ahora;
+
+  // Si todavía tiene una suscripción vigente,
+  // se agregan los meses desde su vencimiento actual.
+  if (
+    vencimientoActual instanceof Date &&
+    !isNaN(vencimientoActual) &&
+    vencimientoActual > ahora
+  ) {
+    fechaBase = vencimientoActual;
+  }
+
+  const nuevoVencimiento =
+    sumarMeses_(fechaBase, meses);
+
+
+  // ===========================
+  // ACTUALIZAR ALUMNO
+  // ===========================
+
+  hoja
+    .getRange(fila, ACCESO.MODULO)
+    .setValue("ALL");
+
+  hoja
+    .getRange(fila, ACCESO.CODIGO)
+    .setValue(codigo);
+
+  hoja
+    .getRange(fila, ACCESO.ESTADO)
+    .setValue("ACTIVO");
+
+  hoja
+    .getRange(fila, ACCESO.VENCIMIENTO)
+    .setValue(nuevoVencimiento);
+
+  hoja
+    .getRange(fila, ACCESO.PLAN)
+    .setValue(plan);
+
+  hoja
+    .getRange(fila, ACCESO.IMPORTE)
+    .setValue(importe);
+
+  hoja
+    .getRange(fila, ACCESO.FECHA_PAGO)
+    .setValue(ahora);
+
+
+  // ===========================
+  // MENSAJE WHATSAPP
+  // ===========================
+
+  const zonaHoraria =
+    SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone();
+
+  const fechaTexto =
+    Utilities.formatDate(
+      nuevoVencimiento,
+      zonaHoraria,
+      "dd/MM/yyyy"
+    );
+
+  const mensaje =
+    "Hola " + nombre + " 👋\n\n" +
+    "Tu acceso a Academia Mauro está activo. ♟️\n\n" +
+    "📧 Correo: " + correo + "\n" +
+    "🔑 Código: " + codigo + "\n" +
+    "📚 Plan: " + plan + "\n" +
+    "📅 Válido hasta: " + fechaTexto + "\n\n" +
+    "Ingresa aquí:\n" +
+    "https://web-2022.github.io/Mauro-Chess-Academy/\n\n" +
+    "¡Bienvenido a Academia Mauro!";
+
+  hoja
+    .getRange(fila, ACCESO.MENSAJE)
+    .setValue(mensaje);
+
+
+  // ===========================
+  // LINK DE WHATSAPP
+  // ===========================
+
+  const numero = limpiarWhatsapp_(whatsapp);
+
+  const url =
+    "https://wa.me/" +
+    numero +
+    "?text=" +
+    encodeURIComponent(mensaje);
+
+  const richText =
+    SpreadsheetApp
+      .newRichTextValue()
+      .setText("📲 ENVIAR ACCESO")
+      .setLinkUrl(url)
+      .build();
+
+  hoja
+    .getRange(fila, ACCESO.LINK_WHATSAPP)
+    .setRichTextValue(richText);
+
+
+  // Limpiar observaciones si todo salió bien
+  hoja
+    .getRange(fila, ACCESO.OBSERVACIONES)
+    .setValue("");
+
+}
+
+
+/* =====================================================
+   GENERAR CÓDIGO ÚNICO
+===================================================== */
+
+function generarCodigoAlumno_(hoja) {
+
+  const caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+  let codigo = "";
+  let existe = true;
+
+  while (existe) {
+
+    let parte1 = "";
+    let parte2 = "";
+
+    for (let i = 0; i < 4; i++) {
+
+      parte1 += caracteres.charAt(
+        Math.floor(Math.random() * caracteres.length)
+      );
+
+      parte2 += caracteres.charAt(
+        Math.floor(Math.random() * caracteres.length)
+      );
+
+    }
+
+    codigo = "MAU-" + parte1 + "-" + parte2;
+
+
+    const ultimaFila = hoja.getLastRow();
+
+    if (ultimaFila < 2) {
+      existe = false;
+      continue;
+    }
+
+    const codigos =
+      hoja
+        .getRange(
+          2,
+          ACCESO.CODIGO,
+          ultimaFila - 1,
+          1
+        )
+        .getValues()
+        .flat();
+
+    existe = codigos.includes(codigo);
+
+  }
+
+  return codigo;
+
+}
+
+
+/* =====================================================
+   SUMAR MESES DE FORMA SEGURA
+===================================================== */
+
+function sumarMeses_(fecha, meses) {
+
+  const resultado = new Date(fecha);
+
+  const diaOriginal = resultado.getDate();
+
+  resultado.setDate(1);
+
+  resultado.setMonth(
+    resultado.getMonth() + meses
+  );
+
+  const ultimoDiaMes =
+    new Date(
+      resultado.getFullYear(),
+      resultado.getMonth() + 1,
+      0
+    ).getDate();
+
+  resultado.setDate(
+    Math.min(diaOriginal, ultimoDiaMes)
+  );
+
+  return resultado;
+
+}
+
+
+/* =====================================================
+   LIMPIAR NÚMERO WHATSAPP
+===================================================== */
+
+function limpiarWhatsapp_(numero) {
+
+  let limpio =
+    String(numero).replace(/\D/g, "");
+
+  // Para Perú:
+  // si tiene 9 dígitos agrega 51
+  if (limpio.length === 9) {
+    limpio = "51" + limpio;
+  }
+
+  return limpio;
+
+}

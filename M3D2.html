@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MX OREPLANIX - Superficie estilo MineSight | Mine Design & Planning Platform</title>
+<title>MX OREPLANIX - Scroll fluido sin engrosamiento</title>
 <style>
 :root {
     --bg-main: #06101b;
@@ -2271,6 +2271,525 @@ html, body{
     margin-top:7px;
 }
 
+
+/* =========================================================
+   MÓDULO SONDAJES
+========================================================= */
+#drillholeInputCollar,#drillholeInputSurvey,
+#drillholeInputAssay,#drillholeInputLithology{display:none}
+.drillhole-modal{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(3,8,15,.68);backdrop-filter:blur(4px)}
+.drillhole-modal.open{display:flex}
+.drillhole-window{width:min(1180px,96vw);max-height:92vh;display:grid;grid-template-columns:320px minmax(0,1fr);overflow:hidden;border:1px solid rgba(249,188,57,.22);border-radius:14px;background:#0f1b2d;box-shadow:0 24px 70px rgba(0,0,0,.48)}
+.drillhole-sidebar{padding:16px;overflow:auto;border-right:1px solid rgba(255,255,255,.07)}
+.drillhole-main{min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.drillhole-modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.drillhole-modal-header h3{margin:0;color:#fff;font-size:16px}
+.drillhole-close{width:30px;height:30px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#13243a;color:#d9e1ea;cursor:pointer;font-size:18px}
+.drillhole-section{margin-bottom:15px}
+.drillhole-section-title{margin-bottom:7px;color:#f9bc39;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.drillhole-file-grid{display:grid;gap:6px}
+.drillhole-load-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:34px;padding:7px 9px;border:1px solid rgba(249,188,57,.18);border-radius:7px;background:#13243a;color:#dce5ee;cursor:pointer;font-size:10px;text-align:left}
+.drillhole-load-btn:hover{border-color:#f39c1c}
+.drillhole-load-btn.loaded{border-color:rgba(91,214,146,.55);background:rgba(42,117,82,.17)}
+.drillhole-load-state{color:#8ba0b2;font-size:8.5px}
+.drillhole-switch-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;color:#d6dee7;font-size:10px}
+.drillhole-switch-row input{accent-color:#f39c1c}
+.drillhole-field{margin-bottom:8px}
+.drillhole-field label{display:block;margin-bottom:4px;color:#8ea2b4;font-size:9px}
+.drillhole-select{width:100%;padding:7px 8px;border:1px solid rgba(255,255,255,.10);border-radius:7px;background:#0c1727;color:#e9eef4;font-size:10px}
+.drillhole-field input[type="range"]{width:100%}
+.drillhole-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.drillhole-summary{color:#9eafbd;font-size:10px}
+.drillhole-clear-btn{padding:7px 10px;border:1px solid rgba(243,156,28,.28);border-radius:7px;background:rgba(243,156,28,.08);color:#f5b754;cursor:pointer;font-size:9px}
+.drillhole-table-wrap{overflow:auto;max-height:56vh}
+.drillhole-table{width:100%;border-collapse:collapse;font-size:9.5px}
+.drillhole-table th{position:sticky;top:0;z-index:2;padding:8px 9px;background:#16253a;color:#9fb0bf;text-align:left;border-bottom:1px solid rgba(255,255,255,.08);white-space:nowrap}
+.drillhole-table td{padding:7px 9px;border-bottom:1px solid rgba(255,255,255,.055);color:#dce4eb;white-space:nowrap}
+.drillhole-table tbody tr{cursor:pointer}.drillhole-table tbody tr:hover{background:rgba(249,188,57,.06)}.drillhole-table tbody tr.selected{background:rgba(243,156,28,.18)}
+.drillhole-props{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);background:#101d30}
+.drillhole-props-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.drillhole-prop{padding:7px;border:1px solid rgba(255,255,255,.055);border-radius:7px;background:#0d1828}
+.drillhole-prop span{display:block;color:#8195a6;font-size:8px}
+.drillhole-prop strong{display:block;margin-top:2px;color:#f1f4f7;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drillhole-help{color:#7f93a5;font-size:8.5px;line-height:1.45}
+.drillhole-legend{display:grid;gap:4px;margin-top:6px}.drillhole-legend-row{display:flex;align-items:center;gap:6px;color:#c8d2dc;font-size:8.5px}.drillhole-legend-swatch{width:18px;height:8px;border-radius:2px}
+.drillhole-header-btn{border-color:rgba(249,188,57,.28)!important}
+@media(max-width:900px){.drillhole-window{grid-template-columns:1fr}.drillhole-sidebar{border-right:0;border-bottom:1px solid rgba(255,255,255,.07);max-height:38vh}.drillhole-props-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* =========================================================
+   SONDAJES MULTIDISCIPLINARIOS
+========================================================= */
+.drillhole-discipline-tabs{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+    margin-bottom:12px;
+}
+.drillhole-tab{
+    padding:7px 5px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:7px;
+    background:#0c1727;
+    color:#8ea2b4;
+    cursor:pointer;
+    font-size:9px;
+    font-weight:700;
+}
+.drillhole-tab.active{
+    color:#fff;
+    border-color:rgba(243,156,28,.55);
+    background:rgba(243,156,28,.14);
+}
+.drillhole-discipline-panel{display:none}
+.drillhole-discipline-panel.active{display:block}
+.drillhole-dataset-card{
+    margin-bottom:7px;
+    padding:8px;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:8px;
+    background:#101e31;
+}
+.drillhole-dataset-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:5px;
+    color:#dce5ee;
+    font-size:9.5px;
+    font-weight:700;
+}
+.drillhole-dataset-desc{
+    color:#768a9d;
+    font-size:8px;
+    line-height:1.35;
+    margin-bottom:6px;
+}
+.drillhole-small-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:76px;
+    padding:5px 7px;
+    border:1px solid rgba(249,188,57,.18);
+    border-radius:6px;
+    background:#13243a;
+    color:#dce5ee;
+    cursor:pointer;
+    font-size:8.5px;
+}
+.drillhole-small-button.loaded{
+    border-color:rgba(91,214,146,.55);
+    color:#a6e7c4;
+}
+.drillhole-small-input{display:none}
+.drillhole-data-summary{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:5px;
+    margin-top:8px;
+}
+.drillhole-stat{
+    padding:6px;
+    border:1px solid rgba(255,255,255,.05);
+    border-radius:6px;
+    background:#0b1625;
+}
+.drillhole-stat span{
+    display:block;color:#71869a;font-size:7.5px
+}
+.drillhole-stat strong{
+    display:block;color:#eef2f5;font-size:9px;margin-top:2px
+}
+.drillhole-warning{
+    padding:6px 8px;
+    border-left:3px solid #f39c1c;
+    background:rgba(243,156,28,.07);
+    color:#aebdca;
+    font-size:8px;
+    line-height:1.4;
+    margin-top:7px;
+}
+
+
+/* =========================================================
+   SONDAJES ACOPLADOS AL PANEL IZQUIERDO
+   El visor 3D permanece completamente visible.
+========================================================= */
+.left-panel-switch{
+    flex:0 0 auto;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 30px;
+    gap:5px;
+    padding:5px;
+    border:1px solid rgba(249,188,57,.16);
+    border-radius:9px;
+    background:#0d1829;
+}
+.left-panel-tab,
+.left-panel-collapse{
+    min-height:30px;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:6px;
+    background:#13233a;
+    color:#96a8b8;
+    cursor:pointer;
+    font-size:9px;
+    font-weight:700;
+}
+.left-panel-tab.active{
+    border-color:rgba(243,156,28,.55);
+    background:rgba(243,156,28,.15);
+    color:#fff;
+}
+.left-panel-collapse{
+    color:#f9bc39;
+    font-size:11px;
+}
+.left-pane{
+    display:none;
+    min-height:0;
+    flex:1 1 auto;
+    overflow:hidden;
+    flex-direction:column;
+    gap:10px;
+}
+.left-pane.active{
+    display:flex;
+}
+
+/* El antiguo modal ahora es un dock dentro del sidebar. */
+.drillhole-dock{
+    display:none;
+    min-height:0;
+    flex:1 1 auto;
+    overflow:hidden;
+}
+.drillhole-dock.open{
+    display:flex;
+    flex-direction:column;
+}
+.drillhole-dock .drillhole-window{
+    width:100% !important;
+    height:100% !important;
+    max-height:none !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+.drillhole-dock .drillhole-sidebar{
+    flex:1 1 auto;
+    width:auto !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:7px 5px 10px 2px !important;
+    border-right:0 !important;
+    border-bottom:0 !important;
+    scrollbar-gutter:stable;
+}
+.drillhole-dock .drillhole-sidebar::-webkit-scrollbar{width:8px}
+.drillhole-dock .drillhole-sidebar::-webkit-scrollbar-thumb{
+    background:rgba(249,188,57,.34);
+    border-radius:999px;
+}
+.drillhole-dock .drillhole-main{
+    flex:0 0 auto;
+    min-height:0;
+    max-height:35%;
+    border-top:1px solid rgba(249,188,57,.14);
+    background:#0b1625;
+}
+.drillhole-dock .drillhole-modal-header{
+    padding:7px 8px 5px !important;
+}
+.drillhole-dock .drillhole-modal-header h3{
+    margin:0 !important;
+    font-size:10px !important;
+}
+.drillhole-dock .drillhole-summary{
+    font-size:8px !important;
+    line-height:1.25;
+}
+.drillhole-dock .drillhole-toolbar{
+    padding:4px 8px !important;
+}
+.drillhole-dock .drillhole-data-summary{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:3px;
+    padding:0 7px 5px !important;
+}
+.drillhole-dock .drillhole-stat{
+    padding:4px;
+}
+.drillhole-dock .drillhole-table-wrap{
+    max-height:130px;
+    overflow:auto;
+}
+.drillhole-dock .drillhole-table{
+    font-size:8px;
+}
+.drillhole-dock .drillhole-table th,
+.drillhole-dock .drillhole-table td{
+    padding:4px 5px;
+}
+.drillhole-dock .drillhole-props{
+    display:none;
+}
+.drillhole-dock .drillhole-close{
+    display:none;
+}
+.drillhole-dock .drillhole-discipline-tabs{
+    position:sticky;
+    top:-7px;
+    z-index:4;
+    padding:3px 0 5px;
+    background:#101a2d;
+}
+.drillhole-dock .drillhole-section{
+    margin-bottom:8px !important;
+}
+.drillhole-dock .drillhole-dataset-card{
+    padding:6px;
+    margin-bottom:5px;
+}
+.drillhole-dock .drillhole-dataset-desc{
+    display:none;
+}
+.drillhole-dock .drillhole-warning{
+    margin-bottom:8px;
+}
+
+/* Maximizar visor ocultando el lateral izquierdo cuando se requiera. */
+.workspace.left-panel-collapsed{
+    grid-template-columns:minmax(0,1fr) minmax(280px,320px) !important;
+}
+.workspace.left-panel-collapsed > .sidebar{
+    display:none !important;
+}
+@media(max-width:1366px){
+    .workspace.left-panel-collapsed{
+        grid-template-columns:minmax(0,1fr) minmax(260px,290px) !important;
+    }
+}
+@media(max-width:1120px){
+    .workspace.left-panel-collapsed{
+        grid-template-columns:minmax(0,1fr) minmax(245px,270px) !important;
+    }
+}
+@media(max-width:900px){
+    .workspace.left-panel-collapsed{
+        grid-template-columns:1fr !important;
+    }
+}
+
+/* En pantallas angostas el dock sigue siendo parte del flujo, no un overlay. */
+@media(max-width:900px){
+    .drillhole-dock .drillhole-main{max-height:none}
+    .drillhole-dock .drillhole-sidebar{max-height:520px !important}
+}
+
+
+/* =========================================================
+   PANEL DE SONDAJES - LEGIBILIDAD Y ORGANIZACIÓN
+========================================================= */
+.drillhole-compact-window{gap:0!important}
+.drillhole-work-tabs{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:5px;
+    padding:6px 4px 8px;border-bottom:1px solid rgba(249,188,57,.14);
+    background:#101a2d;flex:0 0 auto
+}
+.drillhole-work-tab{
+    min-height:34px;border:1px solid rgba(255,255,255,.08);border-radius:7px;
+    background:#13243a;color:#95a7b8;font-size:11px;font-weight:800;cursor:pointer
+}
+.drillhole-work-tab.active{background:rgba(243,156,28,.16);border-color:rgba(243,156,28,.55);color:#fff}
+.drillhole-work-pane{display:none;min-height:0;flex:1 1 auto;overflow:hidden}
+.drillhole-work-pane.active{display:flex;flex-direction:column}
+.drillhole-scroll-pane{min-height:0;flex:1 1 auto;overflow:auto;padding:8px 5px 12px 2px}
+.drillhole-large-section-title{font-size:12px!important;margin-bottom:10px!important}
+.drillhole-dock .drillhole-tab{font-size:10.5px;min-height:32px}
+.drillhole-dock .drillhole-dataset-title{font-size:11px}
+.drillhole-dock .drillhole-small-button{font-size:10px;min-width:68px}
+.drillhole-dock .drillhole-load-btn{font-size:10.5px}
+.drillhole-dock .drillhole-load-state{font-size:9px}
+.drillhole-dock .drillhole-switch-row{min-height:38px;font-size:11px}
+.drillhole-dock .drillhole-field label{font-size:10.5px}
+.drillhole-dock .drillhole-select{font-size:11px;min-height:34px}
+.drillhole-holes-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:9px 7px 7px}
+.drillhole-holes-title{font-size:14px;font-weight:800;color:#fff;margin-bottom:2px}
+.drillhole-work-pane[data-dh-pane="holes"] .drillhole-summary{font-size:9.5px!important;line-height:1.35}
+.drillhole-work-pane[data-dh-pane="holes"] .drillhole-data-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:0;padding:0 7px 7px!important}
+.drillhole-work-pane[data-dh-pane="holes"] .drillhole-stat{padding:6px 7px}
+.drillhole-work-pane[data-dh-pane="holes"] .drillhole-stat span{font-size:9px}
+.drillhole-work-pane[data-dh-pane="holes"] .drillhole-stat strong{font-size:12px}
+.drillhole-search-row{padding:0 7px 7px}
+.drillhole-search-row input{
+    width:100%;min-height:34px;padding:7px 9px;border:1px solid rgba(255,255,255,.11);
+    border-radius:7px;background:#0b1625;color:#eef3f7;font-size:11px;outline:none
+}
+.drillhole-search-row input:focus{border-color:rgba(243,156,28,.55)}
+.drillhole-table-wrap-readable{max-height:none!important;min-height:120px;flex:0 1 auto}
+.drillhole-table-readable{font-size:11px!important;table-layout:fixed}
+.drillhole-table-readable th{font-size:10px!important;padding:8px 7px!important}
+.drillhole-table-readable td{font-size:11px!important;padding:9px 7px!important;line-height:1.2}
+.drillhole-table-readable th:nth-child(1),.drillhole-table-readable td:nth-child(1){width:34%}
+.drillhole-table-readable th:nth-child(2),.drillhole-table-readable td:nth-child(2){width:24%;text-align:right}
+.drillhole-table-readable th:nth-child(3),.drillhole-table-readable td:nth-child(3){width:22%;text-align:right}
+.drillhole-table-readable th:nth-child(4),.drillhole-table-readable td:nth-child(4){width:20%;text-align:right}
+.drillhole-table-readable td:first-child{font-weight:800;color:#f3f6f8}
+.drillhole-table-readable tr.selected td:first-child{color:#f9bc39}
+.drillhole-detail-card{
+    margin:8px 7px 10px;padding:10px;border:1px solid rgba(249,188,57,.16);border-radius:9px;
+    background:#0d1828;font-size:11px
+}
+.drillhole-empty-detail{color:#8194a5;font-size:10.5px}
+.drillhole-detail-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.drillhole-detail-id{font-size:14px;font-weight:900;color:#fff}
+.drillhole-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:9px}
+.drillhole-detail-metric{padding:6px;border-radius:6px;background:#101f33;border:1px solid rgba(255,255,255,.055)}
+.drillhole-detail-metric span{display:block;color:#8295a6;font-size:8.5px;margin-bottom:2px}
+.drillhole-detail-metric strong{display:block;color:#eef3f7;font-size:11px;white-space:nowrap}
+.drillhole-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.drillhole-detail-actions button{
+    min-height:31px;border:1px solid rgba(249,188,57,.2);border-radius:6px;background:#13243a;
+    color:#e8eef3;font-size:10px;font-weight:700;cursor:pointer
+}
+.drillhole-detail-actions button.active{background:rgba(243,156,28,.18);border-color:rgba(243,156,28,.55);color:#f9bc39}
+.drillhole-coords-details{border-top:1px solid rgba(255,255,255,.06);padding-top:7px}
+.drillhole-coords-details summary{cursor:pointer;color:#9fb0be;font-size:10px;font-weight:700}
+.drillhole-coords-grid{display:grid;grid-template-columns:1fr;gap:3px;margin-top:7px}
+.drillhole-coord-row{display:flex;justify-content:space-between;gap:10px;color:#aebdca;font-size:10px}
+.drillhole-coord-row strong{color:#eef3f7;font-weight:700}
+.drillhole-dock .drillhole-props{display:block!important}
+
+
+/* =========================================================
+   CARGA GEOTÉCNICA COMBINADA
+========================================================= */
+.geotech-combined-card{
+    border-color:rgba(243,156,28,.42) !important;
+    background:linear-gradient(180deg,rgba(243,156,28,.08),rgba(16,30,49,.92)) !important;
+}
+.geotech-combined-button{
+    min-width:106px !important;
+    border-color:rgba(249,188,57,.42) !important;
+    color:#fff !important;
+}
+.geotech-combined-status{
+    margin-top:6px;
+    padding:6px 7px;
+    border-radius:6px;
+    background:#0b1625;
+    border:1px solid rgba(255,255,255,.05);
+    color:#91a4b5;
+    font-size:9px;
+    line-height:1.4;
+}
+.geotech-combined-status.loaded{
+    color:#a8e7c4;
+    border-color:rgba(91,214,146,.30);
+}
+
+
+/* PASO 2/3 · resumen conjunto de sondajes seleccionados */
+.drillhole-multi-id-list{
+    margin:6px 0 8px;
+    padding:6px 8px;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:6px;
+    background:#0b1625;
+    color:#aab8c5;
+    font-size:10px;
+    line-height:1.35;
+    word-break:break-word;
+}
+.drillhole-summary-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.drillhole-summary-grid .drillhole-detail-metric strong{
+    font-size:11px;
+}
+
+
+.drillhole-active-dataset-note{
+    margin-top:10px;
+    padding:8px 10px;
+    border:1px solid rgba(249,188,57,.20);
+    border-radius:8px;
+    background:rgba(249,188,57,.08);
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+.drillhole-active-dataset-note .label{
+    font-size:9px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:#f9bc39;
+    font-weight:700;
+}
+.drillhole-active-dataset-note strong{
+    font-size:11px;
+    color:#ffffff;
+}
+.drillhole-active-dataset-note .value{
+    font-size:10px;
+    color:#d9e4ec;
+}
+
+
+.viewer-axis-guide{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+    font-size:9px;
+    color:#9fb0bf;
+}
+.viewer-axis-guide span{
+    padding:3px 6px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:5px;
+    background:rgba(255,255,255,.035);
+}
+
+
+.viewer-canvas-stack #axisGizmoCanvas{
+    position:absolute !important;
+    right:12px;
+    bottom:12px;
+    width:118px !important;
+    height:118px !important;
+    inset:auto !important;
+    z-index:5;
+    pointer-events:none;
+    background:transparent !important;
+}
+.axis-gizmo-caption{
+    position:absolute;
+    right:18px;
+    bottom:6px;
+    z-index:6;
+    pointer-events:none;
+    font-size:9px;
+    color:#96adbd;
+    letter-spacing:.02em;
+    background:rgba(7,19,31,.45);
+    padding:2px 6px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.06);
+}
+
 </style>
 </head>
 <body>
@@ -2314,6 +2833,18 @@ html, body{
                     title="Guardar proyecto completo">
                 💾 Guardar
             </button>
+            <button class="btn header-tool-btn drillhole-header-btn"
+                    onclick="openDrillholeModule()"
+                    title="Abrir sondajes en el panel izquierdo">
+                ⛏ Sondajes
+            </button>
+
+            <button class="btn header-tool-btn"
+                    id="leftPanelHeaderToggle"
+                    onclick="toggleLeftPanelCollapsed()"
+                    title="Mostrar u ocultar el panel izquierdo">
+                ◧ Panel
+            </button>
 
             <button class="btn danger header-tool-btn"
                     onclick="clearDXF()"
@@ -2341,7 +2872,20 @@ html, body{
     </header>
 
     <div class="workspace">
-        <aside class="sidebar">
+        <aside class="sidebar" id="leftWorkspacePanel">
+            <div class="left-panel-switch">
+                <button type="button" class="left-panel-tab active" id="leftTabDXF" onclick="setLeftPanelMode('dxf')">
+                    ◫ Archivos
+                </button>
+                <button type="button" class="left-panel-tab" id="leftTabDrillholes" onclick="setLeftPanelMode('drillholes')">
+                    ⛏ Sondajes
+                </button>
+                <button type="button" class="left-panel-collapse" onclick="toggleLeftPanelCollapsed()" title="Ocultar panel izquierdo">
+                    ◀
+                </button>
+            </div>
+
+            <div class="left-pane active" id="leftDXFPane">
             <div class="panel files-panel">
                 <div class="panel-header files-panel-header">
                     <h2>Archivos DXF cargados</h2>
@@ -2375,6 +2919,118 @@ html, body{
                 curvas de nivel/polilíneas, se mostrarán como líneas hasta generar un TIN.
                 Los 3DSOLID/ACIS deben exportarse como 3DFACE o malla.
             </div>
+            </div>
+
+<div class="drillhole-dock" id="drillholeModal" aria-hidden="true">
+  <div class="drillhole-window drillhole-compact-window">
+    <div class="drillhole-work-tabs">
+      <button type="button" class="drillhole-work-tab active" data-dh-view="data" onclick="setDrillholeWorkTab('data')">Datos</button>
+      <button type="button" class="drillhole-work-tab" data-dh-view="view" onclick="setDrillholeWorkTab('view')">Vista</button>
+      <button type="button" class="drillhole-work-tab" data-dh-view="holes" onclick="setDrillholeWorkTab('holes')">Taladros</button>
+    </div>
+
+    <div class="drillhole-work-pane active" data-dh-pane="data">
+      <div class="drillhole-scroll-pane">
+        <div class="drillhole-discipline-tabs">
+          <button class="drillhole-tab active" data-discipline="geology" onclick="setDrillholeDiscipline('geology')">Geología</button>
+          <button class="drillhole-tab" data-discipline="geotech" onclick="setDrillholeDiscipline('geotech')">Geotecnia</button>
+          <button class="drillhole-tab" data-discipline="hydro" onclick="setDrillholeDiscipline('hydro')">Hidro</button>
+        </div>
+
+        <div class="drillhole-section">
+          <div class="drillhole-section-title">Base común</div>
+          <div class="drillhole-file-grid">
+            <label class="drillhole-load-btn" id="drillholeCollarButton" for="drillholeInputCollar"><span>Collar</span><span class="drillhole-load-state" id="drillholeCollarState">Sin cargar</span></label>
+            <input id="drillholeInputCollar" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv">
+            <label class="drillhole-load-btn" id="drillholeSurveyButton" for="drillholeInputSurvey"><span>Survey</span><span class="drillhole-load-state" id="drillholeSurveyState">Sin cargar</span></label>
+            <input id="drillholeInputSurvey" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv">
+          </div>
+        </div>
+
+        <div class="drillhole-discipline-panel active" data-discipline-panel="geology">
+          <div class="drillhole-section-title">Geología</div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Assays / Leyes</span><label class="drillhole-small-button" id="btn-assay" for="input-assay">Cargar</label></div><input id="input-assay" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Litología</span><label class="drillhole-small-button" id="btn-lithology" for="input-lithology">Cargar</label></div><input id="input-lithology" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+        </div>
+
+        <div class="drillhole-discipline-panel" data-discipline-panel="geotech">
+          <div class="drillhole-section-title">Geotecnia</div>
+          <div class="drillhole-dataset-card geotech-combined-card">
+            <div class="drillhole-dataset-title">
+              <span>Geotecnia completa</span>
+              <label class="drillhole-small-button geotech-combined-button" id="btn-geotechCombined" for="input-geotechCombined">Cargar archivo</label>
+            </div>
+            <div class="drillhole-dataset-desc geotech-combined-desc">Un solo CSV con HoleID + From + To. Detecta automáticamente Recovery, RQD, RMR/GSI/Q y ensayos geotécnicos.</div>
+            <div class="geotech-combined-status" id="geotechCombinedStatus">Sin archivo combinado cargado.</div>
+            <input id="input-geotechCombined" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv">
+          </div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Core Recovery</span><label class="drillhole-small-button" id="btn-coreRecovery" for="input-coreRecovery">Cargar</label></div><input id="input-coreRecovery" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>RQD</span><label class="drillhole-small-button" id="btn-rqd" for="input-rqd">Cargar</label></div><input id="input-rqd" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Rock Mass</span><label class="drillhole-small-button" id="btn-rockMass" for="input-rockMass">Cargar</label></div><input id="input-rockMass" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Fracture Frequency</span><label class="drillhole-small-button" id="btn-fractureFrequency" for="input-fractureFrequency">Cargar</label></div><input id="input-fractureFrequency" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Fractures / Discontinuities</span><label class="drillhole-small-button" id="btn-fractures" for="input-fractures">Cargar</label></div><input id="input-fractures" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Geotech Tests</span><label class="drillhole-small-button" id="btn-geotechTests" for="input-geotechTests">Cargar</label></div><input id="input-geotechTests" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Oriented Core</span><label class="drillhole-small-button" id="btn-orientedCore" for="input-orientedCore">Cargar</label></div><input id="input-orientedCore" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+        </div>
+
+        <div class="drillhole-discipline-panel" data-discipline-panel="hydro">
+          <div class="drillhole-section-title">Hidrogeología</div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>HydroLog</span><label class="drillhole-small-button" id="btn-hydroLog" for="input-hydroLog">Cargar</label></div><input id="input-hydroLog" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Water Levels</span><label class="drillhole-small-button" id="btn-waterLevels" for="input-waterLevels">Cargar</label></div><input id="input-waterLevels" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Packer / Lugeon</span><label class="drillhole-small-button" id="btn-hydraulicTests" for="input-hydraulicTests">Cargar</label></div><input id="input-hydraulicTests" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Well Construction</span><label class="drillhole-small-button" id="btn-wellConstruction" for="input-wellConstruction">Cargar</label></div><input id="input-wellConstruction" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+          <div class="drillhole-dataset-card"><div class="drillhole-dataset-title"><span>Water Quality</span><label class="drillhole-small-button" id="btn-waterQuality" for="input-waterQuality">Cargar</label></div><input id="input-waterQuality" class="drillhole-small-input" type="file" accept=".csv,.txt,.tsv"></div>
+        </div>
+
+        <div class="drillhole-warning">Collar y Survey definen la trayectoria. Los demás archivos se proyectan sobre ella mediante HoleID y Depth o From-To.</div>
+      </div>
+    </div>
+
+    <div class="drillhole-work-pane" data-dh-pane="view">
+      <div class="drillhole-scroll-pane">
+        <div class="drillhole-section-title drillhole-large-section-title">Visualización 3D</div>
+        <label class="drillhole-switch-row"><span>Sondajes visibles</span><input type="checkbox" id="drillholeVisibleCheck" checked onchange="updateDrillholeVisualOption('visible',this.checked)"></label>
+        <label class="drillhole-switch-row"><span>Collares</span><input type="checkbox" id="drillholeCollarCheck" checked onchange="updateDrillholeVisualOption('showCollars',this.checked)"></label>
+        <label class="drillhole-switch-row"><span>Trayectoria base</span><input type="checkbox" id="drillholeTrajectoryCheck" checked onchange="updateDrillholeVisualOption('showTrajectory',this.checked)"></label>
+        <label class="drillhole-switch-row"><span>Fracturas</span><input type="checkbox" id="drillholeFractureCheck" checked onchange="updateDrillholeVisualOption('showFractures',this.checked)"></label>
+        <label class="drillhole-switch-row"><span>Nivel de agua</span><input type="checkbox" id="drillholeWaterCheck" checked onchange="updateDrillholeVisualOption('showWaterLevels',this.checked)"></label>
+
+        <div class="drillhole-field"><label>Dataset activo</label><select class="drillhole-select" id="drillholeDatasetSelect" onchange="setDrillholeActiveDataset(this.value)"></select></div>
+        <div class="drillhole-field"><label>Atributo / campo</label><select class="drillhole-select" id="drillholeFieldSelect" onchange="setDrillholeActiveField(this.value)"></select></div>
+        <div class="drillhole-field"><label>Grosor de visualización</label><input type="range" min="1" max="9" step=".5" value="3" id="drillholeLineWidth" oninput="updateDrillholeVisualOption('lineWidth',Number(this.value))"></div>
+        <div class="drillhole-legend" id="drillholeLegend"></div>
+      </div>
+    </div>
+
+    <div class="drillhole-work-pane" data-dh-pane="holes">
+      <div class="drillhole-holes-header">
+        <div>
+          <div class="drillhole-holes-title">Taladros</div>
+          <div class="drillhole-summary" id="drillholeModuleSummary">Carga Collar y Survey para comenzar.</div>
+        </div>
+        <button class="drillhole-clear-btn" onclick="clearDrillholes()">Limpiar</button>
+      </div>
+
+      <div class="drillhole-data-summary" id="drillholeDataSummary"></div>
+
+      <div class="drillhole-search-row">
+        <input id="drillholeSearchInput" type="search" placeholder="Buscar DDH..." oninput="setDrillholeSearch(this.value)">
+      </div>
+
+      <div class="drillhole-table-wrap drillhole-table-wrap-readable">
+        <table class="drillhole-table drillhole-table-readable">
+          <thead><tr><th>Taladro</th><th>Prof.</th><th>Azimut</th><th>Dip</th></tr></thead>
+          <tbody id="drillholeTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="drillhole-detail-card" id="drillholeSelectedProps">
+        <div class="drillhole-empty-detail">Selecciona un taladro para ver sus datos.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
         </aside>
 
         <main>
@@ -2384,12 +3040,19 @@ html, body{
                         <strong>Visor 3D DXF</strong>
                         <span>Seleccionar ON: clic o ventana · stopes masivos se agrupan sin bloquear · líneas de caras no cuentan como líneas</span>
                     </div>
+                    <div class="viewer-axis-guide" id="viewerAxisGuide" title="Convención de ejes">
+                        <span>E = X</span>
+                        <span>N = Y</span>
+                        <span>Z = Cota</span>
+                    </div>
                 </div>
 
                 <div class="viewer-canvas-stack">
                     <canvas id="gridCanvas" aria-hidden="true"></canvas>
                     <canvas id="dxfViewer"></canvas>
                     <canvas id="selectionOverlay" aria-hidden="true"></canvas>
+                    <canvas id="axisGizmoCanvas" aria-hidden="true"></canvas>
+                                    <div class="axis-gizmo-caption">X · Y · Z</div>
                 </div>
 
                 <div class="viewer-status">
@@ -2420,13 +3083,15 @@ html, body{
     </div>
 
 
-    <div class="footer">MX OREPLANIX · Superficie topográfica estilo MineSight · Mining Expert</div>
+    <div class="footer">MX OREPLANIX · Panel lateral de Sondajes · Geología + Geotecnia + Hidrogeología · Mining Expert</div>
 </div>
+
+
 
 <div class="right-side-dock" aria-label="Herramientas rápidas">
     <div class="dock-group">
         <div class="dock-group-title">SNAP</div>
-        <button class="dock-btn snap-mode-btn" id="snapPointButtonDock" onclick="toggleSnapMode('point')" title="Snap Punto">
+        <button class="dock-btn snap-mode-btn" id="snapPointButtonDock" onclick="toggleSnapMode('point')" title="Snap Punto · DXF + collar + trayectoria + límites From/To + eventos Depth de sondajes">
             <span class="dock-icon">◎</span>
             <span class="dock-label">Punto</span>
         </button>
@@ -2442,15 +3107,15 @@ html, body{
 
     <div class="dock-group">
         <div class="dock-group-title">VISTAS</div>
-        <button class="dock-btn view-btn" id="viewIsoButtonDock" onclick="setDXFView('iso')" title="Vista isométrica">
+        <button class="dock-btn view-btn" id="viewIsoButtonDock" onclick="setDXFView('iso')" title="Isométrica · Z hacia arriba · orientación 3D estándar">
             <span class="dock-icon">⬢</span>
             <span class="dock-label">Iso</span>
         </button>
-        <button class="dock-btn view-btn" id="viewTopButtonDock" onclick="setDXFView('top')" title="Vista en planta">
+        <button class="dock-btn view-btn" id="viewTopButtonDock" onclick="setDXFView('top')" title="Planta · Este a la derecha · Norte hacia arriba">
             <span class="dock-icon">▣</span>
             <span class="dock-label">Planta</span>
         </button>
-        <button class="dock-btn view-btn" id="viewFrontButtonDock" onclick="setDXFView('front')" title="Vista de perfil">
+        <button class="dock-btn view-btn" id="viewFrontButtonDock" onclick="setDXFView('front')" title="Perfil E-Z · Este a la derecha · Cota Z hacia arriba">
             <span class="dock-icon">▭</span>
             <span class="dock-label">Perfil</span>
         </button>
@@ -2507,6 +3172,72 @@ const dxfFiles = [];
 */
 const designObjects = [];
 
+const drillholeData={
+    visible:true,
+    showCollars:true,
+    showTrajectory:true,
+    showFractures:true,
+    showWaterLevels:true,
+    lineWidth:3,
+    activeDiscipline:"geology",
+    activeDataset:"assay",
+    activeField:"",
+    collars:[],
+    surveys:[],
+    trajectories:[],
+    trajectoryByHole:new Map(),
+    collarByHole:new Map(),
+    bbox:null,
+    datasets:{
+        assay:{kind:"interval",rows:[],fields:[],categoryField:null,name:"Assays / Leyes"},
+        lithology:{kind:"interval",rows:[],fields:[],categoryField:"value",name:"Litología"},
+        coreRecovery:{kind:"interval",rows:[],fields:[],categoryField:null,name:"Core Recovery"},
+        rqd:{kind:"interval",rows:[],fields:[],categoryField:null,name:"RQD"},
+        rockMass:{kind:"interval",rows:[],fields:[],categoryField:null,name:"Rock Mass"},
+        fractureFrequency:{kind:"interval",rows:[],fields:[],categoryField:null,name:"Fracture Frequency"},
+        fractures:{kind:"event",rows:[],fields:[],categoryField:null,name:"Fractures / Discontinuities"},
+        geotechTests:{kind:"interval_or_event",rows:[],fields:[],categoryField:null,name:"Geotech Tests"},
+        orientedCore:{kind:"event",rows:[],fields:[],categoryField:null,name:"Oriented Core"},
+        hydroLog:{kind:"interval",rows:[],fields:[],categoryField:"value",name:"HydroLog"},
+        waterLevels:{kind:"waterlevel",rows:[],fields:[],categoryField:null,name:"Water Levels"},
+        hydraulicTests:{kind:"interval",rows:[],fields:[],categoryField:null,name:"Packer / Lugeon"},
+        wellConstruction:{kind:"interval",rows:[],fields:[],categoryField:"value",name:"Well Construction"},
+        waterQuality:{kind:"event",rows:[],fields:[],categoryField:null,name:"Water Quality"}
+    },
+    sourceNames:{
+        collar:"",
+        survey:"",
+        assay:"",
+        lithology:"",
+        geotechCombined:"",
+        coreRecovery:"",
+        rqd:"",
+        rockMass:"",
+        fractureFrequency:"",
+        fractures:"",
+        geotechTests:"",
+        orientedCore:"",
+        hydroLog:"",
+        waterLevels:"",
+        hydraulicTests:"",
+        wellConstruction:"",
+        waterQuality:""
+    },
+    selectedHoleId:null,
+    workTab:"data",
+    searchQuery:"",
+    isolatedHoleId:null,
+    numericRange:{min:0,max:1}
+};
+
+
+function normalizeViewAngle(angle){
+    const twoPi=Math.PI*2;
+    let a=Number(angle)||0;
+    a=((a+Math.PI)%twoPi+twoPi)%twoPi-Math.PI;
+    return a;
+}
+
 const dxfView = {
     yaw: -0.80,
     pitch: 0.55,
@@ -2518,6 +3249,8 @@ const dxfView = {
     showGrid: true,
     rotationCenter: null,
     pickingPivot: false,
+    // Controla solo la visibilidad del símbolo del pivote.
+    pivotMarkerVisible: false,
 
     // Object Snap
     snapEnabled: false,
@@ -2628,6 +3361,7 @@ const categoryColors = {
 const gridCanvas = document.getElementById("gridCanvas");
 const viewer = document.getElementById("dxfViewer");
 const selectionOverlay = document.getElementById("selectionOverlay");
+const axisGizmoCanvas = document.getElementById("axisGizmoCanvas");
 
 /*
    Referencias DOM de alta frecuencia.
@@ -2796,6 +3530,8 @@ function makeProjectSnapshot() {
             */
             objects: clonePlain(designObjects)
         },
+
+        drillholes: serializeDrillholeProjectData(),
 
         view: {
             yaw: dxfView.yaw,
@@ -2979,6 +3715,8 @@ async function openOREPLANIXProject(file) {
             designObjects.push(...data.design.objects);
         }
 
+        restoreDrillholeProjectData(data.drillholes || null);
+
         const projectName =
             data.project?.name ||
             file.name.replace(/\.oreplanix$/i, "");
@@ -3010,6 +3748,7 @@ async function openOREPLANIXProject(file) {
 
         dxfView.rotationCenter =
             view.rotationCenter || null;
+        dxfView.pivotMarkerVisible = false;
 
         dxfView.currentView =
             view.currentView || "iso";
@@ -4291,6 +5030,731 @@ function toggleImportedDXFStyles(fileId,enabled) {
     renderDXFList();
     renderPropertiesPanel();
 }
+
+
+/* =========================================================
+   MÓDULO SONDAJES MULTIDISCIPLINARIO
+========================================================= */
+const DRILLHOLE_DATASET_DISCIPLINE={
+    assay:"geology",lithology:"geology",
+    coreRecovery:"geotech",rqd:"geotech",rockMass:"geotech",fractureFrequency:"geotech",
+    fractures:"geotech",geotechTests:"geotech",orientedCore:"geotech",
+    hydroLog:"hydro",waterLevels:"hydro",hydraulicTests:"hydro",
+    wellConstruction:"hydro",waterQuality:"hydro"
+};
+
+function setLeftPanelMode(mode){
+    const workspace=document.querySelector(".workspace");
+    const dxfPane=document.getElementById("leftDXFPane");
+    const drillPane=document.getElementById("drillholeModal");
+    const dxfTab=document.getElementById("leftTabDXF");
+    const drillTab=document.getElementById("leftTabDrillholes");
+
+    if(workspace)workspace.classList.remove("left-panel-collapsed");
+    const isDrill=mode==="drillholes";
+
+    dxfPane?.classList.toggle("active",!isDrill);
+    drillPane?.classList.toggle("open",isDrill);
+    drillPane?.setAttribute("aria-hidden",isDrill?"false":"true");
+    dxfTab?.classList.toggle("active",!isDrill);
+    drillTab?.classList.toggle("active",isDrill);
+
+    if(isDrill)renderDrillholeModule();
+    requestAnimationFrame(()=>requestViewerRender(false));
+}
+function toggleLeftPanelCollapsed(){
+    const workspace=document.querySelector(".workspace");
+    if(!workspace)return;
+    workspace.classList.toggle("left-panel-collapsed");
+    requestAnimationFrame(()=>requestViewerRender(false));
+}
+function openDrillholeModule(){
+    setLeftPanelMode("drillholes");
+}
+function closeDrillholeModule(){
+    setLeftPanelMode("dxf");
+}
+function setDrillholeDiscipline(name){
+    drillholeData.activeDiscipline=name;
+    document.querySelectorAll(".drillhole-tab").forEach(el=>el.classList.toggle("active",el.dataset.discipline===name));
+    document.querySelectorAll(".drillhole-discipline-panel").forEach(el=>el.classList.toggle("active",el.dataset.disciplinePanel===name));
+}
+function normalizeColumnName(v){
+    return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+function detectDelimitedSeparator(text){
+    const lines=String(text).split(/\r?\n/).filter(v=>v.trim()).slice(0,6);
+    const candidates=["\t",";",",","|"];
+    let best=",",score=-1;
+    for(const sep of candidates){
+        let n=0;for(const line of lines)n+=line.split(sep).length-1;
+        if(n>score){score=n;best=sep}
+    }
+    return best;
+}
+function parseDelimitedLine(line,sep){
+    const out=[];let value="",quoted=false;
+    for(let i=0;i<line.length;i++){
+        const ch=line[i];
+        if(ch==='"'){
+            if(quoted&&line[i+1]==='"'){value+='"';i++}
+            else quoted=!quoted;
+            continue;
+        }
+        if(ch===sep&&!quoted){out.push(value.trim());value="";continue}
+        value+=ch;
+    }
+    out.push(value.trim());
+    return out;
+}
+function parseDrillholeTableText(text){
+    const sep=detectDelimitedSeparator(text);
+    const lines=String(text).replace(/\r/g,"").split("\n").filter(v=>v.trim());
+    if(lines.length<2)throw new Error("El archivo no contiene suficientes filas.");
+    const headers=parseDelimitedLine(lines[0],sep),rows=[];
+    for(let i=1;i<lines.length;i++){
+        const vals=parseDelimitedLine(lines[i],sep),row={};
+        headers.forEach((h,j)=>row[h]=vals[j]??"");
+        rows.push(row);
+    }
+    return{headers,rows};
+}
+function findDrillholeColumn(headers,aliases){
+    const cols=headers.map(raw=>({raw,key:normalizeColumnName(raw)}));
+    const keys=aliases.map(normalizeColumnName);
+    for(const k of keys){const f=cols.find(c=>c.key===k);if(f)return f.raw}
+    for(const k of keys){const f=cols.find(c=>c.key.includes(k)||k.includes(c.key));if(f)return f.raw}
+    return null;
+}
+function drillholeNumber(v){
+    if(v===null||v===undefined||v==="")return NaN;
+    let t=String(v).trim().replace(/\s/g,"");
+    if(t.includes(",")&&!t.includes("."))t=t.replace(",",".");
+    const n=Number(t);return Number.isFinite(n)?n:NaN;
+}
+function normalizeHoleId(v){return String(v||"").trim()}
+
+function detectNumericFields(table,excluded=[]){
+    const ex=new Set(excluded.filter(Boolean));
+    return table.headers.filter(header=>{
+        if(ex.has(header))return false;
+        let seen=0,ok=0;
+        for(const row of table.rows.slice(0,150)){
+            if(row[header]===null||row[header]===undefined||row[header]==="")continue;
+            seen++;
+            if(Number.isFinite(drillholeNumber(row[header])))ok++;
+        }
+        return seen>0&&ok/seen>=.65;
+    });
+}
+function importDrillholeCollar(table,filename=""){
+    const h=table.headers;
+    const id=findDrillholeColumn(h,["holeid","hole_id","id","hole","sondaje","borehole","dhid"]);
+    const x=findDrillholeColumn(h,["easting","east","este","x","utme"]);
+    const y=findDrillholeColumn(h,["northing","north","norte","y","utmn"]);
+    const z=findDrillholeColumn(h,["elevation","elev","rl","cota","z","altura"]);
+    const td=findDrillholeColumn(h,["totaldepth","total_depth","depth","profundidad","length","longitud"]);
+    if(!id||!x||!y||!z)throw new Error("Collar requiere HoleID, X/Easting, Y/Northing y Z/Elevation.");
+    const rows=[];
+    for(const r of table.rows){
+        const hole=normalizeHoleId(r[id]),xx=drillholeNumber(r[x]),yy=drillholeNumber(r[y]),zz=drillholeNumber(r[z]),depth=td?drillholeNumber(r[td]):NaN;
+        if(!hole||![xx,yy,zz].every(Number.isFinite))continue;
+        rows.push({id:hole,x:xx,y:yy,z:zz,totalDepth:Number.isFinite(depth)?depth:null,raw:r});
+    }
+    drillholeData.collars=rows;drillholeData.sourceNames.collar=filename;rebuildDrillholeModel();
+}
+function importDrillholeSurvey(table,filename=""){
+    const h=table.headers;
+    const id=findDrillholeColumn(h,["holeid","hole_id","id","hole","sondaje","borehole","dhid"]);
+    const md=findDrillholeColumn(h,["depth","md","measureddepth","profundidad","at","dist"]);
+    const az=findDrillholeColumn(h,["azimuth","azm","azi","azimut","bearing"]);
+    const dipCol=findDrillholeColumn(h,["dip","inclination","incl","inclinacion","angle"]);
+    if(!id||!md||!az||!dipCol)throw new Error("Survey requiere HoleID, Depth/MD, Azimuth y Dip/Inclination.");
+    const rows=[];
+    for(const r of table.rows){
+        const hole=normalizeHoleId(r[id]),depth=drillholeNumber(r[md]),azimuth=drillholeNumber(r[az]);
+        let dip=drillholeNumber(r[dipCol]);
+        if(!hole||![depth,azimuth,dip].every(Number.isFinite))continue;
+        if(dip>0&&dip<=90)dip=-dip;
+        rows.push({id:hole,depth,azimuth:((azimuth%360)+360)%360,dip,raw:r});
+    }
+    drillholeData.surveys=rows;drillholeData.sourceNames.survey=filename;rebuildDrillholeModel();
+}
+
+function importIntervalDataset(key,table,filename,categoryAliases=[]){
+    const h=table.headers;
+    const id=findDrillholeColumn(h,["holeid","hole_id","id","hole","sondaje","borehole","dhid"]);
+    const from=findDrillholeColumn(h,["from","fromm","desde","inicio","depthfrom"]);
+    const to=findDrillholeColumn(h,["to","tom","hasta","fin","depthto"]);
+    if(!id||!from||!to)throw new Error("El archivo requiere HoleID, From y To.");
+    const category=categoryAliases.length?findDrillholeColumn(h,categoryAliases):null;
+    const numeric=detectNumericFields(table,[id,from,to,category]);
+    const rows=[];
+    for(const r of table.rows){
+        const hole=normalizeHoleId(r[id]),a=drillholeNumber(r[from]),b=drillholeNumber(r[to]);
+        if(!hole||!Number.isFinite(a)||!Number.isFinite(b)||b<=a)continue;
+        const values={};
+        for(const field of numeric){
+            const v=drillholeNumber(r[field]);if(Number.isFinite(v))values[field]=v;
+        }
+        rows.push({id:hole,from:a,to:b,value:category?String(r[category]||"").trim():"",values,raw:r});
+    }
+    const ds=drillholeData.datasets[key];
+    ds.rows=rows;ds.fields=numeric;ds.categoryField=category?"value":null;
+    drillholeData.sourceNames[key]=filename;
+    if(drillholeData.activeDataset===key&&!ds.fields.includes(drillholeData.activeField))drillholeData.activeField=ds.fields[0]||"";
+    rebuildDrillholeIndexes();
+}
+function importEventDataset(key,table,filename,depthAliases=["depth","md","profundidad"]){
+    const h=table.headers;
+    const id=findDrillholeColumn(h,["holeid","hole_id","id","hole","sondaje","borehole","dhid"]);
+    const depth=findDrillholeColumn(h,depthAliases);
+    if(!id||!depth)throw new Error("El archivo requiere HoleID y Depth/MD.");
+    const numeric=detectNumericFields(table,[id,depth]);
+    const rows=[];
+    for(const r of table.rows){
+        const hole=normalizeHoleId(r[id]),d=drillholeNumber(r[depth]);
+        if(!hole||!Number.isFinite(d))continue;
+        const values={};for(const f of numeric){const v=drillholeNumber(r[f]);if(Number.isFinite(v))values[f]=v}
+        rows.push({id:hole,depth:d,values,raw:r});
+    }
+    const ds=drillholeData.datasets[key];ds.rows=rows;ds.fields=numeric;
+    drillholeData.sourceNames[key]=filename;
+    rebuildDrillholeIndexes();
+}
+function importWaterLevels(table,filename=""){
+    const h=table.headers;
+    const id=findDrillholeColumn(h,["holeid","hole_id","id","hole","sondaje","borehole","dhid"]);
+    const wl=findDrillholeColumn(h,["waterlevel","depthtowater","dtw","nivelagua","water_depth","staticwaterlevel","swl"]);
+    const date=findDrillholeColumn(h,["date","fecha","datetime","timestamp"]);
+    if(!id||!wl)throw new Error("Water Levels requiere HoleID y WaterLevel/DepthToWater.");
+    const rows=[];
+    for(const r of table.rows){
+        const hole=normalizeHoleId(r[id]),depth=drillholeNumber(r[wl]);
+        if(!hole||!Number.isFinite(depth))continue;
+        rows.push({id:hole,depth,date:date?String(r[date]||""):"",raw:r});
+    }
+    const ds=drillholeData.datasets.waterLevels;ds.rows=rows;ds.fields=["depth"];
+    drillholeData.sourceNames.waterLevels=filename;rebuildDrillholeIndexes();
+}
+function resolveExistingColumns(headers,aliasGroups){
+    const found=[];
+    for(const aliases of aliasGroups){
+        const col=findDrillholeColumn(headers,aliases);
+        if(col&&!found.includes(col))found.push(col);
+    }
+    return found;
+}
+function buildCombinedIntervalRows(table,idCol,fromCol,toCol,fields){
+    const rows=[];
+    for(const r of table.rows){
+        const hole=normalizeHoleId(r[idCol]);
+        const from=drillholeNumber(r[fromCol]);
+        const to=drillholeNumber(r[toCol]);
+        if(!hole||!Number.isFinite(from)||!Number.isFinite(to)||to<=from)continue;
+        const values={};
+        for(const field of fields){
+            const value=drillholeNumber(r[field]);
+            if(Number.isFinite(value))values[field]=value;
+        }
+        if(Object.keys(values).length)rows.push({id:hole,from,to,values,raw:r});
+    }
+    return rows;
+}
+function importCombinedGeotech(table,filename=""){
+    const h=table.headers;
+    const id=findDrillholeColumn(h,["holeid","hole_id","id","hole","sondaje","borehole","dhid"]);
+    const from=findDrillholeColumn(h,["from","fromm","desde","inicio","depthfrom"]);
+    const to=findDrillholeColumn(h,["to","tom","hasta","fin","depthto"]);
+    if(!id||!from||!to)throw new Error("Geotecnia completa requiere HoleID, From y To.");
+
+    const groups={
+        coreRecovery:resolveExistingColumns(h,[
+            ["corerecovery_pct","corerecovery","core_recovery","recovery_pct","recovery","recuperacion","recuperacion_pct"]
+        ]),
+        rqd:resolveExistingColumns(h,[
+            ["rqd_pct","rqd","rockqualitydesignation"]
+        ]),
+        rockMass:resolveExistingColumns(h,[
+            ["rmr","rmr89","rmr76"],
+            ["gsi"],
+            ["q","qsystem","qindex"]
+        ]),
+        fractureFrequency:resolveExistingColumns(h,[
+            ["fracturefreq_m","fracturefrequency","fracture_freq","fracturesperm","fractures_per_m","ffm"]
+        ]),
+        geotechTests:resolveExistingColumns(h,[
+            ["ucs_est_mpa","ucs_mpa","ucs","uniaxialcompressivestrength"],
+            ["is50_mpa","is50","pointload","pointloadindex"],
+            ["brazilian_mpa","brazilian","tensilestrength"],
+            ["density","density_gcm3","density_t_m3","densidad"],
+            ["young_gpa","youngsmodulus","young","e_gpa"],
+            ["poisson","poissonratio","nu"]
+        ])
+    };
+
+    const detected=[];
+    for(const[key,fields]of Object.entries(groups)){
+        const ds=drillholeData.datasets[key];
+        if(!fields.length){
+            ds.rows=[];ds.fields=[];ds.byHole=new Map();
+            continue;
+        }
+        ds.rows=buildCombinedIntervalRows(table,id,from,to,fields);
+        ds.fields=[...fields];
+        ds.categoryField=null;
+        drillholeData.sourceNames[key]=filename;
+        detected.push({key,count:ds.rows.length,fields:[...fields]});
+    }
+
+    if(!detected.length){
+        throw new Error("No se detectaron columnas geotécnicas conocidas. Usa nombres como CoreRecovery_pct, RQD_pct, RMR, GSI, Q, FractureFreq_m o UCS_MPa.");
+    }
+
+    drillholeData.sourceNames.geotechCombined=filename;
+    const preferred=["rockMass","rqd","fractureFrequency","coreRecovery","geotechTests"].find(k=>groups[k]?.length);
+    if(preferred){
+        drillholeData.activeDataset=preferred;
+        drillholeData.activeField=drillholeData.datasets[preferred].fields[0]||"";
+    }
+    rebuildDrillholeIndexes();
+    setDrillholeDiscipline("geotech");
+    renderCombinedGeotechStatus(detected,filename);
+}
+function renderCombinedGeotechStatus(detected=null,filename=""){
+    const el=document.getElementById("geotechCombinedStatus");
+    const btn=document.getElementById("btn-geotechCombined");
+    if(!el)return;
+    if(!detected){
+        const loaded=drillholeData.sourceNames.geotechCombined;
+        if(!loaded){
+            el.textContent="Sin archivo combinado cargado.";
+            el.classList.remove("loaded");
+            if(btn){btn.classList.remove("loaded");btn.textContent="Cargar archivo";}
+            return;
+        }
+        detected=["coreRecovery","rqd","rockMass","fractureFrequency","geotechTests"]
+            .filter(k=>drillholeData.datasets[k].rows.length)
+            .map(k=>({key:k,count:drillholeData.datasets[k].rows.length,fields:drillholeData.datasets[k].fields||[]}));
+        filename=loaded;
+    }
+    const labels={coreRecovery:"Recovery",rqd:"RQD",rockMass:"Rock Mass",fractureFrequency:"Fracture Frequency",geotechTests:"Tests"};
+    const parts=detected.map(d=>`${labels[d.key]}: ${d.fields.join(", ")} (${d.count} reg.)`);
+    el.innerHTML=`<strong>${escapeHTML(filename||"Archivo geotécnico")}</strong><br>${parts.map(escapeHTML).join(" · ")}`;
+    el.classList.add("loaded");
+    if(btn){btn.classList.add("loaded");btn.textContent="Reemplazar";}
+}
+function importGeotechTests(table,filename=""){
+    const h=table.headers;
+    const id=findDrillholeColumn(h,["holeid","hole_id","id","hole","sondaje","borehole","dhid"]);
+    const from=findDrillholeColumn(h,["from","desde","depthfrom"]);
+    const to=findDrillholeColumn(h,["to","hasta","depthto"]);
+    const depth=findDrillholeColumn(h,["depth","md","sampledepth","profundidad"]);
+    if(!id||(!(from&&to)&&!depth))throw new Error("Geotech Tests requiere HoleID + From/To o HoleID + Depth.");
+    const numeric=detectNumericFields(table,[id,from,to,depth]);
+    const rows=[];
+    for(const r of table.rows){
+        const hole=normalizeHoleId(r[id]);if(!hole)continue;
+        const values={};for(const f of numeric){const v=drillholeNumber(r[f]);if(Number.isFinite(v))values[f]=v}
+        if(from&&to){
+            const a=drillholeNumber(r[from]),b=drillholeNumber(r[to]);
+            if(Number.isFinite(a)&&Number.isFinite(b)&&b>a)rows.push({id:hole,from:a,to:b,values,raw:r});
+        }else{
+            const d=drillholeNumber(r[depth]);if(Number.isFinite(d))rows.push({id:hole,depth:d,values,raw:r});
+        }
+    }
+    const ds=drillholeData.datasets.geotechTests;ds.rows=rows;ds.fields=numeric;
+    drillholeData.sourceNames.geotechTests=filename;rebuildDrillholeIndexes();
+}
+
+function surveyDirection(azimuth,dip){
+    const a=Number(azimuth)*Math.PI/180,d=Number(dip)*Math.PI/180,c=Math.cos(d);
+    return{x:c*Math.sin(a),y:c*Math.cos(a),z:Math.sin(d)};
+}
+function minimumCurvatureDisplacement(length,aSurvey,bSurvey){
+    if(!Number.isFinite(length)||length<=0)return{x:0,y:0,z:0};
+    const a=surveyDirection(aSurvey.azimuth,aSurvey.dip),b=surveyDirection(bSurvey.azimuth,bSurvey.dip);
+    let dot=a.x*b.x+a.y*b.y+a.z*b.z;dot=Math.max(-1,Math.min(1,dot));
+    const dogleg=Math.acos(dot),rf=dogleg<1e-9?1:2/dogleg*Math.tan(dogleg/2);
+    return{x:length*.5*(a.x+b.x)*rf,y:length*.5*(a.y+b.y)*rf,z:length*.5*(a.z+b.z)*rf};
+}
+function buildHoleTrajectory(collar,surveys){
+    const stations=[...surveys].sort((a,b)=>a.depth-b.depth);
+    if(!stations.length)return{id:collar.id,collar,surveys:[],points:[{md:0,x:collar.x,y:collar.y,z:collar.z}],totalDepth:collar.totalDepth||0};
+    if(stations[0].depth>0)stations.unshift({id:collar.id,depth:0,azimuth:stations[0].azimuth,dip:stations[0].dip,synthetic:true});
+    const points=[{md:0,x:collar.x,y:collar.y,z:collar.z,azimuth:stations[0].azimuth,dip:stations[0].dip}];
+    let current={x:collar.x,y:collar.y,z:collar.z};
+    for(let i=1;i<stations.length;i++){
+        const prev=stations[i-1],next=stations[i],delta=next.depth-prev.depth;
+        if(!Number.isFinite(delta)||delta<=0)continue;
+        const d=minimumCurvatureDisplacement(delta,prev,next);
+        current={x:current.x+d.x,y:current.y+d.y,z:current.z+d.z};
+        points.push({md:next.depth,x:current.x,y:current.y,z:current.z,azimuth:next.azimuth,dip:next.dip});
+    }
+    let total=Number(collar.totalDepth);if(!Number.isFinite(total))total=stations[stations.length-1].depth;
+    const ls=stations[stations.length-1],lp=points[points.length-1];
+    if(total>lp.md){
+        const dir=surveyDirection(ls.azimuth,ls.dip),delta=total-lp.md;
+        points.push({md:total,x:lp.x+dir.x*delta,y:lp.y+dir.y*delta,z:lp.z+dir.z*delta,azimuth:ls.azimuth,dip:ls.dip});
+    }
+    return{id:collar.id,collar,surveys:stations,points,totalDepth:total||lp.md};
+}
+function positionAlongTrajectory(t,depth){
+    if(!t?.points?.length)return null;
+    const md=Number(depth);if(!Number.isFinite(md))return null;
+    const p=t.points;
+    if(md<=p[0].md)return{x:p[0].x,y:p[0].y,z:p[0].z,md};
+    for(let i=1;i<p.length;i++){
+        const a=p[i-1],b=p[i];
+        if(md<=b.md){
+            const span=b.md-a.md,u=span>0?(md-a.md)/span:0;
+            return{x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u,z:a.z+(b.z-a.z)*u,md};
+        }
+    }
+    const last=p[p.length-1];return{x:last.x,y:last.y,z:last.z,md};
+}
+function groupRowsByHole(rows){
+    const map=new Map();
+    for(const row of rows){if(!map.has(row.id))map.set(row.id,[]);map.get(row.id).push(row)}
+    return map;
+}
+function computeDrillholeBBox(){
+    if(!drillholeData.trajectories.length)return null;
+    let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;
+    for(const t of drillholeData.trajectories)for(const p of t.points){
+        minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);minZ=Math.min(minZ,p.z);
+        maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);maxZ=Math.max(maxZ,p.z);
+    }
+    return[minX,minY,minZ,maxX,maxY,maxZ].every(Number.isFinite)?{minX,maxX,minY,maxY,minZ,maxZ}:null;
+}
+function rebuildDrillholeModel(){
+    drillholeData.collarByHole=new Map(drillholeData.collars.map(v=>[v.id,v]));
+    const surveyMap=groupRowsByHole(drillholeData.surveys);
+    drillholeData.trajectories=drillholeData.collars.map(c=>buildHoleTrajectory(c,surveyMap.get(c.id)||[]));
+    drillholeData.trajectoryByHole=new Map(drillholeData.trajectories.map(v=>[v.id,v]));
+    drillholeData.bbox=computeDrillholeBBox();
+    rebuildDrillholeIndexes();
+}
+function rebuildDrillholeIndexes(){
+    for(const ds of Object.values(drillholeData.datasets))ds.byHole=groupRowsByHole(ds.rows||[]);
+    updateDrillholeNumericRange();
+    updateCombinedSceneBoundingBox();
+    renderDrillholeModule();
+    requestViewerRender(false);
+}
+function updateCombinedSceneBoundingBox(){
+    const boxes=[];
+    for(const f of dxfFiles)if(f.visible&&f.geometry?.bbox)boxes.push(f.geometry.bbox);
+    if(drillholeData.visible&&drillholeData.bbox)boxes.push(drillholeData.bbox);
+    dxfView.boundingBox=mergeBoxes(boxes);
+}
+function setDrillholeActiveDataset(key){
+    if(!drillholeData.datasets[key])return;
+    drillholeData.activeDataset=key;
+    const ds=drillholeData.datasets[key];
+    drillholeData.activeField=ds.fields?.[0]||"";
+    setDrillholeDiscipline(DRILLHOLE_DATASET_DISCIPLINE[key]||"geology");
+    updateDrillholeNumericRange();renderDrillholeModule();requestViewerRender(false);
+}
+function setDrillholeActiveField(field){
+    drillholeData.activeField=field;updateDrillholeNumericRange();renderDrillholeLegend();requestViewerRender(false);
+}
+function updateDrillholeVisualOption(key,value){
+    drillholeData[key]=value;if(key==="visible")updateCombinedSceneBoundingBox();renderDrillholeModule();requestViewerRender(false);
+}
+function updateDrillholeNumericRange(){
+    const ds=drillholeData.datasets[drillholeData.activeDataset],field=drillholeData.activeField;
+    const vals=[];
+    if(ds&&field)for(const row of ds.rows||[]){const v=row.values?.[field];if(Number.isFinite(v))vals.push(v)}
+    if(!vals.length){drillholeData.numericRange={min:0,max:1};return}
+    vals.sort((a,b)=>a-b);
+    let min=vals[Math.floor(vals.length*.02)]??vals[0],max=vals[Math.floor(vals.length*.98)]??vals[vals.length-1];
+    if(max<=min)max=min+1;
+    drillholeData.numericRange={min,max};
+}
+function numericColor(value){
+    const{min,max}=drillholeData.numericRange;
+    if(!Number.isFinite(value))return"#8391a0";
+    let t=(value-min)/Math.max(1e-12,max-min);t=Math.max(0,Math.min(1,t));
+    const stops=[[0,[32,108,238]],[.25,[30,199,214]],[.5,[91,201,92]],[.7,[242,220,59]],[.85,[255,153,38]],[1,[239,55,55]]];
+    for(let i=1;i<stops.length;i++)if(t<=stops[i][0]){
+        const a=stops[i-1],b=stops[i],u=(t-a[0])/(b[0]-a[0]),rgb=[0,1,2].map(j=>Math.round(a[1][j]+(b[1][j]-a[1][j])*u));
+        return"#"+rgb.map(v=>v.toString(16).padStart(2,"0")).join("");
+    }
+    return"#ef3737";
+}
+function categoricalColor(code){
+    let hash=0,text=String(code||"?");for(let i=0;i<text.length;i++)hash=(hash*31+text.charCodeAt(i))>>>0;
+    return hslToHex(hash%360,66,54);
+}
+function rowColor(ds,row){
+    if(ds.categoryField&&row.value)return categoricalColor(row.value);
+    const v=row.values?.[drillholeData.activeField];
+    return Number.isFinite(v)?numericColor(v):"#8b9aaa";
+}
+function serializeDrillholeProjectData(){
+    const datasets={};
+    for(const[key,ds]of Object.entries(drillholeData.datasets))datasets[key]={rows:clonePlain(ds.rows),fields:clonePlain(ds.fields)};
+    return{
+        visible:drillholeData.visible,showCollars:drillholeData.showCollars,showTrajectory:drillholeData.showTrajectory,
+        showFractures:drillholeData.showFractures,showWaterLevels:drillholeData.showWaterLevels,lineWidth:drillholeData.lineWidth,
+        activeDiscipline:drillholeData.activeDiscipline,activeDataset:drillholeData.activeDataset,activeField:drillholeData.activeField,workTab:drillholeData.workTab,isolatedHoleId:drillholeData.isolatedHoleId,
+        collars:clonePlain(drillholeData.collars),surveys:clonePlain(drillholeData.surveys),
+        datasets,sourceNames:clonePlain(drillholeData.sourceNames),selectedHoleId:drillholeData.selectedHoleId
+    };
+}
+function restoreDrillholeProjectData(data){
+    drillholeData.visible=data?.visible!==false;drillholeData.showCollars=data?.showCollars!==false;drillholeData.showTrajectory=data?.showTrajectory!==false;
+    drillholeData.showFractures=data?.showFractures!==false;drillholeData.showWaterLevels=data?.showWaterLevels!==false;
+    drillholeData.lineWidth=Number.isFinite(Number(data?.lineWidth))?Number(data.lineWidth):3;
+    drillholeData.activeDiscipline=data?.activeDiscipline||"geology";drillholeData.activeDataset=data?.activeDataset||"assay";drillholeData.activeField=data?.activeField||"";drillholeData.workTab=data?.workTab||"data";drillholeData.isolatedHoleId=data?.isolatedHoleId||null;
+    drillholeData.collars=Array.isArray(data?.collars)?data.collars:[];drillholeData.surveys=Array.isArray(data?.surveys)?data.surveys:[];
+    for(const[key,ds]of Object.entries(drillholeData.datasets)){
+        ds.rows=Array.isArray(data?.datasets?.[key]?.rows)?data.datasets[key].rows:[];
+        ds.fields=Array.isArray(data?.datasets?.[key]?.fields)?data.datasets[key].fields:[];
+    }
+    drillholeData.sourceNames={...drillholeData.sourceNames,...(data?.sourceNames||{})};drillholeData.selectedHoleId=data?.selectedHoleId||null;
+    rebuildDrillholeModel();
+}
+function clearDrillholes(){
+    drillholeData.collars=[];drillholeData.surveys=[];drillholeData.trajectories=[];drillholeData.trajectoryByHole=new Map();drillholeData.collarByHole=new Map();drillholeData.bbox=null;
+    for(const ds of Object.values(drillholeData.datasets)){ds.rows=[];ds.fields=[];ds.byHole=new Map()}
+    for(const key of Object.keys(drillholeData.sourceNames))drillholeData.sourceNames[key]="";
+    drillholeData.selectedHoleId=null;drillholeData.isolatedHoleId=null;drillholeData.searchQuery="";drillholeData.activeField="";updateCombinedSceneBoundingBox();renderDrillholeModule();requestViewerRender(false);
+}
+
+function drawIntervalDataset(ctx,project,w,h,ds,base,selected){
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        const chosen=trajectory.id===selected;
+        for(const row of ds.byHole?.get(trajectory.id)||[]){
+            if(!Number.isFinite(row.from)||!Number.isFinite(row.to))continue;
+            const a=positionAlongTrajectory(trajectory,row.from),b=positionAlongTrajectory(trajectory,row.to);if(!a||!b)continue;
+            const pa=project(a),pb=project(b);if(screenSegmentOutside(pa,pb,w,h,18))continue;
+            ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
+            ctx.strokeStyle=rowColor(ds,row);ctx.lineWidth=chosen?base+3:base+1.5;ctx.stroke();
+        }
+    }
+}
+function drawEventDataset(ctx,project,w,h,ds,base,selected){
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        const chosen=trajectory.id===selected;
+        for(const row of ds.byHole?.get(trajectory.id)||[]){
+            if(!Number.isFinite(row.depth))continue;
+            const p=positionAlongTrajectory(trajectory,row.depth);if(!p)continue;
+            const q=project(p);if(q.x<-15||q.x>w+15||q.y<-15||q.y>h+15)continue;
+            const color=rowColor(ds,row);
+            ctx.beginPath();ctx.arc(q.x,q.y,chosen?4.5:3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+        }
+    }
+}
+function drawFractures(ctx,project,w,h,base,selected){
+    if(!drillholeData.showFractures)return;
+    const ds=drillholeData.datasets.fractures;
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        const chosen=trajectory.id===selected;
+        for(const row of ds.byHole?.get(trajectory.id)||[]){
+            const p=positionAlongTrajectory(trajectory,row.depth);if(!p)continue;
+            const q=project(p);if(q.x<-20||q.x>w+20||q.y<-20||q.y>h+20)continue;
+            const dipDir=row.values?.DipDirection??row.values?.DipDir??row.values?.Azimuth??0;
+            const angle=(Number(dipDir)||0)*Math.PI/180;
+            const len=chosen?10:7,dx=Math.cos(angle)*len,dy=Math.sin(angle)*len;
+            ctx.beginPath();ctx.moveTo(q.x-dx,q.y-dy);ctx.lineTo(q.x+dx,q.y+dy);
+            ctx.strokeStyle="#ff5d5d";ctx.lineWidth=chosen?2.2:1.4;ctx.stroke();
+        }
+    }
+}
+function drawWaterLevels(ctx,project,w,h,base,selected){
+    if(!drillholeData.showWaterLevels)return;
+    const ds=drillholeData.datasets.waterLevels;
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        const rows=ds.byHole?.get(trajectory.id)||[];if(!rows.length)continue;
+        const latest=rows[rows.length-1],p=positionAlongTrajectory(trajectory,latest.depth);if(!p)continue;
+        const q=project(p);if(q.x<-20||q.x>w+20||q.y<-20||q.y>h+20)continue;
+        const len=trajectory.id===selected?10:7;
+        ctx.beginPath();ctx.moveTo(q.x-len,q.y);ctx.lineTo(q.x+len,q.y);
+        ctx.strokeStyle="#35c8ff";ctx.lineWidth=trajectory.id===selected?3:2;ctx.stroke();
+    }
+}
+function drawDrillholes(ctx,project,w,h){
+    if(!drillholeData.visible||!drillholeData.trajectories.length)return;
+    const selected=drillholeData.selectedHoleId,base=Math.max(1,Number(drillholeData.lineWidth)||3);
+    ctx.save();ctx.lineCap="round";ctx.lineJoin="round";ctx.setLineDash([]);
+    for(const t of getDisplayedDrillholeTrajectories()){
+        if(!t.points.length)continue;const chosen=t.id===selected;
+        if(drillholeData.showTrajectory&&t.points.length>=2){
+            ctx.beginPath();t.points.forEach((p,i)=>{const q=project(p);if(i===0)ctx.moveTo(q.x,q.y);else ctx.lineTo(q.x,q.y)});
+            ctx.strokeStyle=chosen?"#ffffff":"#718292";ctx.lineWidth=chosen?base+1.5:Math.max(1,base*.65);ctx.stroke();
+        }
+        if(drillholeData.showCollars){
+            const q=project(t.points[0]);if(q.x>=-10&&q.x<=w+10&&q.y>=-10&&q.y<=h+10){
+                ctx.beginPath();ctx.arc(q.x,q.y,chosen?4.5:3,0,Math.PI*2);ctx.fillStyle=chosen?"#fff":"#d7e0e7";ctx.fill();
+            }
+        }
+    }
+    const active=drillholeData.datasets[drillholeData.activeDataset];
+    if(active&&active.rows.length){
+        if(active.kind==="interval")drawIntervalDataset(ctx,project,w,h,active,base,selected);
+        else if(active.kind==="event")drawEventDataset(ctx,project,w,h,active,base,selected);
+        else if(active.kind==="interval_or_event"){
+            drawIntervalDataset(ctx,project,w,h,active,base,selected);
+            drawEventDataset(ctx,project,w,h,active,base,selected);
+        }
+    }
+    drawFractures(ctx,project,w,h,base,selected);
+    drawWaterLevels(ctx,project,w,h,base,selected);
+    ctx.restore();
+}
+function selectDrillhole(id){drillholeData.selectedHoleId=id||null;renderDrillholeModule();requestViewerRender(false)}
+
+function setDrillholeWorkTab(tab){
+    const allowed=new Set(["data","view","holes"]);
+    drillholeData.workTab=allowed.has(tab)?tab:"data";
+    document.querySelectorAll(".drillhole-work-tab").forEach(el=>el.classList.toggle("active",el.dataset.dhView===drillholeData.workTab));
+    document.querySelectorAll(".drillhole-work-pane").forEach(el=>el.classList.toggle("active",el.dataset.dhPane===drillholeData.workTab));
+}
+function setDrillholeSearch(value){
+    drillholeData.searchQuery=String(value||"").trim().toLowerCase();
+    renderDrillholeHoleList();
+}
+function getDisplayedDrillholeTrajectories(){
+    if(drillholeData.isolatedHoleId){
+        const t=drillholeData.trajectoryByHole.get(drillholeData.isolatedHoleId);
+        return t?[t]:[];
+    }
+    return drillholeData.trajectories;
+}
+function centerSelectedDrillhole(){
+    const t=drillholeData.trajectoryByHole.get(drillholeData.selectedHoleId);if(!t?.points?.length)return;
+    const xs=t.points.map(p=>p.x),ys=t.points.map(p=>p.y),zs=t.points.map(p=>p.z);
+    dxfView.boundingBox={minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys),minZ:Math.min(...zs),maxZ:Math.max(...zs)};
+    dxfView.zoom=1;dxfView.panX=0;dxfView.panY=0;dxfView.rotationCenter=null;dxfView.pickingPivot=false;
+    drawViewerGrid(true);drawDXFViewer();updatePivotUI();
+}
+function toggleIsolateSelectedDrillhole(){
+    if(!drillholeData.selectedHoleId)return;
+    drillholeData.isolatedHoleId=drillholeData.isolatedHoleId===drillholeData.selectedHoleId?null:drillholeData.selectedHoleId;
+    renderDrillholeHoleList();requestViewerRender(false);
+}
+function renderDrillholeHoleList(){
+    const tbody=document.getElementById("drillholeTableBody");if(!tbody)return;
+    const q=drillholeData.searchQuery||"";
+    const list=drillholeData.trajectories.filter(t=>!q||String(t.id).toLowerCase().includes(q));
+    tbody.innerHTML=list.map(t=>{
+        const first=t.surveys.find(v=>!v.synthetic)||t.surveys[0]||null,sel=t.id===drillholeData.selectedHoleId,encoded=encodeURIComponent(t.id);
+        return`<tr class="${sel?"selected":""}" onclick="selectDrillhole(decodeURIComponent('${encoded}'))"><td>${escapeHTML(t.id)}</td><td>${formatMetric(t.totalDepth,0)} m</td><td>${first?formatMetric(first.azimuth,0)+"°":"—"}</td><td>${first?formatMetric(first.dip,0)+"°":"—"}</td></tr>`;
+    }).join("");
+
+    const props=document.getElementById("drillholeSelectedProps");if(!props)return;
+    const t=drillholeData.trajectoryByHole.get(drillholeData.selectedHoleId);
+    if(!t){props.innerHTML='<div class="drillhole-empty-detail">Selecciona un taladro para ver sus datos.</div>';return}
+    const first=t.surveys.find(v=>!v.synthetic)||t.surveys[0]||null;
+    const isolated=drillholeData.isolatedHoleId===t.id;
+    props.innerHTML=`
+      <div class="drillhole-detail-head"><div class="drillhole-detail-id">${escapeHTML(t.id)}</div><span class="badge">Seleccionado</span></div>
+      <div class="drillhole-detail-grid">
+        <div class="drillhole-detail-metric"><span>Profundidad</span><strong>${formatMetric(t.totalDepth,0)} m</strong></div>
+        <div class="drillhole-detail-metric"><span>Azimut</span><strong>${first?formatMetric(first.azimuth,0)+"°":"—"}</strong></div>
+        <div class="drillhole-detail-metric"><span>Dip</span><strong>${first?formatMetric(first.dip,0)+"°":"—"}</strong></div>
+      </div>
+      <div class="drillhole-detail-actions">
+        <button type="button" onclick="centerSelectedDrillhole()">Centrar</button>
+        <button type="button" class="${isolated?"active":""}" onclick="toggleIsolateSelectedDrillhole()">${isolated?"Mostrar todos":"Solo este"}</button>
+      </div>
+      <details class="drillhole-coords-details">
+        <summary>Ubicación / coordenadas</summary>
+        <div class="drillhole-coords-grid">
+          <div class="drillhole-coord-row"><span>Este (X)</span><strong>${formatMetric(t.collar.x,2)}</strong></div>
+          <div class="drillhole-coord-row"><span>Norte (Y)</span><strong>${formatMetric(t.collar.y,2)}</strong></div>
+          <div class="drillhole-coord-row"><span>Cota (Z)</span><strong>${formatMetric(t.collar.z,2)}</strong></div>
+        </div>
+      </details>`;
+}
+function renderDrillholeLegend(){
+    const el=document.getElementById("drillholeLegend");if(!el)return;
+    const ds=drillholeData.datasets[drillholeData.activeDataset];
+    if(!ds||!ds.rows.length){el.innerHTML='<div class="drillhole-help">Sin datos para el dataset activo.</div>';return}
+    if(ds.categoryField){
+        const cats=[...new Set(ds.rows.map(r=>r.value).filter(Boolean))].slice(0,8);
+        el.innerHTML=cats.map(v=>`<div class="drillhole-legend-row"><span class="drillhole-legend-swatch" style="background:${categoricalColor(v)}"></span><span>${escapeHTML(v)}</span></div>`).join("");
+    }else if(drillholeData.activeField){
+        const{min,max}=drillholeData.numericRange,vals=[min,min+(max-min)*.25,min+(max-min)*.5,min+(max-min)*.75,max];
+        el.innerHTML=vals.map(v=>`<div class="drillhole-legend-row"><span class="drillhole-legend-swatch" style="background:${numericColor(v)}"></span><span>${escapeHTML(drillholeData.activeField)} ${formatMetric(v,3)}</span></div>`).join("");
+    }else{
+        el.innerHTML='<div class="drillhole-help">Selecciona un campo numérico.</div>';
+    }
+}
+function renderDrillholeModule(){
+    setDrillholeDiscipline(drillholeData.activeDiscipline||"geology");
+    setDrillholeWorkTab(drillholeData.workTab||"data");
+
+    const baseStates=[
+        ["drillholeCollarButton","drillholeCollarState","collar",drillholeData.collars.length],
+        ["drillholeSurveyButton","drillholeSurveyState","survey",drillholeData.surveys.length]
+    ];
+    for(const[bid,sid,key,count]of baseStates){
+        const b=document.getElementById(bid),st=document.getElementById(sid);
+        if(b)b.classList.toggle("loaded",count>0);
+        if(st){st.textContent=count?`${count.toLocaleString("es-PE")} registros`:"Sin cargar";st.title=drillholeData.sourceNames[key]||""}
+    }
+    for(const[key,ds]of Object.entries(drillholeData.datasets)){
+        const b=document.getElementById("btn-"+key);
+        if(b){b.classList.toggle("loaded",ds.rows.length>0);b.textContent=ds.rows.length?`${ds.rows.length.toLocaleString("es-PE")} reg.`:"Cargar"}
+    }
+
+    const datasetSelect=document.getElementById("drillholeDatasetSelect");
+    if(datasetSelect)datasetSelect.innerHTML=Object.entries(drillholeData.datasets).map(([key,ds])=>`<option value="${key}" ${key===drillholeData.activeDataset?"selected":""}>${escapeHTML(ds.name)}${ds.rows.length?` (${ds.rows.length})`:""}</option>`).join("");
+    const ds=drillholeData.datasets[drillholeData.activeDataset];
+    const fieldSelect=document.getElementById("drillholeFieldSelect");
+    if(fieldSelect){
+        const fields=ds?.fields||[];
+        fieldSelect.innerHTML=fields.length?fields.map(f=>`<option value="${escapeHTML(f)}" ${f===drillholeData.activeField?"selected":""}>${escapeHTML(f)}</option>`).join(""):'<option value="">Categoría / sin campo</option>';
+    }
+
+    const checks={drillholeVisibleCheck:drillholeData.visible,drillholeCollarCheck:drillholeData.showCollars,drillholeTrajectoryCheck:drillholeData.showTrajectory,drillholeFractureCheck:drillholeData.showFractures,drillholeWaterCheck:drillholeData.showWaterLevels};
+    for(const[id,v]of Object.entries(checks)){const el=document.getElementById(id);if(el)el.checked=!!v}
+    const width=document.getElementById("drillholeLineWidth");if(width)width.value=drillholeData.lineWidth;
+
+    const summary=document.getElementById("drillholeModuleSummary");
+    if(summary)summary.textContent=drillholeData.trajectories.length?`${drillholeData.trajectories.length} taladro(s) · ${drillholeData.surveys.length} estaciones Survey`:"Carga Collar y Survey para comenzar.";
+
+    const stats=document.getElementById("drillholeDataSummary");
+    if(stats){
+        const geo=drillholeData.datasets.assay.rows.length+drillholeData.datasets.lithology.rows.length;
+        const gt=["coreRecovery","rqd","rockMass","fractureFrequency","fractures","geotechTests","orientedCore"].reduce((a,k)=>a+drillholeData.datasets[k].rows.length,0);
+        const hy=["hydroLog","waterLevels","hydraulicTests","wellConstruction","waterQuality"].reduce((a,k)=>a+drillholeData.datasets[k].rows.length,0);
+        stats.innerHTML=`<div class="drillhole-stat"><span>Taladros</span><strong>${drillholeData.trajectories.length}</strong></div><div class="drillhole-stat"><span>Geología</span><strong>${geo}</strong></div><div class="drillhole-stat"><span>Geotecnia</span><strong>${gt}</strong></div><div class="drillhole-stat"><span>Hidro</span><strong>${hy}</strong></div>`;
+    }
+    const search=document.getElementById("drillholeSearchInput");if(search&&search.value!==drillholeData.searchQuery)search.value=drillholeData.searchQuery||"";
+    renderDrillholeHoleList();
+    renderDrillholeLegend();
+    renderCombinedGeotechStatus();
+} 
+async function handleDrillholeFile(file,handler){
+    if(!file)return;
+    try{handler(parseDrillholeTableText(await file.text()),file.name)}
+    catch(error){console.error(error);alert("No se pudo cargar el archivo.\n\n"+error.message)}
+}
+function bindInput(id,handler){
+    document.getElementById(id)?.addEventListener("change",event=>{handleDrillholeFile(event.target.files?.[0],handler);event.target.value=""});
+}
+bindInput("drillholeInputCollar",importDrillholeCollar);
+bindInput("drillholeInputSurvey",importDrillholeSurvey);
+bindInput("input-assay",(t,n)=>importIntervalDataset("assay",t,n,[]));
+bindInput("input-lithology",(t,n)=>importIntervalDataset("lithology",t,n,["lithology","lith","litologia","code","rock","domain"]));
+bindInput("input-geotechCombined",importCombinedGeotech);
+bindInput("input-coreRecovery",(t,n)=>importIntervalDataset("coreRecovery",t,n,[]));
+bindInput("input-rqd",(t,n)=>importIntervalDataset("rqd",t,n,[]));
+bindInput("input-rockMass",(t,n)=>importIntervalDataset("rockMass",t,n,[]));
+bindInput("input-fractureFrequency",(t,n)=>importIntervalDataset("fractureFrequency",t,n,[]));
+bindInput("input-fractures",(t,n)=>importEventDataset("fractures",t,n));
+bindInput("input-geotechTests",importGeotechTests);
+bindInput("input-orientedCore",(t,n)=>importEventDataset("orientedCore",t,n));
+bindInput("input-hydroLog",(t,n)=>importIntervalDataset("hydroLog",t,n,["event","type","hydroevent","observation","zone"]));
+bindInput("input-waterLevels",importWaterLevels);
+bindInput("input-hydraulicTests",(t,n)=>importIntervalDataset("hydraulicTests",t,n,[]));
+bindInput("input-wellConstruction",(t,n)=>importIntervalDataset("wellConstruction",t,n,["component","type","construction","material"]));
+bindInput("input-waterQuality",(t,n)=>importEventDataset("waterQuality",t,n,["depth","sampledepth","md","profundidad"]));
+
 
 /* =========================================================
    PARSER DXF ASCII
@@ -9523,6 +10987,7 @@ function toggleDXF(id, visible) {
     const f = dxfFiles.find(x=>x.id===id);
     if (f) f.visible = visible;
     updateDXFStats();
+    updateCombinedSceneBoundingBox();
     drawDXFViewer();
     if (dxfView.selectedFileId === id) renderPropertiesPanel();
 }
@@ -9632,6 +11097,7 @@ function clearDXF() {
     dxfFiles.length = 0;
     dxfView.boundingBox = null;
     dxfView.rotationCenter = null;
+    dxfView.pivotMarkerVisible = false;
     dxfView.pickingPivot = false;
     dxfView.snapHover = null;
     dxfView.snapLocked = null;
@@ -9660,8 +11126,20 @@ function clearDXF() {
 function centerAllDXF() {
     const visible = dxfFiles.filter(f=>f.visible);
 
-    /* MISMA lógica de centrado del Paso 3, que sí funcionaba. */
-    dxfView.boundingBox = mergeBoxes(visible.map(f=>f.geometry.bbox));
+    /*
+       Conserva la lógica estable de centrado y añade el bbox de sondajes
+       cuando están visibles.
+    */
+    const boxes=visible.map(f=>f.geometry.bbox);
+
+    if (
+        drillholeData.visible &&
+        drillholeData.bbox
+    ) {
+        boxes.push(drillholeData.bbox);
+    }
+
+    dxfView.boundingBox = mergeBoxes(boxes);
     dxfView.zoom = 1;
 
     /* Centrar también elimina cualquier desplazamiento PAN. */
@@ -9670,6 +11148,7 @@ function centerAllDXF() {
 
     /* El pivote se desactiva, pero NO se modifica yaw, pitch ni el algoritmo de cámara. */
     dxfView.rotationCenter = null;
+    dxfView.pivotMarkerVisible = false;
     dxfView.pickingPivot = false;
 
     /* Dibujar primero: aunque hubiera un problema de UI, el modelo no desaparece. */
@@ -9691,6 +11170,7 @@ function centerDXFFile(id) {
     dxfView.panY = 0;
 
     dxfView.rotationCenter = null;
+    dxfView.pivotMarkerVisible = false;
     dxfView.pickingPivot = false;
 
     drawViewerGrid(true);
@@ -9699,21 +11179,68 @@ function centerDXFFile(id) {
 }
 
 function setDXFView(mode) {
+    /*
+       Convención de vistas MX OREPLANIX
+       ----------------------------------
+       PLANTA:
+         X / Este  -> derecha
+         Y / Norte -> arriba
+         Vista perpendicular al plano XY.
+
+       PERFIL:
+         X / Este -> derecha
+         Z / Cota -> arriba
+         Se observa en dirección Norte-Sur.
+
+       ISOMÉTRICA:
+         Vista ortográfica 3D estándar con Z hacia arriba.
+         yaw = -45°
+         pitch = -35.264°
+    */
     if (mode === "top") {
         dxfView.yaw = 0;
         dxfView.pitch = 0;
+        mode = "top";
     } else if (mode === "front") {
-        dxfView.yaw = -Math.PI/2;
-        dxfView.pitch = Math.PI/2;
+        dxfView.yaw = 0;
+        /* Perfil: Este hacia la derecha y Z positivo hacia arriba. */
+        dxfView.pitch = -Math.PI/2;
+        mode = "front";
     } else {
-        dxfView.yaw = -0.80;
-        dxfView.pitch = 0.55;
+        dxfView.yaw = -Math.PI/4;
+        dxfView.pitch = -Math.atan(1/Math.sqrt(2));
         mode = "iso";
     }
 
     dxfView.currentView = mode;
+
+    /*
+       Al elegir una vista estándar quitamos únicamente el pivote de
+       rotación personalizado. Zoom y PAN se conservan para no producir
+       saltos innecesarios en la escala de trabajo.
+    */
+    dxfView.rotationCenter = null;
+    dxfView.pivotMarkerVisible = false;
+    dxfView.pickingPivot = false;
+    dxfView.snapHover = null;
+    dxfView.snapLocked = null;
+    dxfView.snapCache = null;
+    invalidateSelectionCache();
+
+    updatePivotUI();
     updateViewUI();
+    drawViewerGrid(true);
     drawDXFViewer();
+
+    const status = document.getElementById("dxfStatus");
+    if (status) {
+        status.textContent =
+            mode === "top"
+                ? "Vista Planta · Este → derecha · Norte → arriba"
+                : mode === "front"
+                    ? "Vista Perfil · Este → derecha · Cota Z → arriba"
+                    : "Vista Isométrica · Z hacia arriba";
+    }
 }
 
 function toggleGrid() {
@@ -9926,31 +11453,20 @@ function cancelWheelPreview() {
 function beginWheelPreview() {
     const perf=dxfView.performance;
 
-    if (perf.wheelPreviewActive) {
-        return;
+    if (!perf.wheelPreviewActive) {
+        perf.wheelPreviewActive=true;
     }
 
     /*
-       El canvas contiene la vista exacta de este estado de cámara.
-       A partir de aquí la rueda solo transforma ese bitmap.
+       Ya no guardamos un bitmap-base para escalarlo con CSS.
+       El canvas se redibuja en modo interacción, manteniendo
+       lineWidth constante independientemente del nivel de zoom.
     */
-    perf.wheelPreviewActive=true;
-    perf.wheelPreviewBaseZoom=
-        dxfView.zoom;
-
-    perf.wheelPreviewBasePanX=
-        dxfView.panX;
-
-    perf.wheelPreviewBasePanY=
-        dxfView.panY;
-
     perf.interacting=true;
+    resetWheelPreviewTransform();
 
     if (perf.settleTimer) {
-        clearTimeout(
-            perf.settleTimer
-        );
-
+        clearTimeout(perf.settleTimer);
         perf.settleTimer=null;
     }
 }
@@ -9958,72 +11474,39 @@ function beginWheelPreview() {
 function updateWheelPreviewTransform() {
     const perf=dxfView.performance;
 
-    if (!perf.wheelPreviewActive) {
-        return;
-    }
-
-    const rect=
-        getStableViewerRect();
-
-    const baseZoom=
-        perf.wheelPreviewBaseZoom || 1;
-
-    const ratio=
-        dxfView.zoom/baseZoom;
-
-    if (
-        !Number.isFinite(ratio) ||
-        ratio<=0
-    ) {
-        return;
-    }
-
-    const cx=rect.width/2;
-    const cy=rect.height/2;
+    if (!perf.wheelPreviewActive) return;
 
     /*
-       Transformación afín equivalente al cambio real de zoom + PAN:
-       pantalla nueva = ratio*pantalla antigua + traslación.
+       IMPORTANTE:
+       Antes se aplicaba transform: matrix(scale...) al canvas y eso
+       escalaba visualmente también el ancho de las líneas.
+       Ahora solo pedimos un render ligero. requestViewerRender()
+       agrupa múltiples eventos de rueda dentro del mismo animation frame,
+       por lo que no se renderiza una vez por cada notch físico.
     */
-    const tx=
-        cx +
-        dxfView.panX -
-        ratio*(
-            cx +
-            perf.wheelPreviewBasePanX
-        );
-
-    const ty=
-        cy +
-        dxfView.panY -
-        ratio*(
-            cy +
-            perf.wheelPreviewBasePanY
-        );
-
-    const matrix=
-        `matrix(${ratio},0,0,${ratio},${tx},${ty})`;
-
-    viewer.style.transform=
-        matrix;
-
-    selectionOverlay.style.transform=
-        matrix;
+    resetWheelPreviewTransform();
+    requestViewerRender(true);
 }
 
 function scheduleWheelPreviewCommit() {
     const perf=dxfView.performance;
 
     if (perf.wheelPreviewTimer) {
-        clearTimeout(
-            perf.wheelPreviewTimer
-        );
+        clearTimeout(perf.wheelPreviewTimer);
     }
 
+    const complexity=visibleSceneComplexity();
+    const heavyScene=
+        complexity.faces>30000 ||
+        complexity.segments>120000 ||
+        complexity.total>180000;
+
     /*
-       Esperamos un instante tras el último notch/gesto del scroll.
-       Durante ese tiempo no reproyectamos ninguna cara.
+       Un pequeño debounce permite acumular varios notches de rueda.
+       Mientras tanto se dibuja en LOD de interacción con grosores reales.
     */
+    const commitDelay=heavyScene ? 150 : 95;
+
     perf.wheelPreviewTimer=setTimeout(()=>{
         perf.wheelPreviewTimer=null;
         perf.wheelPreviewActive=false;
@@ -10032,12 +11515,12 @@ function scheduleWheelPreviewCommit() {
         resetWheelPreviewTransform();
 
         /*
-           Un solo render final, ya con la cámara definitiva.
+           Solo un render final a resolución/calidad completa.
         */
         drawDXFViewer();
         schedulePickCacheWarmup();
         scheduleSelectionCacheWarmup();
-    },85);
+    },commitDelay);
 }
 
 function markViewerInteraction() {
@@ -10123,7 +11606,12 @@ function requestViewerRender(interaction=false) {
        Si comienza otra interacción mientras la rueda usa el bitmap,
        volvemos inmediatamente al render normal.
     */
-    if (perf.wheelPreviewActive) {
+    /*
+       Un render solicitado DURANTE la rueda no cancela el modo wheel:
+       se usa precisamente para dibujar una vista ligera real.
+       Otros renders no interactivos sí pueden cancelar el estado.
+    */
+    if (perf.wheelPreviewActive && !interaction) {
         cancelWheelPreview();
     }
 
@@ -12329,11 +13817,12 @@ function drawDXFViewer() {
     const perfState=dxfView.performance;
 
     /*
-       Un render real nunca debe quedar combinado con una transformación
-       bitmap de rueda anterior.
+       La rueda ya NO escala el bitmap del canvas.
+       Durante el scroll hacemos un render ligero real para conservar
+       constante el grosor de líneas, curvas y bordes.
     */
     if (perfState.wheelPreviewActive) {
-        cancelWheelPreview();
+        resetWheelPreviewTransform();
     }
 
     const frameStart=performance.now();
@@ -12355,13 +13844,15 @@ function drawDXFViewer() {
     drawViewerGrid();
 
     const visible = dxfFiles.filter(f=>f.visible);
-    if (!visible.length || !dxfView.boundingBox) {
+    const hasDrillholes=drillholeData.visible&&drillholeData.trajectories.length>0;
+
+    if ((!visible.length && !hasDrillholes) || !dxfView.boundingBox) {
         ctx.fillStyle = "#8fa8bb";
         ctx.textAlign = "center";
         ctx.font = "14px Segoe UI";
-        ctx.fillText("Carga un archivo DXF para comenzar", w/2, h/2-8);
+        ctx.fillText("Carga un DXF o sondajes para comenzar", w/2, h/2-8);
         ctx.font = "11px Segoe UI";
-        ctx.fillText("Topografía · vetas · wireframes · superficies · labores", w/2, h/2+14);
+        ctx.fillText("Topografía · stopes · labores · sondajes", w/2, h/2+14);
         ctx.textAlign = "left";
         if (dxfStatusEl) {
             dxfStatusEl.textContent=
@@ -12479,14 +13970,29 @@ function drawDXFViewer() {
        Las líneas reales se simplifican como paths continuos,
        no como segmentos discontinuos.
     */
+    const isWheelInteracting=
+        isInteracting &&
+        !!dxfView.performance.wheelPreviewActive;
+
+    /*
+       Durante rueda reducimos principalmente caras/puntos.
+       Los paths de líneas siguen siendo continuos y mantienen su grosor.
+       Al soltar la rueda se restaura inmediatamente la calidad completa.
+    */
     const MAX_RENDER_SEGMENTS=
-        isInteracting ? 52000 : 260000;
+        isWheelInteracting
+            ? 32000
+            : (isInteracting ? 52000 : 260000);
 
     const MAX_RENDER_FACES=
-        isInteracting ? 18000 : 90000;
+        isWheelInteracting
+            ? 8000
+            : (isInteracting ? 18000 : 90000);
 
     const MAX_RENDER_POINTS=
-        isInteracting ? 5000 : 60000;
+        isWheelInteracting
+            ? 1800
+            : (isInteracting ? 5000 : 60000);
 
     const totalVisibleSegments=
         complexity.segments;
@@ -13598,6 +15104,13 @@ function drawDXFViewer() {
 ctx.restore();
     }
 
+    drawDrillholes(
+        ctx,
+        project,
+        w,
+        h
+    );
+
     if (!dxfView.pickingPivot) {
         if (dxfView.snapLocked) drawSnapMarker(dxfView.snapLocked, true);
         if (dxfView.snapHover) drawSnapMarker(dxfView.snapHover, false);
@@ -13608,7 +15121,7 @@ ctx.restore();
     /* Rectángulo de selección en overlay independiente. */
 
     /* Marcador visual del pivote; no modifica la cámara si no existe. */
-    if (dxfView.rotationCenter) {
+    if (dxfView.rotationCenter && dxfView.pivotMarkerVisible !== false) {
         const pq = project(dxfView.rotationCenter);
 
         ctx.save();
@@ -15697,6 +17210,9 @@ function togglePivotPick() {
 
     dxfView.pickingPivot = turningOn;
 
+    if (turningOn) {
+        dxfView.pivotMarkerVisible=false;
+    }
     dxfView.snapHover = null;
     dxfView.snapLocked = null;
 
@@ -15708,6 +17224,7 @@ function togglePivotPick() {
 function resetPivot() {
     if (!dxfView.rotationCenter || !dxfView.boundingBox) {
         dxfView.rotationCenter = null;
+    dxfView.pivotMarkerVisible = false;
         dxfView.pickingPivot = false;
         drawDXFViewer();
         updatePivotUI();
@@ -15735,6 +17252,7 @@ function resetPivot() {
 
     dxfView.rotationCenter = null;
 
+    dxfView.pivotMarkerVisible = false;
     const newCamera = getViewerCameraData(w,h);
 
     if (
@@ -15855,6 +17373,7 @@ function setRotationCenterPreserveView(point, w, h) {
         y:Number(point.y),
         z:Number.isFinite(Number(point.z)) ? Number(point.z) : 0
     };
+    dxfView.pivotMarkerVisible = true;
 
     /*
        Al cambiar rotationCenter, el cálculo interno de maxSpan puede
@@ -16452,9 +17971,14 @@ window.addEventListener("mousemove", e=>{
             dxfView.dragMoved=true;
         }
 
-        dxfView.yaw += dx*0.008;
-        dxfView.pitch += dy*0.008;
-        dxfView.pitch = Math.max(-1.45, Math.min(1.45,dxfView.pitch));
+        dxfView.yaw = normalizeViewAngle(dxfView.yaw + dx*0.008);
+        dxfView.pitch = normalizeViewAngle(dxfView.pitch + dy*0.008);
+
+        if (dxfView.currentView !== "custom") {
+            dxfView.currentView = "custom";
+            updateViewUI();
+        }
+
         dxfView.lastX=e.clientX;
         dxfView.lastY=e.clientY;
         requestViewerRender(true);
@@ -16598,31 +18122,50 @@ viewer.addEventListener("wheel", e=>{
     dxfView.snapHover=null;
 
     /*
-       ZOOM INSTANTÁNEO:
-       1) conservamos el frame ya dibujado,
-       2) actualizamos la cámara real,
-       3) transformamos el bitmap con CSS,
-       4) al terminar la rueda hacemos UN render final.
+       ZOOM RÁPIDO Y CONTINUO
+       ----------------------
+       - Usa la magnitud real de deltaY, no solo su signo.
+       - Mouse con rueda: aumenta/reduce más por notch.
+       - Trackpad: mantiene respuesta progresiva.
+       - Shift = precisión fina.
+       - Ctrl = zoom rápido.
+       - Durante el gesto usa render ligero real, sin escalar grosores.
+       - El render pesado/completo se difiere hasta terminar el gesto.
     */
     beginWheelPreview();
 
-    const direction =
-        e.deltaY < 0 ? 1 : -1;
+    const rect=getStableViewerRect();
 
-    let factor;
+    let delta=Number(e.deltaY)||0;
 
-    if (e.shiftKey) {
-        factor = 1.035;
-    } else if (e.ctrlKey) {
-        factor = 1.35;
-    } else {
-        factor = 1.14;
+    // Normalizar unidades del navegador.
+    if (e.deltaMode===1) {
+        delta*=16;                 // líneas -> px aprox.
+    } else if (e.deltaMode===2) {
+        delta*=Math.max(300,rect.height); // páginas -> px aprox.
     }
 
-    const zoomFactor=
-        direction>0
-            ? factor
-            : (1/factor);
+    /*
+       Sensibilidad:
+       normal  : ~27% por notch típico de 100 px
+       Shift   : fino
+       Ctrl    : rápido
+    */
+    let sensitivity=0.0024;
+
+    if (e.shiftKey) {
+        sensitivity=0.0007;
+    } else if (e.ctrlKey) {
+        sensitivity=0.0040;
+    }
+
+    let zoomFactor=Math.exp(-delta*sensitivity);
+
+    /*
+       Limita saltos anómalos de dispositivos que entregan deltas enormes,
+       sin perder fluidez en rueda/trackpad.
+    */
+    zoomFactor=Math.max(0.62,Math.min(1.62,zoomFactor));
 
     applyZoomAboutCursor(
         e.clientX,
@@ -16664,7 +18207,7 @@ function updateViewUI() {
    1 = Punto
    2 = Línea
    3 = Cara
-   Esc = limpiar punto fijado
+   Esc = limpiar selección / punto fijado
 ========================================================= */
 
 window.addEventListener("keydown", e=>{
@@ -16673,11 +18216,66 @@ window.addEventListener("keydown", e=>{
     dxfView.hoverElement=null;
     viewer.classList.remove("object-hover");
 
+    /*
+       ESC SOBRE PIVOTE
+       Oculta solamente el símbolo del punto de pivote.
+       rotationCenter NO se elimina: la cámara puede continuar
+       rotando alrededor exactamente del mismo punto.
+    */
+    let pivotEscapeChanged=false;
+
+    if (dxfView.pivotMarkerVisible) {
+        dxfView.pivotMarkerVisible=false;
+        pivotEscapeChanged=true;
+    }
+
+    if (dxfView.pickingPivot) {
+        dxfView.pickingPivot=false;
+        dxfView.snapHover=null;
+        dxfView.snapLocked=null;
+        dxfView.snapEnabled=false;
+        updatePivotUI();
+        updateSnapUI();
+        pivotEscapeChanged=true;
+    }
+
+    if (pivotEscapeChanged) {
+        requestViewerRender(false);
+
+        const pivotStatus=document.getElementById("dxfStatus");
+        if (pivotStatus && dxfView.rotationCenter) {
+            pivotStatus.textContent=
+                "Símbolo del pivote oculto · el pivote sigue activo";
+        }
+    }
+
+    /*
+       ESC = salir de cualquier selección visible.
+       Para DXF conserva el comportamiento existente.
+       Para sondajes elimina la selección simple/múltiple y, por
+       tanto, desaparecen el halo del taladro y el resaltado de sus
+       intervalos activos. El sondaje NO se oculta ni se borra.
+    */
     if (
         dxfView.selectedFileId ||
-        dxfView.selectedElement
+        dxfView.selectedElement ||
+        (dxfView.selectedElements || []).length
     ) {
         clearPropertySelection();
+    }
+
+    if (
+        drillholeData.selectedHoleId ||
+        (Array.isArray(drillholeData.multiSelectedHoleIds) &&
+         drillholeData.multiSelectedHoleIds.length)
+    ) {
+        clearDrillholeSelection();
+
+        const status=document.getElementById("dxfStatus");
+        if(status){
+            status.textContent=
+                "Selección de sondajes cancelada · navegación habilitada";
+        }
     }
 });
 
@@ -16774,6 +18372,956 @@ if (filesPanelScroll) {
         filesPanelScroll.scrollTop += event.deltaY;
     }, {passive:false});
 }
+
+
+
+/* =========================================================
+   PATCH: HERRAMIENTAS COMPLETAS TAMBIÉN PARA SONDAJES
+   SNAP + VISTAS + SELECCIÓN + NAVEGACIÓN
+========================================================= */
+if (!Array.isArray(drillholeData.multiSelectedHoleIds)) {
+    drillholeData.multiSelectedHoleIds=[];
+}
+
+function hasVisibleSceneGeometry() {
+    return dxfFiles.some(f=>f.visible) || (
+        drillholeData.visible &&
+        (drillholeData.trajectories?.length||0)>0
+    );
+}
+
+function getDrillholeSelectionIds() {
+    return Array.isArray(drillholeData.multiSelectedHoleIds)
+        ? drillholeData.multiSelectedHoleIds.filter(id=>drillholeData.trajectoryByHole?.has(id))
+        : [];
+}
+
+function isDrillholeSelected(id) {
+    return getDrillholeSelectionIds().includes(id);
+}
+
+function setDrillholeSelection(ids, additive=false) {
+    const incoming=[...(ids||[])].filter(id=>drillholeData.trajectoryByHole?.has(id));
+    const uniqueIncoming=[...new Set(incoming)];
+    let finalIds=[];
+    if (additive) {
+        finalIds=[...new Set([...getDrillholeSelectionIds(), ...uniqueIncoming])];
+    } else {
+        finalIds=uniqueIncoming;
+    }
+
+    drillholeData.multiSelectedHoleIds=finalIds;
+    drillholeData.selectedHoleId=finalIds[0] || null;
+
+    try { setLeftPanelMode('drillholes'); } catch(_) {}
+    try { setDrillholeWorkTab('holes'); } catch(_) {}
+
+    renderDrillholeHoleList();
+    requestViewerRender(false);
+}
+
+function clearDrillholeSelection() {
+    drillholeData.multiSelectedHoleIds=[];
+    drillholeData.selectedHoleId=null;
+    renderDrillholeHoleList();
+    requestViewerRender(false);
+}
+
+const _originalSelectDrillhole = selectDrillhole;
+selectDrillhole = function(id){
+    setDrillholeSelection(id?[id]:[], false);
+};
+
+const _originalRenderDrillholeHoleList = renderDrillholeHoleList;
+renderDrillholeHoleList = function(){
+    const tbody=document.getElementById("drillholeTableBody"); if(!tbody) return;
+    const q=drillholeData.searchQuery||"";
+    const selectedSet=new Set(getDrillholeSelectionIds());
+    const list=drillholeData.trajectories.filter(t=>!q||String(t.id).toLowerCase().includes(q));
+    tbody.innerHTML=list.map(t=>{
+        const first=t.surveys.find(v=>!v.synthetic)||t.surveys[0]||null;
+        const sel=selectedSet.has(t.id) || t.id===drillholeData.selectedHoleId;
+        const encoded=encodeURIComponent(t.id);
+        return `<tr class="${sel?"selected":""}" onclick="selectDrillhole(decodeURIComponent('${encoded}'))"><td>${escapeHTML(t.id)}</td><td>${formatMetric(t.totalDepth,0)} m</td><td>${first?formatMetric(first.azimuth,0)+"°":"—"}</td><td>${first?formatMetric(first.dip,0)+"°":"—"}</td></tr>`;
+    }).join("");
+
+    const props=document.getElementById("drillholeSelectedProps"); if(!props) return;
+    const t=drillholeData.trajectoryByHole.get(drillholeData.selectedHoleId);
+    const totalSelected=selectedSet.size;
+    if(!t){
+        props.innerHTML='<div class="drillhole-empty-detail">Selecciona un taladro para ver sus datos.</div>';
+        return;
+    }
+    const first=t.surveys.find(v=>!v.synthetic)||t.surveys[0]||null;
+    const isolated=drillholeData.isolatedHoleId===t.id;
+    props.innerHTML=`
+      <div class="drillhole-detail-head"><div class="drillhole-detail-id">${escapeHTML(t.id)}</div><span class="badge">${totalSelected>1?`${totalSelected} seleccionados`:`Seleccionado`}</span></div>
+      <div class="drillhole-detail-grid">
+        <div class="drillhole-detail-metric"><span>Profundidad</span><strong>${formatMetric(t.totalDepth,0)} m</strong></div>
+        <div class="drillhole-detail-metric"><span>Azimut</span><strong>${first?formatMetric(first.azimuth,0)+"°":"—"}</strong></div>
+        <div class="drillhole-detail-metric"><span>Dip</span><strong>${first?formatMetric(first.dip,0)+"°":"—"}</strong></div>
+      </div>
+      <div class="drillhole-detail-actions">
+        <button type="button" onclick="centerSelectedDrillhole()">Centrar</button>
+        <button type="button" class="${isolated?"active":""}" onclick="toggleIsolateSelectedDrillhole()">${isolated?"Mostrar todos":"Solo este"}</button>
+      </div>
+      <details class="drillhole-coords-details">
+        <summary>Ubicación / coordenadas</summary>
+        <div class="drillhole-coords-grid">
+          <div class="drillhole-coord-row"><span>Este (X)</span><strong>${formatMetric(t.collar.x,2)}</strong></div>
+          <div class="drillhole-coord-row"><span>Norte (Y)</span><strong>${formatMetric(t.collar.y,2)}</strong></div>
+          <div class="drillhole-coord-row"><span>Cota (Z)</span><strong>${formatMetric(t.collar.z,2)}</strong></div>
+        </div>
+      </details>`;
+};
+
+const _originalDrawDrillholes = drawDrillholes;
+drawDrillholes = function(ctx,project,w,h){
+    if(!drillholeData.visible||!drillholeData.trajectories.length)return;
+    const selectedPrimary=drillholeData.selectedHoleId;
+    const selectedSet=new Set(getDrillholeSelectionIds());
+    const base=Math.max(1,Number(drillholeData.lineWidth)||3);
+    ctx.save();ctx.lineCap="round";ctx.lineJoin="round";ctx.setLineDash([]);
+
+    for(const t of getDisplayedDrillholeTrajectories()){
+        if(!t.points.length)continue;
+        const chosen=selectedSet.has(t.id) || t.id===selectedPrimary;
+        if(drillholeData.showTrajectory&&t.points.length>=2){
+            ctx.beginPath();
+            t.points.forEach((p,i)=>{const q=project(p); if(i===0)ctx.moveTo(q.x,q.y); else ctx.lineTo(q.x,q.y);});
+            ctx.strokeStyle=chosen?"#ffffff":"#718292";
+            ctx.lineWidth=chosen?base+2.2:Math.max(1,base*.65);
+            ctx.stroke();
+        }
+        if(drillholeData.showCollars){
+            const q=project(t.points[0]);
+            if(q.x>=-10&&q.x<=w+10&&q.y>=-10&&q.y<=h+10){
+                ctx.beginPath();ctx.arc(q.x,q.y,chosen?5.2:3.2,0,Math.PI*2);ctx.fillStyle=chosen?"#fff":"#d7e0e7";ctx.fill();
+            }
+        }
+    }
+
+    const active=drillholeData.datasets[drillholeData.activeDataset];
+    if(active&&active.rows.length){
+        if(active.kind==="interval")drawIntervalDataset(ctx,project,w,h,active,base,selectedPrimary);
+        else if(active.kind==="event")drawEventDataset(ctx,project,w,h,active,base,selectedPrimary);
+        else if(active.kind==="interval_or_event"){
+            drawIntervalDataset(ctx,project,w,h,active,base,selectedPrimary);
+            drawEventDataset(ctx,project,w,h,active,base,selectedPrimary);
+        }
+    }
+    drawFractures(ctx,project,w,h,base,selectedPrimary);
+    drawWaterLevels(ctx,project,w,h,base,selectedPrimary);
+    ctx.restore();
+};
+
+const _originalSnapCameraSignature = snapCameraSignature;
+snapCameraSignature = function(w,h){
+    const base=_originalSnapCameraSignature(w,h);
+    const holes=drillholeData.visible ? getDisplayedDrillholeTrajectories().map(t=>t.id).join('|') : 'none';
+    return `${base};drillholes:${holes};dhDataset:${drillholeData.activeDataset};dhVisible:${drillholeData.visible?1:0};dhCollars:${drillholeData.showCollars?1:0};dhTraj:${drillholeData.showTrajectory?1:0}`;
+};
+
+const _originalBuildSnapCache = buildSnapCache;
+buildSnapCache = function(w,h){
+    const cache=_originalBuildSnapCache(w,h);
+    if(!drillholeData.visible || !drillholeData.trajectories?.length) return cache;
+
+    const CELL=cache.cell||42;
+    const TOL=dxfView.snapTolerance||13;
+
+    function addDrillPoint(world, holeId, role){
+        const q=getInteractionProjection(world,w,h); if(!q) return;
+        const item={
+            point:{x:Number(world.x),y:Number(world.y),z:Number.isFinite(Number(world.z))?Number(world.z):0},
+            screen:q,
+            fileId:'__DRILLHOLES__',
+            drillholeId:holeId,
+            layer:'DRILLHOLES',
+            entityType:role||'DRILLHOLE_POINT'
+        };
+        addToGrid(cache.points, Math.floor(q.x/CELL), Math.floor(q.y/CELL), item);
+        cache.counts.points=(cache.counts.points||0)+1;
+    }
+
+    function addDrillLine(aWorld,bWorld,holeId,segmentIndex){
+        const a=getInteractionProjection(aWorld,w,h); const b=getInteractionProjection(bWorld,w,h);
+        if(!a||!b) return;
+        const item={
+            a,b, worldA:aWorld, worldB:bWorld,
+            fileId:'__DRILLHOLES__',
+            drillholeId:holeId,
+            segmentIndex,
+            pathId:holeId,
+            layer:'DRILLHOLES',
+            entityType:'DRILLHOLE_TRAJECTORY'
+        };
+        const inserted=addBBoxToGrid(cache.lines, Math.min(a.x,b.x)-TOL, Math.min(a.y,b.y)-TOL, Math.max(a.x,b.x)+TOL, Math.max(a.y,b.y)+TOL, CELL, item, 120);
+        if(!inserted) cache.longLines.push(item);
+        cache.counts.lines=(cache.counts.lines||0)+1;
+    }
+
+    for (const t of getDisplayedDrillholeTrajectories()) {
+        if (!t?.points?.length) continue;
+        if (drillholeData.showCollars) addDrillPoint(t.points[0], t.id, 'DRILLHOLE_COLLAR');
+        for (let i=0;i<t.points.length;i++) addDrillPoint(t.points[i], t.id, 'DRILLHOLE_POINT');
+        if (drillholeData.showTrajectory) {
+            for (let i=1;i<t.points.length;i++) addDrillLine(t.points[i-1], t.points[i], t.id, i-1);
+        }
+    }
+
+    return cache;
+};
+
+function pickDrillholeAtScreen(screenX, screenY){
+    if(!drillholeData.visible || !drillholeData.trajectories?.length) return null;
+    const rect=viewer.getBoundingClientRect();
+    const w=rect.width, h=rect.height;
+    const tolPoint=10, tolLine=8;
+    let bestPoint=null, bestPointD=tolPoint+1;
+    let bestLine=null, bestLineD=tolLine+1, bestLineHit=null;
+
+    for (const t of getDisplayedDrillholeTrajectories()) {
+        if(!t?.points?.length) continue;
+        const collar=t.points[0];
+        const cq=getInteractionProjection(collar,w,h);
+        if(cq){
+            const d=Math.hypot(cq.x-screenX, cq.y-screenY);
+            if(d<=tolPoint && d<bestPointD){
+                bestPointD=d;
+                bestPoint={type:'drillhole', drillholeId:t.id, point:{...collar}, mode:'collar', distance:d};
+            }
+        }
+        for(let i=1;i<t.points.length;i++){
+            const a=getInteractionProjection(t.points[i-1],w,h), b=getInteractionProjection(t.points[i],w,h);
+            if(!a||!b) continue;
+            const hit=closestOnScreenSegment(screenX,screenY,a,b);
+            if(hit.distance<=tolLine && hit.distance<bestLineD){
+                bestLineD=hit.distance;
+                bestLineHit=hit;
+                bestLine={type:'drillhole', drillholeId:t.id, point:interpolateWorld2(t.points[i-1],t.points[i],hit.t), mode:'trajectory', distance:hit.distance};
+            }
+        }
+    }
+
+    return bestPoint || bestLine || null;
+}
+
+function findDrillholesInsideSelectionRect(rect){
+    if(!drillholeData.visible || !drillholeData.trajectories?.length) return [];
+    const viewerRect=viewer.getBoundingClientRect();
+    const w=viewerRect.width, h=viewerRect.height;
+    const out=[];
+    for(const t of getDisplayedDrillholeTrajectories()){
+        if(!t?.points?.length) continue;
+        let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+        let valid=0;
+        for(const p of t.points){
+            const q=getInteractionProjection(p,w,h); if(!q) continue;
+            valid++;
+            minX=Math.min(minX,q.x); minY=Math.min(minY,q.y); maxX=Math.max(maxX,q.x); maxY=Math.max(maxY,q.y);
+        }
+        if(!valid) continue;
+        if(minX>=rect.left && maxX<=rect.right && minY>=rect.top && maxY<=rect.bottom){
+            out.push({type:'drillhole', fileId:'__DRILLHOLES__', drillholeId:t.id, count:1});
+        }
+    }
+    return out;
+}
+
+const _originalFindObjectsInsideSelectionWindowAsync = findObjectsInsideSelectionWindowAsync;
+findObjectsInsideSelectionWindowAsync = async function(rect){
+    const base=await _originalFindObjectsInsideSelectionWindowAsync(rect);
+    const drill=findDrillholesInsideSelectionRect(rect);
+    return [...base, ...drill];
+};
+
+const _originalApplyWindowSelection = applyWindowSelection;
+applyWindowSelection = function(selections, additive=false){
+    const incoming=Array.isArray(selections)?selections:[];
+    const drillSelections=incoming.filter(s=>s?.type==='drillhole');
+    const dxfSelections=incoming.filter(s=>s?.type!=='drillhole');
+
+    if (!additive && !drillSelections.length) {
+        clearDrillholeSelection();
+    }
+    if (drillSelections.length) {
+        setDrillholeSelection(drillSelections.map(s=>s.drillholeId), additive);
+    }
+
+    _originalApplyWindowSelection(dxfSelections, additive);
+};
+
+const _originalSelectGeometryAtClientPoint = selectGeometryAtClientPoint;
+selectGeometryAtClientPoint = function(clientX, clientY, additive=false){
+    const pickedDXF=_originalSelectGeometryAtClientPoint(clientX, clientY, additive);
+    if(pickedDXF) return true;
+    if(!dxfView.selectionToolActive) return false;
+
+    const rect=viewer.getBoundingClientRect();
+    const sx=clientX-rect.left;
+    const sy=clientY-rect.top;
+    const hit=pickDrillholeAtScreen(sx,sy);
+    if(!hit){
+        if(!additive && !(dxfView.selectedElements||[]).length){
+            clearDrillholeSelection();
+        }
+        return false;
+    }
+
+    if(!additive){
+        clearPropertySelection();
+        setDrillholeSelection([hit.drillholeId], false);
+        dxfView.selectionToolActive=false;
+        resetSelectionWindow();
+        updateSelectionToolUI();
+        const status=document.getElementById('dxfStatus');
+        if(status) status.textContent='Sondaje seleccionado · navegación habilitada';
+    } else {
+        setDrillholeSelection([hit.drillholeId], true);
+    }
+    return true;
+};
+
+const _originalToggleSelectionTool = toggleSelectionTool;
+toggleSelectionTool = function(){
+    if(!hasVisibleSceneGeometry()){
+        alert('Primero carga y muestra al menos un DXF o sondajes.');
+        return;
+    }
+    setSelectionToolActive(!dxfView.selectionToolActive);
+};
+
+const _originalTogglePivotPick = togglePivotPick;
+togglePivotPick = function(){
+    if(!hasVisibleSceneGeometry()){
+        alert('Primero carga y muestra al menos un DXF o sondajes.');
+        return;
+    }
+    const turningOn = !dxfView.pickingPivot;
+    if (turningOn && dxfView.selectionToolActive) setSelectionToolActive(false);
+    if (turningOn) {
+        dxfView.snapEnabled=true;
+        dxfView.snapPoint=true;
+        dxfView.snapLine=true;
+        dxfView.snapFace=false;
+    }
+    dxfView.pickingPivot=turningOn;
+    dxfView.snapHover=null;
+    dxfView.snapLocked=null;
+    updatePivotUI();
+    updateSnapUI();
+    drawDXFViewer();
+};
+
+const _originalClearDrillholes = clearDrillholes;
+clearDrillholes = function(){
+    _originalClearDrillholes();
+    drillholeData.multiSelectedHoleIds=[];
+};
+
+
+
+/* =========================================================
+   PASO 1/3 · SNAP SOBRE DATASETS DE SONDAJES
+   Assays · Lithology · Geotecnia · Hidrogeología
+========================================================= */
+function getDrillholeDatasetSnapDepths(){
+    const byHole=new Map();
+
+    function addDepth(holeId, depth, datasetKey, role){
+        const d=Number(depth);
+        if(!holeId || !Number.isFinite(d) || d<0) return;
+
+        let holeMap=byHole.get(holeId);
+        if(!holeMap){
+            holeMap=new Map();
+            byHole.set(holeId,holeMap);
+        }
+
+        // Un mismo límite From/To puede estar repetido en varios datasets.
+        // Lo unificamos espacialmente para no inflar el índice SNAP.
+        const key=d.toFixed(4);
+        let item=holeMap.get(key);
+        if(!item){
+            item={
+                depth:d,
+                datasets:new Set(),
+                roles:new Set()
+            };
+            holeMap.set(key,item);
+        }
+
+        if(datasetKey) item.datasets.add(datasetKey);
+        if(role) item.roles.add(role);
+    }
+
+    for(const [datasetKey,ds] of Object.entries(drillholeData.datasets||{})){
+        for(const row of ds.rows||[]){
+            const holeId=row.id;
+            if(!holeId) continue;
+
+            if(Number.isFinite(Number(row.from))){
+                addDepth(holeId,Number(row.from),datasetKey,"from");
+            }
+            if(Number.isFinite(Number(row.to))){
+                addDepth(holeId,Number(row.to),datasetKey,"to");
+            }
+            if(Number.isFinite(Number(row.depth))){
+                addDepth(holeId,Number(row.depth),datasetKey,"depth");
+            }
+        }
+    }
+
+    return byHole;
+}
+
+function drillholeDatasetSnapSignature(){
+    const parts=[];
+    for(const [key,ds] of Object.entries(drillholeData.datasets||{})){
+        parts.push(`${key}:${ds.rows?.length||0}`);
+    }
+    return parts.join("|");
+}
+
+const _snapCameraSignatureWithDrillholes = snapCameraSignature;
+snapCameraSignature = function(w,h){
+    return _snapCameraSignatureWithDrillholes(w,h) +
+        `;dhDataSnap:${drillholeDatasetSnapSignature()}`;
+};
+
+const _buildSnapCacheWithTrajectories = buildSnapCache;
+buildSnapCache = function(w,h){
+    const cache=_buildSnapCacheWithTrajectories(w,h);
+
+    if(
+        !drillholeData.visible ||
+        !drillholeData.trajectories?.length ||
+        !dxfView.snapPoint
+    ){
+        return cache;
+    }
+
+    const CELL=cache.cell||42;
+    const snapDepths=getDrillholeDatasetSnapDepths();
+
+    let totalCandidates=0;
+    for(const holeMap of snapDepths.values()){
+        totalCandidates+=holeMap.size;
+    }
+
+    /*
+       Protección para campañas muy grandes.
+       No altera la data; únicamente muestrea el índice interactivo
+       si hubiera una cantidad extraordinaria de límites/eventos.
+    */
+    const maxInteractivePoints=160000;
+    const stride=Math.max(
+        1,
+        Math.ceil(totalCandidates/maxInteractivePoints)
+    );
+
+    let counter=0;
+
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        const depths=snapDepths.get(trajectory.id);
+        if(!depths) continue;
+
+        for(const info of depths.values()){
+            counter++;
+            if((counter-1)%stride!==0) continue;
+
+            const world=positionAlongTrajectory(
+                trajectory,
+                info.depth
+            );
+
+            if(!world) continue;
+
+            const q=getInteractionProjection(world,w,h);
+            if(!q) continue;
+
+            const datasetNames=[...info.datasets]
+                .map(key=>drillholeData.datasets[key]?.name||key);
+
+            const item={
+                point:{
+                    x:Number(world.x),
+                    y:Number(world.y),
+                    z:Number(world.z)||0
+                },
+                screen:q,
+                fileId:"__DRILLHOLES__",
+                drillholeId:trajectory.id,
+                datasetKeys:[...info.datasets],
+                datasetNames,
+                depth:info.depth,
+                roles:[...info.roles],
+                layer:"DRILLHOLE_DATASETS",
+                entityType:"DRILLHOLE_DATA_POINT"
+            };
+
+            addToGrid(
+                cache.points,
+                Math.floor(q.x/CELL),
+                Math.floor(q.y/CELL),
+                item
+            );
+
+            cache.counts.points=
+                (cache.counts.points||0)+1;
+        }
+    }
+
+    cache.drillholeDatasetPoints={
+        totalCandidates,
+        indexed:Math.ceil(totalCandidates/stride),
+        stride
+    };
+
+    return cache;
+};
+
+/*
+   Al cargar o reemplazar datasets invalidamos el índice SNAP.
+   Así los nuevos límites From/To/Depth aparecen inmediatamente.
+*/
+const _rebuildDrillholeIndexesForDatasetSnap = rebuildDrillholeIndexes;
+rebuildDrillholeIndexes = function(){
+    dxfView.snapCache=null;
+    return _rebuildDrillholeIndexesForDatasetSnap();
+};
+
+
+
+/* =========================================================
+   PASO 2/3 · RESUMEN CONJUNTO PARA SELECCIÓN MÚLTIPLE
+========================================================= */
+function circularMeanDegrees(values){
+    const valid=(values||[]).map(Number).filter(Number.isFinite);
+    if(!valid.length) return null;
+    let sx=0, sy=0;
+    for(const deg of valid){
+        const r=deg*Math.PI/180;
+        sx+=Math.cos(r); sy+=Math.sin(r);
+    }
+    if(Math.hypot(sx,sy)<1e-9) return null;
+    let deg=Math.atan2(sy,sx)*180/Math.PI;
+    if(deg<0) deg+=360;
+    return deg;
+}
+
+function getSelectedDrillholeSummary(){
+    const ids=getDrillholeSelectionIds();
+    const trajectories=ids
+        .map(id=>drillholeData.trajectoryByHole.get(id))
+        .filter(Boolean);
+
+    if(!trajectories.length) return null;
+
+    const depths=[];
+    const azimuths=[];
+    const dips=[];
+    const xs=[];
+    const ys=[];
+    const zs=[];
+
+    for(const t of trajectories){
+        if(Number.isFinite(Number(t.totalDepth))) depths.push(Number(t.totalDepth));
+        const first=t.surveys?.find(v=>!v.synthetic)||t.surveys?.[0]||null;
+        if(first && Number.isFinite(Number(first.azimuth))) azimuths.push(Number(first.azimuth));
+        if(first && Number.isFinite(Number(first.dip))) dips.push(Number(first.dip));
+        if(t.collar){
+            if(Number.isFinite(Number(t.collar.x))) xs.push(Number(t.collar.x));
+            if(Number.isFinite(Number(t.collar.y))) ys.push(Number(t.collar.y));
+            if(Number.isFinite(Number(t.collar.z))) zs.push(Number(t.collar.z));
+        }
+    }
+
+    const sum=a=>a.reduce((acc,v)=>acc+v,0);
+    const min=a=>a.length?Math.min(...a):null;
+    const max=a=>a.length?Math.max(...a):null;
+    const avg=a=>a.length?sum(a)/a.length:null;
+
+    return {
+        count:trajectories.length,
+        ids,
+        totalDepth:sum(depths),
+        avgDepth:avg(depths),
+        minDepth:min(depths),
+        maxDepth:max(depths),
+        avgAzimuth:circularMeanDegrees(azimuths),
+        minAzimuth:min(azimuths),
+        maxAzimuth:max(azimuths),
+        avgDip:avg(dips),
+        minDip:min(dips),
+        maxDip:max(dips),
+        minX:min(xs),maxX:max(xs),
+        minY:min(ys),maxY:max(ys),
+        minZ:min(zs),maxZ:max(zs)
+    };
+}
+
+function renderMultipleDrillholeSummary(){
+    const props=document.getElementById('drillholeSelectedProps');
+    if(!props) return false;
+    const summary=getSelectedDrillholeSummary();
+    if(!summary || summary.count<=1) return false;
+
+    const f=(v,d=0)=>Number.isFinite(Number(v))?formatMetric(Number(v),d):'—';
+    const idsPreview=summary.ids.slice(0,5).map(escapeHTML).join(', ');
+    const more=summary.ids.length>5?` +${summary.ids.length-5}`:'';
+
+    props.innerHTML=`
+      <div class="drillhole-detail-head">
+        <div class="drillhole-detail-id">${summary.count} sondajes</div>
+        <span class="badge">Selección múltiple</span>
+      </div>
+      <div class="drillhole-multi-id-list">${idsPreview}${more}</div>
+
+      <div class="drillhole-detail-grid drillhole-summary-grid">
+        <div class="drillhole-detail-metric"><span>Prof. total</span><strong>${f(summary.totalDepth,0)} m</strong></div>
+        <div class="drillhole-detail-metric"><span>Prof. promedio</span><strong>${f(summary.avgDepth,0)} m</strong></div>
+        <div class="drillhole-detail-metric"><span>Rango prof.</span><strong>${f(summary.minDepth,0)}–${f(summary.maxDepth,0)} m</strong></div>
+        <div class="drillhole-detail-metric"><span>Azimut prom.</span><strong>${f(summary.avgAzimuth,0)}°</strong></div>
+        <div class="drillhole-detail-metric"><span>Dip promedio</span><strong>${f(summary.avgDip,0)}°</strong></div>
+        <div class="drillhole-detail-metric"><span>Rango dip</span><strong>${f(summary.minDip,0)}° a ${f(summary.maxDip,0)}°</strong></div>
+      </div>
+
+      <div class="drillhole-detail-actions">
+        <button type="button" onclick="centerSelectedDrillholesGroup()">Centrar grupo</button>
+        <button type="button" onclick="clearDrillholeSelection()">Limpiar selección</button>
+      </div>
+
+      <details class="drillhole-coords-details">
+        <summary>Extensión espacial del grupo</summary>
+        <div class="drillhole-coords-grid">
+          <div class="drillhole-coord-row"><span>Este (X)</span><strong>${f(summary.minX,2)} – ${f(summary.maxX,2)}</strong></div>
+          <div class="drillhole-coord-row"><span>Norte (Y)</span><strong>${f(summary.minY,2)} – ${f(summary.maxY,2)}</strong></div>
+          <div class="drillhole-coord-row"><span>Cota (Z)</span><strong>${f(summary.minZ,2)} – ${f(summary.maxZ,2)}</strong></div>
+        </div>
+      </details>`;
+
+    return true;
+}
+
+function centerSelectedDrillholesGroup(){
+    const ids=getDrillholeSelectionIds();
+    const trajectories=ids.map(id=>drillholeData.trajectoryByHole.get(id)).filter(Boolean);
+    if(!trajectories.length) return;
+
+    let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;
+    for(const t of trajectories){
+        for(const p of t.points||[]){
+            minX=Math.min(minX,p.x); minY=Math.min(minY,p.y); minZ=Math.min(minZ,p.z);
+            maxX=Math.max(maxX,p.x); maxY=Math.max(maxY,p.y); maxZ=Math.max(maxZ,p.z);
+        }
+    }
+    if(![minX,minY,minZ,maxX,maxY,maxZ].every(Number.isFinite)) return;
+
+    dxfView.boundingBox={minX,maxX,minY,maxY,minZ,maxZ};
+    dxfView.zoom=1;
+    dxfView.panX=0;
+    dxfView.panY=0;
+    dxfView.rotationCenter=null;
+    dxfView.pivotMarkerVisible = false;
+    dxfView.pickingPivot=false;
+    dxfView.snapCache=null;
+    invalidateSelectionCache();
+    drawViewerGrid(true);
+    drawDXFViewer();
+    updatePivotUI();
+}
+
+const _renderDrillholeHoleListWithSnap = renderDrillholeHoleList;
+renderDrillholeHoleList = function(){
+    _renderDrillholeHoleListWithSnap();
+    renderMultipleDrillholeSummary();
+};
+
+
+/* =========================================================
+   PASO 3/3 · RESALTAR INTERVALOS ACTIVOS DEL DATASET VISIBLE
+   para los sondajes seleccionados
+========================================================= */
+function getSelectedDrillholeIdSet(){
+    const ids=getDrillholeSelectionIds();
+    if(Array.isArray(ids) && ids.length){
+        return new Set(ids);
+    }
+    return drillholeData.selectedHoleId
+        ? new Set([drillholeData.selectedHoleId])
+        : new Set();
+}
+
+function hasAnySelectedDrillhole(){
+    return getSelectedDrillholeIdSet().size>0;
+}
+
+function drawHighlightedIntervalSegment(ctx, pa, pb, color, base){
+    // halo exterior
+    ctx.beginPath();
+    ctx.moveTo(pa.x,pa.y);
+    ctx.lineTo(pb.x,pb.y);
+    ctx.strokeStyle="rgba(255,255,255,0.92)";
+    ctx.lineWidth=base+6.5;
+    ctx.stroke();
+
+    // núcleo de realce
+    ctx.beginPath();
+    ctx.moveTo(pa.x,pa.y);
+    ctx.lineTo(pb.x,pb.y);
+    ctx.strokeStyle=color;
+    ctx.lineWidth=base+3.8;
+    ctx.stroke();
+
+    // línea fina central para nitidez
+    ctx.beginPath();
+    ctx.moveTo(pa.x,pa.y);
+    ctx.lineTo(pb.x,pb.y);
+    ctx.strokeStyle="rgba(20,25,34,0.55)";
+    ctx.lineWidth=Math.max(1.1, base*0.35);
+    ctx.stroke();
+}
+
+function drawHighlightedEventPoint(ctx, q, color, base){
+    ctx.beginPath();
+    ctx.arc(q.x,q.y,base+4.8,0,Math.PI*2);
+    ctx.fillStyle="rgba(255,255,255,0.95)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(q.x,q.y,base+2.7,0,Math.PI*2);
+    ctx.fillStyle=color;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(q.x,q.y,Math.max(1.4, base*0.35),0,Math.PI*2);
+    ctx.fillStyle="rgba(20,25,34,0.60)";
+    ctx.fill();
+}
+
+const _drawIntervalDatasetBase = drawIntervalDataset;
+drawIntervalDataset = function(ctx,project,w,h,ds,base,selected){
+    const selectedIds=getSelectedDrillholeIdSet();
+    if(!selectedIds.size){
+        _drawIntervalDatasetBase(ctx,project,w,h,ds,base,selected);
+        return;
+    }
+
+    // 1) dibuja todo normal, con énfasis moderado
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        const chosen=selectedIds.has(trajectory.id);
+        for(const row of ds.byHole?.get(trajectory.id)||[]){
+            if(!Number.isFinite(row.from)||!Number.isFinite(row.to)) continue;
+            const a=positionAlongTrajectory(trajectory,row.from);
+            const b=positionAlongTrajectory(trajectory,row.to);
+            if(!a||!b) continue;
+            const pa=project(a), pb=project(b);
+            if(screenSegmentOutside(pa,pb,w,h,18)) continue;
+
+            ctx.beginPath();
+            ctx.moveTo(pa.x,pa.y);
+            ctx.lineTo(pb.x,pb.y);
+            ctx.strokeStyle=rowColor(ds,row);
+            ctx.lineWidth=chosen ? base+1.8 : base+1.25;
+            ctx.stroke();
+        }
+    }
+
+    // 2) overlay de realce solo para sondajes seleccionados
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        if(!selectedIds.has(trajectory.id)) continue;
+        for(const row of ds.byHole?.get(trajectory.id)||[]){
+            if(!Number.isFinite(row.from)||!Number.isFinite(row.to)) continue;
+            const a=positionAlongTrajectory(trajectory,row.from);
+            const b=positionAlongTrajectory(trajectory,row.to);
+            if(!a||!b) continue;
+            const pa=project(a), pb=project(b);
+            if(screenSegmentOutside(pa,pb,w,h,18)) continue;
+
+            drawHighlightedIntervalSegment(
+                ctx,
+                pa,
+                pb,
+                rowColor(ds,row),
+                Math.max(1,base)
+            );
+        }
+    }
+};
+
+const _drawEventDatasetBase = drawEventDataset;
+drawEventDataset = function(ctx,project,w,h,ds,base,selected){
+    const selectedIds=getSelectedDrillholeIdSet();
+    if(!selectedIds.size){
+        _drawEventDatasetBase(ctx,project,w,h,ds,base,selected);
+        return;
+    }
+
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        const chosen=selectedIds.has(trajectory.id);
+        for(const row of ds.byHole?.get(trajectory.id)||[]){
+            if(!Number.isFinite(row.depth)) continue;
+            const p=positionAlongTrajectory(trajectory,row.depth);
+            if(!p) continue;
+            const q=project(p);
+            if(q.x<-15||q.x>w+15||q.y<-15||q.y>h+15) continue;
+
+            const color=rowColor(ds,row);
+            ctx.beginPath();
+            ctx.arc(q.x,q.y,chosen?4.2:3.0,0,Math.PI*2);
+            ctx.fillStyle=color;
+            ctx.fill();
+        }
+    }
+
+    for(const trajectory of getDisplayedDrillholeTrajectories()){
+        if(!selectedIds.has(trajectory.id)) continue;
+        for(const row of ds.byHole?.get(trajectory.id)||[]){
+            if(!Number.isFinite(row.depth)) continue;
+            const p=positionAlongTrajectory(trajectory,row.depth);
+            if(!p) continue;
+            const q=project(p);
+            if(q.x<-15||q.x>w+15||q.y<-15||q.y>h+15) continue;
+
+            drawHighlightedEventPoint(
+                ctx,
+                q,
+                rowColor(ds,row),
+                Math.max(1,base)
+            );
+        }
+    }
+};
+
+// Mejora visual opcional para el detalle del taladro seleccionado:
+const _renderMultipleDrillholeSummaryBase = renderMultipleDrillholeSummary;
+renderMultipleDrillholeSummary = function(){
+    const rendered=_renderMultipleDrillholeSummaryBase();
+    const props=document.getElementById('drillholeSelectedProps');
+    if(!props) return rendered;
+
+    const selectedIds=getSelectedDrillholeIdSet();
+    const activeKey=drillholeData.activeDataset;
+    const activeDs=drillholeData.datasets?.[activeKey];
+
+    if(activeDs && activeDs.rows?.length && selectedIds.size){
+        let count=0;
+        for(const holeId of selectedIds){
+            count += activeDs.byHole?.get(holeId)?.length || 0;
+        }
+        const badgeHtml = `
+          <div class="drillhole-active-dataset-note">
+            <span class="label">Dataset visible</span>
+            <strong>${escapeHTML(activeDs.name || activeKey)}</strong>
+            <span class="value">${count} intervalo${count===1?'':'s'} / evento${count===1?'':'s'} resaltado${count===1?'':'s'}</span>
+          </div>`;
+        props.insertAdjacentHTML('beforeend', badgeHtml);
+    }
+
+    return rendered;
+};
+
+
+/* =========================================================
+   GIZMO DE EJES X / Y / Z EN PANTALLA
+========================================================= */
+function updateAxisGizmo(){
+    if(!axisGizmoCanvas) return;
+
+    const cssSize=118;
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    const target=Math.round(cssSize*dpr);
+
+    if(axisGizmoCanvas.width!==target || axisGizmoCanvas.height!==target){
+        axisGizmoCanvas.width=target;
+        axisGizmoCanvas.height=target;
+    }
+
+    const ctx=axisGizmoCanvas.getContext('2d');
+    if(!ctx) return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,axisGizmoCanvas.width,axisGizmoCanvas.height);
+    ctx.scale(dpr,dpr);
+
+    const size=cssSize;
+    const cx=size*0.36;
+    const cy=size*0.68;
+    const len=size*0.28;
+    const cyaw=Math.cos(dxfView.yaw||0);
+    const syaw=Math.sin(dxfView.yaw||0);
+    const cpitch=Math.cos(dxfView.pitch||0);
+    const spitch=Math.sin(dxfView.pitch||0);
+
+    function projectVec(v){
+        const x=v.x, y=v.y, z=v.z;
+        const x1=cyaw*x - syaw*y;
+        const y1=syaw*x + cyaw*y;
+        const y2=cpitch*y1 - spitch*z;
+        const z2=spitch*y1 + cpitch*z;
+        return {x:x1, y:-y2, depth:z2};
+    }
+
+    const axes=[
+        {label:'X', color:'#ef5350', vec:{x:1,y:0,z:0}},
+        {label:'Y', color:'#66bb6a', vec:{x:0,y:1,z:0}},
+        {label:'Z', color:'#42a5f5', vec:{x:0,y:0,z:1}},
+    ].map(a=>({ ...a, p: projectVec(a.vec)})).sort((a,b)=>a.p.depth-b.p.depth);
+
+    // fondo sutil
+    ctx.beginPath();
+    ctx.arc(cx,cy,40,0,Math.PI*2);
+    ctx.fillStyle='rgba(7,19,31,0.32)';
+    ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.06)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    // origen
+    ctx.beginPath();
+    ctx.arc(cx,cy,3.4,0,Math.PI*2);
+    ctx.fillStyle='#e6edf3';
+    ctx.fill();
+
+    function drawArrow(ex,ey,color,label){
+        const angle=Math.atan2(ey-cy, ex-cx);
+        const head=8;
+        ctx.beginPath();
+        ctx.moveTo(cx,cy);
+        ctx.lineTo(ex,ey);
+        ctx.strokeStyle=color;
+        ctx.lineWidth=3;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ex,ey);
+        ctx.lineTo(ex-head*Math.cos(angle-Math.PI/7), ey-head*Math.sin(angle-Math.PI/7));
+        ctx.lineTo(ex-head*Math.cos(angle+Math.PI/7), ey-head*Math.sin(angle+Math.PI/7));
+        ctx.closePath();
+        ctx.fillStyle=color;
+        ctx.fill();
+        const lx=ex+10*Math.cos(angle);
+        const ly=ey+10*Math.sin(angle);
+        ctx.font='bold 12px Segoe UI';
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.fillStyle='rgba(8,16,24,0.9)';
+        ctx.fillText(label,lx+1,ly+1);
+        ctx.fillStyle='#ffffff';
+        ctx.fillText(label,lx,ly);
+    }
+
+    for(const axis of axes){
+        drawArrow(cx+axis.p.x*len, cy+axis.p.y*len, axis.color, axis.label);
+    }
+}
+
+const _drawDXFViewerWithAxisBase = drawDXFViewer;
+drawDXFViewer = function(){
+    _drawDXFViewerWithAxisBase();
+    updateAxisGizmo();
+};
+window.addEventListener('resize', ()=>requestAnimationFrame(updateAxisGizmo));
 
 </script>
 </body>
