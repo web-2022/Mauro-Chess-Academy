@@ -55,7 +55,14 @@
     window.dispatchEvent(new CustomEvent("mauro:analytics-queued",{detail:event}));
   }
 
-  async function flush(){
+  let activeFlush = null;
+  function flush(){
+    if (activeFlush) return activeFlush;
+    activeFlush = sendBatch().finally(() => { activeFlush = null; });
+    return activeFlush;
+  }
+
+  async function sendBatch(){
     const endpoint=(C.googleSheetsWebAppUrl||"").trim();
     if(!endpoint || !/^https:\/\/script\.google\.com\/macros\/s\//i.test(endpoint)){
       return {sent:0, pending:getJson(C.storage.analyticsQueue,[]).length, configured:false};
@@ -74,18 +81,22 @@
     };
 
     try{
-      await fetch(endpoint,{
+      const response = await fetch(endpoint,{
         method:"POST",
-        mode:"no-cors",
+        mode:"cors",
         cache:"no-store",
         keepalive:true,
         headers:{"Content-Type":"text/plain;charset=utf-8"},
         body:JSON.stringify(payload)
       });
 
-      // En no-cors la respuesta es opaca. Si fetch no lanzó error,
-      // consideramos el lote entregado; Apps Script registra cada evento.
-      q=q.slice(batch.length);
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const result = await response.json();
+      if (result.ok !== true || result.received !== batch.length) {
+        throw new Error('El servidor no confirmó el lote completo.');
+      }
+      const sentIds = new Set(batch.map(event => event.eventId));
+      q = getJson(C.storage.analyticsQueue, []).filter(event => !sentIds.has(event.eventId));
       setJson(C.storage.analyticsQueue,q);
       window.dispatchEvent(new CustomEvent("mauro:analytics-flushed",{detail:{sent:batch.length,pending:q.length}}));
       return {sent:batch.length,pending:q.length,configured:true};

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script src="js/mauro-availability.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#020617">
@@ -946,9 +947,9 @@
         <div>
           <div class="premium-kicker">♟ Acceso completo</div>
           <h2 id="premiumTitle">🔓 Activa Premium y desbloquea los 124 temas</h2>
-          <p id="premiumText">Los 3 primeros temas son gratuitos. Activa tu código si ya compraste, o elige un plan para continuar con toda la ruta.</p>
+          <p id="premiumText">Consulta en la ruta principal las condiciones de acceso vigentes. Activa tu código si ya compraste, o elige un plan para continuar con toda la ruta.</p>
         </div>
-        <div class="premium-free" id="premiumBadge">3 temas gratis · 121 Premium</div>
+        <div class="premium-free" id="premiumBadge">Consulta el acceso en la ruta principal</div>
       </div>
 
       <div id="premiumForm">
@@ -1067,12 +1068,13 @@
     </div>
   </div>
 
+  <script src="mauro-premium-config.js"></script>
   <script>
     const PROGRESS_KEY = "mk_learning_path_done_realizado_v3";
     const STUDENT_NAME_KEY = "mauro_student_name_v1";
     const PREMIUM_FLAG = "mk_ajedrez_premium";
     const STUDENT_CODE_KEY = "academia_mauro_codigo_estudiante_v1";
-    const FREE_LIMIT = 3;
+    const FREE_LIMIT = Number(window.MAURO_PREMIUM_CONFIG.FREE_LIMIT);
     const API_URL = "https://script.google.com/macros/s/AKfycbzeDbOOONWxW-K6TfVzOzImxX4vobCTwMuOB8Lehd4DS_NfwrInxcN8XpynzjuIPRaXaQ/exec";
 
     const LEVELS = [
@@ -1280,7 +1282,7 @@
     }
 
     function isPremiumActive() {
-      return localStorage.getItem(PREMIUM_FLAG) === "true";
+      return window.MauroPremium?.isAuthorized() === true;
     }
 
     function toggleTopicDone(id) {
@@ -1415,8 +1417,8 @@
       } else {
         premiumBox.classList.remove("premium-ok");
         premiumTitle.textContent = "🔓 Activa Premium y desbloquea los 124 temas";
-        premiumText.textContent = "Los 3 primeros temas son gratuitos. Activa tu código si ya compraste, o elige un plan para continuar con toda la ruta.";
-        premiumBadge.textContent = "3 temas gratis · 121 Premium";
+        premiumText.textContent = "Consulta en la ruta principal las condiciones de acceso vigentes. Activa tu código si ya compraste, o elige un plan para continuar con toda la ruta.";
+        premiumBadge.textContent = "Consulta el acceso en la ruta principal";
         premiumForm.style.display = "block";
         premiumSuccess.style.display = "none";
       }
@@ -1793,5 +1795,18 @@
 
     render();
   </script>
+<script src="acceso-premium.js"></script>
+<script>
+// Preserve the historical curriculum and its progress keys. Authentication is shared.
+function abrirAccesoActual() { location.href = 'ruta-chess.html?login=1'; return false; }
+activarCodigo = abrirAccesoActual;
+mostrarAvisoPremium = abrirAccesoActual;
+comprarPagoUnico = abrirAccesoActual;
+crearSuscripcion = abrirAccesoActual;
+window.addEventListener('mauro:premium-updated', () => { actualizarCajaPremium(); render(); });
+const previousPremiumValidate = window.MauroPremium.validate;
+previousPremiumValidate().then(() => { actualizarCajaPremium(); render(); });
+window.addEventListener('focus', () => previousPremiumValidate().then(() => { actualizarCajaPremium(); render(); }));
+</script>
 </body>
 </html>

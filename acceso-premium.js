@@ -91,6 +91,11 @@
     document.querySelectorAll('.topic-card').forEach(card => {
       const n = topicNumber(card);
       if (!n) return;
+      if (card.dataset.plannedUrl) {
+        card.setAttribute('aria-disabled', 'true');
+        ensureBadge(card, 'Próximamente', 'planned');
+        return;
+      }
       card.dataset.topicNumber = String(n);
       if (n <= FREE_LIMIT) {
         card.classList.add('mauro-free');
@@ -111,6 +116,7 @@
       }
     });
     updateStatusUI();
+    window.dispatchEvent(new CustomEvent("mauro:premium-updated"));
   }
 
   function updateStatusUI(message) {
@@ -255,6 +261,7 @@
     // Captura: bloquea antes de los listeners existentes del HTML.
     document.addEventListener('click', function (event) {
       const card = event.target.closest?.('.topic-card');
+      if (card?.dataset.plannedUrl) return;
       if (card && topicNumber(card) > FREE_LIMIT && !state.authorized) {
         event.preventDefault();
         event.stopImmediatePropagation();

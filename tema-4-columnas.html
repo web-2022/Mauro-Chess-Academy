@@ -1548,7 +1548,7 @@ function finish(){
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='tema-5-diagonales.html'}
+function goNext(){window.location.href='ruta-chess.html#proximamente'}
 
 renderBoard();
 try{
@@ -1566,5 +1566,26 @@ renderStep();
       }
 
     </script>
+<script>
+(function () {
+  const key = 'mauro_lesson_resume_4_v1';
+  const originalRender = window.renderStep;
+  const originalFinish = window.finish;
+  let finished = false;
+  function save(completed = finished) {
+    try { localStorage.setItem(key, JSON.stringify({step, xp, attempts, completed})); } catch (_) {}
+  }
+  window.renderStep = function () { finished = false; const result = originalRender.apply(this, arguments); save(); return result; };
+  window.finish = function () { const result = originalFinish.apply(this, arguments); finished = true; save(true); return result; };
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || 'null');
+    if (saved && !saved.completed && Number.isInteger(saved.step) && saved.step >= 0 && saved.step < steps.length) {
+      step = saved.step; xp = Math.max(0, Number(saved.xp) || 0); attempts = Math.max(0, Number(saved.attempts) || 0);
+      window.renderStep();
+    }
+  } catch (_) {}
+  window.addEventListener('pagehide', () => { if (step < steps.length) save(); });
+})();
+</script>
 </body>
 </html>
