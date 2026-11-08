@@ -7,7 +7,7 @@ window.MAURO_CONFIG = Object.freeze({
     slug: "que-es-el-ajedrez",
     name: "¿Qué es el ajedrez?",
     totalSteps: 21,
-    url: "tema-1-que-es-el-ajedrez-v2.html",
+    url: "tema-1-que-es-el-ajedrez.html",
     canonical: "https://web-2022.github.io/Mauro-Chess-Academy/tema-1-que-es-el-ajedrez.html",
     nextUrl: "tema-2-el-tablero-de-ajedrez.html"
   },

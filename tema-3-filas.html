@@ -1551,5 +1551,26 @@ renderStep();
       }
 
     </script>
+<script>
+(function () {
+  const key = 'mauro_lesson_resume_3_v1';
+  const originalRender = window.renderStep;
+  const originalFinish = window.finish;
+  let finished = false;
+  function save(completed = finished) {
+    try { localStorage.setItem(key, JSON.stringify({step, xp, attempts, completed})); } catch (_) {}
+  }
+  window.renderStep = function () { finished = false; const result = originalRender.apply(this, arguments); save(); return result; };
+  window.finish = function () { const result = originalFinish.apply(this, arguments); finished = true; save(true); return result; };
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || 'null');
+    if (saved && !saved.completed && Number.isInteger(saved.step) && saved.step >= 0 && saved.step < steps.length) {
+      step = saved.step; xp = Math.max(0, Number(saved.xp) || 0); attempts = Math.max(0, Number(saved.attempts) || 0);
+      window.renderStep();
+    }
+  } catch (_) {}
+  window.addEventListener('pagehide', () => { if (step < steps.length) save(); });
+})();
+</script>
 </body>
 </html>
