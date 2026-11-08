@@ -3,14 +3,18 @@
   const synth = window.speechSynthesis;
   const key = 'mauro_topic1_voice_v1';
   const presets = {
+    veteran: {rate: 0.78, pitch: 0.68},
     experienced: {rate: 0.84, pitch: 0.82},
     warm: {rate: 0.9, pitch: 0.94},
     firm: {rate: 0.96, pitch: 0.88}
   };
-  let preferences = {style: 'experienced', voice: ''};
+  let preferences = {style: 'veteran', voice: '', revision: 2};
   try {
     const saved = JSON.parse(localStorage.getItem(key) || 'null');
-    if (saved) preferences = {style: presets[saved.style] ? saved.style : 'experienced', voice: String(saved.voice || '')};
+    if (saved) preferences = {
+      style: saved.revision !== 2 && saved.style === 'experienced' ? 'veteran' : presets[saved.style] ? saved.style : 'veteran',
+      voice: String(saved.voice || ''), revision: 2
+    };
   } catch (_) {}
   const style = document.getElementById('mauroVoiceStyle');
   const choice = document.getElementById('mauroVoiceChoice');
@@ -54,6 +58,7 @@
     synth.speak(utterance);
   }
   window.MauroVoice = {speak};
+  save();
   style.value = preferences.style;
   style.addEventListener('change', () => { preferences.style = style.value; synth?.cancel(); save(); describe(); });
   choice.addEventListener('change', () => { preferences.voice = choice.value; synth?.cancel(); save(); describe(); });
