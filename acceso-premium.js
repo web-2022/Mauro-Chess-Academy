@@ -116,6 +116,7 @@
       }
     });
     updateStatusUI();
+    window.dispatchEvent(new CustomEvent("mauro:premium-updated"));
   }
 
   function updateStatusUI(message) {

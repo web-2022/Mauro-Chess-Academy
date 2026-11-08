@@ -1803,6 +1803,7 @@ activarCodigo = abrirAccesoActual;
 mostrarAvisoPremium = abrirAccesoActual;
 comprarPagoUnico = abrirAccesoActual;
 crearSuscripcion = abrirAccesoActual;
+window.addEventListener('mauro:premium-updated', () => { actualizarCajaPremium(); render(); });
 const previousPremiumValidate = window.MauroPremium.validate;
 previousPremiumValidate().then(() => { actualizarCajaPremium(); render(); });
 window.addEventListener('focus', () => previousPremiumValidate().then(() => { actualizarCajaPremium(); render(); }));
