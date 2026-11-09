@@ -1,4 +1,4 @@
-const CACHE_NAME = "ajedrez-mauro-v187";
+const CACHE_NAME = "ajedrez-mauro-v188";
 
 /*
   ACADEMIA MAURO
@@ -15,6 +15,12 @@ const CACHE_NAME = "ajedrez-mauro-v187";
 
 const CORE_ASSETS = [
   "./index.html",
+  "./miProgreso.html",
+  "./js/mauro-ui.css?v=188",
+  "./js/mauro-ui.js?v=188",
+  "./js/mauro-catalog.js?v=188",
+  "./js/mauro-learning.js?v=188",
+  "./js/mauro-route-render.js?v=188",
   "./manifest.json",
 
   // Motor común de Academia Mauro
