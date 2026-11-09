@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="es-PE">
 <head>
+<link rel="stylesheet" href="js/mauro-voice.css?v=187">
+<script src="js/mauro-voice.js?v=187"></script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>¿Qué es el ajedrez? Aprende desde cero | Academia Mauro</title>
@@ -1204,7 +1207,7 @@ function speak(text){
  const voices=speechSynthesis.getVoices();
  const preferred=voices.find(v=>/es-PE/i.test(v.lang))||voices.find(v=>/^es/i.test(v.lang));
  if(preferred) u.voice=preferred;
- speechSynthesis.speak(u);
+ window.MauroVoice.speakUtterance(u);
 }
 
 function softBuzz(){if(navigator.vibrate) navigator.vibrate(35)}

@@ -2,6 +2,9 @@
 <html lang="es">
 
     <head>
+<link rel="stylesheet" href="js/mauro-voice.css?v=187">
+<script src="js/mauro-voice.js?v=187"></script>
+
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Ajedrez • Valor de las piezas</title>
@@ -316,7 +319,7 @@
                 u.lang = "es-PE";
                 u.rate = .9;
                 speechSynthesis.cancel();
-                speechSynthesis.speak(u);
+                window.MauroVoice.speakUtterance(u);
             }
 
             function loadExercise() {

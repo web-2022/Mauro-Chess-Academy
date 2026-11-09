@@ -2,6 +2,9 @@
 <html lang="es">
 
     <head>
+<link rel="stylesheet" href="js/mauro-voice.css?v=187">
+<script src="js/mauro-voice.js?v=187"></script>
+
         <meta charset="UTF-8" />
         <title>Ajedrez • Mates en 1-Nivel Táctico</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1739,7 +1742,7 @@ Lograste <strong>${correctCount}</strong> mates correctos.
                 u.lang = "es-PE";
                 u.rate = 0.95;
                 window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(u);
+                window.MauroVoice.speakUtterance(u);
             }
             function speakPrompt() {
                 if (!puzzle) return;

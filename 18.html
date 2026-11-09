@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<link rel="stylesheet" href="js/mauro-voice.css?v=187">
+<script src="js/mauro-voice.js?v=187"></script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#020617">
@@ -169,7 +172,7 @@ const tests=[
  {choice:true,q:'¿Qué significa pieza enemiga?',options:['Una pieza barata','Una pieza que controla el rival','Una pieza atacada'],answer:1,hint:'Piensa en quién controla la pieza.'}
 ];
 
-function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-PE';u.rate=.92;speechSynthesis.speak(u)}
+function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-PE';u.rate=.92;window.MauroVoice.speakUtterance(u)}
 function clearMarks(){document.querySelectorAll('.square').forEach(s=>s.classList.remove('own','enemy','temp'))}
 function renderBoard(){
  const b=document.getElementById('board');b.innerHTML='';

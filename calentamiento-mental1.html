@@ -2,6 +2,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<link rel="stylesheet" href="js/mauro-voice.css?v=187">
+<script src="js/mauro-voice.js?v=187"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#22c55e" />
@@ -615,7 +618,7 @@
     u.lang = "es-PE";
     u.rate = 0.9;
     speechSynthesis.cancel();
-    speechSynthesis.speak(u);
+    window.MauroVoice.speakUtterance(u);
   }
 
   function startWarmup(){

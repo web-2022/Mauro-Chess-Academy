@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="es-PE">
 <head>
+<link rel="stylesheet" href="js/mauro-voice.css?v=187">
+<script src="js/mauro-voice.js?v=187"></script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Calentamiento mental de ajedrez | Academia Mauro</title>
@@ -576,7 +579,7 @@ function renderBoard(){
 function speak(text){
  if(!('speechSynthesis' in window)) return;
  window.speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);u.lang='es-PE';u.rate=.93;window.speechSynthesis.speak(u);
+ const u=new SpeechSynthesisUtterance(text);u.lang='es-PE';u.rate=.93;window.MauroVoice.speakUtterance(u);
 }
 function successBuzz(){try{navigator.vibrate?.([35,45,35])}catch(e){}}
 function softBuzz(){try{navigator.vibrate?.(35)}catch(e){}}
