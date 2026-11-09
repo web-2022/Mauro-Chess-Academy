@@ -3,15 +3,15 @@
 
   <head>
 <link rel="stylesheet" href="js/mauro-voice.css?v=187">
-<script src="js/mauro-voice.js?v=187"></script>
+<script src="js/mauro-voice.js?v=192"></script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajedrez • Buscar la casilla</title>
+    <title>Coordenadas · Práctica | Academia Mauro</title>
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1976d2">
+    <meta name="theme-color" content="#06111f">
 
     <style>
       * {
@@ -219,57 +219,18 @@
         min-height: 44px;
       }
     </style>
-  <link rel="stylesheet" href="js/mauro-ui.css?v=188">
-<script defer src="js/mauro-ui.js?v=188"></script>
-</head>
+  <link rel="stylesheet" href="js/mauro-ui.css?v=192">
+<link rel="stylesheet" href="js/mauro-header.css?v=192"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
+<link rel="stylesheet" href="js/mauro-responsive.css?v=192"><link rel="stylesheet" href="js/mauro-exercise.css?v=192"><script defer src="js/mauro-practice.js?v=192"></script></head>
 
-  <body>
-    <div class="app">
-
-      <!-- HEADER -->
-      <div class="brand-header-kids">
-        <div class="brand-row">
-          <div class="kids-badge">📍</div>
-          <div>
-            <div class="kids-title">Academia de Ajedrez Mauro</div>
-            <div class="kids-subtitle">
-              <span class="kids-pill" onclick="location.href='index.html'">Inicio</span>
-              <span class="kids-pill" onclick="location.href='ruta-chess.html'">Ruta de aprendizaje</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h1>Buscar la casilla</h1>
-      <p class="subtitle" id="instruction">Escucha y toca la casilla correcta</p>
-
-      <div class="status-bar">
-        <div>✅ <b id="ok">0</b></div>
-        <div>❌ <b id="bad">0</b></div>
-        <div>📊 <b id="prog">0</b>/10</div>
-      </div>
-
-      <div class="progress">
-        <div class="progress-inner" id="bar"></div>
-      </div>
-
-      <div class="card">
-        <div class="board" id="board"></div>
-        <div class="feedback" id="feedback"></div>
-      </div>
-
-      <div class="controls">
-        <button class="main-btn" onclick="repeatVoice()">🔊 Repetir</button>
-        <button class="main-btn" onclick="next()">Siguiente</button>
-        <button class="main-btn" id="nextTopicBtn" style="display:none;background:#16a34a"
-          onclick="goNextTopic()">Siguiente tema</button>
-      </div>
-
-    </div>
-
-    <script>
+  <body class="mauro-exercise" data-exercise="coordinates"><div class="app">
+ <header class="exercise-progress"><a href="practica.html">← Práctica</a><div class="exercise-status"><span>✓ Aciertos <b id="ok">0</b></span><span>Intentos <b id="prog">0</b>/10</span><span>Errores <b id="bad">0</b></span></div><div class="progress" id="exerciseMeter" role="progressbar" aria-label="Progreso de la sesión" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div class="progress-inner" id="bar"></div></div></header>
+ <main class="exercise-layout"><section class="exercise-intro"><span class="exercise-kicker">MAURO · ENTRENAMIENTO GUIADO</span><h1>Coordenadas</h1><p id="instruction">Encuentra la casilla indicada en el tablero.</p></section>
+ <section class="exercise-board"><div class="exercise-board-label">♟ Tablero interactivo</div><div class="exercise-board-shell"><div class="board" id="board"></div></div><p class="exercise-board-note">Columnas a–h · Filas 1–8</p></section>
+ <section class="exercise-action"><p>Una respuesta por ronda. Pulsa Siguiente para continuar.</p><div class="feedback" id="feedback" role="status" aria-live="polite"></div><div class="controls"><button class="main-btn" onclick="repeatVoice()">🔊 Escuchar instrucción</button><button class="main-btn primary" onclick="next()">Siguiente →</button><button class="main-btn" id="nextTopicBtn" style="display:none" onclick="goNextTopic()">Volver a Práctica</button></div><div id="exerciseSummary" hidden></div><p class="exercise-tip">Escucha la instrucción y resuelve cada ronda a tu ritmo.</p><a href="practica.html">Elegir otro entrenamiento</a></section></main></div>
+ <script>
       const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
-      let target = "";
+      let target = ""; let answered = false;
       let ok = 0, bad = 0, attempts = 0;
       const TOTAL = 10;
 
@@ -297,14 +258,18 @@
       }
 
       function newTarget() {
+        answered = false;
+        document.querySelectorAll("#board .sq").forEach(square=>square.classList.remove("correct","wrong"));
         const file = files[Math.floor(Math.random() * 8)];
         const rank = Math.floor(Math.random() * 8) + 1;
         target = file + rank;
+        document.getElementById("instruction").textContent = "Encuentra la casilla " + target.toUpperCase() + ".";
         speak(`Busca la casilla ${target}`);
       }
 
       function check(c, el) {
-        if (attempts >= TOTAL) return;
+        if (attempts >= TOTAL || answered) return;
+        answered = true;
         document.querySelectorAll(".sq").forEach(s => s.classList.remove("correct", "wrong"));
 
         if (c === target) {
@@ -343,6 +308,7 @@
       }
 
       function finish() {
+        window.MauroPractice?.record("coordinates", {correct:ok,total:attempts});
         feedback.textContent = "🎉 ¡Clase completada!";
         feedback.className = "feedback good";
         speak("Excelente, completaste la clase");
@@ -350,7 +316,7 @@
       }
 
       function goNextTopic() {
-        location.href = "ajedrez-03.html";
+        location.href = "practica.html";
       }
 
       const okEl = document.getElementById("ok");

@@ -3,14 +3,14 @@
 
     <head>
 <link rel="stylesheet" href="js/mauro-voice.css?v=187">
-<script src="js/mauro-voice.js?v=187"></script>
+<script src="js/mauro-voice.js?v=192"></script>
 
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ajedrez • Clase 3: ¿Dónde está la pieza?</title>
+        <title>Reconoce las piezas · Práctica | Academia Mauro</title>
 
         <link rel="manifest" href="manifest.json">
-        <meta name="theme-color" content="#1976d2">
+        <meta name="theme-color" content="#06111f">
 
         <style>
             * {
@@ -302,63 +302,16 @@
                 }
             }
         </style>
-    <link rel="stylesheet" href="js/mauro-ui.css?v=188">
-<script defer src="js/mauro-ui.js?v=188"></script>
-</head>
+    <link rel="stylesheet" href="js/mauro-ui.css?v=192">
+<link rel="stylesheet" href="js/mauro-header.css?v=192"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
+<link rel="stylesheet" href="js/mauro-responsive.css?v=192"><link rel="stylesheet" href="js/mauro-exercise.css?v=192"><script defer src="js/mauro-practice.js?v=192"></script></head>
 
-    <body>
-
-        <div class="app">
-
-            <!-- HEADER -->
-            <div class="brand-header-kids">
-                <div class="brand-row">
-                    <div class="kids-badge">♟️</div>
-
-                    <div>
-                        <div class="kids-title">Academia de Ajedrez Mauro</div>
-
-                        <div class="kids-subtitle">
-                            <span class="kids-pill nav" onclick="location.href='index.html'">
-                                Inicio
-                            </span>
-
-                            <span class="kids-pill nav" onclick="location.href='ruta-chess.html'">
-                                Ruta de aprendizaje
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <h1>¿Dónde está la pieza?</h1>
-            <p class="subtitle">Observa el tablero y elige la coordenada correcta</p>
-
-            <div class="status">
-                <div>✅ Bien: <b id="ok">0</b></div>
-                <div>📊 <b id="count">0/10</b></div>
-            </div>
-
-            <div class="progress">
-                <div class="progress-inner" id="bar"></div>
-            </div>
-
-            <div class="card">
-                <div class="piece-question" id="question"></div>
-                <div class="board" id="board"></div>
-                <div class="options" id="options"></div>
-                <div class="feedback" id="feedback"></div>
-            </div>
-
-            <div class="controls">
-                <button class="btn" onclick="next()">Siguiente</button>
-                <button class="btn" onclick="share()">📤 Compartir</button>
-            </div>
-
-        </div>
-
-        <script>
+    <body class="mauro-exercise" data-exercise="pieces"><div class="app">
+ <header class="exercise-progress"><a href="practica.html">← Práctica</a><div class="exercise-status"><span>✓ Aciertos <b id="ok">0</b></span><span>Progreso <b id="count">0/10</b></span></div><div class="progress" id="exerciseMeter" role="progressbar" aria-label="Progreso de la sesión" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div class="progress-inner" id="bar"></div></div></header>
+ <main class="exercise-layout"><section class="exercise-intro"><span class="exercise-kicker">MAURO · ENTRENAMIENTO GUIADO</span><h1>Reconoce las piezas</h1><p>Observa la pieza y elige su coordenada.</p><div class="piece-question" id="question"></div></section>
+ <section class="exercise-board"><div class="exercise-board-label">♟ Tablero interactivo</div><div class="exercise-board-shell"><div class="board" id="board"></div></div><p class="exercise-board-note">Columnas a–h · Filas 1–8</p></section>
+ <section class="exercise-action"><div class="options" id="options"></div><div class="feedback" id="feedback" role="status" aria-live="polite"></div><div class="controls"><button class="main-btn" onclick="speak(document.getElementById('question').textContent)">🔊 Escuchar instrucción</button><button class="main-btn primary" onclick="next()" id="exerciseNext">Siguiente →</button></div><div id="exerciseSummary" hidden></div><p class="exercise-tip">Escucha la instrucción y resuelve cada ronda a tu ritmo.</p><a href="practica.html">Elegir otro entrenamiento</a></section></main></div>
+ <script>
             const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
             const pieces = [
                 { n: "rey", s: "♔" },
@@ -405,6 +358,7 @@
             }
 
             function next() {
+                if (total >= 10) return;
                 locked = false;
                 buildBoard();
                 document.getElementById("feedback").textContent = "";
@@ -413,7 +367,8 @@
                 piece = pieces[Math.floor(Math.random() * pieces.length)];
 
                 const idx = (8 - (+target[1])) * 8 + files.indexOf(target[0]);
-                document.querySelectorAll(".sq")[idx].textContent = piece.s;
+                const square=document.querySelectorAll(".sq")[idx];
+                const image=document.createElement('img');image.src='pieces/'+({'rey':'wK','dama':'wQ','torre':'wR','alfil':'wB','caballo':'wN','peón':'wP'}[piece.n])+'.png';image.alt=piece.n;square.append(image);
 
                 document.getElementById("question").textContent =
                     `¿En qué casilla está ${article(piece.n)} ${piece.n}?`
@@ -458,9 +413,11 @@
                 document.getElementById("bar").style.width = (total / 10 * 100) + "%";
 
                 if (total === 10) {
+                    window.MauroPractice?.record("pieces",{correct:ok,total:total});
+                    document.getElementById("exerciseNext").disabled=true;
                     setTimeout(() => {
-                        speak("Excelente. Terminaste la clase tres");
-                        alert("🎉 Clase 3 completada");
+                        speak("Excelente. Completaste la sesión de reconocimiento");
+                        document.getElementById("feedback").textContent="¡Sesión completada!";
                     }, 400);
                 }
             }

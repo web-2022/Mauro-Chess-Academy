@@ -1,4 +1,4 @@
-const CACHE_NAME = "ajedrez-mauro-v191";
+const CACHE_NAME = "ajedrez-mauro-v192";
 
 /*
   ACADEMIA MAURO
@@ -15,14 +15,17 @@ const CACHE_NAME = "ajedrez-mauro-v191";
 
 const CORE_ASSETS = [
   "./index.html",
-  "./js/mauro-header.css?v=191",
-  "./js/mauro-header.js?v=191",
+  "./js/mauro-responsive.css?v=192",
+  "./js/mauro-exercise.css?v=192",
+  "./js/mauro-practice.js?v=192",
+  "./js/mauro-header.css?v=192",
+  "./js/mauro-header.js?v=192",
   "./assets/chess-studio.webp",
-  "./js/mauro-welcome.css?v=191",
-  "./js/mauro-welcome.js?v=191",
+  "./js/mauro-welcome.css?v=192",
+  "./js/mauro-welcome.js?v=192",
   "./miProgreso.html",
-  "./js/mauro-ui.css?v=188",
-  "./js/mauro-ui.js?v=191",
+  "./js/mauro-ui.css?v=192",
+  "./js/mauro-ui.js?v=192",
   "./js/mauro-catalog.js?v=188",
   "./js/mauro-learning.js?v=188",
   "./js/mauro-route-render.js?v=188",
@@ -34,7 +37,7 @@ const CORE_ASSETS = [
   "./js/mauro-analytics.js",
   "./js/mauro-profile.js",
   "./js/mauro-pwa.js",
-  "./js/mauro-voice.js?v=187",
+  "./js/mauro-voice.js?v=192",
   "./js/mauro-voice.css?v=187",
 
   // Iconos PWA

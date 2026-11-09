@@ -2,7 +2,7 @@
 <html lang="es-PE">
 <head>
 <link rel="stylesheet" href="js/mauro-voice.css?v=187">
-<script src="js/mauro-voice.js?v=187"></script>
+<script src="js/mauro-voice.js?v=192"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -388,9 +388,9 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
 }
 </script>
 
-<link rel="stylesheet" href="js/mauro-ui.css?v=188">
-<script defer src="js/mauro-ui.js?v=188"></script>
-</head>
+<link rel="stylesheet" href="js/mauro-ui.css?v=192">
+<link rel="stylesheet" href="js/mauro-header.css?v=192"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
+<link rel="stylesheet" href="js/mauro-responsive.css?v=192"></head>
 <body>
 <div class="app">
   <header class="topbar">
@@ -412,27 +412,6 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
       <div class="stat">❤️ ∞</div>
     </div>
   </header>
-
-  <details class="voice-settings">
-    <summary>🎙 Voz de Mauro · elegir y probar</summary>
-    <div class="voice-options">
-      <label>Estilo de narración
-        <select id="mauroVoiceStyle">
-          <option value="young">Varón joven · natural y dinámico</option>
-          <option value="veteran">Maestro veterano · más grave y pausado</option>
-          <option value="experienced">Maestro experimentado · grave y pausado</option>
-          <option value="warm">Mentor cercano · tranquilo</option>
-          <option value="firm">Entrenador firme · claro y directo</option>
-        </select>
-      </label>
-      <label>Voz en español
-        <select id="mauroVoiceChoice"><option value="">Automática · preferir voz masculina</option></select>
-      </label>
-      <button type="button" class="mini-btn" id="mauroVoicePreview">▶ Probar voz</button>
-      <button type="button" class="mini-btn" id="mauroVoiceStop">■ Detener</button>
-    </div>
-    <p id="mauroVoiceStatus" role="status"></p>
-  </details>
   <main class="main">
     <section class="card board-card">
       <div class="board-head">

@@ -111,7 +111,7 @@ export function mountChessScene(host) {
   const onPointer=event=>{if(reduced||paused||event.pointerType==='touch')return;const bounds=host.getBoundingClientRect();pointerX=(event.clientX-bounds.left)/bounds.width-.5;pointerY=(event.clientY-bounds.top)/bounds.height-.5;start();};host.addEventListener('pointermove',onPointer);
   host.addEventListener('pointerleave',()=>{pointerX=pointerY=0;start();});
   const onReduce=()=>{reduced=reduce.matches;pointerX=pointerY=currentX=currentY=0;halt();draw();if(!reduced)start();};reduce.addEventListener('change',onReduce);
-  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();contextLost=true;halt();poster.hidden=false;host.dataset.scene='fallback';host.parentElement.querySelector('.mauro-scene-controls').hidden=true;});
+  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();contextLost=true;halt();poster.hidden=false;host.dataset.scene='fallback';});
   const api={snapshot(){draw();return canvas.toDataURL('image/png');},replay(){elapsed=0;paused=false;draw();start();},pause(){paused=true;halt();},resume(){paused=false;start();},get reduced(){return reduced;},get animating(){return frame!==0;},dispose(){disposed=true;halt();observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',onVisibility);reduce.removeEventListener('change',onReduce);scene.traverse(node=>{if(node.geometry)node.geometry.dispose();});new Set([lightTile,darkTile,edge,brass,ivory,ebony,eyeMaterial,accent]).forEach(material=>{material.map?.dispose();material.dispose();});renderer.dispose();}};
   draw();start();return api;
 }
