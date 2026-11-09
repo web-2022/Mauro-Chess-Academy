@@ -1,21 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Aprende ajedrez con Academia Mauro: clases interactivas, ejercicios y una ruta progresiva de aprendizaje."><meta name="google-site-verification" content="t9KwBRIUgWYwkNk4A9yN5tcqE0dVzDQrztxNiC53cR8"><title>Academia Mauro · Aprende ajedrez paso a paso</title><link rel="canonical" href="https://web-2022.github.io/Mauro-Chess-Academy/"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#06111f"><link rel="stylesheet" href="js/mauro-ui.css?v=188"><script defer src="js/mauro-ui.js?v=189"></script><script defer src="js/mauro-pwa.js"></script><link rel="stylesheet" href="js/mauro-welcome.css?v=190"><script defer src="js/mauro-welcome.js?v=189"></script></head><body class="mauro-page"><div id="mauroWelcome">    <nav class="nav" id="nav" data-mauro-navigation aria-label="Navegación principal">
-      <div class="container nav-inner">
-        <a class="brand" href="#inicio" aria-label="Academia de Ajedrez Mauro">
-          <span class="brand-mark">♞</span>
-          <span>Academia Mauro<small>Ajedrez & estrategia</small></span>
-        </a>
-
-        <div class="nav-links" id="navLinks">
-<a href="index.html" aria-current="page">Inicio</a><a href="miProgreso.html">Mi aprendizaje</a><a href="ruta-chess.html">Ruta</a><a href="practica.html">Práctica</a>
-</div>
-
-        <div class="nav-cta">
-          <a class="btn btn-primary btn-sm" href="inicio-anterior.html#contacto">Clase
-            gratuita de evaluación</a>
-          <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú" aria-controls="navLinks" aria-expanded="false">☰</button>
-        </div>
-      </div>
-    </nav>    <header class="hero" id="inicio">
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Aprende ajedrez con Academia Mauro: clases interactivas, ejercicios y una ruta progresiva de aprendizaje."><meta name="google-site-verification" content="t9KwBRIUgWYwkNk4A9yN5tcqE0dVzDQrztxNiC53cR8"><title>Academia Mauro · Aprende ajedrez paso a paso</title><link rel="canonical" href="https://web-2022.github.io/Mauro-Chess-Academy/"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#06111f"><link rel="stylesheet" href="js/mauro-ui.css?v=188"><link rel="stylesheet" href="js/mauro-header.css?v=191"><script defer src="js/mauro-header.js?v=191"></script><script defer src="js/mauro-ui.js?v=191"></script><script defer src="js/mauro-pwa.js"></script><link rel="stylesheet" href="js/mauro-welcome.css?v=191"><script defer src="js/mauro-welcome.js?v=191"></script></head><body class="mauro-page mauro-home"><div id="mauroSharedHeader"><noscript><a href="index.html">Inicio</a> · <a href="miProgreso.html">Mi aprendizaje</a> · <a href="ruta-chess.html">Ruta</a> · <a href="practica.html">Práctica</a></noscript></div><div id="mauroWelcome">        <header class="hero" id="inicio">
       <div class="container hero-grid">
         <div>
           <div class="eyebrow"><span class="pulse-dot"></span> Matrículas abiertas</div>
@@ -41,17 +24,15 @@
           </div>
         </div>
 
-        <div class="chess-visual" aria-hidden="true">
-          <div class="orb"></div>
-          <div class="board-wrap">
-            <div class="board" id="welcomeBoard"></div>
-            <div class="piece king">♛</div>
-            <div class="piece queen">♜</div>
-            <div class="piece knight">♞</div>
+        <div class="chess-visual mauro-studio">
+          <div class="orb" aria-hidden="true"></div>
+          <div class="mauro-scene" id="mauroChessScene" data-scene="poster" role="img" aria-label="Tablero de ajedrez de madera y marfil con piezas tridimensionales. El caballo blanco avanza de g1 a f3.">
+            <img src="assets/chess-studio.webp" width="960" height="960" alt="Tablero de madera con piezas de ajedrez Staunton" fetchpriority="high">
+            <canvas aria-hidden="true"></canvas>
           </div>
-          <div class="floating-card card-1"><strong>4 clases</strong><span>disponibles para empezar</span></div>
-          <div class="floating-card card-2"><strong>Ruta completa</strong><span>de principiante a competencia</span>
-          </div>
+          <div class="floating-card card-1" aria-hidden="true"><strong>Piensa tu jugada.</strong><span>Comprende. Decide. Avanza.</span></div>
+          <div class="floating-card card-2" aria-hidden="true"><strong>Caballo g1 → f3</strong><span>El comienzo de una estrategia</span></div>
+          <div class="mauro-scene-controls" hidden><button type="button" id="mauroSceneReplay">↻ Repetir jugada</button><button type="button" id="mauroScenePause" aria-pressed="false">Pausar animación</button></div>
         </div>
       </div>
     </header></div><div class="mauro-shell"><main>

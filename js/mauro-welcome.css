@@ -470,3 +470,14 @@
 #mauroWelcome .nav-links a{padding:10px 13px;border-radius:12px;background:#0d1c30;color:#edf4ff;font-size:14px;font-weight:700}
 #mauroWelcome .nav-links a:hover{background:#163449;color:#75f4d4}
 #mauroWelcome .nav-links a[aria-current="page"]{background:#173d48;color:#75f4d4}
+/* Studio de ajedrez: WebGL con imagen de respaldo. */
+#mauroWelcome .mauro-studio{min-width:0;min-height:610px;isolation:isolate}
+#mauroWelcome .mauro-scene{width:calc(100% + 120px);height:600px;position:relative;z-index:1;touch-action:pan-y}
+#mauroWelcome .mauro-scene canvas,#mauroWelcome .mauro-scene img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
+#mauroWelcome .mauro-scene canvas{opacity:0;transition:opacity .4s}#mauroWelcome .mauro-scene[data-scene=ready] canvas{opacity:1}#mauroWelcome .mauro-scene[data-scene=fallback] canvas{opacity:0}#mauroWelcome .mauro-scene img[hidden]{display:none}
+#mauroWelcome .mauro-studio .orb{width:100%;height:100%;background:radial-gradient(ellipse,rgba(33,138,127,.25),transparent 65%);animation:none;filter:blur(20px)}
+#mauroWelcome .mauro-studio .card-1{right:-35px;top:2%;z-index:2;animation:none}#mauroWelcome .mauro-studio .card-2{left:-25px;bottom:15%;z-index:2;animation:none}
+#mauroWelcome .mauro-scene-controls{position:absolute;bottom:10px;left:0;right:0;display:flex;gap:8px;justify-content:center;z-index:3}#mauroWelcome .mauro-scene-controls[hidden]{display:none}#mauroWelcome .mauro-scene-controls button{padding:9px 12px;border:1px solid #4e7379;border-radius:12px;background:#0c1d2dde;color:#d9f5ee;cursor:pointer;font:600 12px system-ui,sans-serif}#mauroWelcome .mauro-scene-controls button:focus-visible{outline:3px solid #6ee7ff;outline-offset:4px}
+@media(max-width:1150px){#mauroWelcome .mauro-scene{width:calc(100% + 40px);height:520px}#mauroWelcome .mauro-studio{min-height:540px}#mauroWelcome .mauro-studio .card-1{right:0}#mauroWelcome .mauro-studio .card-2{left:0}}
+@media(max-width:760px){#mauroWelcome .mauro-studio{min-height:390px}#mauroWelcome .mauro-scene{width:100%;height:370px}#mauroWelcome .mauro-scene-controls{bottom:0}}
+@media(min-width:761px){#mauroWelcome h1{font-size:clamp(3.2rem,6.2vw,6rem)}#mauroWelcome .hero-grid{grid-template-columns:minmax(0,1.07fr) minmax(0,.93fr)}}

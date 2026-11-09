@@ -1,9 +1,18 @@
 (function(){
-  const board=document.getElementById('welcomeBoard');
-  if(board)for(let row=0;row<8;row++)for(let col=0;col<8;col++){const square=document.createElement('div');square.className='sq '+((row+col)%2?'dark':'light');board.append(square);}
-  const button=document.getElementById('menuBtn'),links=document.getElementById('navLinks');
-  function close(){links.classList.remove('open');button.setAttribute('aria-expanded','false');}
-  button.addEventListener('click',()=>{const open=links.classList.toggle('open');button.setAttribute('aria-expanded',String(open));});
-  links.addEventListener('click',event=>{if(event.target.closest('a'))close();});
-  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&links.classList.contains('open')){close();button.focus();}});
+  const host=document.getElementById('mauroChessScene');if(!host)return;
+  let started=false;
+  const observer=new IntersectionObserver(async entries=>{
+    if(started||!entries.some(entry=>entry.isIntersecting))return;started=true;observer.disconnect();
+    try{
+      const {mountChessScene}=await import('./mauro-scene.js?v=191');const scene=mountChessScene(host);if(!scene)return;
+      window.MauroChessScene=scene;
+      const controls=host.parentElement.querySelector('.mauro-scene-controls'),replay=document.getElementById('mauroSceneReplay'),pause=document.getElementById('mauroScenePause');
+      controls.hidden=false;
+      function reduced(){pause.hidden=scene.reduced;replay.hidden=scene.reduced;controls.hidden=scene.reduced;}
+      reduced();matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',reduced);
+      replay.addEventListener('click',()=>{scene.replay();pause.textContent='Pausar animación';pause.setAttribute('aria-pressed','false');});
+      pause.addEventListener('click',()=>{const paused=pause.getAttribute('aria-pressed')==='true';if(paused)scene.resume();else scene.pause();pause.setAttribute('aria-pressed',String(!paused));pause.textContent=paused?'Pausar animación':'Reanudar animación';});
+      window.addEventListener('pagehide',()=>scene.pause());window.addEventListener('pageshow',()=>{if(pause.getAttribute('aria-pressed')==='false')scene.resume();});
+    }catch(_){host.dataset.scene='fallback';}
+  },{rootMargin:'150px'});observer.observe(host);
 })();
