@@ -464,3 +464,9 @@
 @media(prefers-reduced-motion:reduce){#mauroWelcome *,#mauroWelcome *::after{animation:none!important;transition:none!important}}
 @media(max-width:760px){#mauroWelcome .hero-actions{display:grid}#mauroWelcome .hero-actions .btn{width:100%;min-width:0}#mauroWelcome .hero-proof{gap:12px}}
 .mauro-contact-floating{position:fixed;right:20px;bottom:20px;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#22c55e;color:#031a12!important;font-size:26px;text-decoration:none;box-shadow:0 8px 24px #0005;z-index:45}.mauro-contact-floating:focus-visible{outline:3px solid white;outline-offset:4px}
+
+/* Navegación principal de cuatro destinos. */
+#mauroWelcome .nav-links{gap:8px}
+#mauroWelcome .nav-links a{padding:10px 13px;border-radius:12px;background:#0d1c30;color:#edf4ff;font-size:14px;font-weight:700}
+#mauroWelcome .nav-links a:hover{background:#163449;color:#75f4d4}
+#mauroWelcome .nav-links a[aria-current="page"]{background:#173d48;color:#75f4d4}
