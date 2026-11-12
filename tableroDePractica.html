@@ -3358,7 +3358,169 @@
     </style>
   <link rel="stylesheet" href="js/mauro-ui.css?v=192">
 <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
-<link rel="stylesheet" href="js/mauro-responsive.css?v=192"></head>
+<link rel="stylesheet" href="js/mauro-responsive.css?v=192">
+    <style id="v20-tablero-libre">
+      /* ===== V20 · Diseño limpio y responsivo para el Tablero libre =====
+         Capa final: corrige las capas anteriores sin borrarlas. */
+
+      /* --- Selector Profesor / Alumno --- */
+      .v20-mode-switch{display:inline-flex;padding:3px;gap:3px;border:1px solid var(--line);border-radius:12px;background:#0b1730}
+      .v20-mode-btn{border:0;border-radius:9px;padding:7px 12px;background:transparent;color:var(--muted);font:inherit;font-weight:850;font-size:.86rem;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+      .v20-mode-btn:hover{color:#fff}
+      .v20-mode-btn[aria-pressed="true"]{background:linear-gradient(90deg,var(--green),var(--blue));color:#03111d}
+      .v20-mode-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+      /* --- Caja para pegar FEN --- */
+      .v20-fen{grid-area:fen;margin-top:10px;padding:10px 12px;border:1px solid rgba(56,189,248,.28);border-radius:14px;background:linear-gradient(145deg,rgba(56,189,248,.07),rgba(34,197,94,.05))}
+      .v20-fen-label{display:block;margin-bottom:6px;font-weight:900;font-size:.9rem;color:#e0f2fe}
+      .v20-fen-row{display:flex;gap:8px;align-items:stretch}
+      .v20-fen-input{flex:1;min-width:0;resize:vertical;min-height:44px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#020617;color:#f8fafc;font:600 .88rem/1.35 ui-monospace,SFMono-Regular,Consolas,monospace}
+      .v20-fen-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(56,189,248,.18)}
+      .v20-fen-buttons{display:flex;flex-direction:column;gap:6px}
+      .v20-btn{min-height:40px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:#0f1d39;color:#e5e7eb;font:inherit;font-weight:850;font-size:.88rem;cursor:pointer;white-space:nowrap}
+      .v20-btn:hover{border-color:rgba(56,189,248,.5)}
+      .v20-btn-primary{border:0;background:linear-gradient(90deg,var(--green),var(--blue));color:#03111d;font-weight:950}
+      .v20-fen-msg{min-height:1.2em;margin-top:6px;font-size:.8rem;font-weight:750;color:var(--muted)}
+      .v20-fen-msg.ok{color:var(--green-soft)} .v20-fen-msg.bad{color:#fecdd3}
+
+      /* --- Estado de la partida --- */
+      .v20-game-status{display:none;padding:3px 9px;border-radius:999px;font-size:.78rem;font-weight:900;background:#0f1d39;border:1px solid var(--line);color:#e5e7eb;white-space:nowrap}
+      .v20-game-status.show{display:inline-block}
+      .v20-game-status.check{background:rgba(250,204,21,.14);border-color:rgba(250,204,21,.5);color:#fde68a}
+      .v20-game-status.mate{background:rgba(251,113,133,.16);border-color:rgba(251,113,133,.55);color:#fecdd3}
+      .v20-game-status.draw{background:rgba(148,163,184,.16);color:#e2e8f0}
+      body:not(#v20) .board-info{display:flex !important;flex-wrap:wrap;align-items:center;gap:6px 12px}
+      body:not(#v20) .board-info #positionInfo{margin-left:auto}
+
+      /* --- Panel derecho: todo en tema oscuro y legible --- */
+      body:not(#v20) .comment-editor-panel{background:linear-gradient(160deg,#0b1730,#071124) !important;color:var(--text) !important;border-color:var(--line) !important}
+      body:not(#v20) .comment-editor-panel h2,body:not(#v20) .comment-editor-panel h3,body:not(#v20) .comment-editor-panel strong{color:#f8fafc !important}
+      body:not(#v20) .comment-editor-panel .field-label,body:not(#v20) .comment-editor-panel .v16-field,body:not(#v20) .comment-editor-panel .comment-help,
+      body:not(#v20) .comment-editor-panel .commented-moves-head span,body:not(#v20) .comment-editor-panel .v16-variant-status,
+      body:not(#v20) .comment-editor-panel .format-note,body:not(#v20) .comment-editor-panel .evaluation-field span{color:#cbd5e1 !important}
+      body:not(#v20) .comment-editor-panel input,body:not(#v20) .comment-editor-panel textarea,body:not(#v20) .comment-editor-panel select{background:#020617 !important;color:#f8fafc !important;border:1px solid var(--line) !important}
+      body:not(#v20) .comment-editor-panel input::placeholder,body:not(#v20) .comment-editor-panel textarea::placeholder{color:#64748b !important}
+      body:not(#v20) .comment-editor-panel .v16-check-row label{color:#e2e8f0 !important;opacity:1 !important;font-size:.82rem !important}
+      body:not(#v20) .comment-editor-panel .nav-btn{background:#0f1d39 !important;color:#e5e7eb !important;border:1px solid var(--line) !important}
+      body:not(#v20) .comment-editor-panel .nav-btn:disabled{opacity:.45 !important}
+      body:not(#v20) .comment-editor-panel .study-counter{color:#e0f2fe !important}
+      body:not(#v20) .comment-editor-panel .move-comment-card,body:not(#v20) .comment-editor-panel .commented-moves,
+      body:not(#v20) .comment-editor-panel .study-list,body:not(#v20) .comment-editor-panel .study-initial-card{background:rgba(2,6,23,.45) !important;border-color:var(--line) !important}
+      body:not(#v20) .comment-editor-panel .study-head-cell,body:not(#v20) .comment-editor-panel .study-head-number,
+      body:not(#v20) .comment-editor-panel .study-turn-number{background:#0f1d39 !important;color:#cbd5e1 !important;border-color:var(--line) !important}
+      body:not(#v20) .comment-editor-panel .study-move-cell{background:#0b1730 !important;color:#e5e7eb !important;border-color:var(--line) !important}
+      body:not(#v20) .comment-editor-panel .study-move-cell *{color:inherit}
+      body:not(#v20) .comment-editor-panel .sticky-badge{display:none !important}
+
+      /* --- Paneles plegables de la columna derecha --- */
+      .v20-collapsible > h2{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;gap:8px}
+      .v20-collapsible > h2::after{content:"▾";font-size:.9em;color:var(--muted);transition:transform .2s}
+      .v20-collapsible.v20-collapsed > h2::after{transform:rotate(-90deg)}
+      .v20-collapsible.v20-collapsed > :not(h2){display:none !important}
+
+      /* --- Distribución general: anula desplazamientos antiguos --- */
+      body:not(#v20) .board-shell,body:not(#v20) .board-info,body:not(#v20) .board-session-controls,body:not(#v20) .board-bottom-tools{transform:none !important;left:0 !important}
+      body:not(#v20) .board-card{display:grid !important;gap:10px !important;overflow:visible !important;align-content:start}
+      body:not(#v20) .board-toolbar{grid-area:toolbar !important}
+      body:not(#v20) .board-shell{grid-area:board !important;justify-self:center !important;margin:0 !important}
+      body:not(#v20) .board-info{grid-area:info !important;width:auto !important;margin:0 !important}
+      body:not(#v20) .board-session-controls{grid-area:session !important;width:auto !important;margin:0 !important;display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:8px !important}
+      body:not(#v20) .board-bottom-tools{grid-area:tools !important;width:auto !important;min-width:0 !important;display:grid !important;gap:10px !important;margin:0 !important}
+      body:not(#v20) .board-bottom-tools > .board-mini-panel{width:auto !important;min-width:0 !important;margin:0 !important}
+      body:not(#v20) .board-bottom-tools .piece-tray{display:grid !important;grid-template-columns:repeat(6,minmax(0,1fr)) !important;gap:5px !important}
+      body:not(#v20) .board-bottom-tools .tray-piece{min-height:0 !important;aspect-ratio:1 !important;padding:0 !important;display:grid;place-items:center}
+      body:not(#v20) .board-bottom-tools .tray-piece img,body:not(#v20) .board-bottom-tools .tray-piece img.tray-bN{width:82% !important;height:82% !important;transform:none !important}
+      body:not(#v20) .board-bottom-tools .actions{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:6px !important}
+      body:not(#v20) .board-bottom-tools .actions .action-btn{width:100% !important;min-height:38px !important;white-space:normal !important;font-size:.84rem !important;line-height:1.15 !important;padding:6px 8px !important}
+      body:not(#v20) .board-bottom-tools .actions .wide{grid-column:1 / -1 !important}
+      body:not(#v20) .board-toolbar{display:flex !important;flex-wrap:wrap !important;gap:6px !important}
+      body:not(#v20) .board-toolbar > *{flex:1 1 auto;min-height:38px}
+
+      /* Escritorio: tablero grande + columna de herramientas a la derecha del tablero */
+      @media (min-width:1101px){
+        body:not(#v20) .page{width:min(1640px,calc(100% - 28px)) !important;margin-inline:auto !important}
+        body:not(#v20) .practice-layout{display:grid !important;grid-template-columns:minmax(0,1.3fr) minmax(380px,1fr) !important;gap:16px !important;align-items:start !important}
+        body:not(#v20) .board-card{grid-template-columns:minmax(0,1fr) 200px !important;grid-template-areas:"toolbar toolbar" "board tools" "info info" "fen fen" "session session" !important}
+        body:not(#v20) .board-shell{width:min(100%,calc(100vh - 200px)) !important;max-width:none !important}
+        body:not(#v20) .board-bottom-tools{align-self:start;grid-template-columns:1fr !important}
+        body:not(#v20) .board-bottom-tools .piece-tray{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+        body:not(#v20) .board-bottom-tools .actions{grid-template-columns:1fr 1fr !important}
+        body:not(#v20) .side{position:static !important}
+        body.student-mode:not(#v20) .board-card{grid-template-columns:minmax(0,1fr) !important;grid-template-areas:"toolbar" "board" "info" "fen" "session" !important}
+      }
+
+      /* Tablet y celular: una sola columna */
+      @media (max-width:1100px){
+        body:not(#v20) .page{width:min(100%,calc(100% - 20px)) !important;margin-inline:auto !important}
+        body:not(#v20) .practice-layout{display:grid !important;grid-template-columns:minmax(0,1fr) !important;gap:12px !important}
+        body:not(#v20) .board-card{grid-template-columns:minmax(0,1fr) !important;grid-template-areas:"toolbar" "board" "info" "fen" "tools" "session" !important}
+        body:not(#v20) .board-shell{width:min(100%,640px,calc(100vh - 140px)) !important;min-width:min(100%,280px)}
+        body:not(#v20) .board-bottom-tools{grid-template-columns:1.2fr 1fr !important}
+        body:not(#v20) .side{position:static !important}
+        body:not(#v20) .comment-editor-panel{position:static !important}
+      }
+
+      @media (max-width:700px){
+        body:not(#v20) .page{width:calc(100% - 12px) !important}
+        body:not(#v20) .hero-top{display:flex !important;flex-wrap:wrap;gap:8px !important;align-items:center}
+        body:not(#v20) .hero h1{font-size:1.35rem !important}
+        .v20-mode-btn{padding:6px 9px;font-size:.8rem}
+        body:not(#v20) .board-shell{width:100% !important}
+        body:not(#v20) .board-toolbar{display:grid !important;grid-template-columns:repeat(4,minmax(0,1fr)) !important}
+        body:not(#v20) .board-toolbar > *{font-size:.76rem !important;padding:6px 4px !important;min-height:36px}
+        body:not(#v20) .board-bottom-tools{grid-template-columns:1fr !important}
+        body:not(#v20) .board-session-controls{grid-template-columns:1fr 1fr 1fr !important}
+        body:not(#v20) .board-session-controls .action-btn{font-size:.72rem !important;padding:6px 4px !important}
+        .v20-fen-row{flex-direction:column}
+        .v20-fen-buttons{flex-direction:row}
+        .v20-fen-buttons .v20-btn{flex:1}
+        body:not(#v20) .comment-editor-panel .study-nav{display:grid !important;grid-template-columns:repeat(4,1fr) !important;gap:5px !important}
+        body:not(#v20) .comment-editor-panel .study-nav .study-counter{grid-column:1 / -1;order:-1;text-align:center}
+      }
+
+      @media (max-width:380px){
+        body:not(#v20) .board-toolbar{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+        body:not(#v20) .board-session-controls{grid-template-columns:1fr !important}
+      }
+
+      /* Pantalla completa: solo el tablero y lo esencial */
+      body:not(#v20) .board-card:fullscreen{overflow:auto !important;padding:14px !important;background:var(--bg) !important}
+      body:not(#v20) .board-card:fullscreen .board-shell{width:min(100%,calc(100vh - 170px)) !important}
+    
+      /* --- V20b · refuerzos --- */
+      @media (max-width:1100px){
+        body:not(#v20) .hero-top{display:flex !important;flex-wrap:wrap !important;align-items:center;justify-content:space-between;gap:8px 12px !important}
+        body:not(#v20) .hero-top h1{order:-1;flex:1 1 100%;text-align:left;font-size:clamp(1.3rem,4.5vw,2rem) !important;line-height:1.1 !important;margin:0 !important}
+        body:not(#v20) .hero-top .header-actions{display:flex !important;flex-wrap:wrap;gap:6px}
+      }
+      body:not(#v20) .board-bottom-tools > .board-mini-panel{background:linear-gradient(160deg,#0b1730,#071124) !important;border:1px solid var(--line) !important;color:var(--text) !important}
+      body:not(#v20) .board-bottom-tools h2,body:not(#v20) .board-bottom-tools .piece-section-title{color:#cbd5e1 !important}
+      body:not(#v20) .board-bottom-tools .tray-piece{background:#e2e8f0 !important;border:2px solid transparent !important;border-radius:9px !important}
+      body:not(#v20) .board-bottom-tools .tray-piece.active{border-color:var(--green) !important;box-shadow:0 0 0 2px rgba(34,197,94,.35) !important}
+      body:not(#v20) .comment-editor-panel .study-counter{white-space:nowrap !important;font-size:.82rem !important}
+      body.student-mode:not(#v20) .board-bottom-tools,body.student-mode:not(#v20) .board-session-controls{display:none !important}
+      #uiModeBtn{display:none !important}
+      body:not(#v20) .board-toolbar{display:grid !important;grid-template-columns:repeat(auto-fit,minmax(118px,1fr)) !important}
+      body:not(#v20) .board-toolbar > *{width:100% !important;margin:0 !important}
+      body:not(#v20) .comment-editor-panel .v16-details,body:not(#v20) .comment-editor-panel .v16-student-view,
+      body:not(#v20) .comment-editor-panel .v16-summary,body:not(#v20) .comment-editor-panel .summary-stat,
+      body:not(#v20) .comment-editor-panel .student-main-comment,body:not(#v20) .comment-editor-panel .student-info,
+      body:not(#v20) .comment-editor-panel .v16-question-box,body:not(#v20) .comment-editor-panel .student-eval,
+      body:not(#v20) .comment-editor-panel .comment-actions,body:not(#v20) .comment-editor-panel .study-nav,
+      body:not(#v20) .comment-editor-panel .v16-variant-bar,body:not(#v20) .comment-editor-panel .lesson-title-row{background:transparent !important;color:var(--text) !important;border-color:var(--line) !important}
+      body:not(#v20) .comment-editor-panel .v16-student-view,body:not(#v20) .comment-editor-panel .v16-details{background:rgba(2,6,23,.35) !important;border:1px solid var(--line) !important;border-radius:12px !important}
+      body:not(#v20) .comment-editor-panel .student-main-comment{background:#020617 !important;color:#e5e7eb !important}
+      body:not(#v20) .comment-editor-panel .summary-stat{background:#0f1d39 !important}
+      body:not(#v20) .comment-editor-panel .summary-stat span,body:not(#v20) .comment-editor-panel .v16-field,
+      body:not(#v20) .comment-editor-panel label,body:not(#v20) .comment-editor-panel summary{color:#cbd5e1 !important;opacity:1 !important}
+      body:not(#v20) .comment-editor-panel .study-counter,body:not(#v20) .comment-editor-panel .v16-variant-status{color:#bae6fd !important;opacity:1 !important}
+      body:not(#v20) .comment-editor-panel .nav-btn,body:not(#v20) .comment-editor-panel .study-nav .nav-btn{background:#0f1d39 !important;color:#e5e7eb !important;border:1px solid var(--line) !important}
+      body:not(#v20) .comment-editor-panel .nav-btn:not(:disabled):hover{border-color:var(--blue) !important}
+      body:not(#v20) .comment-editor-panel .v16-mini-btn{background:#0f1d39 !important;color:#e5e7eb !important;border:1px solid var(--line) !important}
+      body:not(#v20) .comment-editor-panel .lesson-title-row input{background:#020617 !important;color:#fff !important}
+      body.student-mode:not(#v20) .comment-editor-panel .lesson-title-row input{background:transparent !important;border-color:transparent !important;font-size:1.1rem !important}
+</style>
+</head>
 
   <body class="mauro-board-page">
     <main class="page">
@@ -3368,7 +3530,11 @@
           <h1>Tablero de <span class="gradient-text">práctica libre</span></h1>
           <div class="header-actions">
             <a class="home-link" href="index.html" title="Ir al inicio">🏠 Inicio</a>
-            <button class="home-link" id="uiModeBtn" type="button" title="Cambiar modo Profesor/Alumno">👨‍🏫 Profesor</button>
+            <div class="v20-mode-switch" role="group" aria-label="Modo de uso del tablero">
+              <button class="v20-mode-btn" type="button" data-mode="teacher" aria-pressed="true" title="Crear y editar lecciones">👨‍🏫 Profesor</button>
+              <button class="v20-mode-btn" type="button" data-mode="student" aria-pressed="false" title="Estudiar y practicar posiciones">🎓 Alumno</button>
+            </div>
+            <button class="home-link" id="uiModeBtn" type="button" hidden aria-hidden="true">👨‍🏫 Profesor</button>
             <a class="back-learning" href="miProgreso.html" title="Volver a la ruta de aprendizaje">← Ruta de
               aprendizaje</a>
           </div>
@@ -3407,7 +3573,21 @@
           <div class="board-info">
             <strong id="statusText">Modo mover · selecciona una pieza</strong>
             <span id="positionInfo">32 piezas en el tablero</span>
+            <span id="v20GameStatus" class="v20-game-status" aria-live="polite"></span>
           </div>
+
+          <section class="v20-fen" aria-label="Pegar una posición FEN">
+            <label class="v20-fen-label" for="v20FenPaste">📋 Pega una posición FEN</label>
+            <div class="v20-fen-row">
+              <textarea id="v20FenPaste" class="v20-fen-input" rows="2" spellcheck="false" autocomplete="off"
+                placeholder="Ej.: 4r1k1/2q2ppp/8/8/8/8/3Q1PPP/3R2K1 w - - 0 1"></textarea>
+              <div class="v20-fen-buttons">
+                <button class="v20-btn v20-btn-primary" id="v20FenLoadBtn" type="button">▶ Cargar</button>
+                <button class="v20-btn" id="v20FenPasteBtn" type="button" title="Pegar desde el portapapeles">📋 Pegar</button>
+              </div>
+            </div>
+            <div id="v20FenMsg" class="v20-fen-msg" role="status"></div>
+          </section>
 
           <div class="board-session-controls" aria-label="Controles de sesión del tablero">
             <button class="action-btn" id="saveBtn" type="button">💾 Guardar sesión</button>
@@ -3558,9 +3738,9 @@
           </section>
 
           <section class="card panel" id="fenPanel">
-            <h2>📝 Posición FEN</h2>
-            <p class="hint">Puedes preparar una posición concreta con FEN. Al cargarla se convierte en la nueva posición
-              inicial de la lección.</p>
+            <h2>📝 FEN de la posición actual</h2>
+            <p class="hint">Este es el FEN de lo que ves en el tablero. Cópialo para guardarlo o compartirlo. Para cargar
+              otra posición usa la caja «Pega una posición FEN» debajo del tablero.</p>
             <div class="fen-row">
               <input id="fenInput" class="fen-input" type="text" spellcheck="false" aria-label="Posición FEN" />
               <button class="action-btn" id="copyFenBtn" type="button">Copiar</button>
@@ -4909,6 +5089,154 @@
       lessonStartSnapshot = clonePositionSnapshot();
       annotationModeEl.value = annotationMode;
       renderAll();
+
+      // ===============================================================
+      // V20 · Selector de modo, pegar FEN, estado de la partida,
+      //       exploración del alumno y paneles plegables
+      // ===============================================================
+      (function(){
+        const MODE_KEY = 'mauro_tablero_modo_v1';
+        const modeBtns = Array.from(document.querySelectorAll('.v20-mode-btn'));
+        const fenPasteEl = document.getElementById('v20FenPaste');
+        const fenMsgEl = document.getElementById('v20FenMsg');
+        const gameStatusEl = document.getElementById('v20GameStatus');
+
+        // ----- Selector Profesor / Alumno -----
+        function syncModeButtons(){
+          modeBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === v16UiMode)));
+        }
+        const v19ApplyMode = v16ApplyMode;
+        v16ApplyMode = function(){ v19ApplyMode(); syncModeButtons(); try { localStorage.setItem(MODE_KEY, v16UiMode); } catch(_) {} };
+        modeBtns.forEach(b => b.addEventListener('click', () => { if (b.dataset.mode !== v16UiMode) v16ToggleMode(); }));
+
+        // ----- Pegar y cargar FEN -----
+        const FEN_RE = /[pnbrqkPNBRQK1-8]{1,8}(?:\/[pnbrqkPNBRQK1-8]{1,8}){7}(?:\s+[wb](?:\s+(?:-|[KQkq]{1,4})(?:\s+(?:-|[a-h][36])(?:\s+\d+(?:\s+\d+)?)?)?)?)?/;
+        function cleanFen(raw){
+          const text = String(raw || '').replace(/[`"'“”‘’]/g, ' ').replace(/\s+/g, ' ').trim();
+          const m = text.match(FEN_RE);
+          return m ? m[0].trim() : text.replace(/^fen\s*[:=]?\s*/i, '');
+        }
+        function validateFen(fen){
+          const parts = fen.split(' ');
+          const rows = (parts[0] || '').split('/');
+          if (rows.length !== 8) throw new Error('El FEN debe tener 8 filas separadas por «/».');
+          let wK = 0, bK = 0;
+          rows.forEach((row, i) => {
+            let n = 0;
+            for (const ch of row) {
+              if (/[1-8]/.test(ch)) { n += Number(ch); continue; }
+              if (!/[pnbrqkPNBRQK]/.test(ch)) throw new Error(`Símbolo no válido en el FEN: «${ch}».`);
+              if (ch === 'K') wK++; if (ch === 'k') bK++;
+              if ((ch === 'p' || ch === 'P') && (i === 0 || i === 7)) throw new Error('Hay un peón en la fila 1 u 8; eso no es posible.');
+              n++;
+            }
+            if (n !== 8) throw new Error(`La fila ${8 - i} tiene ${n} casillas; deben ser 8.`);
+          });
+          if (wK !== 1 || bK !== 1) throw new Error(`Debe haber un rey de cada color (blancos: ${wK}, negros: ${bK}).`);
+          // Completa los campos que falten.
+          const turn = parts[1] === 'b' ? 'b' : 'w';
+          let castling = parts[2] && parts[2] !== '-' ? parts[2] : '-';
+          // Quita derechos de enroque imposibles según la posición.
+          const sqAt = (file, rank) => { const r = rows[8 - rank]; let f = 0; for (const ch of r) { if (/[1-8]/.test(ch)) { f += Number(ch); continue; } if (f === file) return ch; f++; } return null; };
+          if (castling !== '-') {
+            castling = castling.split('').filter(c =>
+              (c === 'K' && sqAt(4,1) === 'K' && sqAt(7,1) === 'R') || (c === 'Q' && sqAt(4,1) === 'K' && sqAt(0,1) === 'R') ||
+              (c === 'k' && sqAt(4,8) === 'k' && sqAt(7,8) === 'r') || (c === 'q' && sqAt(4,8) === 'k' && sqAt(0,8) === 'r')).join('') || '-';
+          }
+          const ep = parts[3] && /^[a-h][36]$/.test(parts[3]) ? parts[3] : '-';
+          const half = /^\d+$/.test(parts[4] || '') ? parts[4] : '0';
+          const full = /^\d+$/.test(parts[5] || '') && Number(parts[5]) > 0 ? parts[5] : '1';
+          return `${parts[0]} ${turn} ${castling} ${ep} ${half} ${full}`;
+        }
+        function setFenMsg(text, kind){ fenMsgEl.textContent = text; fenMsgEl.className = 'v20-fen-msg' + (kind ? ' ' + kind : ''); }
+        function loadPastedFen(){
+          const raw = fenPasteEl.value.trim();
+          if (!raw) { setFenMsg('Pega primero un FEN en la caja.', 'bad'); fenPasteEl.focus(); return; }
+          try {
+            const fen = validateFen(cleanFen(raw));
+            // Comprueba que el bando que NO juega no esté en jaque (posición imposible).
+            const turn = fen.split(' ')[1];
+            loadFen(fen);
+            const kOther = v16KingSquare(boardState, v16Opp(turn));
+            if (kOther && v16IsAttacked(boardState, kOther, turn)) {
+              setFenMsg('⚠ Posición cargada, pero el rey del bando que no juega está en jaque: revisa el turno (w/b).', 'bad');
+            } else {
+              setFenMsg(`✓ Posición cargada · juegan ${turn === 'w' ? 'blancas' : 'negras'}. Las reglas del ajedrez están activadas.`, 'ok');
+            }
+            if (!v16LegalMode) { v16LegalMode = true; v16UpdateLegalButton(); }
+            fenPasteEl.value = fen;
+            renderAll();
+          } catch (e) {
+            setFenMsg('✕ ' + (e.message || 'El FEN no es válido.'), 'bad');
+          }
+        }
+        document.getElementById('v20FenLoadBtn').addEventListener('click', loadPastedFen);
+        fenPasteEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); loadPastedFen(); } });
+        fenPasteEl.addEventListener('input', () => setFenMsg('', ''));
+        document.getElementById('v20FenPasteBtn').addEventListener('click', async () => {
+          try { const t = await navigator.clipboard.readText(); if (t) { fenPasteEl.value = t.trim(); loadPastedFen(); } }
+          catch (_) { setFenMsg('Tu navegador no permite pegar automáticamente: mantén pulsada la caja y elige «Pegar».', 'bad'); fenPasteEl.focus(); }
+        });
+
+        // ----- Estado de la partida: turno, jaque, mate, ahogado -----
+        function updateGameStatus(){
+          if (!gameStatusEl) return;
+          gameStatusEl.className = 'v20-game-status';
+          if (!v16LegalMode || !v16PositionLegalReady()) { gameStatusEl.textContent = ''; return; }
+          const turn = v16ChessMeta.turn, side = turn === 'w' ? 'blancas' : 'negras', other = turn === 'w' ? 'negras' : 'blancas';
+          const king = v16KingSquare(boardState, turn);
+          const check = !!king && v16IsAttacked(boardState, king, v16Opp(turn));
+          let moves = 1; try { moves = v16AllLegal().length; } catch (_) {}
+          if (!moves && check) { gameStatusEl.textContent = `🏁 Jaque mate · ganan ${other}`; gameStatusEl.classList.add('show','mate'); }
+          else if (!moves) { gameStatusEl.textContent = '🤝 Ahogado · tablas'; gameStatusEl.classList.add('show','draw'); }
+          else if (check) { gameStatusEl.textContent = `⚠ Jaque · juegan ${side}`; gameStatusEl.classList.add('show','check'); }
+          else { gameStatusEl.textContent = `${turn === 'w' ? '⚪' : '⚫'} Juegan ${side}`; gameStatusEl.classList.add('show'); }
+        }
+        const v19RenderSummary = v16RenderSummary;
+        v16RenderSummary = function(){ v19RenderSummary(); if (!v16ActiveMoves().length) lessonSummaryEl.classList.add('v16-hidden'); };
+        const v19RenderAll = renderAll;
+        renderAll = function(){ v19RenderAll(); updateGameStatus(); };
+
+        // ----- Exploración del alumno: si no hay jugada preparada, puede mover libremente (con reglas) -----
+        function studentCanExplore(){
+          return v16UiMode === 'student' && !v16StudentPractice && v16ActiveMoves().length <= currentStudyStep;
+        }
+        function asExplorer(fn){
+          const prevLegal = v16LegalMode;
+          v16UiMode = 'teacher'; if (v16PositionLegalReady()) v16LegalMode = true;
+          try { return fn(); } finally { v16UiMode = 'student'; v16LegalMode = prevLegal || v16LegalMode; updateGameStatus(); }
+        }
+        const v19HandleSquareClick = handleSquareClick;
+        handleSquareClick = function(sq){ return studentCanExplore() ? asExplorer(() => v19HandleSquareClick(sq)) : v19HandleSquareClick(sq); };
+        const v19MovePiece = movePiece;
+        movePiece = function(from, to){ return studentCanExplore() ? asExplorer(() => v19MovePiece(from, to)) : v19MovePiece(from, to); };
+        // En modo alumno las piezas del tablero también se pueden arrastrar durante la exploración.
+        const v19RenderBoard = renderBoard;
+        renderBoard = function(){ v19RenderBoard(); if (v16UiMode === 'student') boardEl.querySelectorAll('img.piece').forEach(img => { img.draggable = studentCanExplore(); }); };
+
+        // ----- Paneles plegables de la columna derecha -----
+        const narrow = window.matchMedia('(max-width: 1100px)').matches;
+        ['fenPanel', 'historyPanel'].forEach(id => {
+          const panel = document.getElementById(id); if (!panel) return;
+          panel.classList.add('v20-collapsible');
+          if (narrow || id === 'historyPanel') panel.classList.add('v20-collapsed');
+        });
+        const captured = document.getElementById('capturedWhite')?.closest('.panel');
+        if (captured) { captured.classList.add('v20-collapsible'); if (narrow) captured.classList.add('v20-collapsed'); }
+        document.querySelectorAll('.v20-collapsible > h2').forEach(h => {
+          h.setAttribute('role', 'button'); h.tabIndex = 0;
+          const toggle = () => { const p = h.parentElement; p.classList.toggle('v20-collapsed'); h.setAttribute('aria-expanded', String(!p.classList.contains('v20-collapsed'))); };
+          h.setAttribute('aria-expanded', String(!h.parentElement.classList.contains('v20-collapsed')));
+          h.addEventListener('click', toggle);
+          h.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+        });
+
+        // ----- Inicio: recuerda el último modo usado -----
+        let saved = 'teacher'; try { saved = localStorage.getItem(MODE_KEY) || 'teacher'; } catch (_) {}
+        if (saved === 'student' && v16UiMode !== 'student') { v16UiMode = 'student'; }
+        v16ApplyMode();
+        renderAll();
+      })();
     </script>
 
     <!-- PWA -->
