@@ -10,6 +10,7 @@
 <link rel="canonical" href="https://web-2022.github.io/Mauro-Chess-Academy/practica.html">
 <meta name="theme-color" content="#071124">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="stylesheet" href="js/mauro-tema.css?v=1">
 <style>
 /* ===== Práctica con formato de tema ===== */
@@ -60,6 +61,16 @@
   .train{min-height:0}
 }
 @media(max-width:900px){.board-card{position:static!important;min-height:0!important}}
+/* ===== Correcciones de la revisión ===== */
+/* La tarjeta derecha ya no tiene scroll interno: el botón Empezar y los resultados siempre se ven al bajar. */
+.lesson-card{min-height:0!important;max-height:none!important;overflow:visible!important}
+/* El tablero acompaña al desplazarse, debajo del encabezado y la barra de progreso. */
+@media(min-width:901px){.board-card{min-height:0!important;top:140px!important}}
+/* El 🔊 automático de las tarjetas del tema confundía: aquí la tarjeta selecciona el entrenamiento. */
+.train b::after{content:none!important}
+.selected-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.selected-actions .continue-btn{min-height:44px;padding:10px 16px;border-radius:12px;font-weight:900}
+.selected-actions .continue-btn.primary{flex:1 1 220px}
 /* Tablero grande, igual que en el Tema 1 */
 .board-card .board-shell{width:min(100%,calc(100vh - 135px))!important;max-width:860px!important;margin:auto!important}
 </style>
@@ -121,7 +132,6 @@
 
       <div class="bottom-actions">
         <a class="continue-btn" href="tableroDePractica.html">🧩 Tablero libre</a>
-        <a class="continue-btn primary" id="startBtn" href="#">Empezar →</a>
       </div>
 
       <div class="practice-results">
@@ -243,7 +253,6 @@
   // ----- Tarjetas -----
   const grid = document.getElementById('trainGrid');
   const panel = document.getElementById('selectedPanel');
-  const startBtn = document.getElementById('startBtn');
   const mascotEl = document.getElementById('mascotText');
   const CAT = { fund: 'Fundamentos', tact: 'Táctica', daily: 'Reto diario' };
   let current = null;
@@ -278,12 +287,16 @@
     renderBoard(current);
     document.getElementById('boardTitle').textContent = `♟ ${current.name} · Vista previa`;
     messageEl.innerHTML = current.board;
-    panel.innerHTML = `<div class="step-eyebrow">${CAT[current.cat]} · ${current.rounds}</div><h3>${current.name}</h3><p>${current.text}</p><ul>${current.steps.map(s => `<li>${s}</li>`).join('')}</ul>`;
+    const doneToday = current.id === 'daily' && daily().date === todayKey();
+    const label = doneToday ? 'Ver la táctica de hoy →' : `Empezar: ${current.name} →`;
+    panel.innerHTML = `<div class="step-eyebrow">${CAT[current.cat]} · ${current.rounds}</div><h3>${current.name}</h3><p>${current.text}</p><ul>${current.steps.map(s => `<li>${s}</li>`).join('')}</ul><div class="selected-actions"><a class="continue-btn primary" href="${current.href}">${label}</a><button class="continue-btn" type="button" id="previewSpeak">🔊 Escuchar</button></div>`;
+    document.getElementById('previewSpeak').onclick = () => speak(`${current.name}. ${current.text} ${current.steps.join(' ')}`);
     mascotEl.textContent = current.mascot;
-    startBtn.href = current.href;
-    startBtn.textContent = current.id === 'daily' && daily().date === todayKey() ? 'Ver la táctica de hoy →' : `Empezar: ${current.name} →`;
     try { localStorage.setItem('mauro_practice_selected_v1', current.id); } catch (_) {}
-    if (withVoice) speak(`${current.name}. ${current.text}`);
+    if (withVoice) {
+      speak(`${current.name}. ${current.text}`);
+      if (window.matchMedia('(max-width: 900px)').matches) panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
   // ----- Filtros -----
