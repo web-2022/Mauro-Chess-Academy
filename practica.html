@@ -73,6 +73,119 @@
 .selected-actions .continue-btn.primary{flex:1 1 220px}
 /* Tablero grande, igual que en el Tema 1 */
 .board-card .board-shell{width:min(100%,calc(100vh - 135px))!important;max-width:860px!important;margin:auto!important}
+
+/* =====================================================================
+   PRÁCTICA · CAPA RESPONSIVA FINAL (v1)
+   Desktop-first: base → ≤1100 (tablet/celular) → ≤620 (celular) →
+   celular horizontal → pantallas anchas. No borra reglas anteriores.
+   Medidas de referencia: encabezado del sitio ≈ 76 px, barra de
+   progreso ≈ 50 px, cabecera del tablero ≈ 40 px.
+   ===================================================================== */
+
+/* ---------- Base: zona segura del iPhone ---------- */
+.app{
+  padding-left:max(0px, env(safe-area-inset-left));
+  padding-right:max(0px, env(safe-area-inset-right));
+  padding-bottom:max(14px, env(safe-area-inset-bottom));
+}
+
+/* ---------- Base: tipografía mínima legible (12 px etiquetas, 14 px texto) ---------- */
+.progress-label{font-size:clamp(12px, .8vw + 6px, 13px)}
+.stats .stat{font-size:12px}
+.board-head h1{font-size:clamp(13px, .9vw + 6px, 15px)!important}
+.board-tools .mini-btn{font-size:12px}
+.board .coord{font-size:clamp(12px, 1vw, 13px)}
+.step-eyebrow{font-size:12px}
+.step-text{font-size:clamp(14px, .5vw + 11px, 16px)}
+.train .train-cat{font-size:12px!important;letter-spacing:.06em}
+.train b{font-size:clamp(14px, .4vw + 12px, 16px)!important}
+.train > span > span:not(.train-cat):not(.train-meta){font-size:14px!important}
+.train .train-meta{font-size:12px!important}
+.board-message{font-size:14px}
+.selected-panel p{font-size:14px}
+.selected-panel ul{font-size:14px}
+.mascot p{font-size:14px}
+.results-head a{font-size:13px}
+.practice-results .result-box span{font-size:12px}
+.history-list li{font-size:13px}
+
+/* ---------- Base: tablero completo en pantalla (escritorio) ---------- */
+.board-card .board-shell{
+  width:min(100%, calc(100vh - 200px))!important;
+  width:min(100%, calc(100dvh - 200px))!important;
+  max-width:860px!important;
+}
+
+/* ---------- Accesibilidad ---------- */
+.train:focus-visible,.mini-btn:focus-visible,.primary-btn:focus-visible,
+.continue-btn:focus-visible,.results-head a:focus-visible,.square:focus-visible{
+  outline:3px solid #7dd3fc;outline-offset:2px;
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* ---------- Pantallas anchas (≥1600): tablero hasta 860 px ---------- */
+@media (min-width:1600px){
+  body .app{max-width:1760px!important;margin-inline:auto}
+  .main{grid-template-columns:minmax(0,1.12fr) minmax(480px,.88fr)!important}
+}
+
+/* ---------- Tablet y celular (≤1100): una columna ---------- */
+@media (max-width:1100px){
+  .main{grid-template-columns:minmax(0,1fr)!important}
+  .board-card{position:static!important;min-height:0!important}
+  .lesson-card{min-height:0!important;max-height:none!important;overflow:visible!important}
+  /* El tablero entra completo debajo del encabezado fijo */
+  .board-card .board-shell{
+    width:min(100%, 720px, calc(100vh - 180px))!important;
+    width:min(100%, 720px, calc(100dvh - 180px))!important;
+  }
+  .train-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  /* Áreas táctiles de 44 px */
+  .board-tools .mini-btn,.primary-btn,.continue-btn,.selected-actions .continue-btn{min-height:44px}
+  .board-tools .mini-btn{padding:8px 12px}
+  .results-head a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px}
+  .board-head{flex-wrap:wrap;row-gap:6px}
+}
+
+/* ---------- Celular (≤620) ---------- */
+@media (max-width:620px){
+  .train-grid,.lesson-card .fact-grid.train-grid{grid-template-columns:minmax(0,1fr)!important}
+  /* Barra superior: progreso a todo el ancho, estadísticas debajo */
+  .topbar{display:flex!important;flex-wrap:wrap!important;gap:6px 8px!important}
+  .topbar .lesson-progress{flex:1 1 100%!important;width:100%!important;min-width:0}
+  .topbar .progress-label{flex-wrap:nowrap}
+  .topbar .progress-label span{white-space:nowrap}
+  .topbar .stats{flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+  .board-card .board-shell{width:100%!important}
+  .board-tools.practice-filters{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:100%}
+  .board-tools .mini-btn{width:100%}
+  .speak-row{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  .speak-row .primary-btn{width:100%}
+  .selected-actions{display:grid;grid-template-columns:minmax(0,1fr)}
+  .bottom-actions .continue-btn{flex:1 1 100%}
+  .practice-results .result-box b{font-size:1.2rem}
+  .history-list li{flex-wrap:wrap}
+}
+
+/* ---------- Celular pequeño (≤360) ---------- */
+@media (max-width:360px){
+  .lesson-card{padding:10px!important}
+  .train{padding:9px!important;gap:8px}
+  .train .train-icon{flex-basis:36px;height:36px}
+  .practice-results .result-grid{gap:5px}
+  .practice-results .result-box{padding:8px 4px}
+}
+
+/* ---------- Celular horizontal (poca altura) ---------- */
+@media (max-height:500px) and (orientation:landscape){
+  .board-card .board-shell{
+    width:min(100%, calc(100vh - 96px))!important;
+    width:min(100%, calc(100dvh - 96px))!important;
+  }
+  .board-tools .mini-btn{min-height:44px}
+}
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
 <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
