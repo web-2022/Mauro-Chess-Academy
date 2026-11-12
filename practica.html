@@ -60,6 +60,8 @@
   .train{min-height:0}
 }
 @media(max-width:900px){.board-card{position:static!important;min-height:0!important}}
+/* Tablero grande, igual que en el Tema 1 */
+.board-card .board-shell{width:min(100%,calc(100vh - 135px))!important;max-width:860px!important;margin:auto!important}
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
 <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
@@ -158,25 +160,25 @@
       steps: ['La letra indica la columna: de la a a la h.', 'El número indica la fila: del 1 al 8.', 'Juntas forman la casilla, por ejemplo e4.'],
       board: '<strong>e4</strong> es la columna e con la fila 4. Toca cualquier casilla para escuchar su nombre.',
       mascot: 'Saber las coordenadas te permite leer y escribir partidas, como un idioma.' },
-    { id: 'pieces', cat: 'fund', icon: '<img src="pieces/wN.png" alt="">', name: 'Reconoce las piezas', sub: 'Di en qué casilla está cada pieza', href: 'dondeEstaLaPieza.html', rounds: '10 rondas',
+    { id: 'pieces', cat: 'fund', icon: '<img src="pieces-tema/wN.png" alt="">', name: 'Reconoce las piezas', sub: 'Di en qué casilla está cada pieza', href: 'dondeEstaLaPieza.html', rounds: '10 rondas',
       fen: '8/8/8/3N4/8/8/8/8', marks: { d5: 'preview-goal' },
       text: 'Aparece una pieza en el tablero y eliges su coordenada entre tres opciones.',
       steps: ['Identifica qué pieza es.', 'Lee su columna y su fila.', 'Elige la coordenada correcta.'],
       board: '<strong>El caballo</strong> está en <strong>d5</strong>. Toca la pieza para escuchar su nombre.',
       mascot: 'Reconocer piezas y casillas al instante libera tu mente para pensar jugadas.' },
-    { id: 'legal', cat: 'fund', icon: '<img src="pieces/wB.png" alt="">', name: 'Movimientos legales', sub: 'Marca a dónde puede ir cada pieza', href: 'movimientos-legales.html', rounds: '10 rondas',
+    { id: 'legal', cat: 'fund', icon: '<img src="pieces-tema/wB.png" alt="">', name: 'Movimientos legales', sub: 'Marca a dónde puede ir cada pieza', href: 'movimientos-legales.html', rounds: '10 rondas',
       fen: '8/8/2p5/8/3N4/1P6/8/8', marks: { d4: 'preview-from', b5: 'preview-target', c6: 'preview-trap', e6: 'preview-target', f5: 'preview-target', f3: 'preview-target', e2: 'preview-target', c2: 'preview-target' },
       text: 'Marca todas las casillas a las que puede ir la pieza blanca. Desde la ronda 5 aparecen obstáculos.',
       steps: ['Las piezas propias bloquean el camino.', 'Las piezas negras se pueden capturar.', 'Solo el caballo puede saltar.'],
       board: '<strong>El caballo de d4</strong> tiene 7 casillas: b3 está ocupada por su propio peón y en c6 puede capturar.',
       mascot: 'Si dominas cómo se mueve cada pieza, nunca te sorprenderán en el tablero.' },
-    { id: 'mate1', cat: 'tact', icon: '<img src="pieces/wQ.png" alt="">', name: 'Mate en 1', sub: 'Encuentra el jaque mate', href: 'mate-en-1.html', rounds: '10 rondas',
+    { id: 'mate1', cat: 'tact', icon: '<img src="pieces-tema/wQ.png" alt="">', name: 'Mate en 1', sub: 'Encuentra el jaque mate', href: 'mate-en-1.html', rounds: '10 rondas',
       fen: '6k1/5ppp/8/8/8/8/8/R5K1', marks: { a1: 'preview-from', a8: 'preview-goal', g8: 'glow-king' },
       text: 'Encuentra la jugada que da jaque mate. Aprenderás los patrones clásicos: pasillo, coz, mate árabe, ópera y más.',
       steps: ['Un mate siempre empieza con un jaque.', 'Mira las casillas de escape del rey.', 'Comprueba que nadie pueda capturar ni tapar.'],
       board: '<strong>Mate del pasillo:</strong> Ta8# — los peones encierran a su propio rey.',
       mascot: 'Los patrones de mate se repiten. Cuantos más conozcas, más rápido los verás en tus partidas.' },
-    { id: 'hanging', cat: 'tact', icon: '<img src="pieces/bN.png" alt="">', name: 'Pieza indefensa', sub: 'Gana material sin caer en trampas', href: 'pieza-indefensa.html', rounds: '10 rondas',
+    { id: 'hanging', cat: 'tact', icon: '<img src="pieces-tema/bN.png" alt="">', name: 'Pieza indefensa', sub: 'Gana material sin caer en trampas', href: 'pieza-indefensa.html', rounds: '10 rondas',
       fen: '6k1/8/2n5/8/3r4/8/1B6/3R2K1', marks: { d1: 'preview-from', d4: 'preview-trap', c6: 'glow-black' },
       text: 'Una pieza negra está indefensa: captúrala sin que te la devuelvan. Cuidado con las piezas defendidas.',
       steps: ['Busca todas las capturas posibles.', 'Pregunta: ¿quién defiende esa pieza?', 'Captura solo lo que es gratis.'],
@@ -226,7 +228,7 @@
       el.className = 'square ' + ((fi + r) % 2 === 0 ? 'light' : 'dark');
       el.dataset.square = sq;
       if (t.marks[sq]) el.classList.add(t.marks[sq]);
-      if (p) { const img = document.createElement('img'); img.src = `pieces/${p}.png`; img.alt = NAMES[p[1]]; img.className = 'piece piece-' + p; el.append(img); }
+      if (p) { const img = document.createElement('img'); img.src = `pieces-tema/${p}.png`; img.alt = NAMES[p[1]]; img.className = 'piece piece-' + p; el.append(img); }
       if (r === 1) { const c = document.createElement('span'); c.className = 'coord file'; c.textContent = FILES[fi]; el.append(c); }
       if (fi === 0) { const c = document.createElement('span'); c.className = 'coord rank'; c.textContent = r; el.append(c); }
       el.addEventListener('click', () => {
