@@ -1,7 +1,143 @@
-body:has(#mauroSharedHeader){padding-top:76px}body.mauro-home{padding-top:0}.mauro-site-header{position:fixed;inset:0 0 auto;z-index:100;background:rgba(6,17,31,.96);border-bottom:1px solid #22384a80;backdrop-filter:blur(16px);color:#edf4ff;font:14px/1.4 system-ui,sans-serif}.mauro-header-inner{width:min(1180px,calc(100% - 36px));min-height:76px;margin:auto;display:flex;align-items:center;gap:22px}.mauro-header-brand{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:850;color:#edf4ff!important;text-decoration:none!important;white-space:nowrap}.mauro-header-logo{width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,#22c55e,#38bdf8);color:#020617;display:grid;place-items:center;font-size:27px}.mauro-header-brand small{display:block;color:#9aabc0;font-size:10px;letter-spacing:.16em;margin-top:3px}.mauro-header-links{display:flex;gap:8px;align-items:center;justify-content:center;flex:1}.mauro-header-links a{padding:10px 13px;border-radius:12px;background:#0d1c30;color:#edf4ff!important;text-decoration:none!important;font-size:14px;font-weight:700;white-space:nowrap}.mauro-header-links a:hover,.mauro-header-links a[aria-current=page]{background:#173d48;color:#75f4d4!important}.mauro-header-cta{display:inline-flex;justify-content:center;align-items:center;min-height:44px;padding:10px 16px;background:linear-gradient(135deg,#22c55e,#38bdf8);border-radius:15px;color:#03121c!important;text-decoration:none!important;font-weight:800;white-space:nowrap}.mauro-header-toggle{display:none;border:1px solid #29415c;background:#0d1c30;color:white;width:44px;height:44px;border-radius:14px;font-size:20px;cursor:pointer}.mauro-site-header :focus-visible{outline:3px solid #6ee7ff;outline-offset:4px}
-@media(max-width:1000px){.mauro-header-links{display:none;position:absolute;top:76px;left:18px;right:18px;flex-direction:column;align-items:stretch;background:#071124;border:1px solid #29415c;border-radius:16px;padding:14px}.mauro-site-header.menu-open .mauro-header-links{display:flex}.mauro-header-toggle{display:block;margin-left:auto}.mauro-header-cta{margin-left:auto}.mauro-header-inner{gap:12px}}
-@media(max-width:650px){.mauro-header-cta{display:none}.mauro-header-brand{font-size:16px}.mauro-header-brand small{font-size:9px}.mauro-header-inner{width:calc(100% - 32px)}}
+/* Academia Mauro · Menú de navegación compartido (v2) */
+:root{--mh-h:76px;--mh-h-compact:60px;--mh-tab:64px;--mh-bg:rgba(6,17,31,.96);--mh-line:rgba(41,65,92,.75);--mh-text:#edf4ff;--mh-muted:#9aabc0;--mh-green:#22c55e;--mh-blue:#38bdf8;--mh-mint:#75f4d4}
+body:has(#mauroSharedHeader){padding-top:var(--mh-h)}
+body.mauro-home{padding-top:0}
+html.mh-lock,html.mh-lock body{overflow:hidden}
 
+/* ---------- Barra superior ---------- */
+.mauro-site-header{position:fixed;inset:0 0 auto;z-index:100;background:var(--mh-bg);border-bottom:1px solid var(--mh-line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--mh-text);font:14px/1.4 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;padding-top:env(safe-area-inset-top);transition:background .2s ease,box-shadow .2s ease}
+.mauro-site-header.is-compact{background:rgba(6,17,31,.82);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.mauro-header-inner{width:min(1280px,calc(100% - 36px));min-height:var(--mh-h);margin:auto;display:flex;align-items:center;gap:18px;transition:min-height .2s ease}
+.mauro-site-header.is-compact .mauro-header-inner{min-height:var(--mh-h-compact)}
+.mauro-header-brand{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:850;color:var(--mh-text)!important;text-decoration:none!important;white-space:nowrap;min-height:44px;min-width:44px}
+.mauro-header-logo{width:44px;height:44px;flex:0 0 44px;border-radius:15px;background:linear-gradient(135deg,var(--mh-green),var(--mh-blue));color:#020617;display:grid;place-items:center;font-size:27px;box-shadow:0 8px 22px rgba(34,197,94,.22);transition:transform .2s ease,width .2s ease,height .2s ease}
+.mauro-header-brand:hover .mauro-header-logo{transform:rotate(-8deg) scale(1.05)}
+.mauro-site-header.is-compact .mauro-header-logo{width:38px;height:38px;flex-basis:38px;font-size:23px}
+.mauro-header-brand small{display:block;color:var(--mh-muted);font-size:12px;letter-spacing:.1em;margin-top:2px}
+
+/* Secciones */
+.mauro-header-links{position:relative;display:flex;gap:6px;align-items:center;justify-content:center;flex:1;min-width:0}
+.mauro-header-links .mh-link{position:relative;display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:9px 14px;border-radius:12px;color:var(--mh-text)!important;text-decoration:none!important;font-size:14px;font-weight:750;white-space:nowrap;transition:background .15s ease,color .15s ease,transform .12s ease}
+.mauro-header-links .mh-link:hover{background:#0d1c30}
+.mauro-header-links .mh-link[aria-current=page]{background:#123241;color:var(--mh-mint)!important}
+.mauro-header-links .mh-link:active,.mh-tab:active,.mh-mega-item:active,.mh-drawer-item:active{transform:scale(.96)}
+.mh-icon{font-size:17px;line-height:1}
+.mh-indicator{position:absolute;left:0;bottom:-6px;height:3px;width:0;border-radius:3px;background:linear-gradient(90deg,var(--mh-green),var(--mh-blue));opacity:0;transition:transform .2s ease,width .2s ease,opacity .2s ease;pointer-events:none}
+.mauro-site-header.is-compact .mh-indicator{bottom:-4px}
+
+/* Insignia */
+.mh-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#ef4444;color:#fff;font-size:12px;font-weight:900;line-height:1;box-shadow:0 0 0 2px #06111f}
+.mh-badge[hidden]{display:none}
+.mh-link .mh-badge{position:absolute;top:2px;right:2px}
+
+/* Mega-menú */
+.mh-has-mega{position:relative;display:flex;align-items:center}
+.mh-has-mega .mh-link{padding-right:30px}
+.mh-mega-toggle{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:28px;height:36px;border:0;border-radius:9px;background:transparent;color:inherit;cursor:pointer;font-size:13px;color:var(--mh-muted)}
+.mh-mega-toggle:hover{color:var(--mh-text);background:#0d1c30}
+.mh-has-mega.is-open .mh-mega-toggle span{display:inline-block;transform:rotate(180deg)}
+.mh-mega{position:absolute;top:calc(100% + 14px);left:50%;width:min(620px,calc(100vw - 40px));padding:14px;border:1px solid var(--mh-line);border-radius:18px;background:linear-gradient(180deg,#0b1730,#071124);box-shadow:0 24px 70px rgba(0,0,0,.5);opacity:0;visibility:hidden;transform:translate(-50%,-6px);transition:opacity .18s ease,transform .18s ease,visibility .18s;z-index:5}
+.mh-mega::before{content:"";position:absolute;left:0;right:0;top:-16px;height:16px}
+.mh-has-mega.is-open .mh-mega{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.mh-mega-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 10px}
+.mh-mega-head strong{font-size:15px}
+.mh-mega-head a{display:inline-flex;align-items:center;min-height:32px;padding:0 6px;border-radius:8px;color:var(--mh-mint)!important;font-size:13px;font-weight:800;text-decoration:none!important}
+.mh-mega-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.mh-mega-item,.mh-drawer-item{display:flex;align-items:center;gap:11px;min-height:56px;padding:9px 11px;border:1px solid var(--mh-line);border-radius:13px;background:rgba(15,29,57,.62);color:var(--mh-text)!important;text-decoration:none!important;transition:border-color .15s ease,background .15s ease,transform .12s ease}
+.mh-mega-item:hover,.mh-mega-item:focus-visible,.mh-drawer-item:hover{border-color:rgba(56,189,248,.6);background:rgba(56,189,248,.10)}
+.mh-mega-item[aria-current=page],.mh-drawer-item[aria-current=page]{border-color:var(--mh-green);background:rgba(34,197,94,.12)}
+.mh-mega-item:first-child,.mh-drawer-item:first-child{border-color:rgba(250,204,21,.45);background:linear-gradient(135deg,rgba(250,204,21,.10),rgba(15,29,57,.62))}
+.mh-ti-icon{flex:0 0 38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#0f1d39;font-size:20px}
+.mh-ti-text{min-width:0}
+.mh-ti-text b{display:flex;align-items:center;gap:6px;font-size:14px}
+.mh-ti-text small{display:block;color:var(--mh-muted);font-size:12px;margin-top:1px}
+
+/* Chips del jugador */
+.mh-chips{display:flex;gap:6px;align-items:center}
+.mh-chip{display:inline-flex;align-items:center;gap:5px;min-height:38px;padding:6px 11px;border:1px solid var(--mh-line);border-radius:999px;background:#0d1c30;color:var(--mh-text)!important;text-decoration:none!important;font-size:13px;font-weight:850;white-space:nowrap;transition:border-color .15s ease,transform .12s ease}
+.mh-chip:hover{border-color:rgba(56,189,248,.55)}
+.mh-chip:active{transform:scale(.95)}
+.mh-chip-streak.is-on{border-color:rgba(249,115,22,.55);background:linear-gradient(135deg,rgba(249,115,22,.18),#0d1c30)}
+.mh-chip-xp b{color:#fde68a}
+.mh-xp-unit{color:var(--mh-muted);font-size:12px}
+.mh-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Botón clase gratuita */
+.mauro-header-cta{display:inline-flex;justify-content:center;align-items:center;min-height:44px;padding:10px 16px;background:linear-gradient(135deg,var(--mh-green),var(--mh-blue));border-radius:15px;color:#03121c!important;text-decoration:none!important;font-weight:850;white-space:nowrap;box-shadow:0 8px 24px rgba(34,197,94,.25);transition:transform .12s ease,box-shadow .15s ease}
+.mauro-header-cta:hover{box-shadow:0 10px 30px rgba(56,189,248,.35)}
+.mauro-header-cta:active{transform:scale(.97)}
+.mh-cta-short{display:none}
+
+/* Botón ☰ */
+.mauro-header-toggle{display:none;border:1px solid #29415c;background:#0d1c30;color:#fff;width:44px;height:44px;flex:0 0 44px;border-radius:14px;font-size:20px;cursor:pointer}
+.mauro-site-header :focus-visible,.mh-tabbar :focus-visible,.mh-drawer :focus-visible{outline:3px solid #6ee7ff;outline-offset:3px}
+
+/* Escritorio intermedio: texto del botón más corto */
+@media (max-width:1320px){.mh-cta-long{display:none}.mh-cta-short{display:inline}}
+@media (max-width:1200px) and (min-width:1101px){.mh-chip-xp .mh-xp-unit{display:none}.mauro-header-links .mh-link{padding:9px 11px}.mauro-header-inner{gap:12px}}
+
+/* ---------- Barra inferior (celular/tablet) ---------- */
+.mh-tabbar{display:none}
+@media (max-width:1100px){
+  :root{--mh-h:64px}
+  .mauro-header-inner{width:calc(100% - 24px);gap:10px}
+  .mauro-site-header.is-compact .mauro-header-inner{min-height:var(--mh-h)}
+  .mauro-header-links,.mauro-header-cta{display:none!important}
+  .mauro-header-toggle{display:grid;place-items:center;margin-left:4px}
+  .mh-chips{margin-left:auto}
+  .mh-chip{min-height:44px}
+  .mauro-header-logo,.mauro-site-header.is-compact .mauro-header-logo{width:40px;height:40px;flex-basis:40px;font-size:24px}
+  .mh-tabbar{position:fixed;left:0;right:0;bottom:0;z-index:99;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));height:calc(var(--mh-tab) + env(safe-area-inset-bottom));padding:4px max(6px,env(safe-area-inset-left)) env(safe-area-inset-bottom) max(6px,env(safe-area-inset-right));background:rgba(6,17,31,.97);border-top:1px solid var(--mh-line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 -10px 30px rgba(0,0,0,.35)}
+  .mh-tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;margin:2px;border-radius:14px;color:var(--mh-muted)!important;text-decoration:none!important;font:800 12px/1.1 Inter,system-ui,sans-serif;transition:color .15s ease,background .15s ease,transform .12s ease}
+  .mh-tab-icon{position:relative;font-size:21px;line-height:1;transition:transform .2s ease}
+  .mh-tab .mh-badge{position:absolute;top:-6px;right:-12px}
+  .mh-tab[aria-current=page]{color:var(--mh-mint)!important;background:rgba(34,197,94,.12)}
+  .mh-tab[aria-current=page] .mh-tab-icon{transform:translateY(-2px) scale(1.08)}
+  .mh-tab[aria-current=page]::before{content:"";position:absolute;top:-5px;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:linear-gradient(90deg,var(--mh-green),var(--mh-blue))}
+  body.mh-has-tabbar{padding-bottom:calc(var(--mh-tab) + env(safe-area-inset-bottom))}
+  /* Elementos flotantes de otras páginas: suben por encima de la barra inferior */
+  body.mh-has-tabbar .mauro-contact-floating{bottom:calc(var(--mh-tab) + 14px + env(safe-area-inset-bottom))!important}
+  body.mh-has-tabbar .toast,body.mh-has-tabbar #toast{bottom:calc(var(--mh-tab) + 14px + env(safe-area-inset-bottom))!important}
+}
+@media (max-width:420px){
+  .mauro-header-brand{font-size:15px;gap:9px}
+  .mauro-header-brand small{display:none}
+  .mh-chip{padding:6px 9px;gap:4px}
+  .mh-chip-xp .mh-xp-unit{display:none}
+}
+@media (max-width:340px){
+  .mauro-header-brand>span:last-child{display:none}
+  .mauro-header-logo,.mauro-site-header.is-compact .mauro-header-logo{width:44px;height:44px;flex-basis:44px}
+}
+
+/* ---------- Panel lateral ---------- */
+.mh-drawer{position:fixed;inset:0;z-index:200}
+.mh-drawer[hidden]{display:none}
+.mh-drawer-backdrop{position:absolute;inset:0;background:rgba(2,6,23,.62);opacity:0;transition:opacity .2s ease}
+.mh-drawer-panel{position:absolute;top:0;right:0;bottom:0;width:min(360px,88vw);overflow:auto;padding:max(14px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) 16px;background:linear-gradient(180deg,#0b1730,#050d1d);border-left:1px solid var(--mh-line);box-shadow:-20px 0 60px rgba(0,0,0,.5);color:var(--mh-text);font:14px/1.4 Inter,system-ui,sans-serif;transform:translateX(100%);transition:transform .2s ease;outline:none}
+.mh-drawer.is-open .mh-drawer-backdrop{opacity:1}
+.mh-drawer.is-open .mh-drawer-panel{transform:none}
+.mh-drawer-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.mh-drawer-head strong{font-size:16px}
+.mh-drawer-close{margin-left:auto;width:44px;height:44px;border:1px solid #29415c;border-radius:12px;background:#0d1c30;color:#fff;font-size:18px;cursor:pointer}
+.mh-drawer-chips{display:flex;gap:8px;margin-bottom:6px}
+.mh-drawer-chips .mh-chip{flex:1;justify-content:center;min-height:44px}
+.mh-drawer-chips .mh-xp-unit{display:inline!important}
+.mh-drawer-title{margin:14px 2px 8px;color:var(--mh-muted);font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.mh-drawer-sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.mh-drawer-link{display:flex;align-items:center;gap:8px;min-height:48px;padding:10px 12px;border:1px solid var(--mh-line);border-radius:13px;background:#0d1c30;color:var(--mh-text)!important;text-decoration:none!important;font-weight:800}
+.mh-drawer-link[aria-current=page]{border-color:var(--mh-green);color:var(--mh-mint)!important;background:rgba(34,197,94,.12)}
+.mh-drawer-trainings{display:grid;gap:8px}
+.mh-drawer-cta,.mh-install{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;margin-top:14px;border-radius:14px;font:850 14px/1.2 Inter,system-ui,sans-serif;text-decoration:none!important;cursor:pointer}
+.mh-drawer-cta{background:linear-gradient(135deg,var(--mh-green),var(--mh-blue));color:#03121c!important}
+.mh-install{margin-top:8px;border:1px solid rgba(56,189,248,.45);background:#0d1c30;color:#bae6fd}
+.mh-install[hidden]{display:none}
+
+/* ---------- Compatibilidad con páginas existentes ---------- */
 body.mauro-has-header>nav.nav{display:none}
-
 body.mauro-has-header .topbar{position:relative;top:auto}
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion:reduce){
+  .mauro-site-header *,.mauro-site-header,.mh-tabbar *,.mh-drawer *{transition:none!important;animation:none!important}
+}
