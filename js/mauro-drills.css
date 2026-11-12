@@ -1,0 +1,22 @@
+/* Academia Mauro · marcas del tablero para los entrenamientos interactivos */
+body.mauro-exercise .sq{transition:box-shadow .15s}
+body.mauro-exercise .sq.drill-selected{box-shadow:inset 0 0 0 5px #facc15}
+body.mauro-exercise .sq.drill-target::after{content:"";width:28%;height:28%;border-radius:50%;background:rgba(2,6,23,.38);position:absolute}
+body.mauro-exercise .sq.drill-capture{box-shadow:inset 0 0 0 4px rgba(251,113,133,.85)}
+body.mauro-exercise .sq.drill-pick{box-shadow:inset 0 0 0 5px #38bdf8}
+body.mauro-exercise .sq.drill-pick::after{content:"✓";position:absolute;font:900 clamp(14px,3vw,24px)/1 system-ui;color:#0284c7}
+body.mauro-exercise .sq.dark.drill-pick::after{color:#e0f2fe}
+body.mauro-exercise .sq.drill-missed{box-shadow:inset 0 0 0 5px #facc15}
+body.mauro-exercise .sq.drill-missed::after{content:"•";position:absolute;font:900 clamp(20px,5vw,40px)/1 system-ui;color:#ca8a04}
+body.mauro-exercise .sq.drill-hint{box-shadow:inset 0 0 0 5px #a78bfa;animation:drillPulse 1s ease-in-out 3}
+body.mauro-exercise .sq.drill-from{box-shadow:inset 0 0 0 4px rgba(34,197,94,.55)}
+body.mauro-exercise .sq.drill-defender{box-shadow:inset 0 0 0 5px #f97316}
+@keyframes drillPulse{50%{box-shadow:inset 0 0 0 9px #a78bfa}}
+.exercise-theme{display:inline-block;margin-top:12px;padding:6px 12px;border-radius:999px;background:#0d1c30;border:1px solid #29415c;color:#bae6fd;font-size:14px;font-weight:700}
+.exercise-action .main-btn:disabled{opacity:.45;cursor:default}
+.exercise-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:6px 0 0;padding:0;list-style:none;color:#9bb1cc;font-size:13px}
+.exercise-legend span{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+#dailyBox{padding:16px;margin:16px 0;border:1px solid #7c5a12;border-radius:14px;background:#2a1f08;color:#fde68a}
+#dailyBox p{color:#fef3c7}
+#dailyBox .main-btn{display:inline-block;text-decoration:none;margin-top:6px}
+@media(max-width:420px){.exercise-action .controls .main-btn{min-width:0;flex:1 1 45%}}

@@ -1,7 +1,7 @@
 (function(){
   const key='mauro_practice_sessions_v1';let recorded=false;
   function sessions(){try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}catch(_){return [];}}
-  const names={coordinates:'Coordenadas',pieces:'Reconoce las piezas'};
+  const names={coordinates:'Coordenadas',pieces:'Reconoce las piezas',mate1:'Mate en 1',hanging:'Pieza indefensa',legal:'Movimientos legales',daily:'Táctica del día'};
   function record(type,result){
     if(recorded)return;recorded=true;const total=Math.max(1,Number(result.total)||10),correct=Math.max(0,Math.min(total,Number(result.correct)||0));
     const entry={type,correct,total,completedAt:new Date().toISOString()};let saved=false;try{localStorage.setItem(key,JSON.stringify([...sessions(),entry].slice(-100)));saved=true;}catch(_){}

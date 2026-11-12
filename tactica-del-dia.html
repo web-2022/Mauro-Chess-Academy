@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Táctica del día · Práctica | Academia Mauro</title>
+  <meta name="description" content="Un reto nuevo cada día: mates, dobles ataques y golpes tácticos. Mantén tu racha resolviéndolo a diario.">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#06111f">
+  <link rel="stylesheet" href="js/mauro-voice.css?v=187">
+  <script src="js/mauro-voice.js?v=192"></script>
+  <link rel="stylesheet" href="js/mauro-ui.css?v=192">
+  <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
+  <link rel="stylesheet" href="js/mauro-responsive.css?v=192">
+  <link rel="stylesheet" href="js/mauro-exercise.css?v=192">
+  <link rel="stylesheet" href="js/mauro-drills.css?v=1">
+  <script defer src="js/mauro-practice.js?v=193"></script>
+</head>
+<body class="mauro-exercise" data-exercise="daily">
+  <div class="app">
+    <header class="exercise-progress">
+      <a href="practica.html">← Práctica</a>
+      <div class="exercise-status"><span>✓ Aciertos <b id="ok">0</b></span><span>Progreso <b id="count">0/1</b></span></div>
+      <div class="progress" id="exerciseMeter" role="progressbar" aria-label="Progreso de la sesión" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div class="progress-inner" id="bar"></div></div>
+    </header>
+    <main class="exercise-layout">
+      <section class="exercise-intro">
+        <span class="exercise-kicker">MAURO · RETO DIARIO</span>
+        <h1>Táctica del día</h1>
+        <p>Un reto nuevo cada día: mates, dobles ataques y golpes tácticos. Mantén tu racha resolviéndolo a diario.</p>
+        <div class="piece-question" id="question" aria-live="polite"></div>
+        <span class="exercise-theme" id="exerciseTheme"></span>
+      </section>
+      <section class="exercise-board">
+        <div class="exercise-board-label">♟ Tablero interactivo · juegan blancas</div>
+        <div class="exercise-board-shell"><div class="board" id="board"></div></div>
+        <ul class="exercise-legend" aria-label="Leyenda de colores"><li><span style="background:#facc15"></span>Pieza elegida</li><li><span style="background:#475569;border-radius:50%"></span>Casillas posibles</li><li><span style="background:#a78bfa"></span>Pista</li></ul>
+      </section>
+      <section class="exercise-action">
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+        <div class="controls">
+          
+          <button class="main-btn" type="button" id="exerciseHint">💡 Pista</button>
+          <button class="main-btn" type="button" id="exerciseListen">🔊 Escuchar</button>
+          <button class="main-btn primary" type="button" id="exerciseNext" disabled>Siguiente →</button>
+        </div>
+        <div id="dailyBox" hidden></div>
+        <div id="exerciseSummary" hidden></div>
+        <p class="exercise-tip">Tienes dos intentos. Si usas la pista, la táctica cuenta como resuelta con ayuda.</p>
+        <a href="practica.html">Elegir otro entrenamiento</a>
+      </section>
+    </main>
+  </div>
+  <script src="js/mauro-chess-rules.js?v=1"></script>
+  <script src="js/mauro-drill-data.js?v=1"></script>
+  <script defer src="js/mauro-drills.js?v=1"></script>
+</body>
+</html>
