@@ -187,6 +187,17 @@
   .board-tools .mini-btn{min-height:44px}
 }
 
+/* ===== Navegación por niveles: categorías → sublista → ejercicio ===== */
+.cat-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))!important}
+.cat-grid .train{min-height:110px}
+.cat-grid .train .train-icon{flex-basis:52px;height:52px;font-size:1.7rem}
+.cat-grid .train b{font-size:clamp(16px,.5vw + 13px,19px)!important}
+.train .train-go{display:inline-block;margin:6px 0 0 10px;color:var(--green2);font-size:13px;font-weight:900}
+.back-link{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;margin-bottom:8px;border:1px solid var(--line);border-radius:12px;background:#0f1d39;color:var(--blue2)!important;font-weight:900;font-size:14px;text-decoration:none!important}
+.back-link:hover{border-color:rgba(56,189,248,.55)}
+#trainGrid .train{cursor:pointer}
+a.train{text-decoration:none!important;color:var(--text)!important}
+#viewSublist .train-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))!important}
 /* =====================================================================
    PANTALLAS GRANDES (≥1101 px): página a todo el ancho y tablero al máximo
    - Sin márgenes laterales vacíos.
@@ -255,40 +266,39 @@
     </section>
 
     <section class="card lesson-card">
-      <div class="step-eyebrow">Entrena · Elige tu sesión</div>
-      <h2 class="step-title">Practica y mejora una jugada a la vez</h2>
-      <p class="step-text">Sesiones cortas de 10 rondas con instrucciones de voz y tablero interactivo. Empieza por los fundamentos y sube a la táctica. Tus resultados se guardan en este dispositivo.</p>
-      <div class="speak-row">
-        <button class="primary-btn audio" id="audioBtn" type="button">🔊 Escuchar explicación</button>
-        <button class="primary-btn hint" id="recommendBtn" type="button">🎯 Recomiéndame uno</button>
-      </div>
-
-      <div class="train-filters">
-        <div class="board-tools practice-filters train-filter-row" role="group" aria-label="Filtrar entrenamientos">
-          <button class="mini-btn active" type="button" data-filter="all">Todo</button>
-          <button class="mini-btn" type="button" data-filter="fund">Fundamentos</button>
-          <button class="mini-btn" type="button" data-filter="tact">Táctica</button>
-          <button class="mini-btn" type="button" data-filter="daily">Reto diario</button>
+      <!-- Nivel 1: categorías -->
+      <div id="viewCategories">
+        <div class="step-eyebrow">Entrena · Elige una categoría</div>
+        <h2 class="step-title">Practica y mejora una jugada a la vez</h2>
+        <p class="step-text">Sesiones cortas de 10 rondas con instrucciones de voz y tablero interactivo. Empieza por los fundamentos y sube a la táctica. Tus resultados se guardan en este dispositivo.</p>
+        <div class="speak-row">
+          <button class="primary-btn audio" id="audioBtn" type="button">🔊 Escuchar explicación</button>
+          <button class="primary-btn hint" id="recommendBtn" type="button">🎯 Recomiéndame uno</button>
+        </div>
+        <div class="fact-grid train-grid cat-grid" id="catGrid" aria-label="Categorías de entrenamiento"></div>
+        <div class="mascot"><div class="mascot-icon">♞</div><p id="mascotText">Practicar un poco cada día vale más que una sesión larga de vez en cuando.</p></div>
+        <div class="bottom-actions">
+          <a class="continue-btn" href="tableroDePractica.html">🧩 Tablero libre</a>
+        </div>
+        <div class="practice-results">
+          <div class="results-head"><h2>📊 Tus resultados</h2><a href="miProgreso.html">Volver a Mi aprendizaje →</a></div>
+          <div class="result-grid">
+            <div class="result-box"><b id="resSessions">0</b><span>sesiones</span></div>
+            <div class="result-box"><b id="resAccuracy">—</b><span>precisión</span></div>
+            <div class="result-box"><b id="resStreak">0</b><span>días de racha</span></div>
+          </div>
+          <ul class="history-list" id="historyList"></ul>
         </div>
       </div>
-      <div class="fact-grid train-grid" id="trainGrid" aria-label="Entrenamientos disponibles"></div>
 
-      <div class="selected-panel" id="selectedPanel" aria-live="polite"></div>
-
-      <div class="mascot"><div class="mascot-icon">♞</div><p id="mascotText">Practicar un poco cada día vale más que una sesión larga de vez en cuando.</p></div>
-
-      <div class="bottom-actions">
-        <a class="continue-btn" href="tableroDePractica.html">🧩 Tablero libre</a>
-      </div>
-
-      <div class="practice-results">
-        <div class="results-head"><h2>📊 Tus resultados</h2><a href="miProgreso.html">Volver a Mi aprendizaje →</a></div>
-        <div class="result-grid">
-          <div class="result-box"><b id="resSessions">0</b><span>sesiones</span></div>
-          <div class="result-box"><b id="resAccuracy">—</b><span>precisión</span></div>
-          <div class="result-box"><b id="resStreak">0</b><span>días de racha</span></div>
-        </div>
-        <ul class="history-list" id="historyList"></ul>
+      <!-- Nivel 2: sublista de la categoría elegida -->
+      <div id="viewSublist" hidden>
+        <a class="back-link" id="backLink" href="practica.html">← Todas las categorías</a>
+        <div class="step-eyebrow" id="subEyebrow">Categoría</div>
+        <h2 class="step-title" id="subTitle"></h2>
+        <p class="step-text" id="subText"></p>
+        <div class="fact-grid train-grid" id="trainGrid" aria-label="Ejercicios de la categoría"></div>
+        <div class="mascot"><div class="mascot-icon">♞</div><p id="subMascot"></p></div>
       </div>
     </section>
   </main>
@@ -397,12 +407,19 @@
     }
   }
 
-  // ----- Tarjetas -----
-  const grid = document.getElementById('trainGrid');
-  const panel = document.getElementById('selectedPanel');
-  const mascotEl = document.getElementById('mascotText');
+  // ----- Categorías (nivel 1) y sublistas (nivel 2) -----
+  const CATS = [
+    { id: 'daily', slug: 'reto-diario', name: 'Reto diario', icon: '🔥', sub: 'Un problema nuevo cada día', text: 'Cada día Mauro te propone un reto distinto: mates, dobles ataques y golpes tácticos. Resuélvelo para mantener tu racha.', mascot: 'Un problema al día construye un ojo táctico de campeón.' },
+    { id: 'fund', slug: 'fundamentos', name: 'Fundamentos', icon: '<img src="pieces-tema/wP.png" alt="">', sub: 'Tablero, piezas y movimientos', text: 'La base de todo jugador: ubica cualquier casilla, reconoce las piezas y domina cómo se mueve cada una.', mascot: 'Con buenos fundamentos, todo lo demás se aprende más rápido.' },
+    { id: 'tact', slug: 'tactica', name: 'Táctica', icon: '<img src="pieces-tema/wQ.png" alt="">', sub: 'Mates y ganancia de material', text: 'Aprende a dar jaque mate y a ganar piezas sin caer en trampas: así se ganan las partidas.', mascot: 'Los patrones tácticos se repiten. Cuantos más conozcas, más partidas ganarás.' }
+  ];
   const CAT = { fund: 'Fundamentos', tact: 'Táctica', daily: 'Reto diario' };
-  let current = null;
+  const catGrid = document.getElementById('catGrid');
+  const grid = document.getElementById('trainGrid');
+  const viewCats = document.getElementById('viewCategories');
+  const viewSub = document.getElementById('viewSublist');
+  const mascotEl = document.getElementById('mascotText');
+  let current = null, highlight = null;
 
   function metaFor(t) {
     if (t.id === 'daily') {
@@ -410,54 +427,68 @@
       if (i.date === todayKey()) return ['done', `✓ Hecha hoy · racha ${i.streak || 1}`];
       return streakNow() ? ['new', `🔥 Racha ${streakNow()} · ¡resuélvela hoy!`] : ['new', 'Nueva hoy'];
     }
-    const s = statsFor(t.id);
-    if (!s) return ['new', 'Nuevo · ' + t.rounds];
-    return ['done', `Mejor ${s.best.correct}/${s.best.total} · ${s.count} ${s.count === 1 ? 'sesión' : 'sesiones'}`];
+    const st = statsFor(t.id);
+    if (!st) return ['new', 'Nuevo · ' + t.rounds];
+    return ['done', `Mejor ${st.best.correct}/${st.best.total} · ${st.count} ${st.count === 1 ? 'sesión' : 'sesiones'}`];
   }
-  function renderCards() {
-    grid.replaceChildren();
-    TRAININGS.forEach(t => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'fact train' + (t.id === 'daily' ? ' daily' : ''); b.dataset.id = t.id; b.dataset.cat = t.cat;
-      const [cls, meta] = metaFor(t);
-      b.innerHTML = `<span class="train-icon" aria-hidden="true">${t.icon}</span><span><span class="train-cat">${CAT[t.cat]}</span><b>${t.name}</b><span>${t.sub}</span><span class="train-meta ${cls}">${meta}</span></span>`;
-      b.setAttribute('aria-label', `${t.name}: ${t.sub}. ${meta}`);
-      b.addEventListener('click', () => select(t.id, true));
-      grid.append(b);
+  function catMeta(c) {
+    const items = TRAININGS.filter(t => t.cat === c.id);
+    if (c.id === 'daily') return metaFor(items[0]);
+    const done = items.filter(t => statsFor(t.id)).length;
+    return [done ? 'done' : 'new', `${items.length} ejercicios${done ? ` · ${done} practicado${done > 1 ? 's' : ''}` : ''}`];
+  }
+  function preview(t) {
+    current = t;
+    renderBoard(t);
+    document.getElementById('boardTitle').textContent = `♟ ${t.name} · Vista previa`;
+    messageEl.innerHTML = `<span class="bm-title">${t.name} · vista previa</span> ` + t.board;
+  }
+  function renderCategories() {
+    catGrid.replaceChildren();
+    CATS.forEach(c => {
+      const a = document.createElement('a');
+      a.className = 'fact train' + (c.id === 'daily' ? ' daily' : ''); a.href = '#' + c.slug; a.dataset.cat = c.id;
+      const [cls, meta] = catMeta(c);
+      a.innerHTML = `<span class="train-icon" aria-hidden="true">${c.icon}</span><span><b>${c.name}</b><span>${c.sub}</span><span class="train-meta ${cls}">${meta}</span><span class="train-go">Ver ejercicios →</span></span>`;
+      a.setAttribute('aria-label', `${c.name}: ${c.sub}. ${meta}`);
+      const first = TRAININGS.find(t => t.cat === c.id);
+      a.addEventListener('mouseenter', () => preview(first));
+      a.addEventListener('focus', () => preview(first));
+      catGrid.append(a);
     });
-    applyFilter(activeFilter);
-    if (current) grid.querySelector(`[data-id="${current.id}"]`)?.classList.add('active');
   }
-  function select(id, withVoice) {
-    current = TRAININGS.find(t => t.id === id) || TRAININGS[0];
-    grid.querySelectorAll('.train').forEach(b => b.classList.toggle('active', b.dataset.id === current.id));
-    renderBoard(current);
-    document.getElementById('boardTitle').textContent = `♟ ${current.name} · Vista previa`;
-    messageEl.innerHTML = `<span class="bm-title">${current.name} · vista previa</span> ` + current.board;
-    const doneToday = current.id === 'daily' && daily().date === todayKey();
-    const label = doneToday ? 'Ver la táctica de hoy →' : `Empezar: ${current.name} →`;
-    panel.innerHTML = `<div class="step-eyebrow">${CAT[current.cat]} · ${current.rounds}</div><h3>${current.name}</h3><p>${current.text}</p><ul>${current.steps.map(s => `<li>${s}</li>`).join('')}</ul><div class="selected-actions"><a class="continue-btn primary" href="${current.href}">${label}</a><button class="continue-btn" type="button" id="previewSpeak">🔊 Escuchar</button></div>`;
-    document.getElementById('previewSpeak').onclick = () => speak(`${current.name}. ${current.text} ${current.steps.join(' ')}`);
-    mascotEl.textContent = current.mascot;
-    try { localStorage.setItem('mauro_practice_selected_v1', current.id); } catch (_) {}
-    if (withVoice) {
-      speak(`${current.name}. ${current.text}`);
-      if (window.matchMedia('(max-width: 900px)').matches) panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+  function renderSublist(c) {
+    document.getElementById('subEyebrow').textContent = `Categoría · ${c.name}`;
+    document.getElementById('subTitle').textContent = c.name;
+    document.getElementById('subText').textContent = c.text;
+    document.getElementById('subMascot').textContent = c.mascot;
+    grid.replaceChildren();
+    const items = TRAININGS.filter(t => t.cat === c.id);
+    items.forEach(t => {
+      const a = document.createElement('a');
+      a.className = 'fact train' + (t.id === 'daily' ? ' daily' : '') + (t.id === highlight ? ' active' : '');
+      a.href = t.href; a.dataset.id = t.id;
+      const [cls, meta] = metaFor(t);
+      const go = t.id === 'daily' && daily().date === todayKey() ? 'Ver la táctica de hoy →' : 'Empezar →';
+      a.innerHTML = `<span class="train-icon" aria-hidden="true">${t.icon}</span><span><b>${t.name}</b><span>${t.text}</span><span class="train-meta ${cls}">${meta}</span><span class="train-go">${go}</span></span>`;
+      a.setAttribute('aria-label', `${t.name}. ${t.sub}. ${meta}. ${go.replace('→', '')}`);
+      a.addEventListener('mouseenter', () => preview(t));
+      a.addEventListener('focus', () => preview(t));
+      grid.append(a);
+    });
+    preview(items.find(t => t.id === highlight) || items[0]);
   }
-
-  // ----- Filtros -----
-  let activeFilter = 'all';
-  function applyFilter(f) {
-    activeFilter = f;
-    document.querySelectorAll('.practice-filters .mini-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
-    grid.querySelectorAll('.train').forEach(b => { b.hidden = f !== 'all' && b.dataset.cat !== f; });
+  // Muestra el nivel según la dirección: practica.html (categorías) o practica.html#tactica (sublista).
+  function route() {
+    const slug = decodeURIComponent(location.hash.replace('#', ''));
+    const c = CATS.find(x => x.slug === slug);
+    viewCats.hidden = !!c; viewSub.hidden = !c;
+    if (c) { renderSublist(c); document.title = `${c.name} · Práctica · Academia Mauro`; }
+    else { renderCategories(); preview(TRAININGS[0]); highlight = null; document.title = 'Práctica · Academia Mauro'; }
+    document.querySelector('.lesson-card').scrollTop = 0;
+    if (window.matchMedia('(max-width: 1100px)').matches && c) document.querySelector('.lesson-card').scrollIntoView({ block: 'start' });
   }
-  document.querySelectorAll('.practice-filters .mini-btn').forEach(b => b.addEventListener('click', () => {
-    applyFilter(b.dataset.filter);
-    const first = grid.querySelector('.train:not([hidden])');
-    if (first && (!current || (b.dataset.filter !== 'all' && current.cat !== b.dataset.filter))) select(first.dataset.id, false);
-  }));
+  window.addEventListener('hashchange', route);
 
   // ----- Recomendación -----
   function recommend() {
@@ -465,19 +496,19 @@
     const order = ['coordinates', 'pieces', 'legal', 'mate1', 'hanging'];
     const untried = order.find(id => !statsFor(id));
     if (untried) return untried;
-    // El de peor precisión reciente.
     let worst = order[0], worstAcc = 2;
     order.forEach(id => { const list = sessions().filter(s => s.type === id).slice(-3); const acc = list.reduce((a, s) => a + s.correct, 0) / Math.max(1, list.reduce((a, s) => a + s.total, 0)); if (acc < worstAcc) { worstAcc = acc; worst = id; } });
     return worst;
   }
   document.getElementById('recommendBtn').addEventListener('click', () => {
-    const id = recommend(); applyFilter('all'); select(id, false);
-    const t = current, reason = id === 'daily' ? 'Aún no resuelves la táctica de hoy.' : !statsFor(id) ? 'Todavía no lo has probado.' : 'Es donde tienes menos precisión: ¡a reforzarlo!';
-    mascotEl.textContent = `Te recomiendo «${t.name}». ${reason}`;
+    const id = recommend(), t = TRAININGS.find(x => x.id === id), c = CATS.find(x => x.id === t.cat);
+    const reason = id === 'daily' ? 'Aún no resuelves la táctica de hoy.' : !statsFor(id) ? 'Todavía no lo has probado.' : 'Es donde tienes menos precisión: ¡a reforzarlo!';
     speak(`Te recomiendo ${t.name}. ${reason}`);
-    grid.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    highlight = id;
+    location.hash = c.slug;
+    setTimeout(() => { document.getElementById('subMascot').textContent = `Te recomiendo «${t.name}». ${reason}`; }, 0);
   });
-  document.getElementById('audioBtn').addEventListener('click', () => speak('Bienvenido a la práctica. Elige un entrenamiento: los fundamentos te enseñan el tablero y las piezas, y la táctica te enseña a ganar material y dar mate. Cada sesión tiene diez rondas. Y no olvides la táctica del día.'));
+  document.getElementById('audioBtn').addEventListener('click', () => speak('Bienvenido a la práctica. Elige una categoría: los fundamentos te enseñan el tablero y las piezas, la táctica te enseña a ganar material y dar mate, y el reto diario te propone un problema nuevo cada día.'));
 
   // ----- Barra superior y resultados -----
   const LABEL = { coordinates: 'Coordenadas', pieces: 'Reconoce las piezas', mate1: 'Mate en 1', hanging: 'Pieza indefensa', legal: 'Movimientos legales', daily: 'Táctica del día' };
@@ -502,13 +533,10 @@
   }
 
   // ----- Inicio -----
-  renderStats(); renderCards();
-  const params = new URLSearchParams(location.search);
-  let first = params.get('t'); try { first = first || localStorage.getItem('mauro_practice_selected_v1'); } catch (_) {}
-  select(TRAININGS.some(t => t.id === first) ? first : recommend(), false);
+  renderStats(); route();
   // Si vuelves de un ejercicio, refresca los resultados.
-  window.addEventListener('pageshow', () => { renderStats(); renderCards(); });
-  window.addEventListener('storage', () => { renderStats(); renderCards(); });
+  window.addEventListener('pageshow', () => { renderStats(); route(); });
+  window.addEventListener('storage', () => { renderStats(); route(); });
 })();
 </script>
 

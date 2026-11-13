@@ -17,10 +17,10 @@
   // ---------- Datos ----------
   const current = decodeURIComponent(location.pathname.split('/').pop()) || 'index.html';
   const SECTIONS = [
-    { id: 'home', url: 'index.html', label: 'Inicio', icon: '🏠', match: p => p === 'index.html' || p === '' },
-    { id: 'learn', url: 'miProgreso.html', label: 'Aprender', icon: '📚', match: p => p === 'miProgreso.html' || /^tema-/.test(p) || p === 'progreso-historico.html' },
-    { id: 'route', url: 'ruta-chess.html', label: 'Ruta', icon: '🗺', match: p => p === 'ruta-chess.html' || p === 'rutaCompleta.html' },
-    { id: 'practice', url: 'practica.html', label: 'Practicar', icon: '♟', match: p => PRACTICE_PAGES.includes(p) }
+    { id: 'home', url: 'index.html', label: 'INICIO', icon: '🏠', match: p => p === 'index.html' || p === '' },
+    { id: 'learn', url: 'miProgreso.html', label: 'APRENDER', icon: '📚', match: p => p === 'miProgreso.html' || /^tema-/.test(p) || p === 'progreso-historico.html' },
+    { id: 'route', url: 'ruta-chess.html', label: 'RUTA', icon: '🗺', match: p => p === 'ruta-chess.html' || p === 'rutaCompleta.html' },
+    { id: 'practice', url: 'practica.html', label: 'PRACTICAR', icon: '♟', match: p => PRACTICE_PAGES.includes(p) }
   ];
   const TRAININGS = [
     { url: 'tactica-del-dia.html', icon: '🔥', name: 'Táctica del día', desc: 'Un reto nuevo cada día', daily: true },
@@ -58,7 +58,7 @@
   const trainingItem = (t, cls) => `<a class="${cls}" href="${t.url}"${t.url === current ? ' aria-current="page"' : ''} role="menuitem"><span class="mh-ti-icon" aria-hidden="true">${t.icon}</span><span class="mh-ti-text"><b>${esc(t.name)}${t.daily ? '<span class="mh-badge mh-daily-badge" hidden>1</span>' : ''}</b><small>${esc(t.desc)}</small></span></a>`;
 
   const desktopLinks = SECTIONS.map(s => {
-    const link = `<a class="mh-link" data-section="${s.id}" href="${s.url}"${cur(s.id)}><span class="mh-icon" aria-hidden="true">${s.icon}</span><span class="mh-label">${s.label}</span>${s.id === 'practice' ? '<span class="mh-badge mh-daily-badge" hidden aria-label="Táctica del día pendiente">1</span>' : ''}</a>`;
+    const link = `<a class="mh-link" data-section="${s.id}" href="${s.url}"${cur(s.id)}><span class="mh-label">${s.label}</span>${s.id === 'practice' ? '<span class="mh-badge mh-daily-badge" hidden aria-label="Táctica del día pendiente">1</span>' : ''}</a>`;
     if (s.id !== 'practice') return link;
     return `<div class="mh-has-mega">${link}<button class="mh-mega-toggle" type="button" aria-label="Ver entrenamientos" aria-expanded="false" aria-controls="mhMega"><span aria-hidden="true">▾</span></button>
       <div class="mh-mega" id="mhMega" role="menu" aria-label="Entrenamientos">
@@ -85,7 +85,7 @@
   const tabbar = document.createElement('nav');
   tabbar.className = 'mh-tabbar';
   tabbar.setAttribute('aria-label', 'Navegación inferior');
-  tabbar.innerHTML = SECTIONS.map(s => `<a class="mh-tab" href="${s.url}"${cur(s.id)}><span class="mh-tab-icon" aria-hidden="true">${s.icon}${s.id === 'practice' ? '<span class="mh-badge mh-daily-badge" hidden>1</span>' : ''}</span><span class="mh-tab-label">${s.label}</span></a>`).join('');
+  tabbar.innerHTML = SECTIONS.map(s => `<a class="mh-tab" href="${s.url}"${cur(s.id)}><span class="mh-tab-label">${s.label}${s.id === 'practice' ? '<span class="mh-badge mh-daily-badge" hidden>1</span>' : ''}</span></a>`).join('');
 
   // Panel lateral
   const drawer = document.createElement('div');
@@ -100,7 +100,7 @@
       <div class="mh-drawer-head"><span class="mauro-header-logo" aria-hidden="true">♞</span><strong>Academia Mauro</strong><button class="mh-drawer-close" type="button" aria-label="Cerrar menú" data-close>✕</button></div>
       <div class="mh-drawer-chips">${chips}</div>
       <p class="mh-drawer-title">Navegación</p>
-      <div class="mh-drawer-sections">${SECTIONS.map(s => `<a class="mh-drawer-link" href="${s.url}"${cur(s.id)}><span aria-hidden="true">${s.icon}</span>${s.label}</a>`).join('')}</div>
+      <div class="mh-drawer-sections">${SECTIONS.map(s => `<a class="mh-drawer-link" href="${s.url}"${cur(s.id)}>${s.label}</a>`).join('')}</div>
       <p class="mh-drawer-title">Entrenamientos</p>
       <div class="mh-drawer-trainings" role="menu" aria-label="Entrenamientos">${TRAININGS.map(t => trainingItem(t, 'mh-drawer-item')).join('')}</div>
       <a class="mh-drawer-cta" href="${CTA.url}">🎓 ${CTA.label}</a>
