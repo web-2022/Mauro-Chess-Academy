@@ -3501,6 +3501,28 @@
       .v21-now{grid-column:1 / -1;font-weight:900;color:#e0f2fe;font-size:.92rem}
       .v21-range{grid-column:1 / -1;width:100%;accent-color:#22c55e}
       @media(max-width:700px){.v21-player{grid-template-columns:repeat(5,minmax(0,1fr))}.v21-player .v20-btn[data-v21="play"]{grid-column:1 / -1;order:-1}.v21-speed{grid-column:1 / -1;justify-self:start}}
+
+      /* --- V22 · Análisis de Lichess: evaluación, relojes y errores --- */
+      .v22-analysis{grid-column:1 / -1;display:grid;gap:6px;padding:10px;border:1px solid rgba(148,163,184,.25);border-radius:12px;background:rgba(2,6,23,.45)}
+      .v22-evalbar{height:10px;border-radius:999px;background:#1e293b;overflow:hidden;border:1px solid rgba(148,163,184,.3)}
+      .v22-evalbar span{display:block;height:100%;width:50%;background:linear-gradient(90deg,#f8fafc,#e2e8f0);transition:width .25s ease}
+      .v22-row{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between;font-weight:900}
+      .v22-eval{padding:2px 9px;border-radius:999px;background:#0f1d39;border:1px solid var(--line);color:#e0f2fe;font-size:.85rem}
+      .v22-clock{color:#cbd5e1;font-size:.82rem}
+      .v22-note{font-size:.88rem;line-height:1.45;color:#e2e8f0}
+      .v22-note:empty{display:none}
+      .v22-note .v22-tag{display:inline-block;margin-right:6px;padding:1px 8px;border-radius:999px;font-weight:900;font-size:.78rem}
+      .v22-tag.dubious{background:rgba(250,204,21,.15);color:#fde68a}.v22-tag.error{background:rgba(249,115,22,.18);color:#fdba74}.v22-tag.blunder{background:rgba(239,68,68,.2);color:#fca5a5}.v22-tag.good{background:rgba(34,197,94,.18);color:#86efac}
+      .v22-note .v22-best{display:block;margin-top:4px;color:#a5f3fc;font-family:ui-monospace,Consolas,monospace;font-size:.82rem}
+      .v22-jumps{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+      .v22-jumps .v20-btn{min-height:40px;font-size:.82rem}
+      .v22-count{color:#94a3b8;font-size:.8rem;font-weight:800}
+      @media(max-width:700px){.v22-jumps .v20-btn{flex:1 1 45%;min-height:44px}}
+      /* --- V22b · Lista de jugadas legible en el panel oscuro --- */
+      body:not(#v20) .comment-editor-panel .study-move-label{color:#f8fafc !important;font-weight:900}
+      body:not(#v20) .comment-editor-panel .study-move-prefix{color:#7dd3fc !important}
+      body:not(#v20) .comment-editor-panel .study-move-comment{color:#cbd5e1 !important}
+      body:not(#v20) .comment-editor-panel .study-move-cell.active,body:not(#v20) .comment-editor-panel .study-move-cell[aria-current]{border-color:#22c55e !important;background:rgba(34,197,94,.14) !important}
       /* --- V20b · refuerzos --- */
       @media (max-width:1100px){
         body:not(#v20) .hero-top{display:flex !important;flex-wrap:wrap !important;align-items:center;justify-content:space-between;gap:8px 12px !important}
@@ -3610,6 +3632,12 @@
               <button class="v20-btn" type="button" data-v21="end" title="Posición final (Fin)" aria-label="Posición final">⏭</button>
               <label class="v21-speed">Velocidad <select id="v21Speed" aria-label="Velocidad de reproducción"><option value="2200">Lenta</option><option value="1300" selected>Normal</option><option value="700">Rápida</option></select></label>
               <div class="v21-now" id="v21Now" aria-live="polite"></div>
+              <div class="v22-analysis" id="v22Analysis" hidden>
+                <div class="v22-evalbar" aria-hidden="true"><span id="v22EvalFill"></span></div>
+                <div class="v22-row"><span class="v22-eval" id="v22Eval"></span><span class="v22-clock" id="v22Clocks"></span></div>
+                <div class="v22-note" id="v22Note"></div>
+                <div class="v22-jumps"><button class="v20-btn" type="button" data-v22="prevErr">◀ Error anterior</button><button class="v20-btn" type="button" data-v22="nextErr">Siguiente error ▶</button><span class="v22-count" id="v22Count"></span></div>
+              </div>
               <input class="v21-range" id="v21Range" type="range" min="0" value="0" aria-label="Ir a la jugada">
             </div>
           </section>
@@ -5271,7 +5299,7 @@
         const infoEl=document.getElementById('v21GameInfo'),playerEl=document.getElementById('v21Player');
         const nowEl=document.getElementById('v21Now'),rangeEl=document.getElementById('v21Range'),speedEl=document.getElementById('v21Speed');
         const playBtn=playerEl.querySelector('[data-v21="play"]');
-        let timer=null,loadedTags=null;
+        let timer=null,loadedTags=null,annotated=false;
         const looksLikePgn=t=>/\[\s*[A-Za-z]+\s+"/.test(t)||/(^|\s)1\.\s*\.{0,3}\s*([a-hKQRBNO]|0-0)/.test(t);
         function say(text,kind){msgEl.textContent=text;msgEl.className='v20-fen-msg'+(kind?' '+kind:'');}
         function tag(k){return loadedTags&&loadedTags[k]&&loadedTags[k]!=='?'&&loadedTags[k]!=='-'?loadedTags[k]:'';}
@@ -5292,9 +5320,35 @@
           if(currentStudyStep===0)nowEl.textContent=`Posición inicial · ${n} jugadas (${Math.ceil(n/2)} movimientos)`;
           else{const m=moves[currentStudyStep-1],num=Math.ceil(currentStudyStep/2),white=currentStudyStep%2===1;
             nowEl.textContent=`Jugada ${currentStudyStep} de ${n} · ${num}${white?'.':'...'} ${m.san||m.notation}`;}
+          renderAnalysis(moves);
           playBtn.textContent=timer?'⏸ Pausa':(currentStudyStep>=n?'↺ Repetir':'▶ Reproducir');
           playBtn.setAttribute('aria-label',timer?'Pausar':'Reproducir la partida');
         }
+        const anaEl=document.getElementById('v22Analysis');
+        function lastClock(moves,upto,side){for(let k=upto;k>=1;k--){const m=moves[k-1];if(m.side===side&&m.v22&&m.v22.clk)return m.v22.clk;}return '';}
+        function errorSteps(){return v16ActiveMoves().map((m,k)=>m.v22&&['dubious','error','blunder'].includes(m.v22.judgeKey)?k+1:0).filter(Boolean);}
+        function renderAnalysis(moves){
+          if(!annotated||!moves.some(m=>m.v22)){anaEl.hidden=true;return;}
+          anaEl.hidden=false;
+          const step=currentStudyStep,m=step?moves[step-1]:null,a=m&&m.v22||{};
+          const ev=step?a.eval:'0.0';
+          document.getElementById('v22EvalFill').style.width=evalPct(ev)+'%';
+          document.getElementById('v22Eval').textContent=ev!==''&&ev!=null?'Evaluación: '+evalText(ev):'Evaluación: —';
+          const cw=lastClock(moves,step,'w'),cb=lastClock(moves,step,'b');
+          document.getElementById('v22Clocks').textContent=cw||cb?`⏱ ⚪ ${cw||'—'} · ⚫ ${cb||'—'}`:'';
+          const note=document.getElementById('v22Note');
+          if(!m){note.textContent='';}
+          else{
+            const tag=a.judgeKey?`<span class="v22-tag ${['verygood','key'].includes(a.judgeKey)?'good':a.judgeKey}">${escapeHtml(a.judge)}</span>`:'';
+            const txt=(m.comment||'').replace(/^⚠ [^.]+\.\s*/,'').replace(/\s*Mejor continuación:.*$/,'');
+            note.innerHTML=tag+escapeHtml(txt)+(a.best?`<span class="v22-best">Mejor: ${escapeHtml(a.best)}</span>`:'');
+          }
+          const errs=errorSteps();
+          document.getElementById('v22Count').textContent=errs.length?`${errs.length} errores e imprecisiones en la partida`:'Sin errores marcados';
+        }
+        anaEl.addEventListener('click',e=>{const b=e.target.closest('[data-v22]');if(!b)return;stop();const errs=errorSteps();if(!errs.length)return;
+          const t=b.dataset.v22==='nextErr'?(errs.find(k=>k>currentStudyStep)||errs[0]):([...errs].reverse().find(k=>k<currentStudyStep)||errs[errs.length-1]);
+          goToStudyStep(t);});
         function stop(){if(timer){clearInterval(timer);timer=null;}syncPlayer();}
         function play(){
           const n=v16ActiveMoves().length;if(!n)return;
@@ -5311,6 +5365,66 @@
         speedEl.addEventListener('change',()=>{if(timer){stop();play();}});
         const v20Render=renderAll;renderAll=function(){v20Render();syncPlayer();};
 
+
+        // ----- V22 · Lee el análisis de Lichess (eval, reloj, juicios y mejor variante) -----
+        const MOVE_RE=/^(?:[NBRQK]?[a-h]?[1-8]?x?[a-h][1-8](?:=?[NBRQ])?|O-O(?:-O)?|0-0(?:-0)?)[+#]?([!?]{1,2})?$/;
+        function parseAnnotations(raw){
+          const body=String(raw).replace(/^\s*\[[^\]]*\]\s*$/gm,' ');
+          const moves=[],pre={comments:[]};let depth=0,i=0,alt='',cur=null;
+          const attach=c=>{const t=c.trim();if(!t)return;(cur||pre).comments.push(t);};
+          while(i<body.length){
+            const ch=body[i];
+            if(ch==='{'){const j=body.indexOf('}',i);const c=body.slice(i+1,j<0?body.length:j);if(depth===0)attach(c);else alt+=' ';i=j<0?body.length:j+1;continue;}
+            if(ch==='('){if(depth===0)alt='';else alt+='(';depth++;i++;continue;}
+            if(ch===')'){depth--;if(depth===0){if(cur&&!cur.alt)cur.alt=alt.replace(/\s+/g,' ').trim();}else alt+=')';i++;continue;}
+            if(depth>0){alt+=ch;i++;continue;}
+            if(/\s/.test(ch)){i++;continue;}
+            let j=i;while(j<body.length&&!/[\s{}()]/.test(body[j]))j++;
+            let tok=body.slice(i,j).replace(/^\d+\.(?:\.\.)?/,'');i=j;
+            if(!tok||/^\$\d+$/.test(tok)){if(cur&&tok)cur.nag=({'$1':'!','$2':'?','$3':'!!','$4':'??','$5':'!?','$6':'?!'})[tok]||cur.nag;continue;}
+            const m=tok.match(MOVE_RE);
+            if(m){cur={nag:m[1]||'',comments:[],alt:''};moves.push(cur);}
+          }
+          return {moves,pre};
+        }
+        const JUDGE={Inaccuracy:['dubious','Imprecisión'],Mistake:['error','Error'],Blunder:['blunder','Error grave']};
+        function translate(t){
+          return t.replace(/\bInaccuracy\.?/,'').replace(/\bMistake\.?/,'').replace(/\bBlunder\.?/,'')
+            .replace(/([^\s.]+) was best\./,'Lo mejor era $1.')
+            .replace(/Checkmate is now unavoidable\./,'Ahora el mate es inevitable.')
+            .replace(/Lost forced checkmate sequence\./,'Se dejó escapar un mate forzado.')
+            .replace(/(White|Black) resigns\./,(_,w)=>w==='White'?'Las blancas abandonan.':'Las negras abandonan.')
+            .replace(/(White|Black) wins on time\./,(_,w)=>w==='White'?'Las blancas ganan por tiempo.':'Las negras ganan por tiempo.')
+            .replace(/Mate in (\d+)/g,'Mate en $1').replace(/\s+/g,' ').trim();
+        }
+        function evalText(e){if(e==null||e==='')return '';if(String(e).startsWith('#')){const n=parseInt(String(e).slice(1),10);return n>0?`Mate en ${n} para blancas`:`Mate en ${Math.abs(n)} para negras`;}const v=Number(e);return `${v>0?'+':''}${v.toFixed(2)} ${Math.abs(v)<0.3?'· igualdad':v>0?'· ventaja blanca':'· ventaja negra'}`;}
+        function evalPct(e){if(e==null||e==='')return 50;if(String(e).startsWith('#'))return parseInt(String(e).slice(1),10)>0?100:0;const v=Math.max(-8,Math.min(8,Number(e)));return 50+v*6.25;}
+        function applyAnnotations(raw){
+          const {moves,pre}=parseAnnotations(raw),list=lessonMoves;
+          if(moves.length!==list.length)return 0; // si no coinciden, no se toca nada
+          let marked=0;
+          moves.forEach((a,k)=>{
+            const rec=list[k];let ev='',clk='',judge=null,opening='',texts=[];
+            a.comments.forEach(c=>{
+              const e=c.match(/\[%eval\s+([^\],]+)/);if(e)ev=e[1].trim();
+              const t=c.match(/\[%clk\s+([^\]]+)\]/);if(t)clk=t[1].trim().replace(/^0:(?=\d\d:)/,'').replace(/^0(?=\d:)/,'').replace(/\.\d+$/,'');
+              let txt=c.replace(/\[%[^\]]*\]/g,'').trim();if(!txt)return;
+              const jw=Object.keys(JUDGE).find(w=>new RegExp('\\b'+w+'\\b').test(txt));if(jw)judge=JUDGE[jw];
+              if(/^[A-E]\d\d\s/.test(txt)&&!/was best/.test(txt)){opening=txt;return;}
+              txt=translate(txt);if(txt)texts.push(txt);
+            });
+            if(!judge&&a.nag)judge=({'?!':['dubious','Imprecisión'],'?':['error','Error'],'??':['blunder','Error grave'],'!':['verygood','Muy buena'],'!!':['key','Brillante'],'!?':['good','Interesante']})[a.nag]||null;
+            rec.v22={eval:ev,clk,judge:judge&&judge[1],judgeKey:judge&&judge[0],best:a.alt||'',opening};
+            if(judge){rec.evaluation=judge[0];if(['dubious','error','blunder'].includes(judge[0]))marked++;}
+            const parts=[];
+            if(opening)parts.push(`📖 Apertura: ${opening}.`);
+            if(judge&&['dubious','error','blunder'].includes(judge[0]))parts.push(`⚠ ${judge[1]}.`);
+            parts.push(...texts);
+            if(a.alt)parts.push(`Mejor continuación: ${a.alt}`);
+            rec.comment=parts.join(' '); // reemplaza el texto crudo ([%eval] [%clk]) que dejó el importador
+          });
+          return marked;
+        }
         async function loadPgn(raw){
           stop();
           const before=lessonMoves.length,beforeTitle=lessonTitleEl.value;
@@ -5328,10 +5442,11 @@
           const w=tag('White'),b=tag('Black');
           if(w&&b)lessonTitleEl.value=`${w} vs ${b}${tag('Result')?' · '+tag('Result'):''}`;
           renderInfo();
+          const marked=applyAnnotations(raw);annotated=lessonMoves.some(m=>m.v22&&(m.v22.eval||m.v22.clk||m.v22.judge));
           loadedLessonBannerEl.innerHTML=`✅ <strong>Partida cargada:</strong> ${escapeHtml(lessonTitleEl.value)}<br>${lessonMoves.length} jugadas. Usa <strong>▶ Reproducir</strong> debajo del tablero o <strong>Siguiente ▶</strong>.`;
           if(!v16LegalMode){v16LegalMode=true;v16UpdateLegalButton();}
           goToStudyStep(0);
-          say(`✓ Partida cargada: ${lessonMoves.length} jugadas. Usa ▶ Reproducir o las flechas ← → del teclado.`,'ok');
+          say(`✓ Partida cargada: ${lessonMoves.length} jugadas${annotated?` con análisis de Lichess (${marked} errores e imprecisiones marcados)`:''}. Usa ▶ Reproducir o las flechas ← → del teclado.`,'ok');
           playerEl.hidden=false;syncPlayer();
           playerEl.scrollIntoView({block:'nearest',behavior:'smooth'});
         }
@@ -5341,7 +5456,7 @@
         pasteEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&looksLikePgn(pasteEl.value)){e.preventDefault();e.stopImmediatePropagation();loadPgn(pasteEl.value.trim());}},true);
         pasteEl.addEventListener('paste',()=>setTimeout(()=>{const t=pasteEl.value.trim();if(looksLikePgn(t))loadPgn(t);},0));
         // Un FEN cargado reemplaza la partida: se ocultan la ficha y el reproductor.
-        loadBtn.addEventListener('click',()=>{if(!looksLikePgn(pasteEl.value)){loadedTags=null;infoEl.hidden=true;stop();}});
+        loadBtn.addEventListener('click',()=>{if(!looksLikePgn(pasteEl.value)){loadedTags=null;annotated=false;infoEl.hidden=true;stop();}});
         // El botón «Pegar» del portapapeles también entiende PGN.
         document.getElementById('v20FenPasteBtn').addEventListener('click',async e=>{
           e.stopImmediatePropagation(); // un solo manejador decide si es PGN o FEN
