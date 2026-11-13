@@ -231,6 +231,23 @@ a.train{text-decoration:none!important;color:var(--text)!important}
   /* El menú superior también a todo el ancho en esta página */
   body .mauro-header-inner{width:calc(100% - 24px)!important}
 }
+
+/* ===== Tarjeta «Mates» con sublista ===== */
+#viewSublist .train.has-sub{grid-column:1/-1;display:block;padding:0;cursor:default}
+.train.has-sub .ts-head{all:unset;box-sizing:border-box;display:flex;gap:10px;align-items:flex-start;width:100%;padding:12px;cursor:pointer;border-radius:11px}
+.train.has-sub .ts-head:focus-visible{outline:3px solid #7dd3fc;outline-offset:2px}
+.train.has-sub .ts-head b{display:block;color:var(--blue2)}
+.train.has-sub .ts-head span span{display:block}
+.train.has-sub .ts-head span .train-meta{display:inline-block;width:auto}
+.train-sub{display:none;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:4px 12px 14px}
+.train.has-sub.open .train-sub{display:grid}
+.train.has-sub.open{border-color:var(--green)!important;background:rgba(34,197,94,.08)!important}
+.train.has-sub.open .train-go{opacity:.6}
+.ts-group{display:grid;gap:6px;align-content:start}
+.ts-title{font-size:12px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--green2)}
+.ts-link{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:11px;background:#0f1d39;color:var(--text)!important;text-decoration:none!important;font-weight:850;font-size:14px;transition:border-color .15s,background .15s}
+.ts-link small{color:var(--muted);font-weight:700;font-size:12px;white-space:nowrap}
+.ts-link:hover,.ts-link:focus-visible{border-color:rgba(56,189,248,.6);background:rgba(56,189,248,.10)}
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
 <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
@@ -339,9 +356,14 @@ a.train{text-decoration:none!important;color:var(--text)!important}
       steps: ['Las piezas propias bloquean el camino.', 'Las piezas negras se pueden capturar.', 'Solo el caballo puede saltar.'],
       board: '<strong>El caballo de d4</strong> tiene 7 casillas: b3 está ocupada por su propio peón y en c6 puede capturar.',
       mascot: 'Si dominas cómo se mueve cada pieza, nunca te sorprenderán en el tablero.' },
-    { id: 'mate1', cat: 'tact', icon: '<img src="pieces-tema/wQ.png" alt="">', name: 'Mate en 1', sub: 'Encuentra el jaque mate', href: 'mate-en-1.html', rounds: '10 rondas',
+    { id: 'mate1', cat: 'tact', icon: '<img src="pieces-tema/wQ.png" alt="">', name: 'Mates', sub: 'Mate en 1, 2, 3 y 4 y mates básicos', href: 'mate-en-1.html', rounds: '11 series · 176 ejercicios',
+      children: [
+        { group: 'Por número de jugadas', items: [['Mate en 1', 'mate-en-1.html', 26], ['Mate en 2', 'mates.html?tipo=m2', 22], ['Mate en 3', 'mates.html?tipo=m3', 15], ['Mate en 4', 'mates.html?tipo=m4', 10]] },
+        { group: 'Mates básicos', items: [['Rey y torre', 'mates.html?tipo=torre', 18], ['Rey y dama', 'mates.html?tipo=dama', 16], ['Dama y torre', 'mates.html?tipo=damatorre', 15], ['Dos torres', 'mates.html?tipo=dostorres', 14], ['Alfil y caballo', 'mates.html?tipo=caballoalfil', 14], ['Dos alfiles', 'mates.html?tipo=dosalfiles', 13]] },
+        { group: 'Patrones', items: [['Mates clásicos', 'mates.html?tipo=patrones', 13]] }
+      ],
       fen: '6k1/5ppp/8/8/8/8/8/R5K1', marks: { a1: 'preview-from', a8: 'preview-goal', g8: 'glow-king' },
-      text: 'Encuentra la jugada que da jaque mate. Aprenderás los patrones clásicos: pasillo, coz, mate árabe, ópera y más.',
+      text: 'Del mate en 1 al mate en 4, los mates básicos con torre, dama, dos torres, alfil y caballo, dos alfiles y los mates clásicos con nombre.',
       steps: ['Un mate siempre empieza con un jaque.', 'Mira las casillas de escape del rey.', 'Comprueba que nadie pueda capturar ni tapar.'],
       board: '<strong>Mate del pasillo:</strong> Ta8# — los peones encierran a su propio rey.',
       mascot: 'Los patrones de mate se repiten. Cuantos más conozcas, más rápido los verás en tus partidas.' },
@@ -457,6 +479,23 @@ a.train{text-decoration:none!important;color:var(--text)!important}
       catGrid.append(a);
     });
   }
+  // Tarjeta con sublista: se abre al pasar el cursor (o al tocarla en celular)
+  function subCard(t) {
+    const box = document.createElement('div');
+    box.className = 'fact train has-sub' + (t.id === highlight ? ' active' : ''); box.dataset.id = t.id;
+    const [cls, meta] = metaFor(t);
+    const links = t.children.map(g => `<div class="ts-group"><span class="ts-title">${g.group}</span>${g.items.map(([n, h, k]) => `<a class="ts-link" href="${h}" role="menuitem">${n}<small>${k} ejercicios</small></a>`).join('')}</div>`).join('');
+    box.innerHTML = `<button class="ts-head" type="button" aria-expanded="false" aria-controls="ts-${t.id}"><span class="train-icon" aria-hidden="true">${t.icon}</span><span><b>${t.name}</b><span>${t.text}</span><span class="train-meta ${cls}">${t.rounds}</span><span class="train-go">Elige el tipo de mate ▾</span></span></button><div class="train-sub" id="ts-${t.id}" role="menu" aria-label="Tipos de mate">${links}</div>`;
+    const head = box.querySelector('.ts-head');
+    const setOpen = v => { box.classList.toggle('open', v); head.setAttribute('aria-expanded', String(v)); };
+    head.addEventListener('click', () => setOpen(!box.classList.contains('open')));
+    box.addEventListener('mouseenter', () => { if (matchMedia('(hover:hover)').matches) setOpen(true); preview(t); });
+    box.addEventListener('mouseleave', () => { if (matchMedia('(hover:hover)').matches) setOpen(false); });
+    box.addEventListener('focusin', () => preview(t));
+    box.addEventListener('focusout', e => { if (!box.contains(e.relatedTarget)) setOpen(false); });
+    box.addEventListener('keydown', e => { if (e.key === 'Escape') { setOpen(false); head.focus(); } });
+    return box;
+  }
   function renderSublist(c) {
     document.getElementById('subEyebrow').textContent = `Categoría · ${c.name}`;
     document.getElementById('subTitle').textContent = c.name;
@@ -465,6 +504,7 @@ a.train{text-decoration:none!important;color:var(--text)!important}
     grid.replaceChildren();
     const items = TRAININGS.filter(t => t.cat === c.id);
     items.forEach(t => {
+      if (t.children) { grid.append(subCard(t)); return; }
       const a = document.createElement('a');
       a.className = 'fact train' + (t.id === 'daily' ? ' daily' : '') + (t.id === highlight ? ' active' : '');
       a.href = t.href; a.dataset.id = t.id;

@@ -23,14 +23,14 @@
   ];
   const TRAININGS = [
     { url: 'tactica-del-dia.html', icon: '🔥', name: 'Táctica del día', desc: 'Un reto nuevo cada día', daily: true },
-    { url: 'mate-en-1.html', icon: '♛', name: 'Mate en 1', desc: 'Patrones clásicos de mate' },
+    { url: 'practica.html#tactica', icon: '♛', name: 'Mates', desc: 'Mate en 1 a 4 y mates básicos' },
     { url: 'pieza-indefensa.html', icon: '♞', name: 'Pieza indefensa', desc: 'Gana material sin caer en trampas' },
     { url: 'movimientos-legales.html', icon: '♝', name: 'Movimientos legales', desc: 'A dónde puede ir cada pieza' },
     { url: 'practiquemoseltableroycoordenadas.html', icon: '🎯', name: 'Coordenadas', desc: 'Encuentra la casilla que escuchas' },
     { url: 'dondeEstaLaPieza.html', icon: '👀', name: 'Reconoce las piezas', desc: 'Di en qué casilla está cada pieza' },
     { url: 'tableroDePractica.html', icon: '🧩', name: 'Tablero libre', desc: 'Explora y crea posiciones' }
   ];
-  const PRACTICE_PAGES = ['practica.html', ...TRAININGS.map(t => t.url)];
+  const PRACTICE_PAGES = ['practica.html', 'mate-en-1.html', 'mates.html', ...TRAININGS.map(t => t.url)];
   const CTA = { url: 'inicio-anterior.html#contacto', label: 'Clase gratuita de evaluación', short: 'Clase gratuita' };
   const activeId = (SECTIONS.find(s => s.match(current)) || {}).id || null;
 

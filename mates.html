@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mates · Práctica | Academia Mauro</title>
+  <meta name="description" content="Ejercicios de mate verificados: mate en 2, 3 y 4, mates básicos con torre, dama, dos torres, alfil y caballo, dos alfiles y mates clásicos.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <meta name="theme-color" content="#06111f">
+  <link rel="stylesheet" href="js/mauro-voice.css?v=187">
+  <script src="js/mauro-voice.js?v=192"></script>
+  <link rel="stylesheet" href="js/mauro-ui.css?v=192">
+  <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
+  <link rel="stylesheet" href="js/mauro-responsive.css?v=192">
+  <link rel="stylesheet" href="js/mauro-exercise.css?v=192">
+  <link rel="stylesheet" href="js/mauro-drills.css?v=1">
+  <link rel="stylesheet" href="js/mauro-ejercicio-ancho.css?v=1">
+  <style>
+    body.mauro-exercise .sq img.mp-libre{width:82%;height:82%;object-fit:contain}
+    body.mauro-exercise .sq img.mp-bR{width:81%;height:81%}body.mauro-exercise .sq img.mp-bN{width:67%;height:67%}
+    body.mauro-exercise .sq img.mp-bB{width:73%;height:73%}body.mauro-exercise .sq img.mp-bQ{width:75%;height:75%}body.mauro-exercise .sq img.mp-bK{width:68%;height:68%}
+    #setDone{padding:16px;margin:16px 0;border:1px solid #2d735c;border-radius:14px;background:#0c2a2c}
+    #setDone .main-btn{display:inline-block;text-decoration:none;margin-top:8px}
+  </style>
+  <script defer src="js/mauro-practice.js?v=194"></script>
+</head>
+<body class="mauro-exercise" data-exercise="mates">
+  <div class="app">
+    <header class="exercise-progress">
+      <a href="practica.html#tactica">← Mates</a>
+      <div class="exercise-status"><span>✓ Aciertos <b id="ok">0</b></span><span>Progreso <b id="count">0/0</b></span></div>
+      <div class="progress" id="exerciseMeter" role="progressbar" aria-label="Progreso de la serie" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div class="progress-inner" id="bar"></div></div>
+    </header>
+    <main class="exercise-layout">
+      <section class="exercise-intro">
+        <span class="exercise-kicker" id="setKicker">MATES</span>
+        <h1 id="setTitle">Mates</h1>
+        <p id="setDesc"></p>
+        <div class="piece-question" id="question" aria-live="polite"></div>
+        <span class="exercise-theme" id="exerciseTheme"></span>
+      </section>
+      <section class="exercise-board">
+        <div class="exercise-board-label">♟ Tablero interactivo · juegan blancas</div>
+        <div class="exercise-board-shell"><div class="board" id="board"></div></div>
+        <ul class="exercise-legend" aria-label="Leyenda de colores"><li><span style="background:#facc15"></span>Pieza elegida</li><li><span style="background:#475569;border-radius:50%"></span>Casillas posibles</li><li><span style="background:#f97316"></span>Respuesta de las negras</li><li><span style="background:#a78bfa"></span>Pista</li></ul>
+      </section>
+      <section class="exercise-action">
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+        <div class="controls">
+          <button class="main-btn" type="button" id="exerciseHint">💡 Pista</button>
+          <button class="main-btn" type="button" id="exerciseRetry" hidden>↺ Reintentar</button>
+          <button class="main-btn" type="button" id="exerciseListen">🔊 Escuchar</button>
+          <button class="main-btn primary" type="button" id="exerciseNext" disabled>Siguiente →</button>
+        </div>
+        <div id="setDone" hidden></div>
+        <div id="exerciseSummary" hidden></div>
+        <p class="exercise-tip" id="setTip"></p>
+        <a href="practica.html#tactica">Elegir otros mates</a>
+      </section>
+    </main>
+  </div>
+  <script src="js/mauro-chess-rules.js?v=1"></script>
+  <script src="js/mauro-mates-data.js?v=1"></script>
+  <script defer src="js/mauro-mates.js?v=1"></script>
+</body>
+</html>
