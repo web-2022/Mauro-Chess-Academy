@@ -197,6 +197,8 @@
      · ancho disponible: 100vw − columna derecha mínima (400) − márgenes (80)
    ===================================================================== */
 .board-caption h1{margin:8px 2px 4px;font-size:13px;color:var(--blue2)}
+.bm-title{display:none}
+@media (min-width:1101px){.bm-title{display:inline-block;margin-right:6px;padding:1px 8px;border-radius:999px;background:rgba(56,189,248,.12);color:var(--blue2);font-weight:900;font-size:12px}}
 .train-filters{margin-top:12px}
 .train-filters .practice-filters{display:flex!important;flex-wrap:wrap;gap:6px}
 .train-filters + .train-grid{margin-top:8px}
@@ -206,9 +208,15 @@
     grid-template-columns:calc(var(--board-size) + 18px) minmax(400px,1fr)!important;grid-template-rows:auto 1fr;column-gap:12px;align-items:start}
   body .app>.topbar{grid-column:2;grid-row:1;margin:0 0 8px!important}
   body .app>.main{display:contents!important}
-  body .board-card{grid-column:1;grid-row:1 / span 2;position:sticky!important;top:68px!important;min-height:0!important;margin-top:0!important}
-  body .lesson-card{grid-column:2;grid-row:2;margin-top:0!important}
-  body .board-card .board-shell{width:var(--board-size)!important;max-width:none!important;margin:0!important}
+  /* Solo el tablero queda fijo al bajar; el título y el mensaje pasan a la columna derecha.
+     Así el tablero (100dvh − 100px) siempre cabe entero debajo del menú, incluso al final de la página. */
+  body .app{grid-template-columns:var(--board-size) minmax(400px,1fr)!important;grid-template-rows:auto auto 1fr}
+  body .board-card{display:contents!important}
+  body .board-card .board-shell{grid-column:1;grid-row:1 / span 3;align-self:start;position:sticky!important;top:84px!important;
+    width:var(--board-size)!important;max-width:none!important;margin:0!important}
+  body .board-card .board-caption{grid-column:2;grid-row:2;display:none}
+  body .board-card .board-message{grid-column:2;grid-row:2;margin:0 0 8px!important}
+  body .lesson-card{grid-column:2;grid-row:3;margin-top:0!important}
   /* El menú superior también a todo el ancho en esta página */
   body .mauro-header-inner{width:calc(100% - 24px)!important}
 }
@@ -425,7 +433,7 @@
     grid.querySelectorAll('.train').forEach(b => b.classList.toggle('active', b.dataset.id === current.id));
     renderBoard(current);
     document.getElementById('boardTitle').textContent = `♟ ${current.name} · Vista previa`;
-    messageEl.innerHTML = current.board;
+    messageEl.innerHTML = `<span class="bm-title">${current.name} · vista previa</span> ` + current.board;
     const doneToday = current.id === 'daily' && daily().date === todayKey();
     const label = doneToday ? 'Ver la táctica de hoy →' : `Empezar: ${current.name} →`;
     panel.innerHTML = `<div class="step-eyebrow">${CAT[current.cat]} · ${current.rounds}</div><h3>${current.name}</h3><p>${current.text}</p><ul>${current.steps.map(s => `<li>${s}</li>`).join('')}</ul><div class="selected-actions"><a class="continue-btn primary" href="${current.href}">${label}</a><button class="continue-btn" type="button" id="previewSpeak">🔊 Escuchar</button></div>`;
