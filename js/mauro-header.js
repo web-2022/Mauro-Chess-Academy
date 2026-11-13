@@ -18,8 +18,7 @@
   const current = decodeURIComponent(location.pathname.split('/').pop()) || 'index.html';
   const SECTIONS = [
     { id: 'home', url: 'index.html', label: 'INICIO', icon: '🏠', match: p => p === 'index.html' || p === '' },
-    { id: 'learn', url: 'miProgreso.html', label: 'APRENDER', icon: '📚', match: p => p === 'miProgreso.html' || /^tema-/.test(p) || p === 'progreso-historico.html' },
-    { id: 'route', url: 'ruta-chess.html', label: 'RUTA', icon: '🗺', match: p => p === 'ruta-chess.html' || p === 'rutaCompleta.html' },
+    { id: 'learn', url: 'ruta-chess.html', label: 'APRENDER', icon: '📚', match: p => ['ruta-chess.html', 'rutaCompleta.html', 'miProgreso.html', 'progreso-historico.html'].includes(p) || /^tema-/.test(p) },
     { id: 'practice', url: 'practica.html', label: 'PRACTICAR', icon: '♟', match: p => PRACTICE_PAGES.includes(p) }
   ];
   const TRAININGS = [

@@ -87,7 +87,7 @@ html.mh-lock,html.mh-lock body{overflow:hidden}
   .mh-chips{margin-left:auto}
   .mh-chip{min-height:44px}
   .mauro-header-logo,.mauro-site-header.is-compact .mauro-header-logo{width:40px;height:40px;flex-basis:40px;font-size:24px}
-  .mh-tabbar{position:fixed;left:0;right:0;bottom:0;z-index:99;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));height:calc(var(--mh-tab) + env(safe-area-inset-bottom));padding:4px max(6px,env(safe-area-inset-left)) env(safe-area-inset-bottom) max(6px,env(safe-area-inset-right));background:rgba(6,17,31,.97);border-top:1px solid var(--mh-line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 -10px 30px rgba(0,0,0,.35)}
+  .mh-tabbar{position:fixed;left:0;right:0;bottom:0;z-index:99;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:calc(var(--mh-tab) + env(safe-area-inset-bottom));padding:4px max(6px,env(safe-area-inset-left)) env(safe-area-inset-bottom) max(6px,env(safe-area-inset-right));background:rgba(6,17,31,.97);border-top:1px solid var(--mh-line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 -10px 30px rgba(0,0,0,.35)}
   .mh-tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;margin:2px;border-radius:14px;color:var(--mh-muted)!important;text-decoration:none!important;font:800 12px/1.1 Inter,system-ui,sans-serif;transition:color .15s ease,background .15s ease,transform .12s ease}
   .mh-tab-icon{position:relative;font-size:21px;line-height:1;transition:transform .2s ease}
   .mh-tab .mh-badge{position:absolute;top:-6px;right:-12px}
@@ -124,7 +124,7 @@ html.mh-lock,html.mh-lock body{overflow:hidden}
 .mh-drawer-chips .mh-chip{flex:1;justify-content:center;min-height:44px}
 .mh-drawer-chips .mh-xp-unit{display:inline!important}
 .mh-drawer-title{margin:14px 2px 8px;color:var(--mh-muted);font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
-.mh-drawer-sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.mh-drawer-sections{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .mh-drawer-link{display:flex;align-items:center;gap:8px;min-height:48px;padding:10px 12px;border:1px solid var(--mh-line);border-radius:13px;background:#0d1c30;color:var(--mh-text)!important;text-decoration:none!important;font-weight:800}
 .mh-drawer-link[aria-current=page]{border-color:var(--mh-green);color:var(--mh-mint)!important;background:rgba(34,197,94,.12)}
 .mh-drawer-trainings{display:grid;gap:8px}

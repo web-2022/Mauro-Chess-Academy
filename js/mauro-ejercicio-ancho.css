@@ -1,0 +1,25 @@
+/* Academia Mauro · Ejercicios a ancho completo en laptops, PC y pantallas ultra grandes.
+   Tablero a la izquierda tan grande como permita la pantalla (sin cortarse) y el resto
+   del ejercicio en la columna derecha. En celular y tablet no cambia nada. */
+@media (min-width:1101px){
+  body.mauro-exercise{
+    --exb:min(calc(100vh - 104px), calc(100vw - 480px));
+    --exb:min(calc(100dvh - 104px), calc(100vw - 480px));
+  }
+  body.mauro-exercise .app{
+    display:grid!important;grid-template-columns:var(--exb) minmax(400px,1fr);grid-template-rows:auto auto auto 1fr;
+    column-gap:14px;align-items:start;width:calc(100% - 24px)!important;max-width:none!important;margin:8px 12px 8px!important;
+    min-height:calc(100vh - 92px);min-height:calc(100dvh - 92px);
+  }
+  /* Sin relleno extra abajo: la página no se desplaza si el contenido cabe en pantalla */
+  body.mauro-exercise{padding-bottom:0!important;margin-bottom:0!important}
+  body.mauro-exercise .exercise-layout,body.mauro-exercise .exercise-board{display:contents!important}
+  /* Solo el tablero queda fijo al bajar: así siempre se ve completo debajo del menú */
+  body.mauro-exercise .exercise-board-shell{grid-column:1;grid-row:1 / span 4;align-self:start;position:sticky;top:84px;width:var(--exb);margin:0!important}
+  body.mauro-exercise .exercise-progress{grid-column:2;grid-row:1;margin:0 0 12px!important}
+  body.mauro-exercise .exercise-intro{grid-column:2;grid-row:2;margin:0 0 12px!important}
+  body.mauro-exercise .exercise-action{grid-column:2;grid-row:3}
+  body.mauro-exercise .exercise-legend{grid-column:2;grid-row:4;margin-top:12px!important;padding:10px 14px;border:1px solid #29415c;border-radius:14px;background:#071124}
+  body.mauro-exercise .exercise-board-label,body.mauro-exercise .exercise-board-note{display:none!important}
+  body.mauro-exercise .exercise-intro,body.mauro-exercise .exercise-action{padding:20px!important}
+}

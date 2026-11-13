@@ -6,7 +6,7 @@
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1976d2">
-<title>Ruta de aprendizaje de ajedrez | Academia Mauro</title>
+<title>Aprender ajedrez · Ruta y mi progreso | Academia Mauro</title>
 <meta name="description" content="Ruta completa de aprendizaje de ajedrez desde iniciación hasta nivel competitivo avanzado. 293 clases progresivas de reglas, táctica, cálculo, finales, estrategia y competición.">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="author" content="Academia Mauro">
@@ -200,6 +200,44 @@ body.text-large .topic-card{min-height:82px}
 <div class="hero-side"><div class="metric"><b>14</b><span>Niveles progresivos</span></div><div class="metric"><b>293</b><span>Clases planificadas</span></div><div class="metric"><b>4</b><span>Clases disponibles</span></div><div class="metric"><b>Sin ELO → 2200+</b><span>Nivel orientativo de juego</span></div>
 <details class="method-card"><summary>Método Academia Mauro</summary><div class="method-flow"><span>1. Observar</span><span>2. Detectar</span><span>3. Pensar</span><span>4. Candidatas</span><span>5. Calcular</span><span>6. Evaluar</span><span>7. Comprobar</span><span>8. Mover</span></div></details></div>
 </section>
+<section class="learn-progress" id="mi-progreso" aria-label="Mi progreso">
+  <div class="lp-main">
+    <span class="eyebrow">MI PROGRESO · CONTINÚA DONDE TE QUEDASTE</span>
+    <span class="lp-module" id="learningModule">Módulo 1 · Descubro el ajedrez</span>
+    <h2 id="learningTitle">¿Qué es el ajedrez?</h2>
+    <p id="learningStep">Empieza tu primera clase.</p>
+    <p class="lp-welcome" id="learningWelcome">Tu avance se guarda en este navegador y dispositivo.</p>
+    <div class="lp-actions"><a class="btn primary" id="learningContinue" href="tema-1-que-es-el-ajedrez.html">Continuar aprendiendo →</a><a class="btn" href="practica.html">Practicar lo aprendido</a></div>
+  </div>
+  <div class="lp-stats">
+    <div class="metric"><b id="learningDone">0 / 4</b><span>Clases completadas</span><progress id="learningProgress" max="4" value="0" aria-label="Clases completadas"></progress></div>
+    <div class="metric"><b id="learningXP">0</b><span>XP en las clases</span></div>
+    <div class="metric"><b id="learningErrors">0</b><span>Actividades para repasar</span></div>
+  </div>
+  <details class="lp-module-list">
+    <summary>Tu módulo actual</summary>
+    <p id="learningGoal">Objetivo: conocer el ajedrez y orientarte en el tablero.</p>
+    <ul id="learningTopics"></ul>
+    <p class="lp-history"><a href="progreso-historico.html">Consultar mi historial de la colección anterior</a></p>
+  </details>
+</section>
+<style>
+.learn-progress{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;margin:0 0 18px;padding:20px;border:1px solid rgba(34,197,94,.35);border-radius:22px;background:linear-gradient(135deg,rgba(34,197,94,.10),rgba(56,189,248,.07) 60%,rgba(7,17,36,.9));scroll-margin-top:90px}
+.learn-progress .lp-module{display:block;margin-top:6px;color:#bae6fd;font-weight:800;font-size:14px}
+.learn-progress h2{margin:4px 0 6px;font-size:clamp(22px,2.4vw,30px)}
+.learn-progress p{margin:0 0 6px;color:#cbd5e1}
+.learn-progress .lp-welcome{font-size:13px;color:#94a3b8}
+.learn-progress .lp-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.learn-progress .lp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:center}
+.learn-progress .lp-stats .metric{text-align:center}
+.learn-progress progress{width:100%;height:8px;margin-top:6px;accent-color:#22c55e}
+.learn-progress .lp-module-list{grid-column:1/-1}
+.learn-progress .lp-module-list summary{cursor:pointer;color:#86efac;font-weight:800;min-height:44px;display:flex;align-items:center}
+.learn-progress #learningTopics{margin:6px 0;padding-left:20px;line-height:1.8}
+.learn-progress #learningTopics a,.learn-progress .lp-history a{color:#7dd3fc}
+@media(max-width:900px){.learn-progress{grid-template-columns:1fr;padding:16px}.learn-progress .lp-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:420px){.learn-progress .lp-stats{grid-template-columns:1fr}.learn-progress .lp-actions .btn{flex:1 1 100%;text-align:center}}
+</style>
 
 
 <nav class="level-nav" aria-label="Niveles de aprendizaje"><a class="level-chip" href="#nivel-1">N1</a><a class="level-chip" href="#nivel-2">N2</a><a class="level-chip" href="#nivel-3">N3</a><a class="level-chip" href="#nivel-4">N4</a><a class="level-chip" href="#nivel-5">N5</a><a class="level-chip" href="#nivel-6">N6</a><a class="level-chip" href="#nivel-7">N7</a><a class="level-chip" href="#nivel-8">N8</a><a class="level-chip" href="#nivel-9">N9</a><a class="level-chip" href="#nivel-10">N10</a><a class="level-chip" href="#nivel-11">N11</a><a class="level-chip" href="#nivel-12">N12</a><a class="level-chip" href="#nivel-13">N13</a><a class="level-chip" href="#nivel-14">N14</a></nav>
@@ -215,7 +253,7 @@ body.text-large .topic-card{min-height:82px}
     <button class="route-tool-btn" type="button" id="collapseAllBtn">Contraer niveles</button>
   </div>
 </section>
-<noscript><p>Activa JavaScript para explorar los módulos o <a href="programa-anterior.html">consulta la presentación anterior del programa</a>.</p></noscript><div id="mauroCurriculum"></div><script src="js/mauro-catalog.js?v=188"></script><script src="js/mauro-route-render.js?v=188"></script>
+<noscript><p>Activa JavaScript para explorar los módulos o <a href="programa-anterior.html">consulta la presentación anterior del programa</a>.</p></noscript><div id="mauroCurriculum"></div><script src="js/mauro-catalog.js?v=188"></script><script src="js/mauro-route-render.js?v=188"></script><script defer src="js/mauro-learning.js?v=189"></script>
 <div class="route-progress" aria-label="Progreso general">
   <div class="route-progress-top">
     <span>Progreso general</span>
