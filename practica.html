@@ -248,6 +248,48 @@ a.train{text-decoration:none!important;color:var(--text)!important}
 .ts-link{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:11px;background:#0f1d39;color:var(--text)!important;text-decoration:none!important;font-weight:850;font-size:14px;transition:border-color .15s,background .15s}
 .ts-link small{color:var(--muted);font-weight:700;font-size:12px;white-space:nowrap}
 .ts-link:hover,.ts-link:focus-visible{border-color:rgba(56,189,248,.6);background:rgba(56,189,248,.10)}
+
+/* ===== Nivel «Mates»: todas las opciones visibles ===== */
+.mates-group{grid-column:1/-1;margin:10px 2px 0;font-size:13px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--green2)}
+.mates-group:first-child{margin-top:0}
+.mates-option{min-height:0}
+.mates-option .train-icon .mi-num{font-size:1.15em;font-weight:950;color:var(--green2)}
+.mates-option .train-icon .mi-duo{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.mates-option .train-icon .mi-duo img{width:50%;height:auto;margin:0 -2px}
+.mates-option .train-icon{color:#fde68a}
+
+/* =====================================================================
+   TEXTO EN PANTALLAS GRANDES: crece con el ancho de la pantalla
+   1366 px ≈ 16 px · 1920 px ≈ 19 px · 2560 px ≈ 22 px (texto normal)
+   ===================================================================== */
+@media (min-width:1101px){
+  body .progress-label{font-size:clamp(13px,.35vw + 10px,19px)}
+  body .stats .stat{font-size:clamp(13px,.35vw + 10px,19px)}
+  body .step-eyebrow{font-size:clamp(12px,.32vw + 10px,18px)}
+  body .step-title{font-size:clamp(30px,1.5vw + 12px,54px)!important}
+  body .step-text{font-size:clamp(16px,.5vw + 11px,24px)!important;line-height:1.55}
+  body .primary-btn{font-size:clamp(14px,.45vw + 10px,21px);min-height:clamp(40px,1.4vw + 24px,58px);padding:8px 16px}
+  body .train b{font-size:clamp(16px,.6vw + 10px,26px)!important}
+  body .train > span > span:not(.train-meta):not(.train-go){font-size:clamp(14px,.45vw + 10px,21px)!important}
+  body:not(#x) .train .train-meta{font-size:clamp(12px,.32vw + 10px,18px)!important}
+  body:not(#x) .train .train-go{font-size:clamp(14px,.42vw + 10px,20px)!important}
+  body .train .train-icon{flex-basis:clamp(42px,1.6vw + 22px,66px);height:clamp(42px,1.6vw + 22px,66px);font-size:clamp(20px,.8vw + 11px,32px)}
+  body .cat-grid .train .train-icon{flex-basis:clamp(52px,2vw + 26px,78px);height:clamp(52px,2vw + 26px,78px)}
+  body .train{padding:clamp(12px,.6vw + 6px,22px)!important;gap:clamp(10px,.5vw + 6px,20px)}
+  body .board-message,body .board-message *{font-size:clamp(14px,.45vw + 10px,21px)}
+  body .bm-title{font-size:clamp(12px,.32vw + 10px,18px)!important}
+  body .mascot p{font-size:clamp(14px,.45vw + 10px,21px)}
+  body .mascot .mascot-icon{width:clamp(46px,1.5vw + 28px,66px);height:clamp(46px,1.5vw + 28px,66px);font-size:clamp(1.7rem,1vw + 1rem,2.4rem)}
+  body .back-link{font-size:clamp(14px,.42vw + 10px,20px);min-height:clamp(44px,1.2vw + 30px,58px);padding:0 16px}
+  body .continue-btn{font-size:clamp(14px,.42vw + 10px,20px)}
+  body .results-head h2{font-size:clamp(18px,.6vw + 12px,28px)}
+  body .results-head a{font-size:clamp(13px,.35vw + 10px,19px)}
+  body .practice-results .result-box b{font-size:clamp(22px,.8vw + 14px,36px)}
+  body .practice-results .result-box span{font-size:clamp(12px,.32vw + 10px,18px)}
+  body .history-list li{font-size:clamp(13px,.4vw + 10px,20px);padding:clamp(7px,.3vw + 5px,14px) 12px}
+  body .mates-group{font-size:clamp(13px,.35vw + 10px,19px)}
+  body .lesson-card{padding:clamp(14px,.8vw + 6px,30px)!important}
+}
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
 <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
@@ -358,9 +400,9 @@ a.train{text-decoration:none!important;color:var(--text)!important}
       mascot: 'Si dominas cómo se mueve cada pieza, nunca te sorprenderán en el tablero.' },
     { id: 'mate1', cat: 'tact', icon: '<img src="pieces-tema/wQ.png" alt="">', name: 'Mates', sub: 'Mate en 1, 2, 3 y 4 y mates básicos', href: 'mate-en-1.html', rounds: '11 series · 176 ejercicios',
       children: [
-        { group: 'Por número de jugadas', items: [['Mate en 1', 'mate-en-1.html', 26], ['Mate en 2', 'mates.html?tipo=m2', 22], ['Mate en 3', 'mates.html?tipo=m3', 15], ['Mate en 4', 'mates.html?tipo=m4', 10]] },
-        { group: 'Mates básicos', items: [['Rey y torre', 'mates.html?tipo=torre', 18], ['Rey y dama', 'mates.html?tipo=dama', 16], ['Dama y torre', 'mates.html?tipo=damatorre', 15], ['Dos torres', 'mates.html?tipo=dostorres', 14], ['Alfil y caballo', 'mates.html?tipo=caballoalfil', 14], ['Dos alfiles', 'mates.html?tipo=dosalfiles', 13]] },
-        { group: 'Patrones', items: [['Mates clásicos', 'mates.html?tipo=patrones', 13]] }
+        { group: 'Por número de jugadas', items: [['Mate en 1', 'mate-en-1.html', 26, '<b class="mi-num">1</b>'], ['Mate en 2', 'mates.html?tipo=m2', 22, '<b class="mi-num">2</b>'], ['Mate en 3', 'mates.html?tipo=m3', 15, '<b class="mi-num">3</b>'], ['Mate en 4', 'mates.html?tipo=m4', 10, '<b class="mi-num">4</b>']] },
+        { group: 'Mates básicos', items: [['Rey y torre', 'mates.html?tipo=torre', 18, '<img src="pieces-tema/wR.png" alt="">'], ['Rey y dama', 'mates.html?tipo=dama', 16, '<img src="pieces-tema/wQ.png" alt="">'], ['Dama y torre', 'mates.html?tipo=damatorre', 15, '<span class="mi-duo"><img src="pieces-tema/wQ.png" alt=""><img src="pieces-tema/wR.png" alt=""></span>'], ['Dos torres', 'mates.html?tipo=dostorres', 14, '<span class="mi-duo"><img src="pieces-tema/wR.png" alt=""><img src="pieces-tema/wR.png" alt=""></span>'], ['Alfil y caballo', 'mates.html?tipo=caballoalfil', 14, '<span class="mi-duo"><img src="pieces-tema/wB.png" alt=""><img src="pieces-tema/wN.png" alt=""></span>'], ['Dos alfiles', 'mates.html?tipo=dosalfiles', 13, '<span class="mi-duo"><img src="pieces-tema/wB.png" alt=""><img src="pieces-tema/wB.png" alt=""></span>']] },
+        { group: 'Patrones', items: [['Mates clásicos', 'mates.html?tipo=patrones', 13, '★']] }
       ],
       fen: '6k1/5ppp/8/8/8/8/8/R5K1', marks: { a1: 'preview-from', a8: 'preview-goal', g8: 'glow-king' },
       text: 'Del mate en 1 al mate en 4, los mates básicos con torre, dama, dos torres, alfil y caballo, dos alfiles y los mates clásicos con nombre.',
@@ -484,7 +526,7 @@ a.train{text-decoration:none!important;color:var(--text)!important}
     const box = document.createElement('div');
     box.className = 'fact train has-sub' + (t.id === highlight ? ' active' : ''); box.dataset.id = t.id;
     const [cls, meta] = metaFor(t);
-    const links = t.children.map(g => `<div class="ts-group"><span class="ts-title">${g.group}</span>${g.items.map(([n, h, k]) => `<a class="ts-link" href="${h}" role="menuitem">${n}<small>${k} ejercicios</small></a>`).join('')}</div>`).join('');
+    const links = t.children.map(g => `<div class="ts-group"><span class="ts-title">${g.group}</span>${g.items.map(([n, h, k, ic]) => `<a class="ts-link" href="${h}" role="menuitem">${n}<small>${k} ejercicios</small></a>`).join('')}</div>`).join('');
     box.innerHTML = `<button class="ts-head" type="button" aria-expanded="false" aria-controls="ts-${t.id}"><span class="train-icon" aria-hidden="true">${t.icon}</span><span><b>${t.name}</b><span>${t.text}</span><span class="train-meta ${cls}">${t.rounds}</span><span class="train-go">Elige el tipo de mate ▾</span></span></button><div class="train-sub" id="ts-${t.id}" role="menu" aria-label="Tipos de mate">${links}</div>`;
     const head = box.querySelector('.ts-head');
     const setOpen = v => { box.classList.toggle('open', v); head.setAttribute('aria-expanded', String(v)); };
@@ -496,7 +538,30 @@ a.train{text-decoration:none!important;color:var(--text)!important}
     box.addEventListener('keydown', e => { if (e.key === 'Escape') { setOpen(false); head.focus(); } });
     return box;
   }
+  function renderMates() {
+    const t = TRAININGS.find(x => x.children);
+    document.getElementById('backLink').href = '#tactica';
+    document.getElementById('backLink').textContent = '← Táctica';
+    document.getElementById('subEyebrow').textContent = 'Táctica · Mates';
+    document.getElementById('subTitle').textContent = 'Mates';
+    document.getElementById('subText').textContent = 'Elige qué tipo de mate quieres entrenar. Empieza por los mates básicos y sube al mate en 2, 3 y 4.';
+    document.getElementById('subMascot').textContent = 'Un mate siempre empieza con un jaque: mira primero las casillas de escape del rey.';
+    grid.replaceChildren();
+    t.children.forEach(g => {
+      const h = document.createElement('h3'); h.className = 'mates-group'; h.textContent = g.group; grid.append(h);
+      g.items.forEach(([name, href, k, icon]) => {
+        const a = document.createElement('a'); a.className = 'fact train mates-option'; a.href = href;
+        a.innerHTML = `<span class="train-icon" aria-hidden="true">${icon || t.icon}</span><span><b>${name}</b><span class="train-meta new">${k} ejercicios</span><span class="train-go">Empezar →</span></span>`;
+        a.setAttribute('aria-label', `${name}: ${k} ejercicios. Empezar`);
+        a.addEventListener('mouseenter', () => preview(t)); a.addEventListener('focus', () => preview(t));
+        grid.append(a);
+      });
+    });
+    preview(t);
+  }
   function renderSublist(c) {
+    document.getElementById('backLink').href = 'practica.html';
+    document.getElementById('backLink').textContent = '← Todas las categorías';
     document.getElementById('subEyebrow').textContent = `Categoría · ${c.name}`;
     document.getElementById('subTitle').textContent = c.name;
     document.getElementById('subText').textContent = c.text;
@@ -504,12 +569,11 @@ a.train{text-decoration:none!important;color:var(--text)!important}
     grid.replaceChildren();
     const items = TRAININGS.filter(t => t.cat === c.id);
     items.forEach(t => {
-      if (t.children) { grid.append(subCard(t)); return; }
       const a = document.createElement('a');
       a.className = 'fact train' + (t.id === 'daily' ? ' daily' : '') + (t.id === highlight ? ' active' : '');
-      a.href = t.href; a.dataset.id = t.id;
-      const [cls, meta] = metaFor(t);
-      const go = t.id === 'daily' && daily().date === todayKey() ? 'Ver la táctica de hoy →' : 'Empezar →';
+      a.href = t.children ? '#mates' : t.href; a.dataset.id = t.id;
+      const [cls, meta] = t.children ? ['new', t.rounds] : metaFor(t);
+      const go = t.children ? 'Ver los 11 tipos de mate →' : t.id === 'daily' && daily().date === todayKey() ? 'Ver la táctica de hoy →' : 'Empezar →';
       a.innerHTML = `<span class="train-icon" aria-hidden="true">${t.icon}</span><span><b>${t.name}</b><span>${t.text}</span><span class="train-meta ${cls}">${meta}</span><span class="train-go">${go}</span></span>`;
       a.setAttribute('aria-label', `${t.name}. ${t.sub}. ${meta}. ${go.replace('→', '')}`);
       a.addEventListener('mouseenter', () => preview(t));
@@ -521,6 +585,11 @@ a.train{text-decoration:none!important;color:var(--text)!important}
   // Muestra el nivel según la dirección: practica.html (categorías) o practica.html#tactica (sublista).
   function route() {
     const slug = decodeURIComponent(location.hash.replace('#', ''));
+    if (slug === 'mates') {
+      viewCats.hidden = true; viewSub.hidden = false; renderMates(); document.title = 'Mates · Práctica · Academia Mauro';
+      if (window.matchMedia('(max-width: 1100px)').matches) document.querySelector('.lesson-card').scrollIntoView({ block: 'start' });
+      return;
+    }
     const c = CATS.find(x => x.slug === slug);
     viewCats.hidden = !!c; viewSub.hidden = !c;
     if (c) { renderSublist(c); document.title = `${c.name} · Práctica · Academia Mauro`; }

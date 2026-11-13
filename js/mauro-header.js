@@ -23,7 +23,7 @@
   ];
   const TRAININGS = [
     { url: 'tactica-del-dia.html', icon: '🔥', name: 'Táctica del día', desc: 'Un reto nuevo cada día', daily: true },
-    { url: 'practica.html#tactica', icon: '♛', name: 'Mates', desc: 'Mate en 1 a 4 y mates básicos' },
+    { url: 'practica.html#mates', icon: '♛', name: 'Mates', desc: 'Mate en 1 a 4 y mates básicos' },
     { url: 'pieza-indefensa.html', icon: '♞', name: 'Pieza indefensa', desc: 'Gana material sin caer en trampas' },
     { url: 'movimientos-legales.html', icon: '♝', name: 'Movimientos legales', desc: 'A dónde puede ir cada pieza' },
     { url: 'practiquemoseltableroycoordenadas.html', icon: '🎯', name: 'Coordenadas', desc: 'Encuentra la casilla que escuchas' },

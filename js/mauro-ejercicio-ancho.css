@@ -23,3 +23,21 @@
   body.mauro-exercise .exercise-board-label,body.mauro-exercise .exercise-board-note{display:none!important}
   body.mauro-exercise .exercise-intro,body.mauro-exercise .exercise-action{padding:20px!important}
 }
+
+/* Texto en pantallas grandes: crece con el ancho (1366 ≈ 16 px · 1920 ≈ 19 px · 2560 ≈ 22 px) */
+@media (min-width:1101px){
+  body.mauro-exercise .exercise-progress a,body.mauro-exercise .exercise-status{font-size:clamp(14px,.42vw + 10px,20px)!important}
+  body.mauro-exercise .exercise-kicker{font-size:clamp(12px,.32vw + 10px,18px)!important}
+  body.mauro-exercise h1{font-size:clamp(34px,1.7vw + 13px,60px)!important}
+  body.mauro-exercise .exercise-intro p{font-size:clamp(16px,.55vw + 11px,25px)!important;line-height:1.55}
+  body.mauro-exercise .piece-question{font-size:clamp(18px,.65vw + 11px,29px)!important}
+  body.mauro-exercise .exercise-theme{font-size:clamp(13px,.4vw + 10px,20px)!important;padding:6px 14px}
+  body.mauro-exercise .feedback{font-size:clamp(16px,.55vw + 11px,25px)!important;line-height:1.5}
+  body.mauro-exercise .main-btn,body.mauro-exercise .option{font-size:clamp(15px,.45vw + 11px,22px)!important;min-height:clamp(44px,1.4vw + 28px,62px);padding:10px 18px!important}
+  body.mauro-exercise .exercise-tip,body.mauro-exercise .exercise-action > a,body.mauro-exercise .exercise-action p{font-size:clamp(15px,.45vw + 11px,22px)!important}
+  body.mauro-exercise .exercise-legend li{font-size:clamp(13px,.4vw + 10px,20px)!important}
+  body.mauro-exercise .exercise-legend span{width:clamp(12px,.4vw + 8px,20px)!important;height:clamp(12px,.4vw + 8px,20px)!important}
+  body.mauro-exercise #setDone,body.mauro-exercise #exerciseSummary,body.mauro-exercise #dailyBox{font-size:clamp(15px,.45vw + 11px,22px)}
+  body.mauro-exercise .sq .square-rank,body.mauro-exercise .sq .square-file{font-size:clamp(11px,.4vw + 8px,19px)!important}
+  body.mauro-exercise .exercise-intro,body.mauro-exercise .exercise-action{padding:clamp(18px,1vw + 8px,36px)!important}
+}

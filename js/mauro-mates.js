@@ -134,7 +134,7 @@
   }
   function endRound(failed) {
     hintBtn.disabled = true; retryBtn.hidden = !failed;
-    if (done >= total) { finished = true; nextBtn.disabled = true; window.MauroPractice?.record('mates', { correct: ok, total }); $('setDone').hidden = false; $('setDone').innerHTML = `<strong>🏆 ¡Serie completada!</strong><p>${ok} de ${total} mates resueltos sin ayuda.</p><a class="main-btn primary" href="practica.html#tactica">Elegir otros mates</a>`; return; }
+    if (done >= total) { finished = true; nextBtn.disabled = true; window.MauroPractice?.record('mates', { correct: ok, total }); $('setDone').hidden = false; $('setDone').innerHTML = `<strong>🏆 ¡Serie completada!</strong><p>${ok} de ${total} mates resueltos sin ayuda.</p><a class="main-btn primary" href="practica.html#mates">Elegir otros mates</a>`; return; }
     nextBtn.disabled = false; nextBtn.focus();
   }
 

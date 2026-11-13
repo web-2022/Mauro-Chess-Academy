@@ -140,6 +140,21 @@ html.mh-lock,html.mh-lock body{overflow:hidden}
 .mh-tab .mh-tab-label .mh-badge{position:absolute;top:-14px;right:-14px}
 @media (max-width:380px){.mh-tab-label{letter-spacing:0}.mh-tab .mh-tab-label .mh-badge{right:-8px}}
 .mh-tab[aria-current=page] .mh-tab-label{color:var(--mh-mint)}
+/* ---------- Texto del menú en pantallas grandes ---------- */
+@media (min-width:1101px){
+  .mauro-header-links .mh-link{font-size:clamp(13px,.4vw + 10px,20px);padding:9px clamp(12px,.6vw + 6px,24px)}
+  .mauro-header-brand{font-size:clamp(17px,.4vw + 14px,24px)}
+  .mauro-header-brand small{font-size:clamp(12px,.2vw + 11px,16px)}
+  .mh-chip{font-size:clamp(13px,.35vw + 10px,19px)}
+  .mauro-header-cta{font-size:clamp(14px,.4vw + 10px,20px)}
+  .mh-ti-text b{font-size:clamp(14px,.4vw + 10px,20px)}
+  .mh-ti-text small{font-size:clamp(12px,.3vw + 10px,17px)}
+  .mh-mega{width:min(clamp(620px,30vw + 202px,902px),calc(100vw - 40px))}
+}
+/* PRACTICAR: espacio para la flecha del desplegable y la insignia, sin taparse con el texto */
+.mauro-header-links .mh-has-mega .mh-link{padding-right:46px!important}
+.mauro-header-links .mh-has-mega .mh-link .mh-badge{top:-4px;right:26px}
+.mh-mega-toggle{right:4px}
 /* ---------- Compatibilidad con páginas existentes ---------- */
 body.mauro-has-header>nav.nav{display:none}
 body.mauro-has-header .topbar{position:relative;top:auto}
