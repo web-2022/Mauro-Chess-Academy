@@ -3487,6 +3487,20 @@
       body:not(#v20) .board-card:fullscreen{overflow:auto !important;padding:14px !important;background:var(--bg) !important}
       body:not(#v20) .board-card:fullscreen .board-shell{width:min(100%,calc(100vh - 170px)) !important}
     
+
+      /* --- V21 · Partida pegada (PGN): ficha y reproductor --- */
+      .v21-game{margin-top:8px;padding:10px 12px;border:1px solid rgba(34,197,94,.35);border-radius:12px;background:rgba(34,197,94,.07);font-size:.86rem;line-height:1.45}
+      .v21-game .v21-players{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-weight:900;font-size:.95rem}
+      .v21-game .v21-res{padding:2px 9px;border-radius:999px;background:#0f1d39;border:1px solid var(--line);color:#fde68a}
+      .v21-game .v21-meta{color:#cbd5e1;margin-top:3px}
+      .v21-game a{color:#7dd3fc}
+      .v21-player{display:grid;grid-template-columns:repeat(5,auto) 1fr;gap:6px;align-items:center;margin-top:8px}
+      .v21-player .v20-btn{min-width:44px;min-height:44px}
+      .v21-speed{justify-self:end;color:#cbd5e1;font-size:.8rem;font-weight:800}
+      .v21-speed select{margin-left:4px;min-height:36px;border-radius:8px;background:#020617;color:#f8fafc;border:1px solid var(--line)}
+      .v21-now{grid-column:1 / -1;font-weight:900;color:#e0f2fe;font-size:.92rem}
+      .v21-range{grid-column:1 / -1;width:100%;accent-color:#22c55e}
+      @media(max-width:700px){.v21-player{grid-template-columns:repeat(5,minmax(0,1fr))}.v21-player .v20-btn[data-v21="play"]{grid-column:1 / -1;order:-1}.v21-speed{grid-column:1 / -1;justify-self:start}}
       /* --- V20b · refuerzos --- */
       @media (max-width:1100px){
         body:not(#v20) .hero-top{display:flex !important;flex-wrap:wrap !important;align-items:center;justify-content:space-between;gap:8px 12px !important}
@@ -3577,16 +3591,27 @@
           </div>
 
           <section class="v20-fen" aria-label="Pegar una posición FEN">
-            <label class="v20-fen-label" for="v20FenPaste">📋 Pega una posición FEN</label>
+            <label class="v20-fen-label" for="v20FenPaste">📋 Pega una partida (PGN) o una posición (FEN)</label>
             <div class="v20-fen-row">
               <textarea id="v20FenPaste" class="v20-fen-input" rows="2" spellcheck="false" autocomplete="off"
-                placeholder="Ej.: 4r1k1/2q2ppp/8/8/8/8/3Q1PPP/3R2K1 w - - 0 1"></textarea>
+                placeholder="Pega aquí la partida de Lichess o Chess.com (PGN) o una posición FEN, por ejemplo: 4r1k1/2q2ppp/8/8/8/8/3Q1PPP/3R2K1 w - - 0 1"></textarea>
               <div class="v20-fen-buttons">
                 <button class="v20-btn v20-btn-primary" id="v20FenLoadBtn" type="button">▶ Cargar</button>
                 <button class="v20-btn" id="v20FenPasteBtn" type="button" title="Pegar desde el portapapeles">📋 Pegar</button>
               </div>
             </div>
             <div id="v20FenMsg" class="v20-fen-msg" role="status"></div>
+            <div id="v21GameInfo" class="v21-game" hidden></div>
+            <div id="v21Player" class="v21-player" hidden>
+              <button class="v20-btn" type="button" data-v21="start" title="Posición inicial (Inicio)" aria-label="Posición inicial">⏮</button>
+              <button class="v20-btn" type="button" data-v21="prev" title="Jugada anterior (←)" aria-label="Jugada anterior">◀</button>
+              <button class="v20-btn v20-btn-primary" type="button" data-v21="play" aria-label="Reproducir la partida">▶ Reproducir</button>
+              <button class="v20-btn" type="button" data-v21="next" title="Jugada siguiente (→)" aria-label="Jugada siguiente">▶</button>
+              <button class="v20-btn" type="button" data-v21="end" title="Posición final (Fin)" aria-label="Posición final">⏭</button>
+              <label class="v21-speed">Velocidad <select id="v21Speed" aria-label="Velocidad de reproducción"><option value="2200">Lenta</option><option value="1300" selected>Normal</option><option value="700">Rápida</option></select></label>
+              <div class="v21-now" id="v21Now" aria-live="polite"></div>
+              <input class="v21-range" id="v21Range" type="range" min="0" value="0" aria-label="Ir a la jugada">
+            </div>
           </section>
 
           <div class="board-session-controls" aria-label="Controles de sesión del tablero">
@@ -5236,6 +5261,94 @@
         if (saved === 'student' && v16UiMode !== 'student') { v16UiMode = 'student'; }
         v16ApplyMode();
         renderAll();
+      })();
+
+      // ===============================================================
+      // V21 · Pegar una partida PGN (Lichess, Chess.com…) y reproducirla
+      // ===============================================================
+      (function(){
+        const pasteEl=document.getElementById('v20FenPaste'),msgEl=document.getElementById('v20FenMsg');
+        const infoEl=document.getElementById('v21GameInfo'),playerEl=document.getElementById('v21Player');
+        const nowEl=document.getElementById('v21Now'),rangeEl=document.getElementById('v21Range'),speedEl=document.getElementById('v21Speed');
+        const playBtn=playerEl.querySelector('[data-v21="play"]');
+        let timer=null,loadedTags=null;
+        const looksLikePgn=t=>/\[\s*[A-Za-z]+\s+"/.test(t)||/(^|\s)1\.\s*\.{0,3}\s*([a-hKQRBNO]|0-0)/.test(t);
+        function say(text,kind){msgEl.textContent=text;msgEl.className='v20-fen-msg'+(kind?' '+kind:'');}
+        function tag(k){return loadedTags&&loadedTags[k]&&loadedTags[k]!=='?'&&loadedTags[k]!=='-'?loadedTags[k]:'';}
+        function renderInfo(){
+          const w=tag('White')||'Blancas',b=tag('Black')||'Negras',we=tag('WhiteElo'),be=tag('BlackElo'),res=tag('Result');
+          const resTxt={'1-0':'1-0 · ganan blancas','0-1':'0-1 · ganan negras','1/2-1/2':'½-½ · tablas'}[res]||res;
+          const tc=tag('TimeControl').match(/^(\d+)\+(\d+)$/);
+          const ritmo=tc?`${Math.round(tc[1]/60)} min${+tc[2]?' + '+tc[2]+' s':''}`:'';
+          const meta=[tag('Opening')&&`${tag('ECO')?tag('ECO')+' · ':''}${escapeHtml(tag('Opening'))}`,ritmo&&`⏱ ${ritmo}`,tag('Date')&&`📅 ${escapeHtml(tag('Date').replace(/\./g,'/'))}`,tag('Termination')&&escapeHtml(tag('Termination'))].filter(Boolean).join(' · ');
+          const site=tag('Site');const link=/^https?:\/\//.test(site)?` · <a href="${escapeHtml(site)}" target="_blank" rel="noopener">Ver original ↗</a>`:'';
+          infoEl.innerHTML=`<div class="v21-players">⚪ ${escapeHtml(w)}${we?` (${escapeHtml(we)})`:''} <span aria-hidden="true">vs</span> ⚫ ${escapeHtml(b)}${be?` (${escapeHtml(be)})`:''}${resTxt?` <span class="v21-res">${escapeHtml(resTxt)}</span>`:''}</div>${meta||link?`<div class="v21-meta">${meta}${link}</div>`:''}`;
+          infoEl.hidden=false;
+        }
+        function syncPlayer(){
+          const moves=v16ActiveMoves(),n=moves.length;
+          if(!n){playerEl.hidden=true;return;}
+          rangeEl.max=n;rangeEl.value=currentStudyStep;
+          if(currentStudyStep===0)nowEl.textContent=`Posición inicial · ${n} jugadas (${Math.ceil(n/2)} movimientos)`;
+          else{const m=moves[currentStudyStep-1],num=Math.ceil(currentStudyStep/2),white=currentStudyStep%2===1;
+            nowEl.textContent=`Jugada ${currentStudyStep} de ${n} · ${num}${white?'.':'...'} ${m.san||m.notation}`;}
+          playBtn.textContent=timer?'⏸ Pausa':(currentStudyStep>=n?'↺ Repetir':'▶ Reproducir');
+          playBtn.setAttribute('aria-label',timer?'Pausar':'Reproducir la partida');
+        }
+        function stop(){if(timer){clearInterval(timer);timer=null;}syncPlayer();}
+        function play(){
+          const n=v16ActiveMoves().length;if(!n)return;
+          if(timer)return stop();
+          if(currentStudyStep>=n)goToStudyStep(0);
+          timer=setInterval(()=>{if(currentStudyStep>=v16ActiveMoves().length)return stop();goToStudyStep(currentStudyStep+1);},Number(speedEl.value)||1300);
+          syncPlayer();
+        }
+        playerEl.addEventListener('click',e=>{const b=e.target.closest('[data-v21]');if(!b)return;const a=b.dataset.v21,n=v16ActiveMoves().length;
+          if(a==='play')return play();stop();
+          if(a==='start')goToStudyStep(0);if(a==='prev')goToStudyStep(Math.max(0,currentStudyStep-1));
+          if(a==='next')goToStudyStep(Math.min(n,currentStudyStep+1));if(a==='end')goToStudyStep(n);});
+        rangeEl.addEventListener('input',()=>{const target=Number(rangeEl.value);stop();goToStudyStep(target);});
+        speedEl.addEventListener('change',()=>{if(timer){stop();play();}});
+        const v20Render=renderAll;renderAll=function(){v20Render();syncPlayer();};
+
+        async function loadPgn(raw){
+          stop();
+          const before=lessonMoves.length,beforeTitle=lessonTitleEl.value;
+          const parsed=v16ParsePGNMain(raw);
+          await v16ImportPGNFile(new File([raw],'partida.pgn',{type:'text/plain'}));
+          // El importador deja la lección anterior si algo falla: comprobamos que haya cargado.
+          const expected=parsed.tokens.filter(t=>!/^__COMMENT_\d+__$/.test(t)).length;
+          if(!expected||lessonMoves.length!==expected){
+            // El importador no cambió nada: muestra su motivo (por ejemplo, la jugada que no pudo leer).
+            const why=(document.getElementById('toast')?.textContent||'').replace(/\s*Se importaron 0 cambios.*$/,'').trim();
+            say('✕ '+(why&&/jugada|PGN|movimiento/i.test(why)?why+' Revisa esa jugada y vuelve a intentarlo.':'No se pudo leer la partida. Revisa que tenga jugadas como 1. e4 e5.'),'bad');
+            return;
+          }
+          loadedTags=parsed.tags;
+          const w=tag('White'),b=tag('Black');
+          if(w&&b)lessonTitleEl.value=`${w} vs ${b}${tag('Result')?' · '+tag('Result'):''}`;
+          renderInfo();
+          loadedLessonBannerEl.innerHTML=`✅ <strong>Partida cargada:</strong> ${escapeHtml(lessonTitleEl.value)}<br>${lessonMoves.length} jugadas. Usa <strong>▶ Reproducir</strong> debajo del tablero o <strong>Siguiente ▶</strong>.`;
+          if(!v16LegalMode){v16LegalMode=true;v16UpdateLegalButton();}
+          goToStudyStep(0);
+          say(`✓ Partida cargada: ${lessonMoves.length} jugadas. Usa ▶ Reproducir o las flechas ← → del teclado.`,'ok');
+          playerEl.hidden=false;syncPlayer();
+          playerEl.scrollIntoView({block:'nearest',behavior:'smooth'});
+        }
+        // La caja acepta FEN o PGN: si parece una partida, se carga como PGN.
+        const loadBtn=document.getElementById('v20FenLoadBtn');
+        loadBtn.addEventListener('click',e=>{const t=pasteEl.value.trim();if(t&&looksLikePgn(t)){e.stopImmediatePropagation();loadPgn(t);}},true);
+        pasteEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&looksLikePgn(pasteEl.value)){e.preventDefault();e.stopImmediatePropagation();loadPgn(pasteEl.value.trim());}},true);
+        pasteEl.addEventListener('paste',()=>setTimeout(()=>{const t=pasteEl.value.trim();if(looksLikePgn(t))loadPgn(t);},0));
+        // Un FEN cargado reemplaza la partida: se ocultan la ficha y el reproductor.
+        loadBtn.addEventListener('click',()=>{if(!looksLikePgn(pasteEl.value)){loadedTags=null;infoEl.hidden=true;stop();}});
+        // El botón «Pegar» del portapapeles también entiende PGN.
+        document.getElementById('v20FenPasteBtn').addEventListener('click',async e=>{
+          e.stopImmediatePropagation(); // un solo manejador decide si es PGN o FEN
+          try{const t=(await navigator.clipboard.readText()||'').trim();if(!t){say('El portapapeles está vacío.','bad');return;}pasteEl.value=t;loadBtn.click();}
+          catch(_){say('Tu navegador no permite pegar automáticamente: mantén pulsada la caja y elige «Pegar».','bad');pasteEl.focus();}
+        },true);
+        syncPlayer();
       })();
     </script>
 
