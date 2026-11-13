@@ -186,6 +186,32 @@
   }
   .board-tools .mini-btn{min-height:44px}
 }
+
+/* =====================================================================
+   PANTALLAS GRANDES (≥1101 px): página a todo el ancho y tablero al máximo
+   - Sin márgenes laterales vacíos.
+   - La columna del tablero mide exactamente lo que mide el tablero.
+   - Barra de progreso en la columna derecha: el tablero gana altura.
+   Tamaño del tablero = el menor entre
+     · alto visible: 100dvh − encabezado (76) − márgenes (24)
+     · ancho disponible: 100vw − columna derecha mínima (400) − márgenes (80)
+   ===================================================================== */
+.board-caption h1{margin:8px 2px 4px;font-size:13px;color:var(--blue2)}
+.train-filters{margin-top:12px}
+.train-filters .practice-filters{display:flex!important;flex-wrap:wrap;gap:6px}
+.train-filters + .train-grid{margin-top:8px}
+@media (min-width:1101px){
+  :root{--board-size:min(calc(100vh - 100px), calc(100vw - 480px));--board-size:min(calc(100dvh - 100px), calc(100vw - 480px))}
+  body .app{width:calc(100% - 24px)!important;max-width:none!important;margin-inline:12px!important;display:grid!important;
+    grid-template-columns:calc(var(--board-size) + 18px) minmax(400px,1fr)!important;grid-template-rows:auto 1fr;column-gap:12px;align-items:start}
+  body .app>.topbar{grid-column:2;grid-row:1;margin:0 0 8px!important}
+  body .app>.main{display:contents!important}
+  body .board-card{grid-column:1;grid-row:1 / span 2;position:sticky!important;top:68px!important;min-height:0!important;margin-top:0!important}
+  body .lesson-card{grid-column:2;grid-row:2;margin-top:0!important}
+  body .board-card .board-shell{width:var(--board-size)!important;max-width:none!important;margin:0!important}
+  /* El menú superior también a todo el ancho en esta página */
+  body .mauro-header-inner{width:calc(100% - 24px)!important}
+}
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
 <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
@@ -215,16 +241,8 @@
 
   <main class="main">
     <section class="card board-card">
-      <div class="board-head">
-        <h1 style="margin:0;font-size:.83rem" id="boardTitle">♟ Práctica · Tablero interactivo</h1>
-        <div class="board-tools practice-filters" role="group" aria-label="Filtrar entrenamientos">
-          <button class="mini-btn active" type="button" data-filter="all">Todo</button>
-          <button class="mini-btn" type="button" data-filter="fund">Fundamentos</button>
-          <button class="mini-btn" type="button" data-filter="tact">Táctica</button>
-          <button class="mini-btn" type="button" data-filter="daily">Reto diario</button>
-        </div>
-      </div>
       <div class="board-shell"><div class="board" id="board" aria-label="Vista previa del entrenamiento"></div><div id="sequenceLabel" class="board-sequence-label"></div></div>
+      <div class="board-caption"><h1 id="boardTitle">♟ Práctica · Tablero interactivo</h1></div>
       <div class="board-message" id="boardMessage"><strong>Elige un entrenamiento</strong> y mira aquí un ejemplo de lo que vas a practicar.</div>
     </section>
 
@@ -237,6 +255,14 @@
         <button class="primary-btn hint" id="recommendBtn" type="button">🎯 Recomiéndame uno</button>
       </div>
 
+      <div class="train-filters">
+        <div class="board-tools practice-filters train-filter-row" role="group" aria-label="Filtrar entrenamientos">
+          <button class="mini-btn active" type="button" data-filter="all">Todo</button>
+          <button class="mini-btn" type="button" data-filter="fund">Fundamentos</button>
+          <button class="mini-btn" type="button" data-filter="tact">Táctica</button>
+          <button class="mini-btn" type="button" data-filter="daily">Reto diario</button>
+        </div>
+      </div>
       <div class="fact-grid train-grid" id="trainGrid" aria-label="Entrenamientos disponibles"></div>
 
       <div class="selected-panel" id="selectedPanel" aria-live="polite"></div>
