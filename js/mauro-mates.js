@@ -28,6 +28,24 @@
     try { if (window.MauroVoice?.speak) return window.MauroVoice.speak(text); const u = new SpeechSynthesisUtterance(text); u.lang = 'es-PE'; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {}
   }
 
+
+  // ---------- Pista con audio: se lee sola y deja un ícono 🔊 para repetirla ----------
+  const spokenHint = t => t.replace(/\b([a-h])([1-8])\b/g, '$1 $2');
+  function showHint(text) {
+    feedbackEl.className = 'feedback hint';
+    feedbackEl.replaceChildren();
+    const msg = document.createElement('span'); msg.className = 'hint-text'; msg.textContent = '💡 ' + text;
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'hint-audio';
+    btn.setAttribute('aria-label', 'Escuchar la pista otra vez'); btn.title = 'Escuchar la pista'; btn.textContent = '🔊';
+    const play = () => {
+      speak(spokenHint(text)); btn.classList.add('speaking');
+      const t0 = Date.now(), iv = setInterval(() => { if ((window.speechSynthesis && !speechSynthesis.speaking && Date.now() - t0 > 400) || Date.now() - t0 > 15000) { btn.classList.remove('speaking'); clearInterval(iv); } }, 250);
+    };
+    btn.addEventListener('click', play);
+    feedbackEl.append(msg, btn);
+    play();
+  }
+
   // ---------- Estado ----------
   let index = 0, ok = 0, done = 0, item = null, state = null, node = null, remaining = 0;
   let selected = null, marks = {}, mistakes = 0, finished = false, busy = false, played = [];
@@ -152,7 +170,7 @@
   hintBtn.addEventListener('click', () => {
     const m = solutionMove(); if (!m) return;
     marks = { [m.from]: 'drill-hint' }; selected = null; mistakes = Math.max(mistakes, 1);
-    say(`Pista: mueve ${NAME[state.board[m.from][1]] === 'dama' || NAME[state.board[m.from][1]] === 'torre' ? 'la' : 'el'} ${NAME[state.board[m.from][1]]} de ${m.from}.`); render(); hintBtn.disabled = true;
+    showHint(`Pista: mueve ${NAME[state.board[m.from][1]] === 'dama' || NAME[state.board[m.from][1]] === 'torre' ? 'la' : 'el'} ${NAME[state.board[m.from][1]]} de ${m.from}.`); render(); hintBtn.disabled = true;
   });
   $('exerciseListen')?.addEventListener('click', () => speak(questionEl.textContent));
 

@@ -20,3 +20,15 @@ body.mauro-exercise .sq.drill-defender{box-shadow:inset 0 0 0 5px #f97316}
 #dailyBox p{color:#fef3c7}
 #dailyBox .main-btn{display:inline-block;text-decoration:none;margin-top:6px}
 @media(max-width:420px){.exercise-action .controls .main-btn{min-width:0;flex:1 1 45%}}
+
+/* Pista con audio */
+.feedback.hint{display:flex;align-items:center;gap:10px;flex-wrap:nowrap;color:#ddd6fe!important}
+.feedback.hint .hint-text{flex:1 1 0;min-width:0}
+.hint-audio{flex:0 0 auto;display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid rgba(167,139,250,.6);background:rgba(167,139,250,.14);color:#fff;font-size:20px;cursor:pointer;transition:transform .15s ease,background .15s ease}
+.hint-audio:hover{background:rgba(167,139,250,.28)}
+.hint-audio:active{transform:scale(.94)}
+.hint-audio:focus-visible{outline:3px solid #6ee7ff;outline-offset:3px}
+.hint-audio.speaking{animation:hintPulse 1s ease-in-out infinite}
+@keyframes hintPulse{50%{box-shadow:0 0 0 8px rgba(167,139,250,.18)}}
+@media (min-width:1101px){.hint-audio{width:clamp(44px,1.4vw + 26px,58px);height:clamp(44px,1.4vw + 26px,58px);font-size:clamp(20px,.6vw + 11px,28px)}}
+@media (prefers-reduced-motion:reduce){.hint-audio.speaking{animation:none}}

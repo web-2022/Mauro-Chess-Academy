@@ -31,6 +31,24 @@
     } catch (_) {}
   }
 
+
+  // ---------- Pista con audio: se lee sola y deja un ícono 🔊 para repetirla ----------
+  const spokenHint = t => t.replace(/\b([a-h])([1-8])\b/g, '$1 $2');
+  function showHint(text) {
+    feedbackEl.className = 'feedback hint';
+    feedbackEl.replaceChildren();
+    const msg = document.createElement('span'); msg.className = 'hint-text'; msg.textContent = '💡 ' + text;
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'hint-audio';
+    btn.setAttribute('aria-label', 'Escuchar la pista otra vez'); btn.title = 'Escuchar la pista'; btn.textContent = '🔊';
+    const play = () => {
+      speak(spokenHint(text)); btn.classList.add('speaking');
+      const t0 = Date.now(), iv = setInterval(() => { if ((window.speechSynthesis && !speechSynthesis.speaking && Date.now() - t0 > 400) || Date.now() - t0 > 15000) { btn.classList.remove('speaking'); clearInterval(iv); } }, 250);
+    };
+    btn.addEventListener('click', play);
+    feedbackEl.append(msg, btn);
+    play();
+  }
+
   // ---------- Estado de la sesión ----------
   let ok = 0, total = 0, round = null, finished = false, extra = false;
   let state = null, selected = null, marks = {}, picks = new Set(), mistakes = 0, solved = false;
@@ -281,10 +299,10 @@
   }
   function hint() {
     if (solved) return;
-    if (TYPE === 'legal') { const s = [...round.answer][rand(round.answer.size)]; marks = { [s]: 'drill-hint' }; say(`Pista: ${s} es una de las casillas.`); render(); return; }
+    if (TYPE === 'legal') { const s = [...round.answer][rand(round.answer.size)]; marks = { [s]: 'drill-hint' }; showHint(`Pista: ${s} es una de las casillas.`); render(); return; }
     const m = solutionMoves()[0]; if (!m) return;
     marks = { [m.from]: 'drill-hint' }; selected = null;
-    say(`Pista: mueve ${pieceName(state.board[m.from])} de ${m.from}.`); render();
+    showHint(`Pista: mueve ${pieceName(state.board[m.from])} de ${m.from}.`); render();
     mistakes = Math.max(mistakes, 1); // usar pista cuenta como ayuda
     hintBtn.disabled = true;
   }
