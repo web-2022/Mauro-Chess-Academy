@@ -366,7 +366,8 @@
     3: { name: 'Intermedio', timeMs: 500, maxDepth: 3, noise: 40 },
     4: { name: 'Avanzado', timeMs: 1000, maxDepth: 64, noise: 0 },
     5: { name: 'Experto', timeMs: 2500, maxDepth: 64, noise: 0 },
-    6: { name: 'Maestro', timeMs: 5000, maxDepth: 64, noise: 0 }
+    6: { name: 'Maestro', timeMs: 5000, maxDepth: 64, noise: 0 },
+    an: { name: 'Análisis', timeMs: 400, maxDepth: 64, noise: 0 }
   };
   // fen: posición inicial de la partida; moves: jugadas (uci) desde ahí. Así el motor conoce
   // las posiciones anteriores y detecta repeticiones.

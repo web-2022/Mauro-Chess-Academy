@@ -18,7 +18,7 @@
     return new Promise(resolve => {
       const id = ++reqId; pending.set(id, resolve);
       try {
-        if (!worker) { worker = new Worker('js/mauro-motor.js?v=1'); worker.onmessage = ev => { const r = pending.get(ev.data.id); pending.delete(ev.data.id); r && r(ev.data); }; }
+        if (!worker) { worker = new Worker('js/mauro-motor.js?v=2'); worker.onmessage = ev => { const r = pending.get(ev.data.id); pending.delete(ev.data.id); r && r(ev.data); }; }
         worker.postMessage({ id, fen, moves, level });
       } catch (_) { // sin Workers: se calcula en la página
         setTimeout(() => { pending.delete(id); resolve(window.MauroMotor.bestMove(fen, level, moves)); }, 30);
@@ -29,6 +29,7 @@
   // ---------- Estado de la partida ----------
   let game = null;          // { mode, level, human: 'w'|'b'|'both', moves:[uci], sans:[], result, hints }
   let positions = [];       // estados de reglas tras cada jugada (0 = inicio)
+  let analyzing = false;
   let viewAt = 0, selected = null, thinking = false, flipped = false, hintMarks = null, promoPending = null;
 
   function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(game)); } catch (_) {} }
@@ -114,9 +115,12 @@
       boardEl.append(d);
     }
     renderMoves(); renderCaptured();
+    if (!analyzing) renderAnalysisLazy();
   }
+  let lastAnKey = null;
+  function renderAnalysisLazy() { const k = an() ? key() : null; if (k !== lastAnKey) { lastAnKey = k; renderAnalysis(); } }
   function onSquare(s) {
-    if (thinking || game.result || !humanTurn()) return;
+    if (thinking || analyzing || game.result || !humanTurn()) return;
     if (viewAt !== positions.length - 1) { goTo(positions.length - 1); return; }
     const st = current(), p = st.board[s];
     if (selected && s !== selected && !(p && C.color(p) === st.turn)) {
@@ -180,14 +184,22 @@
     if (!game.sans.length) { const p = document.createElement('p'); p.className = 'ml-empty'; p.textContent = 'Todavía no hay jugadas.'; list.append(p); }
     game.sans.forEach((san, i) => {
       if (i % 2 === 0) { const n = document.createElement('span'); n.className = 'ml-num'; n.textContent = (i / 2 + 1) + '.'; list.append(n); }
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'rv-move ' + (i % 2 ? 'b' : 'w') + (viewAt === i + 1 ? ' active' : ''); b.textContent = san;
+      const b = document.createElement('button'); b.type = 'button'; const q = an() ? an().q[i] : null;
+      b.className = 'rv-move ' + (i % 2 ? 'b' : 'w') + (viewAt === i + 1 ? ' active' : '') + (q ? ' q-' + q : ''); b.textContent = san + (q ? QUAL[q].sym : '');
+      if (q) b.title = QUAL[q].name;
       b.addEventListener('click', () => goTo(i + 1)); list.append(b);
     });
     if (game.result) { const r = document.createElement('span'); r.className = 'ml-result'; r.textContent = game.result === '1/2-1/2' ? '½-½' : game.result; list.append(r); }
     list.querySelector('.active')?.scrollIntoView({ block: 'nearest' });
     const live = viewAt === positions.length - 1;
-    $('viewNote').hidden = live;
+    const note = analysisNote(viewAt);
+    $('viewNote').hidden = live && !note;
+    $('viewNote').innerHTML = '';
+    if (note) { $('viewNote').append(note); return renderNavButtons(); }
     $('viewNote').textContent = live ? '' : `Estás viendo ${viewAt === 0 ? 'la posición inicial' : 'la jugada ' + Math.ceil(viewAt / 2) + (viewAt % 2 ? '.' : '...') + ' ' + game.sans[viewAt - 1]}. Pulsa ⏭ para volver a la partida.`;
+    renderNavButtons();
+  }
+  function renderNavButtons() {
     document.querySelectorAll('[data-nav]').forEach(b => { const a = b.dataset.nav; b.disabled = (a === 'start' || a === 'prev') ? viewAt === 0 : viewAt === positions.length - 1; });
   }
   function goTo(i) { viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; render(); }
@@ -211,9 +223,13 @@
   // ---------- Controles ----------
   function updateControls() {
     const live = !game.result;
-    $('hintBtn').disabled = !live || thinking || !humanTurn();
-    $('undoBtn').disabled = thinking || !game.moves.length || (game.human !== 'both' && game.moves.length < (game.human === 'w' ? 1 : 2) && !game.result);
-    $('resignBtn').disabled = !live || thinking || !game.moves.length;
+    $('hintBtn').disabled = !live || thinking || analyzing || !humanTurn();
+    $('undoBtn').disabled = thinking || analyzing || !game.moves.length || (game.human !== 'both' && game.moves.length < (game.human === 'w' ? 1 : 2) && !game.result);
+    $('resignBtn').disabled = !live || thinking || analyzing || !game.moves.length;
+    const done = !!an();
+    $('anBtn').disabled = thinking || analyzing || !game.moves.length || (!game.result && game.human !== 'both' && !humanTurn());
+    if (!analyzing) $('anBtn').textContent = done ? '✅ Partida analizada' : game.result ? '🔎 Analizar cada jugada' : '🔎 Analizar hasta aquí';
+    if (done) $('anBtn').disabled = true;
     $('resignBtn').textContent = game.human === 'both' ? '🤝 Terminar' : '🏳 Rendirse';
     $('playHeader').textContent = game.human === 'both' ? 'Partida entre amigos' : `Nivel ${game.level} · ${LEVEL_NAMES[game.level]} (ELO ${LEVEL_ELO[game.level]}) · juegas con ${game.human === 'w' ? 'blancas' : 'negras'}`;
   }
@@ -257,6 +273,93 @@
   $('voiceToggle').addEventListener('click', e => { const b = e.currentTarget, on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); b.textContent = on ? '🔊 Voz' : '🔇 Voz'; try { localStorage.setItem('mauro_jugar_voz', on ? '1' : '0'); } catch (_) {} });
   try { if (localStorage.getItem('mauro_jugar_voz') === '0') { $('voiceToggle').setAttribute('aria-pressed', 'false'); $('voiceToggle').textContent = '🔇 Voz'; } } catch (_) {}
 
+  // ---------- Análisis de cada jugada ----------
+  const QUAL = {
+    best: { sym: '', name: 'Mejor jugada', icon: '★' },
+    good: { sym: '', name: 'Buena jugada', icon: '✓' },
+    inacc: { sym: '?!', name: 'Imprecisión', icon: '?!' },
+    mist: { sym: '?', name: 'Error', icon: '?' },
+    blun: { sym: '??', name: 'Error grave', icon: '??' }
+  };
+  const key = () => game.moves.join(',');
+  const an = () => (game.analysis && game.analysis.key === key() && game.analysis.done) ? game.analysis : null;
+  const cp = v => v == null ? 0 : Math.max(-1000, Math.min(1000, v)); // mate = ±10 peones
+  const winPct = c => 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * c)) - 1);
+  const fmtEval = c => Math.abs(c) >= 1000 ? (c > 0 ? 'Blancas dan mate' : 'Negras dan mate') : (c > 0 ? '+' : c < 0 ? '−' : '') + (Math.abs(c) / 100).toFixed(1).replace('.', ',');
+  function terminalEval(st) {
+    if (C.isMate && C.isMate(st)) return st.turn === 'w' ? -1000 : 1000;
+    if (!C.legalMoves(st).length) return 0;
+    return null;
+  }
+  async function analyze() {
+    if (analyzing || thinking || !game.moves.length) return;
+    analyzing = true; updateControls(); hintMarks = null;
+    const k = key(), n = game.moves.length, ev = [], best = [];
+    const bar = $('anProgress'); bar.hidden = false;
+    for (let i = 0; i <= n; i++) {
+      if (key() !== k) { analyzing = false; bar.hidden = true; updateControls(); return; }
+      bar.querySelector('span').style.width = (100 * i / (n + 1)) + '%';
+      $('anBtn').textContent = `🔎 Analizando… ${i}/${n}`;
+      const t = terminalEval(positions[i]);
+      if (t !== null) { ev.push(t); best.push(null); continue; }
+      const r = await engine(START, game.moves.slice(0, i), 'an');
+      ev.push(r && r.score != null ? (Math.abs(r.score) > 50000 ? Math.sign(r.score) * 1000 : r.score) : 0); best.push(r ? r.uci : null);
+    }
+    const q = [], loss = [], acc = { w: [], b: [] };
+    for (let i = 1; i <= n; i++) {
+      const mover = positions[i - 1].turn, sg = mover === 'w' ? 1 : -1;
+      const before = cp(ev[i - 1]) * sg, after = cp(ev[i]) * sg, l = Math.max(0, before - after);
+      const wl = Math.max(0, winPct(before) - winPct(after));
+      acc[mover].push(Math.max(0, Math.min(100, 103.1668 * Math.exp(-0.04354 * wl) - 3.1669)));
+      loss.push(l);
+      const same = best[i - 1] && best[i - 1].slice(0, 4) === game.moves[i - 1].slice(0, 4);
+      q.push(same || l < 15 ? 'best' : (wl < 6 || l < 50) ? 'good' : (wl < 12 || l < 100) ? 'inacc' : (wl < 22 || l < 250) ? 'mist' : 'blun');
+    }
+    const avg = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : null;
+    game.analysis = { key: k, done: true, ev, best, q, loss, acc: { w: avg(acc.w), b: avg(acc.b) } };
+    save(); analyzing = false; bar.hidden = true;
+    render(); renderAnalysis(); updateControls();
+    status('🔎 Análisis listo. Toca cualquier jugada o usa ◀ ▶ para ver el comentario de Mauro.', 'good');
+    goTo(firstMistake() || 1);
+  }
+  function firstMistake() { const a = an(); if (!a) return 0; const i = a.q.findIndex((q, j) => (q === 'mist' || q === 'blun') && isMine(j)); return i < 0 ? 0 : i + 1; }
+  const isMine = i => game.human === 'both' || positions[i].turn === game.human;
+  function sanOf(i, u) { const st = positions[i]; const m = u && C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); return m ? C.san(st, m) : null; }
+  function analysisNote(i) {
+    const a = an(); if (!a || i === 0) return null;
+    const q = a.q[i - 1], Q = QUAL[q], num = Math.ceil(i / 2) + (i % 2 ? '. ' : '... ');
+    const el = document.createElement('span'); el.className = 'an-note q-' + q;
+    const b = document.createElement('b'); b.textContent = `${Q.icon} ${num}${game.sans[i - 1]}${Q.sym} · ${Q.name}`;
+    el.append(b);
+    let txt = '';
+    if (q === 'best') txt = ' Es la jugada que también eligió Mauro.';
+    else if (q === 'good') { const bs = sanOf(i - 1, a.best[i - 1]); txt = bs ? ` También era muy buena ${bs}.` : ''; }
+    else {
+      const bs = sanOf(i - 1, a.best[i - 1]);
+      txt = ` Perdiste unos ${(a.loss[i - 1] / 100).toFixed(1).replace('.', ',')} peones de ventaja.` + (bs ? ` Mejor era ${bs}.` : '');
+    }
+    el.append(document.createTextNode(txt + ` Evaluación: ${fmtEval(cp(a.ev[i]))}.`));
+    return el;
+  }
+  function renderAnalysis() {
+    const box = $('anSummary'), a = an();
+    box.hidden = !a; if (!a) return;
+    const count = (side, q) => a.q.filter((x, i) => x === q && positions[i].turn === side).length;
+    const row = (side, label) => `<div class="an-row"><b>${label}</b><span class="an-acc">${a.acc[side] ?? '—'}%</span><span class="q-best">★ ${count(side, 'best')}</span><span class="q-inacc">?! ${count(side, 'inacc')}</span><span class="q-mist">? ${count(side, 'mist')}</span><span class="q-blun">?? ${count(side, 'blun')}</span></div>`;
+    const wl = game.human === 'w' ? '⚪ Tú' : game.human === 'b' ? '⚪ Máquina' : '⚪ Blancas', bl = game.human === 'b' ? '⚫ Tú' : game.human === 'w' ? '⚫ Máquina' : '⚫ Negras';
+    // gráfica de evaluación
+    const W = 300, H = 60, n = a.ev.length - 1 || 1;
+    const y = c => (H / 2 - (winPct(cp(c)) - 50) / 50 * (H / 2)).toFixed(1);
+    const pts = a.ev.map((c, i) => `${(i / n * W).toFixed(1)},${y(c)}`).join(' ');
+    const dots = a.q.map((q, i) => (q === 'mist' || q === 'blun') ? `<circle cx="${((i + 1) / n * W).toFixed(1)}" cy="${y(a.ev[i + 1])}" r="3.5" class="dot-${q}"/>` : '').join('');
+    box.innerHTML = `<p class="an-title">🔎 Análisis de Mauro <small>(precisión, mejores jugadas y errores)</small></p>${row('w', wl)}${row('b', bl)}
+      <svg class="an-graph" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Gráfica de la evaluación a lo largo de la partida"><rect width="${W}" height="${H / 2}" class="g-w"/><rect y="${H / 2}" width="${W}" height="${H / 2}" class="g-b"/><polyline points="0,${H / 2} ${pts} ${W},${H / 2}" class="g-fill"/><polyline points="${pts}" class="g-line"/>${dots}</svg>
+      <p class="an-help">Arriba de la línea media: ventaja blanca. Toca la gráfica para ir a esa jugada. ${firstMistake() ? '<button type="button" class="an-jump">Ver mi primer error</button>' : ''}</p>`;
+    box.querySelector('svg').addEventListener('click', e => { const r = e.currentTarget.getBoundingClientRect(); goTo(Math.round((e.clientX - r.left) / r.width * n)); });
+    box.querySelector('.an-jump')?.addEventListener('click', () => goTo(firstMistake()));
+  }
+  $('anBtn').addEventListener('click', analyze);
+
   // PGN
   function pgn() {
     const d = new Date(), date = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
@@ -264,7 +367,7 @@
     const white = game.human === 'both' ? 'Blancas' : game.human === 'w' ? me : bot, black = game.human === 'both' ? 'Negras' : game.human === 'b' ? me : bot;
     // SAN en inglés (estándar PGN)
     const en = s => s.replace(/^R/, 'K').replace(/^D/, 'Q').replace(/^T/, 'R').replace(/^A/, 'B').replace(/^C/, 'N').replace(/=D/, '=Q').replace(/=T/, '=R').replace(/=A/, '=B').replace(/=C/, '=N');
-    let body = ''; game.sans.forEach((s, i) => { if (i % 2 === 0) body += `${i / 2 + 1}. `; body += en(s) + ' '; });
+    const a = an(); let body = ''; game.sans.forEach((s, i) => { if (i % 2 === 0) body += `${i / 2 + 1}. `; body += en(s) + (a ? QUAL[a.q[i]].sym : '') + ' '; });
     const res = game.result || '*';
     return `[Event "Partida en Academia Mauro"]\n[Site "https://web-2022.github.io/Mauro-Chess-Academy/jugar.html"]\n[Date "${date}"]\n[White "${white}"]\n[Black "${black}"]\n[Result "${res}"]\n${game.why ? `[Termination "${game.why}"]\n` : ''}\n${body}${res}\n`;
   }

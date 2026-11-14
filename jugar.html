@@ -77,6 +77,25 @@
     #setupForm fieldset{min-width:0}
   #levelSel{width:100%;max-width:100%;min-width:0}
   #setupForm .setup{grid-template-columns:minmax(0,1fr)}
+  .rv-move.q-best{border-color:#2dd4bf}
+  .rv-move.q-inacc{border-color:#facc15;color:#fde68a}
+  .rv-move.q-mist{border-color:#fb923c;color:#fed7aa}
+  .rv-move.q-blun{border-color:#ef4444;color:#fecaca;background:#3b0d12}
+  .an-note b{display:block;margin-bottom:.15rem}
+  .an-note.q-best b{color:#5eead4}.an-note.q-good b{color:#86efac}.an-note.q-inacc b{color:#fde047}.an-note.q-mist b{color:#fdba74}.an-note.q-blun b{color:#fca5a5}
+  .an-progress{height:8px;border-radius:99px;background:#122440;overflow:hidden;margin:.6rem 0}
+  .an-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#22c55e,#38bdf8);transition:width .3s}
+  .an-summary{margin:.8rem 0;padding:12px;border:1px solid #29415c;border-radius:12px;background:#071124}
+  .an-title{margin:0 0 .5rem;font-weight:800}.an-title small{font-weight:400;opacity:.7}
+  .an-row{display:flex;flex-wrap:wrap;gap:.35rem .8rem;align-items:center;margin:.25rem 0}
+  .an-row b{min-width:6.5em}.an-acc{font-weight:800;color:#7dd3fc}
+  .an-summary .q-best{color:#5eead4}.an-summary .q-inacc{color:#fde047}.an-summary .q-mist{color:#fdba74}.an-summary .q-blun{color:#fca5a5}
+  .an-graph{display:block;width:100%;height:70px;margin:.6rem 0 .3rem;border-radius:8px;cursor:pointer}
+  .an-graph .g-w{fill:#e2e8f0}.an-graph .g-b{fill:#1e293b}.an-graph .g-fill{fill:rgba(56,189,248,.18);stroke:none}
+  .an-graph .g-line{fill:none;stroke:#38bdf8;stroke-width:2;vector-effect:non-scaling-stroke}
+  .an-graph .dot-mist{fill:#fb923c}.an-graph .dot-blun{fill:#ef4444}
+  .an-help{margin:0;font-size:.85em;opacity:.8}
+  .an-jump{margin-left:.4rem;background:none;border:1px solid #fb923c;color:#fdba74;border-radius:8px;padding:.15rem .5rem;cursor:pointer;font:inherit}
   .elo-note{display:block;margin-top:.35rem;opacity:.7;font-size:.85em}
 </style>
 </head>
@@ -150,9 +169,12 @@
           <div>⚫ capturó: <span id="capturedByBlack"></span></div>
         </div>
         <div class="play-tools">
+          <button class="main-btn an-btn" type="button" id="anBtn">🔎 Analizar cada jugada</button>
           <button class="main-btn" type="button" id="pgnBtn">📋 Copiar PGN</button>
           <a class="main-btn" href="tableroDePractica.html">🧩 Estudiarla en el Tablero libre</a>
         </div>
+        <div class="an-progress" id="anProgress" hidden><span></span></div>
+        <div class="an-summary" id="anSummary" hidden></div>
         <textarea id="pgnText" hidden aria-label="PGN de la partida" readonly></textarea>
         <p class="exercise-tip">Consejo de Mauro: antes de mover, pregúntate qué amenaza tu rival. Revisa jaques, capturas y amenazas.</p>
       </section>
@@ -167,7 +189,7 @@
     </div></div>
   </div>
   <script src="js/mauro-chess-rules.js?v=1"></script>
-  <script src="js/mauro-motor.js?v=1"></script>
-  <script defer src="js/mauro-jugar.js?v=1"></script>
+  <script src="js/mauro-motor.js?v=2"></script>
+  <script defer src="js/mauro-jugar.js?v=2"></script>
 </body>
 </html>
