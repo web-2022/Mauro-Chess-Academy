@@ -8,6 +8,7 @@
   const SAVE_KEY = 'mauro_jugar_partida_v1';
   const NAME = { K: 'rey', Q: 'dama', R: 'torre', B: 'alfil', N: 'caballo', P: 'peón' };
   const LEVEL_NAMES = { 1: 'Principiante', 2: 'Fácil', 3: 'Intermedio', 4: 'Avanzado', 5: 'Experto', 6: 'Maestro' };
+  const LEVEL_ELO = { 1: '400–700', 2: '700–1000', 3: '1000–1300', 4: '1300–1600', 5: '1600–1800', 6: '1800–2000' };
   const boardEl = $('board');
 
   // ---------- Motor en segundo plano ----------
@@ -214,7 +215,7 @@
     $('undoBtn').disabled = thinking || !game.moves.length || (game.human !== 'both' && game.moves.length < (game.human === 'w' ? 1 : 2) && !game.result);
     $('resignBtn').disabled = !live || thinking || !game.moves.length;
     $('resignBtn').textContent = game.human === 'both' ? '🤝 Terminar' : '🏳 Rendirse';
-    $('playHeader').textContent = game.human === 'both' ? 'Partida entre amigos' : `Nivel ${game.level} · ${LEVEL_NAMES[game.level]} · juegas con ${game.human === 'w' ? 'blancas' : 'negras'}`;
+    $('playHeader').textContent = game.human === 'both' ? 'Partida entre amigos' : `Nivel ${game.level} · ${LEVEL_NAMES[game.level]} (ELO ${LEVEL_ELO[game.level]}) · juegas con ${game.human === 'w' ? 'blancas' : 'negras'}`;
   }
   $('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
   $('undoBtn').addEventListener('click', () => {

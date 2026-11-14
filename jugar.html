@@ -74,7 +74,8 @@
       .captured{font-size:clamp(13px,.35vw + 9px,17px)}
       .captured img{width:clamp(24px,.8vw + 12px,36px);height:clamp(24px,.8vw + 12px,36px)}
     }
-  </style>
+    .elo-note{display:block;margin-top:.35rem;opacity:.7;font-size:.85em}
+</style>
 </head>
 <body class="mauro-exercise" data-exercise="jugar">
   <div class="app">
@@ -108,13 +109,14 @@
           <fieldset class="only-bot">
             <legend><label for="levelSel">Nivel de la máquina</label></legend>
             <select id="levelSel" name="level">
-              <option value="1">1 · Principiante (para empezar)</option>
-              <option value="2">2 · Fácil</option>
-              <option value="3" selected>3 · Intermedio</option>
-              <option value="4">4 · Avanzado</option>
-              <option value="5">5 · Experto</option>
-              <option value="6">6 · Maestro</option>
+              <option value="1">1 · Principiante · ELO 400–700 (para empezar)</option>
+              <option value="2">2 · Fácil · ELO 700–1000</option>
+              <option value="3" selected>3 · Intermedio · ELO 1000–1300</option>
+              <option value="4">4 · Avanzado · ELO 1300–1600</option>
+              <option value="5">5 · Experto · ELO 1600–1800</option>
+              <option value="6">6 · Maestro · ELO 1800–2000</option>
             </select>
+            <small class="elo-note">ELO aproximado, en partidas rápidas.</small>
           </fieldset>
           <button class="main-btn primary" type="submit">▶ Empezar partida</button>
         </form>

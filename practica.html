@@ -374,7 +374,7 @@ a.train{text-decoration:none!important;color:var(--text)!important}
 
   // ----- Entrenamientos -----
   const TRAININGS = [
-    { id: 'bot', cat: 'play', icon: '🤖', name: 'Contra la máquina', sub: '6 niveles, de principiante a maestro', href: 'jugar.html', rounds: 'Partida completa',
+    { id: 'bot', cat: 'play', icon: '🤖', name: 'Contra la máquina', sub: '6 niveles, de ELO 400 a 2000', href: 'jugar.html', rounds: 'Partida completa',
       fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR', marks: { f3: 'preview-from', f7: 'preview-goal', e8: 'glow-king' },
       text: 'Juega una partida completa contra la máquina de Mauro. Elige tu color y el nivel: de principiante, ideal para empezar, a maestro.',
       steps: ['Elige color y nivel.', 'Pide una pista si te atascas.', 'Al terminar, repasa la partida jugada a jugada.'],
@@ -501,7 +501,7 @@ a.train{text-decoration:none!important;color:var(--text)!important}
   function metaFor(t) {
     if (t.id === 'bot') {
       const g = sessions().filter(s => s.type === 'jugar');
-      if (!g.length) return ['new', 'Nuevo · 6 niveles'];
+      if (!g.length) return ['new', 'Nuevo · ELO 400–2000'];
       const w = g.filter(s => s.correct).length;
       return ['done', `${w} ganada${w === 1 ? '' : 's'} de ${g.length} partida${g.length === 1 ? '' : 's'}`];
     }
