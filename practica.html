@@ -374,6 +374,18 @@ a.train{text-decoration:none!important;color:var(--text)!important}
 
   // ----- Entrenamientos -----
   const TRAININGS = [
+    { id: 'bot', cat: 'play', icon: '🤖', name: 'Contra la máquina', sub: '6 niveles, de principiante a maestro', href: 'jugar.html', rounds: 'Partida completa',
+      fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR', marks: { f3: 'preview-from', f7: 'preview-goal', e8: 'glow-king' },
+      text: 'Juega una partida completa contra la máquina de Mauro. Elige tu color y el nivel: de principiante, ideal para empezar, a maestro.',
+      steps: ['Elige color y nivel.', 'Pide una pista si te atascas.', 'Al terminar, repasa la partida jugada a jugada.'],
+      board: '<strong>¿Ves la amenaza?</strong> La dama y el alfil apuntan a f7: en una partida real, ¡defiéndete a tiempo!',
+      mascot: 'Jugar partidas completas es la mejor forma de unir todo lo que aprendes.' },
+    { id: 'friend', cat: 'play', icon: '👥', name: 'Contra un amigo', sub: 'Dos jugadores en el mismo dispositivo', href: 'jugar.html?modo=amigo', rounds: 'Partida completa',
+      fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR', marks: { e4: 'preview-from', e5: 'preview-goal' },
+      text: 'Juega con un amigo o familiar en el mismo celular, tablet o computadora. Mauro comprueba que todas las jugadas sean legales.',
+      steps: ['Túrnense para mover.', 'Gira el tablero cuando quieran.', 'Copien el PGN para estudiar la partida.'],
+      board: '<strong>1. e4 e5</strong>: la apertura más clásica. ¡Empiecen la partida!',
+      mascot: 'Jugar con otras personas te enseña a pensar en las ideas de tu rival.' },
     { id: 'daily', cat: 'daily', icon: '🔥', name: 'Táctica del día', sub: 'Un reto nuevo cada día', href: 'tactica-del-dia.html', rounds: '1 reto',
       fen: 'q3k3/8/8/1N6/8/8/8/4K3', marks: { b5: 'preview-from', c7: 'preview-goal', e8: 'glow-king', a8: 'preview-trap' },
       text: 'Cada día Mauro te propone un problema distinto: mates, dobles ataques y golpes tácticos. Resuélvelo para mantener tu racha.',
@@ -473,11 +485,12 @@ a.train{text-decoration:none!important;color:var(--text)!important}
 
   // ----- Categorías (nivel 1) y sublistas (nivel 2) -----
   const CATS = [
+    { id: 'play', slug: 'jugar', name: 'Jugar', icon: '🤖', sub: 'Contra la máquina o un amigo', text: 'Pon en práctica todo lo que aprendes jugando partidas completas: contra la máquina de Mauro en 6 niveles o contra un amigo.', mascot: 'Gana o pierde, cada partida te enseña algo: repásala al terminar.' },
     { id: 'daily', slug: 'reto-diario', name: 'Reto diario', icon: '🔥', sub: 'Un problema nuevo cada día', text: 'Cada día Mauro te propone un reto distinto: mates, dobles ataques y golpes tácticos. Resuélvelo para mantener tu racha.', mascot: 'Un problema al día construye un ojo táctico de campeón.' },
     { id: 'fund', slug: 'fundamentos', name: 'Fundamentos', icon: '<img src="pieces-tema/wP.png" alt="">', sub: 'Tablero, piezas y movimientos', text: 'La base de todo jugador: ubica cualquier casilla, reconoce las piezas y domina cómo se mueve cada una.', mascot: 'Con buenos fundamentos, todo lo demás se aprende más rápido.' },
     { id: 'tact', slug: 'tactica', name: 'Táctica', icon: '<img src="pieces-tema/wQ.png" alt="">', sub: 'Mates y ganancia de material', text: 'Aprende a dar jaque mate y a ganar piezas sin caer en trampas: así se ganan las partidas.', mascot: 'Los patrones tácticos se repiten. Cuantos más conozcas, más partidas ganarás.' }
   ];
-  const CAT = { fund: 'Fundamentos', tact: 'Táctica', daily: 'Reto diario' };
+  const CAT = { fund: 'Fundamentos', tact: 'Táctica', daily: 'Reto diario', play: 'Jugar' };
   const catGrid = document.getElementById('catGrid');
   const grid = document.getElementById('trainGrid');
   const viewCats = document.getElementById('viewCategories');
@@ -486,6 +499,13 @@ a.train{text-decoration:none!important;color:var(--text)!important}
   let current = null, highlight = null;
 
   function metaFor(t) {
+    if (t.id === 'bot') {
+      const g = sessions().filter(s => s.type === 'jugar');
+      if (!g.length) return ['new', 'Nuevo · 6 niveles'];
+      const w = g.filter(s => s.correct).length;
+      return ['done', `${w} ganada${w === 1 ? '' : 's'} de ${g.length} partida${g.length === 1 ? '' : 's'}`];
+    }
+    if (t.id === 'friend') return ['new', 'Dos jugadores'];
     if (t.id === 'daily') {
       const i = daily();
       if (i.date === todayKey()) return ['done', `✓ Hecha hoy · racha ${i.streak || 1}`];
@@ -497,6 +517,7 @@ a.train{text-decoration:none!important;color:var(--text)!important}
   }
   function catMeta(c) {
     const items = TRAININGS.filter(t => t.cat === c.id);
+    if (c.id === 'play') return metaFor(items[0]);
     if (c.id === 'daily') return metaFor(items[0]);
     const done = items.filter(t => statsFor(t.id)).length;
     return [done ? 'done' : 'new', `${items.length} ejercicios${done ? ` · ${done} practicado${done > 1 ? 's' : ''}` : ''}`];
@@ -620,7 +641,7 @@ a.train{text-decoration:none!important;color:var(--text)!important}
   document.getElementById('audioBtn').addEventListener('click', () => speak('Bienvenido a la práctica. Elige una categoría: los fundamentos te enseñan el tablero y las piezas, la táctica te enseña a ganar material y dar mate, y el reto diario te propone un problema nuevo cada día.'));
 
   // ----- Barra superior y resultados -----
-  const LABEL = { coordinates: 'Coordenadas', pieces: 'Reconoce las piezas', mate1: 'Mate en 1', hanging: 'Pieza indefensa', legal: 'Movimientos legales', daily: 'Táctica del día' };
+  const LABEL = { coordinates: 'Coordenadas', pieces: 'Reconoce las piezas', mate1: 'Mate en 1', hanging: 'Pieza indefensa', legal: 'Movimientos legales', daily: 'Táctica del día', jugar: 'Partida contra la máquina', mates: 'Mates' };
   function renderStats() {
     const all = sessions(), total = all.reduce((a, s) => a + s.total, 0), correct = all.reduce((a, s) => a + s.correct, 0);
     const acc = total ? Math.round(correct * 100 / total) : null, streak = streakNow();

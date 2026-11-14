@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jugar contra la máquina · Academia Mauro</title>
+  <meta name="description" content="Juega ajedrez contra la máquina de Academia Mauro en 6 niveles, de principiante a maestro, o contra un amigo en el mismo dispositivo. Funciona sin conexión.">
+  <link rel="canonical" href="https://web-2022.github.io/Mauro-Chess-Academy/jugar.html">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <meta name="theme-color" content="#06111f">
+  <link rel="stylesheet" href="js/mauro-voice.css?v=187">
+  <script src="js/mauro-voice.js?v=192"></script>
+  <link rel="stylesheet" href="js/mauro-ui.css?v=192">
+  <link rel="stylesheet" href="js/mauro-header.css?v=193"><script defer src="js/mauro-header.js?v=192"></script><script defer src="js/mauro-ui.js?v=192"></script>
+  <link rel="stylesheet" href="js/mauro-responsive.css?v=192">
+  <link rel="stylesheet" href="js/mauro-exercise.css?v=192">
+  <link rel="stylesheet" href="js/mauro-drills.css?v=1">
+  <link rel="stylesheet" href="js/mauro-ejercicio-ancho.css?v=1">
+  <style>
+    body.mauro-exercise .sq img.mp-libre{width:82%;height:82%;object-fit:contain}
+    body.mauro-exercise .sq img.mp-bR{width:81%;height:81%}body.mauro-exercise .sq img.mp-bN{width:67%;height:67%}
+    body.mauro-exercise .sq img.mp-bB{width:73%;height:73%}body.mauro-exercise .sq img.mp-bQ{width:75%;height:75%}body.mauro-exercise .sq img.mp-bK{width:68%;height:68%}
+    body.mauro-exercise .sq.play-last{box-shadow:inset 0 0 0 100px rgba(250,204,21,.28)}
+    body.mauro-exercise .sq.play-check{box-shadow:inset 0 0 0 5px #ef4444,inset 0 0 26px rgba(239,68,68,.75)}
+    .play-head{font-weight:800;color:#bae6fd}
+    .setup-wrap{margin-top:12px}
+    .setup-wrap summary{display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border:1px solid #365777;border-radius:12px;background:#132b45;color:#eef6ff;font-weight:900;cursor:pointer;list-style:none}
+    .setup-wrap summary::-webkit-details-marker{display:none}
+    .setup-wrap[open] summary{background:linear-gradient(135deg,#22c55e,#38bdf8);color:#03121c;border-color:transparent}
+    .setup-wrap summary:focus-visible{outline:3px solid #6ee7ff;outline-offset:2px}
+    /* Configuración de la partida */
+    .setup{display:grid;gap:12px;margin-top:14px;padding:14px;border:1px solid #29415c;border-radius:14px;background:#0b1730}
+    .setup fieldset{border:0;margin:0;padding:0;display:grid;gap:8px}
+    .setup legend{font-weight:900;color:#86efac;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+    .seg{display:flex;flex-wrap:wrap;gap:6px}
+    .seg label{position:relative}
+    .seg input{position:absolute;opacity:0;pointer-events:none}
+    .seg span{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 14px;border:1px solid #365777;border-radius:12px;background:#132b45;color:#eef6ff;font-weight:800;cursor:pointer}
+    .seg input:checked + span{background:linear-gradient(135deg,#22c55e,#38bdf8);color:#03121c;border-color:transparent}
+    .seg input:focus-visible + span{outline:3px solid #6ee7ff;outline-offset:2px}
+    .setup select{min-height:44px;padding:8px 12px;border-radius:12px;border:1px solid #365777;background:#020617;color:#f8fafc;font:800 15px system-ui,sans-serif}
+    .setup .main-btn{justify-self:start}
+    /* Partida */
+    .play-tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+    .nav-row{display:grid;grid-template-columns:repeat(4,minmax(44px,1fr));gap:8px;max-width:420px;margin:12px 0 8px}
+    .move-list{display:flex;flex-wrap:wrap;gap:6px;align-items:center;max-height:220px;overflow:auto;padding:10px;border:1px solid #29415c;border-radius:12px;background:#071124}
+    .ml-num{color:#94a3b8;font-weight:800;font-size:14px;margin-left:4px}
+    .ml-result{font-weight:900;color:#fde68a;margin-left:6px}
+    .ml-empty{margin:0;color:#94a3b8}
+    .view-note{margin:6px 0 0;color:#fde68a;font-weight:700}
+    .captured{display:grid;gap:4px;margin-top:12px;font-size:13px;color:#94a3b8}
+    .captured div{display:flex;align-items:center;flex-wrap:wrap;gap:1px;min-height:26px}
+    .captured img{width:24px;height:24px;object-fit:contain}
+    .captured b{margin-left:6px;color:#e5e7eb}
+    #pgnText{width:100%;min-height:120px;margin-top:8px;border-radius:10px;background:#020617;color:#f8fafc;border:1px solid #29415c;font:13px ui-monospace,monospace}
+    /* Coronación */
+    .promo{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:rgba(2,6,23,.6)}
+    .promo[hidden]{display:none}
+    .promo-card{padding:18px;border-radius:18px;background:#0b1730;border:1px solid #29415c;box-shadow:0 20px 60px rgba(0,0,0,.5);text-align:center}
+    .promo-card p{margin:0 0 12px;font-weight:900;color:#e5e7eb}
+    .promo-card div{display:flex;gap:10px}
+    .promo-card button{width:72px;height:72px;border-radius:14px;border:1px solid #365777;background:#dbeafe;cursor:pointer}
+    .promo-card button:focus-visible{outline:3px solid #6ee7ff;outline-offset:2px}
+    .promo-card img{width:80%;height:80%;object-fit:contain}
+    @media (min-width:1101px){
+      .setup-wrap summary{font-size:clamp(15px,.45vw + 9px,20px);min-height:clamp(44px,1.2vw + 28px,58px)}
+      .play-head{font-size:clamp(15px,.45vw + 10px,21px)}
+      .setup legend{font-size:clamp(13px,.35vw + 9px,17px)}
+      .seg span,.setup select{font-size:clamp(15px,.45vw + 9px,20px);min-height:clamp(44px,1.2vw + 28px,58px)}
+      .nav-row .rv-btn{min-height:clamp(44px,1.4vw + 26px,58px);font-size:clamp(18px,.5vw + 11px,24px)}
+      .move-list{max-height:clamp(220px,14vw,420px)}
+      .move-list .rv-move,.ml-num{font-size:clamp(14px,.4vw + 9px,19px)}
+      .captured{font-size:clamp(13px,.35vw + 9px,17px)}
+      .captured img{width:clamp(24px,.8vw + 12px,36px);height:clamp(24px,.8vw + 12px,36px)}
+    }
+  </style>
+</head>
+<body class="mauro-exercise" data-exercise="jugar">
+  <div class="app">
+    <header class="exercise-progress">
+      <a href="practica.html#jugar">← Práctica</a>
+      <div class="exercise-status"><span class="play-head" id="playHeader">Jugar</span></div>
+    </header>
+    <main class="exercise-layout">
+      <section class="exercise-intro" id="boardTop">
+        <span class="exercise-kicker">MAURO · JUGAR</span>
+        <h1>Jugar contra la máquina</h1>
+        <p>Elige tu color y el nivel. La máquina piensa en tu dispositivo: funciona incluso sin internet.</p>
+        <details class="setup-wrap" id="setupWrap">
+        <summary>⚙ Nueva partida: rival, color y nivel</summary>
+        <form class="setup" id="setupForm">
+          <fieldset>
+            <legend>Rival</legend>
+            <div class="seg">
+              <label><input type="radio" name="mode" value="maquina" checked><span>🤖 La máquina</span></label>
+              <label><input type="radio" name="mode" value="amigo"><span>👥 Un amigo (mismo dispositivo)</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="only-bot">
+            <legend>Tu color</legend>
+            <div class="seg">
+              <label><input type="radio" name="color" value="w" checked><span>⚪ Blancas</span></label>
+              <label><input type="radio" name="color" value="b"><span>⚫ Negras</span></label>
+              <label><input type="radio" name="color" value="random"><span>🎲 Al azar</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="only-bot">
+            <legend><label for="levelSel">Nivel de la máquina</label></legend>
+            <select id="levelSel" name="level">
+              <option value="1">1 · Principiante (para empezar)</option>
+              <option value="2">2 · Fácil</option>
+              <option value="3" selected>3 · Intermedio</option>
+              <option value="4">4 · Avanzado</option>
+              <option value="5">5 · Experto</option>
+              <option value="6">6 · Maestro</option>
+            </select>
+          </fieldset>
+          <button class="main-btn primary" type="submit">▶ Empezar partida</button>
+        </form>
+        </details>
+      </section>
+      <section class="exercise-board">
+        <div class="exercise-board-shell"><div class="board" id="board" aria-label="Tablero de la partida"></div></div>
+      </section>
+      <section class="exercise-action">
+        <div class="feedback" id="playStatus" role="status" aria-live="polite"></div>
+        <div class="play-tools">
+          <button class="main-btn" type="button" id="hintBtn">💡 Pista</button>
+          <button class="main-btn" type="button" id="undoBtn">↶ Deshacer</button>
+          <button class="main-btn" type="button" id="flipBtn">↕ Girar</button>
+          <button class="main-btn" type="button" id="resignBtn">🏳 Rendirse</button>
+          <button class="main-btn" type="button" id="voiceToggle" aria-pressed="true">🔊 Voz</button>
+        </div>
+        <div class="nav-row" role="group" aria-label="Repasar la partida">
+          <button class="rv-btn" type="button" data-nav="start" aria-label="Posición inicial" title="Posición inicial">⏮</button>
+          <button class="rv-btn" type="button" data-nav="prev" aria-label="Jugada anterior" title="Jugada anterior (←)">◀</button>
+          <button class="rv-btn" type="button" data-nav="next" aria-label="Jugada siguiente" title="Jugada siguiente (→)">▶</button>
+          <button class="rv-btn" type="button" data-nav="end" aria-label="Volver a la partida" title="Volver a la partida">⏭</button>
+        </div>
+        <div class="move-list" id="moveList" aria-label="Jugadas de la partida"></div>
+        <p class="view-note" id="viewNote" hidden></p>
+        <div class="captured" aria-label="Piezas capturadas">
+          <div>⚪ capturó: <span id="capturedByWhite"></span></div>
+          <div>⚫ capturó: <span id="capturedByBlack"></span></div>
+        </div>
+        <div class="play-tools">
+          <button class="main-btn" type="button" id="pgnBtn">📋 Copiar PGN</button>
+          <a class="main-btn" href="tableroDePractica.html">🧩 Estudiarla en el Tablero libre</a>
+        </div>
+        <textarea id="pgnText" hidden aria-label="PGN de la partida" readonly></textarea>
+        <p class="exercise-tip">Consejo de Mauro: antes de mover, pregúntate qué amenaza tu rival. Revisa jaques, capturas y amenazas.</p>
+      </section>
+    </main>
+  </div>
+  <div class="promo" id="promoDialog" hidden role="dialog" aria-modal="true" aria-label="Elige la pieza de coronación">
+    <div class="promo-card"><p>¿En qué pieza coronas?</p><div>
+      <button type="button" data-promo="q" aria-label="Dama"><img alt="" src="pieces-tema/wQ.png"></button>
+      <button type="button" data-promo="r" aria-label="Torre"><img alt="" src="pieces-tema/wR.png"></button>
+      <button type="button" data-promo="b" aria-label="Alfil"><img alt="" src="pieces-tema/wB.png"></button>
+      <button type="button" data-promo="n" aria-label="Caballo"><img alt="" src="pieces-tema/wN.png"></button>
+    </div></div>
+  </div>
+  <script src="js/mauro-chess-rules.js?v=1"></script>
+  <script src="js/mauro-motor.js?v=1"></script>
+  <script defer src="js/mauro-jugar.js?v=1"></script>
+</body>
+</html>

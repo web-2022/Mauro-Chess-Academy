@@ -23,6 +23,7 @@
   ];
   const TRAININGS = [
     { url: 'tactica-del-dia.html', icon: '🔥', name: 'Táctica del día', desc: 'Un reto nuevo cada día', daily: true },
+    { url: 'jugar.html', icon: '🤖', name: 'Jugar contra la máquina', desc: '6 niveles o contra un amigo' },
     { url: 'practica.html#mates', icon: '♛', name: 'Mates', desc: 'Mate en 1 a 4 y mates básicos' },
     { url: 'pieza-indefensa.html', icon: '♞', name: 'Pieza indefensa', desc: 'Gana material sin caer en trampas' },
     { url: 'movimientos-legales.html', icon: '♝', name: 'Movimientos legales', desc: 'A dónde puede ir cada pieza' },
