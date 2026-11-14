@@ -48,7 +48,7 @@
 
   // ---------- Estado ----------
   let index = 0, ok = 0, done = 0, item = null, state = null, node = null, remaining = 0;
-  let selected = null, marks = {}, mistakes = 0, finished = false, busy = false, played = [];
+  let selected = null, marks = {}, mistakes = 0, finished = false, busy = false, played = [], history = [], reviewAt = -1;
   const total = ITEMS.length;
 
   function updateProgress() {
@@ -94,6 +94,24 @@
     for (const r of reps) { const s2 = C.apply(afterWhite, r); if (!mateInOne(s2)) return { ok: false, refutation: r }; }
     return { ok: true };
   }
+  function solveFrom(st, nd, rem) {
+    if (rem >= 3 && nd && nd.m) return C.legalMoves(st).find(m => uci(m) === nd.m);
+    if (rem === 1) return mateInOne(st);
+    return C.legalMoves(st).find(m => forcesMateInTwo(C.apply(st, m)).ok) || null;
+  }
+  // Mejor defensa de las negras: la que más alarga el mate (según el árbol verificado)
+  function chooseReply(st, nd, rem) {
+    const reps = C.legalMoves(st);
+    if (rem >= 3 && nd && nd.r) {
+      let best = -1, chosen = null, child = null;
+      for (const r of reps) { const c = nd.r[uci(r)]; const n = c ? c.n : 0; if (n > best) { best = n; chosen = r; child = c; } }
+      return { chosen, child };
+    }
+    // mate en 2: preferimos una respuesta que no permita un mate «obvio» con captura
+    const quiet = reps.filter(r => !r.captured);
+    const pool = quiet.length ? quiet : reps;
+    return { chosen: pool[Math.floor(Math.random() * pool.length)], child: { n: 1 } };
+  }
   function solutionMove() {
     if (remaining >= 3 && node.m) return C.legalMoves(state).find(m => uci(m) === node.m);
     if (remaining === 1) return mateInOne(state);
@@ -112,7 +130,7 @@
       if (mistakes >= 2) return giveUp(why);
       say(why + ' Inténtalo otra vez.', 'bad'); speak('Inténtalo otra vez'); render(); return;
     }
-    state = after; played.push(san); marks = { [move.from]: 'drill-from', [move.to]: 'correct' }; render();
+    state = after; played.push(san); history.push({ state, san, from: move.from, to: move.to, side: 'w' }); marks = { [move.from]: 'drill-from', [move.to]: 'correct' }; render();
     if (C.isMate(state)) return solved(san);
     // Respuesta de las negras: la defensa más resistente
     busy = true;
@@ -120,17 +138,9 @@
     setTimeout(() => blackReply(), 650);
   }
   function blackReply() {
-    const reps = C.legalMoves(state);
-    let chosen = null, child = null;
-    if (remaining >= 3 && node.r) {
-      let best = -1;
-      for (const r of reps) { const c = node.r[uci(r)]; const n = c ? c.n : 0; if (n > best || (n === best && Math.random() < .4)) { best = n; chosen = r; child = c; } }
-    } else {
-      // mate en 2: cualquier respuesta deja mate en 1; preferimos la que no sea captura obvia al azar
-      chosen = reps[Math.floor(Math.random() * reps.length)]; child = { n: 1 };
-    }
+    const { chosen, child } = chooseReply(state, node, remaining);
     const san = C.san(state, chosen);
-    state = C.apply(state, chosen); played.push(san);
+    state = C.apply(state, chosen); played.push(san); history.push({ state, san, from: chosen.from, to: chosen.to, side: 'b' });
     node = child; remaining = child.n;
     marks = { [chosen.from]: 'drill-from', [chosen.to]: 'drill-defender' };
     busy = false; render();
@@ -147,18 +157,73 @@
     done++; updateProgress();
     const sol = solutionMove();
     if (sol) { marks = { [sol.from]: 'drill-hint', [sol.to]: 'correct' }; }
+    // Línea completa de la solución (con la mejor defensa) para el repaso
+    let st = state, nd = node, rem = remaining, guard = 0;
+    while (rem > 0 && guard++ < 10) {
+      const m = solveFrom(st, nd, rem); if (!m) break;
+      const san = C.san(st, m); st = C.apply(st, m); history.push({ state: st, san, from: m.from, to: m.to, side: 'w', sol: true });
+      if (C.isMate(st)) break;
+      const { chosen, child } = chooseReply(st, nd, rem); if (!chosen) break;
+      const bsan = C.san(st, chosen); st = C.apply(st, chosen); history.push({ state: st, san: bsan, from: chosen.from, to: chosen.to, side: 'b', sol: true });
+      nd = child; rem = child.n;
+    }
     say(`${why} La jugada correcta era ${sol ? C.san(state, sol) : '—'}. Pulsa «Reintentar» para jugarla tú o sigue con el siguiente.`, 'bad');
     render(); endRound(true);
   }
   function endRound(failed) {
     hintBtn.disabled = true; retryBtn.hidden = !failed;
+    showReview(failed);
     if (done >= total) { finished = true; nextBtn.disabled = true; window.MauroPractice?.record('mates', { correct: ok, total }); $('setDone').hidden = false; $('setDone').innerHTML = `<strong>🏆 ¡Serie completada!</strong><p>${ok} de ${total} mates resueltos sin ayuda.</p><a class="main-btn primary" href="practica.html#mates">Elegir otros mates</a>`; return; }
     nextBtn.disabled = false; nextBtn.focus();
   }
 
+  // ---------- Repaso: adelantar y regresar por las jugadas del ejercicio ----------
+  const reviewEl = $('review');
+  function showReview(failed) {
+    if (!reviewEl || history.length < 2) return;
+    node = null; // el tablero queda solo para mirar
+    const list = history.slice(1).map((h, k) => {
+      const ply = k + 1, num = Math.ceil(ply / 2), white = h.side === 'w';
+      return `<button type="button" class="rv-move${h.sol ? ' sol' : ''}${white ? ' w' : ' b'}" data-i="${ply}">${white ? num + '. ' : ''}${h.san}</button>`;
+    }).join('');
+    reviewEl.innerHTML = `<div class="rv-head"><strong>🔁 Repasa ${failed ? 'la solución' : 'tu mate'}</strong><span id="rvNow"></span></div>
+      <div class="rv-controls" role="group" aria-label="Repasar jugadas">
+        <button type="button" class="rv-btn" data-rv="start" aria-label="Posición inicial" title="Posición inicial">⏮</button>
+        <button type="button" class="rv-btn" data-rv="prev" aria-label="Jugada anterior" title="Jugada anterior (←)">◀</button>
+        <button type="button" class="rv-btn" data-rv="next" aria-label="Jugada siguiente" title="Jugada siguiente (→)">▶</button>
+        <button type="button" class="rv-btn" data-rv="end" aria-label="Posición final" title="Posición final">⏭</button>
+      </div>
+      <div class="rv-list">${list}</div>${failed ? '<p class="rv-note">En verde, la solución con la mejor defensa de las negras.</p>' : ''}`;
+    reviewEl.hidden = false;
+    const firstSol = history.findIndex(h => h.sol);
+    goReview(failed && firstSol > 0 ? firstSol - 1 : history.length - 1);
+  }
+  function goReview(i) {
+    i = Math.max(0, Math.min(history.length - 1, i)); reviewAt = i;
+    const h = history[i]; state = h.state;
+    marks = i === 0 ? {} : { [h.from]: h.sol && h.side === 'w' ? 'drill-hint' : 'drill-from', [h.to]: h.side === 'w' ? 'correct' : 'drill-defender' };
+    selected = null; render();
+    const now = $('rvNow');
+    if (now) now.textContent = i === 0 ? 'Posición inicial' : `Jugada ${i} de ${history.length - 1}: ${Math.ceil(i / 2)}${h.side === 'w' ? '.' : '...'} ${h.san}${C.isMate(h.state) ? ' · ¡mate!' : ''}`;
+    reviewEl.querySelectorAll('.rv-move').forEach(b => b.classList.toggle('active', Number(b.dataset.i) === i));
+    reviewEl.querySelector('[data-rv="start"]').disabled = reviewEl.querySelector('[data-rv="prev"]').disabled = i === 0;
+    reviewEl.querySelector('[data-rv="next"]').disabled = reviewEl.querySelector('[data-rv="end"]').disabled = i === history.length - 1;
+  }
+  reviewEl?.addEventListener('click', e => {
+    const mv = e.target.closest('.rv-move'); if (mv) return goReview(Number(mv.dataset.i));
+    const b = e.target.closest('[data-rv]'); if (!b) return;
+    ({ start: () => goReview(0), prev: () => goReview(reviewAt - 1), next: () => goReview(reviewAt + 1), end: () => goReview(history.length - 1) })[b.dataset.rv]();
+  });
+  document.addEventListener('keydown', e => {
+    if (!reviewEl || reviewEl.hidden || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goReview(reviewAt - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goReview(reviewAt + 1); }
+  });
+
   function load(i, retry) {
     index = i; item = ITEMS[i]; state = C.parseFEN(item.fen); node = item.tree || {}; remaining = item.n;
     selected = null; marks = {}; busy = false; played = []; if (!retry) mistakes = 0;
+    history = [{ state, san: null }]; reviewAt = -1; if (reviewEl) { reviewEl.hidden = true; reviewEl.innerHTML = ''; }
     hintBtn.disabled = false; nextBtn.disabled = true; retryBtn.hidden = true;
     questionEl.textContent = `Juegan blancas: mate en ${item.n}.`;
     themeEl.textContent = `Ejercicio ${i + 1} de ${total}` + (item.theme ? ` · ${item.theme}` : ` · mate en ${item.n}`);

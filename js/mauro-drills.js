@@ -51,7 +51,7 @@
 
   // ---------- Estado de la sesión ----------
   let ok = 0, total = 0, round = null, finished = false, extra = false;
-  let state = null, selected = null, marks = {}, picks = new Set(), mistakes = 0, solved = false;
+  let state = null, selected = null, marks = {}, picks = new Set(), mistakes = 0, solved = false, history = [], reviewAt = -1;
 
   function updateProgress() {
     $('ok').textContent = ok;
@@ -99,6 +99,7 @@
   // solvedIt: el alumno encontró la respuesta; firstTry: sin errores ni pista (suma acierto).
   function finishRound(firstTry, message, solvedIt = firstTry) {
     solved = true;
+    if (TYPE === 'mate1' || TYPE === 'daily') setTimeout(() => showReview(!solvedIt), 0);
     if (!firstTry && solvedIt) message += ' (Lo lograste con ayuda: esta ronda no suma acierto.)';
     if (extra) { say(message, solvedIt ? 'good' : 'bad'); speak(solvedIt ? '¡Muy bien!' : 'Observa la solución.'); hintBtn.disabled = true; return; }
     total++; if (firstTry) ok++;
@@ -136,7 +137,7 @@
   function showSolution() {
     const m = solutionMoves()[0]; if (!m) return;
     marks = { [m.from]: 'drill-hint', [m.to]: 'correct' }; selected = null;
-    state = C.apply(state, m); render();
+    const san = C.san(state, m); state = C.apply(state, m); history.push({ state, san, from: m.from, to: m.to, sol: true }); render();
   }
 
   function attempt(move) {
@@ -145,7 +146,7 @@
     const isMate = C.isMate(after);
     const good = (round.kind === 'mate' || TYPE === 'mate1') ? isMate : round.solutions.includes(move.from + move.to);
     if (good) {
-      state = after; marks = { [move.from]: 'drill-from', [move.to]: 'correct' }; render();
+      state = after; history.push({ state, san: notation, from: move.from, to: move.to }); marks = { [move.from]: 'drill-from', [move.to]: 'correct' }; render();
       const extraIdea = round.idea ? ' ' + round.idea : '';
       return finishRound(mistakes === 0, (isMate ? `¡Jaque mate! ${notation}.` : `¡Correcto! ${notation}.`) + extraIdea, true);
     }
@@ -164,6 +165,7 @@
   function newMateRound(item) {
     round = { ...item, kind: item.kind || 'mate' };
     state = C.parseFEN(item.fen);
+    history = [{ state, san: null }]; reviewAt = -1; hideReview();
     questionEl.textContent = TYPE === 'daily' ? (item.prompt || 'Encuentra la mejor jugada.') + ' Juegan blancas.' : 'Juegan blancas: da jaque mate en una jugada.';
     themeEl.textContent = 'Tema: ' + item.theme;
   }
@@ -282,6 +284,41 @@
     box.innerHTML = `<strong>🔥 Racha: ${info.streak || 1} día${(info.streak || 1) === 1 ? '' : 's'}</strong><p>Vuelve mañana para una táctica nueva. Mientras tanto puedes seguir entrenando:</p><button class="main-btn primary" type="button" id="dailyMore">🎲 Otra táctica</button> <a class="main-btn" href="mate-en-1.html">Mate en 1 →</a>`;
     $('dailyMore').onclick = () => { extra = true; solved = false; mistakes = 0; marks = {}; selected = null; const pool = D.DAILY.filter(x => x !== round); newMateRound(pool[rand(pool.length)]); say('Táctica extra (no cuenta para la racha).'); hintBtn.disabled = false; render(); };
   }
+
+  // ---------- Repaso: adelantar y regresar ----------
+  let reviewEl = $('review');
+  if (!reviewEl && (TYPE === 'mate1' || TYPE === 'daily')) { reviewEl = document.createElement('div'); reviewEl.className = 'review'; reviewEl.id = 'review'; reviewEl.hidden = true; feedbackEl.after(reviewEl); }
+  function hideReview() { if (reviewEl) { reviewEl.hidden = true; reviewEl.innerHTML = ''; } }
+  function showReview(failed) {
+    if (!reviewEl || history.length < 2) return;
+    const list = history.slice(1).map((h, k) => `<button type="button" class="rv-move w${h.sol ? ' sol' : ''}" data-i="${k + 1}">${h.san}</button>`).join('');
+    reviewEl.innerHTML = `<div class="rv-head"><strong>🔁 Repasa ${failed ? 'la solución' : 'tu jugada'}</strong><span id="rvNow"></span></div>
+      <div class="rv-controls" role="group" aria-label="Repasar jugadas">
+        <button type="button" class="rv-btn" data-rv="start" aria-label="Posición inicial" title="Posición inicial">⏮</button>
+        <button type="button" class="rv-btn" data-rv="prev" aria-label="Jugada anterior" title="Jugada anterior (←)">◀</button>
+        <button type="button" class="rv-btn" data-rv="next" aria-label="Jugada siguiente" title="Jugada siguiente (→)">▶</button>
+        <button type="button" class="rv-btn" data-rv="end" aria-label="Posición final" title="Posición final">⏭</button>
+      </div><div class="rv-list">${list}</div>`;
+    reviewEl.hidden = false; goReview(failed ? 0 : history.length - 1);
+  }
+  function goReview(i) {
+    i = Math.max(0, Math.min(history.length - 1, i)); reviewAt = i; const h = history[i]; state = h.state;
+    marks = i === 0 ? {} : { [h.from]: h.sol ? 'drill-hint' : 'drill-from', [h.to]: 'correct' }; selected = null; render();
+    const now = $('rvNow'); if (now) now.textContent = i === 0 ? 'Posición inicial' : `${h.san}${C.isMate(h.state) ? ' · ¡mate!' : ''}`;
+    reviewEl.querySelectorAll('.rv-move').forEach(b => b.classList.toggle('active', Number(b.dataset.i) === i));
+    reviewEl.querySelector('[data-rv="start"]').disabled = reviewEl.querySelector('[data-rv="prev"]').disabled = i === 0;
+    reviewEl.querySelector('[data-rv="next"]').disabled = reviewEl.querySelector('[data-rv="end"]').disabled = i === history.length - 1;
+  }
+  reviewEl?.addEventListener('click', e => {
+    const mv = e.target.closest('.rv-move'); if (mv) return goReview(Number(mv.dataset.i));
+    const b = e.target.closest('[data-rv]'); if (!b) return;
+    ({ start: () => goReview(0), prev: () => goReview(reviewAt - 1), next: () => goReview(reviewAt + 1), end: () => goReview(history.length - 1) })[b.dataset.rv]();
+  });
+  document.addEventListener('keydown', e => {
+    if (!reviewEl || reviewEl.hidden || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goReview(reviewAt - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goReview(reviewAt + 1); }
+  });
 
   // ---------- Siguiente / pista ----------
   let matePool = [];
