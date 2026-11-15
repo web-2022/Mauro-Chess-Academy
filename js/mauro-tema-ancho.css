@@ -21,3 +21,13 @@
   body .lesson-card button,body .lesson-card .continue-btn,body .lesson-card .primary-btn{font-size:clamp(.95rem,.6rem + .35vw,1.25rem)!important}
   body .board-card .board-message,body .board-card .board-head{font-size:clamp(.95rem,.6rem + .3vw,1.2rem)!important}
 }
+@media (min-width:1700px){
+  body .lesson-card .challenge-question{font-size:clamp(1.15rem,.7rem + .5vw,1.6rem)!important}
+  body .lesson-card .choice{min-height:clamp(52px,3.4vw,72px)!important;font-size:clamp(1rem,.6rem + .45vw,1.4rem)!important;padding:12px 18px!important}
+  body .lesson-card .fact{padding:14px 16px}
+  body .lesson-card .fact b{font-size:clamp(1.05rem,.6rem + .45vw,1.45rem)!important}
+  body .lesson-card .fact span{font-size:clamp(.85rem,.5rem + .3vw,1.1rem)!important}
+  body .lesson-card .adaptive-chip,body .lesson-card .step-eyebrow{font-size:clamp(.72rem,.45rem + .25vw,.95rem)!important}
+  body .lesson-card .feedback,body .lesson-card .hint-box,body .lesson-card .mascot p{font-size:clamp(1rem,.6rem + .4vw,1.35rem)!important}
+  body .lesson-card .continue-btn,body .lesson-card .primary-btn{min-height:clamp(44px,2.8vw,60px)!important;padding:10px 20px!important}
+}

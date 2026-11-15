@@ -47,7 +47,7 @@
     const alive = daily.date === todayKey() || daily.date === todayKey(-1);
     return {
       streak: alive ? (Number(daily.streak) || 0) : 0,
-      xp: list.reduce((a, s) => a + (Number(s.correct) || 0), 0) * 10,
+      xp: list.reduce((a, s) => a + (Number(s.correct) || 0), 0) * 10 + Object.values(readJSON('mauroChessProgressV1', {}) || {}).reduce((a, t) => a + (Number(t && t.xp) || 0), 0),
       dailyPending: daily.date !== todayKey()
     };
   }
