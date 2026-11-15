@@ -266,14 +266,15 @@
     hintMarks = [r.uci.slice(0, 2), r.uci.slice(2, 4)]; game.hints = (game.hints || 0) + 1; save();
     const piece = st.board[r.uci.slice(0, 2)], fem = /[QR]/.test(piece[1]);
     const sanH = m ? C.san(st, m) : '', showSan = sanH && sanH.replace(/[+#]/, '') !== r.uci.slice(2, 4);
-    const text = `Pista: mueve ${fem ? 'la' : 'el'} ${NAME[piece[1]]} de ${r.uci.slice(0, 2)} a ${r.uci.slice(2, 4)}${showSan ? ' (' + sanH + ')' : ''}.`;
+    let text = `Pista: mueve ${fem ? 'la' : 'el'} ${NAME[piece[1]]} de ${r.uci.slice(0, 2)} a ${r.uci.slice(2, 4)}${showSan ? ' (' + sanH + ')' : ''}.`;
+    try { if (window.MauroExplica) text += ' ' + window.MauroExplica.hint(st, r.uci, Math.ceil((game.moves.length + 1) / 2)); } catch (_) {}
     showHint(text); render(); updateControls();
   });
   function showHint(text) {
     const el = $('playStatus'); el.className = 'feedback hint'; el.replaceChildren();
     const msg = document.createElement('span'); msg.className = 'hint-text'; msg.textContent = '💡 ' + text;
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'hint-audio'; btn.textContent = '🔊'; btn.title = 'Escuchar la pista'; btn.setAttribute('aria-label', 'Escuchar la pista otra vez');
-    const say = () => speakAlways(text.replace(/\b([a-h])([1-8])\b/g, '$1 $2').replace(/\(.*\)/, ''));
+    const say = () => speakAlways(text.replace(/\b([a-h])([1-8])\b/g, '$1 $2').replace(/ \([^)]*\)/, ''));
     btn.addEventListener('click', say); el.append(msg, btn); say();
   }
   function speakAlways(t) { try { if (window.MauroVoice?.speak) return window.MauroVoice.speak(t); const u = new SpeechSynthesisUtterance(t); u.lang = 'es-PE'; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (_) {} }
@@ -342,6 +343,11 @@
     out += body.replace(/x/, ' toma ').replace(/=([DTAC])/, (m, x) => ' corona a ' + P[x]).replace(/\+/, ', jaque').replace(/#/, ', jaque mate').replace(/([a-h])([1-8])/g, ' $1 $2 ');
     return out.replace(/\s+/g, ' ').trim();
   }
+  // Texto para la voz: lee jugadas (Cc3 → caballo c 3) y números con coma
+  function speakify(t) {
+    return t.replace(/(\d),(\d)/g, '$1 coma $2')
+      .replace(/\b(O-O-O|O-O|[RDTAC]?[a-h]?[1-8]?x?[a-h][1-8](?:=[DTAC])?[+#]?)(?=[\s.,:;)]|$)/g, m => /^[a-h][1-8]$/.test(m) ? m[0] + ' ' + m[1] : spokenSan(m));
+  }
   function analysisNote(i) {
     const a = an(); if (!a || i === 0) return null;
     const q = a.q[i - 1], Q = QUAL[q], num = Math.ceil(i / 2) + (i % 2 ? '. ' : '... ');
@@ -351,12 +357,14 @@
     let txt = '';
     if (q === 'best') txt = ' Es la mejor jugada según el análisis.';
     else if (q === 'good') { const bs = sanOf(i - 1, a.best[i - 1]); txt = bs ? ` También era muy buena ${bs}.` : ''; }
-    else {
-      const bs = sanOf(i - 1, a.best[i - 1]);
-      txt = ` Perdiste unos ${(a.loss[i - 1] / 100).toFixed(1).replace('.', ',')} peones de ventaja.` + (bs ? ` Mejor era ${bs}.` : '');
-    }
+    else txt = ` Perdiste unos ${(a.loss[i - 1] / 100).toFixed(1).replace('.', ',')} peones de ventaja.`;
+    // Por qué: idea de la jugada, qué responde el rival y qué plan era mejor
+    try {
+      const ex = window.MauroExplica ? window.MauroExplica.review(positions[i - 1], game.moves[i - 1], a.best[i - 1], a.best[i], q, Math.ceil(i / 2)) : '';
+      if (ex) txt += ' ' + ex;
+    } catch (_) {}
     el.append(document.createTextNode(txt + ` Evaluación: ${fmtEval(cp(a.ev[i]))}.`));
-    const say = `${Q.name}. ${num.replace('...', ', negras,').replace('. ', '. ')}${spokenSan(game.sans[i - 1])}.${txt.replace(/(\d),(\d)/g, '$1 coma $2')}`;
+    const say = `${Q.name}. ${num.replace('...', ', negras,').replace('. ', '. ')}${spokenSan(game.sans[i - 1])}.${speakify(txt)}`;
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'an-audio'; btn.textContent = '🔊';
     btn.title = 'Escuchar la explicación'; btn.setAttribute('aria-label', 'Escuchar la explicación de esta jugada');
     btn.addEventListener('click', () => speakAlways(say));

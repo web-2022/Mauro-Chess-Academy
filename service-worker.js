@@ -1,4 +1,4 @@
-const CACHE_NAME = "ajedrez-mauro-v230";
+const CACHE_NAME = "ajedrez-mauro-v231";
 
 /*
   ACADEMIA MAURO
@@ -22,7 +22,8 @@ const CORE_ASSETS = [
   "./js/mauro-tema-ancho.css?v=2",
   "./jugar.html",
   "./js/mauro-motor.js?v=3",
-  "./js/mauro-jugar.js?v=5",
+  "./js/mauro-jugar.js?v=6",
+  "./js/mauro-explica.js?v=1",
   "./mates.html",
   "./js/mauro-mates.js?v=1",
   "./js/mauro-mates-data.js?v=1",
