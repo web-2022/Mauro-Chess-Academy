@@ -14,14 +14,14 @@
   // ---------- Motor en segundo plano ----------
   let worker = null, reqId = 0;
   const pending = new Map();
-  function engine(fen, moves, level) {
+  function engine(fen, moves, level, maxTime) {
     return new Promise(resolve => {
       const id = ++reqId; pending.set(id, resolve);
       try {
-        if (!worker) { worker = new Worker('js/mauro-motor.js?v=2'); worker.onmessage = ev => { const r = pending.get(ev.data.id); pending.delete(ev.data.id); r && r(ev.data); }; }
-        worker.postMessage({ id, fen, moves, level });
+        if (!worker) { worker = new Worker('js/mauro-motor.js?v=3'); worker.onmessage = ev => { const r = pending.get(ev.data.id); pending.delete(ev.data.id); r && r(ev.data); }; }
+        worker.postMessage({ id, fen, moves, level, maxTime });
       } catch (_) { // sin Workers: se calcula en la página
-        setTimeout(() => { pending.delete(id); resolve(window.MauroMotor.bestMove(fen, level, moves)); }, 30);
+        setTimeout(() => { pending.delete(id); resolve(window.MauroMotor.bestMove(fen, level, moves, maxTime)); }, 30);
       }
     });
   }
@@ -67,7 +67,8 @@
     return null;
   }
   function finish(end) {
-    game.result = end.result; game.why = end.why; save();
+    if (game.clock) { game.clock[current().turn] = clockLeft(current().turn); game.clock.since = 0; }
+    game.result = end.result; game.why = end.why; save(); renderClock();
     const youWin = game.human !== 'both' && ((end.result === '1-0' && game.human === 'w') || (end.result === '0-1' && game.human === 'b'));
     const draw = end.result === '1/2-1/2';
     let msg;
@@ -114,7 +115,7 @@
       d.addEventListener('click', () => onSquare(s));
       boardEl.append(d);
     }
-    renderMoves(); renderCaptured();
+    renderMoves(); renderCaptured(); renderClock();
     if (!analyzing) renderAnalysisLazy();
   }
   let lastAnKey = null;
@@ -136,7 +137,7 @@
     promoPending = from + to;
     const color = current().turn, box = $('promoDialog');
     box.querySelectorAll('[data-promo]').forEach(b => { b.querySelector('img').src = `pieces-tema/${color}${b.dataset.promo.toUpperCase()}.png`; });
-    box.hidden = false; box.querySelector('[data-promo]').focus();
+    box.hidden = false; box.querySelector('[data-promo]').focus({ preventScroll: true });
   }
   $('promoDialog').addEventListener('click', e => {
     const b = e.target.closest('[data-promo]'); if (!b && !e.target.closest('.promo-card')) { $('promoDialog').hidden = true; promoPending = null; render(); return; }
@@ -146,6 +147,7 @@
   function playMove(u) {
     const st = current(); const m = C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); if (!m) return;
     const san = C.san(st, m); // SAN antes de mover (incluye + o #)
+    clockAfterMove(st.turn);
     game.moves.push(u.length === 5 || !m.promotion ? u : u + 'q');
     game.sans.push(san + (m.promotion && u[4] && u[4] !== 'q' ? '' : ''));
     positions.push(C.apply(st, m, (u[4] || 'q').toUpperCase()));
@@ -165,8 +167,10 @@
     status(`🤖 La máquina está pensando… (nivel ${LEVEL_NAMES[game.level]})`);
     const myGame = game, n = game.moves.length;
     const t0 = Date.now();
-    const r = await engine(START, game.moves.slice(), game.level);
-    const wait = 450 - (Date.now() - t0); if (wait > 0) await new Promise(res => setTimeout(res, wait)); // que se note la respuesta
+    const myLeft = game.clock ? clockLeft(current().turn) : 0;
+    const r = await engine(START, game.moves.slice(), game.level, game.clock ? Math.min(myLeft / 25 + (game.clock.inc || 0) * 0.8, myLeft / 3) : 0);
+    const wait = (game.clock ? 150 : 450) - (Date.now() - t0); if (wait > 0) await new Promise(res => setTimeout(res, wait)); // que se note la respuesta
+    if (game.result) { thinking = false; updateControls(); return; } // perdió por tiempo mientras pensaba
     if (myGame !== game || game.moves.length !== n) return; // se reinició o deshizo mientras pensaba
     thinking = false;
     if (r && r.uci) playMove(r.uci); else updateControls();
@@ -190,7 +194,9 @@
       b.addEventListener('click', () => goTo(i + 1)); list.append(b);
     });
     if (game.result) { const r = document.createElement('span'); r.className = 'ml-result'; r.textContent = game.result === '1/2-1/2' ? '½-½' : game.result; list.append(r); }
-    list.querySelector('.active')?.scrollIntoView({ block: 'nearest' });
+    // Desplaza solo la lista de jugadas (no la página: en el celular el tablero no debe moverse)
+    const act = list.querySelector('.active') || list.lastElementChild;
+    if (act) { const top = act.offsetTop - list.offsetTop; if (top < list.scrollTop || top + act.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = top - list.clientHeight / 2; }
     const live = viewAt === positions.length - 1;
     const note = analysisNote(viewAt);
     $('viewNote').hidden = live && !note;
@@ -231,7 +237,7 @@
     if (!analyzing) $('anBtn').textContent = done ? '✅ Partida analizada' : game.result ? '🔎 Analizar cada jugada' : '🔎 Analizar hasta aquí';
     if (done) $('anBtn').disabled = true;
     $('resignBtn').textContent = game.human === 'both' ? '🤝 Terminar' : '🏳 Rendirse';
-    $('playHeader').textContent = game.human === 'both' ? 'Partida entre amigos' : `Nivel ${game.level} · ${LEVEL_NAMES[game.level]} · juegas con ${game.human === 'w' ? 'blancas' : 'negras'}`;
+    $('playHeader').textContent = game.human === 'both' ? 'Partida entre amigos' + (game.clock ? ' · ⏱ ' + game.clock.label : '') : `Nivel ${game.level} · ${LEVEL_NAMES[game.level]} · juegas con ${game.human === 'w' ? 'blancas' : 'negras'}${game.clock ? ' · ⏱ ' + game.clock.label : ''}`;
   }
   $('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
   $('undoBtn').addEventListener('click', () => {
@@ -369,7 +375,7 @@
     const en = s => s.replace(/^R/, 'K').replace(/^D/, 'Q').replace(/^T/, 'R').replace(/^A/, 'B').replace(/^C/, 'N').replace(/=D/, '=Q').replace(/=T/, '=R').replace(/=A/, '=B').replace(/=C/, '=N');
     const a = an(); let body = ''; game.sans.forEach((s, i) => { if (i % 2 === 0) body += `${i / 2 + 1}. `; body += en(s) + (a ? QUAL[a.q[i]].sym : '') + ' '; });
     const res = game.result || '*';
-    return `[Event "Partida en Academia Mauro"]\n[Site "https://web-2022.github.io/Mauro-Chess-Academy/jugar.html"]\n[Date "${date}"]\n[White "${white}"]\n[Black "${black}"]\n[Result "${res}"]\n${game.why ? `[Termination "${game.why}"]\n` : ''}\n${body}${res}\n`;
+    return `[Event "Partida en Academia Mauro"]\n[Site "https://web-2022.github.io/Mauro-Chess-Academy/jugar.html"]\n[Date "${date}"]\n[White "${white}"]\n[Black "${black}"]\n[Result "${res}"]\n${game.clock ? `[TimeControl "${game.clock.base / 1000}+${game.clock.inc / 1000}"]\n` : ''}${game.why ? `[Termination "${game.why}"]\n` : ''}\n${body}${res}\n`;
   }
   $('pgnBtn').addEventListener('click', async () => {
     const text = pgn();
@@ -377,11 +383,65 @@
     catch (_) { const ta = $('pgnText'); ta.hidden = false; ta.value = text; ta.select(); status('Copia el PGN del recuadro.', ''); }
   });
 
+  // ---------- Reloj ----------
+  // clock = { base, inc (ms), w, b (ms restantes), since (momento en que empezó a correr el turno actual; 0 = detenido) }
+  function makeClock(t, cmin, cinc) {
+    if (!t || t === '0') return null;
+    let min, inc;
+    if (t === 'custom') { min = Math.min(180, Math.max(1, +cmin || 10)); inc = Math.min(60, Math.max(0, +cinc || 0)); }
+    else { [min, inc] = t.split('+').map(Number); }
+    const base = min * 60000;
+    return { base, inc: inc * 1000, w: base, b: base, since: 0, label: `${min}+${inc}` };
+  }
+  function clockLeft(side) {
+    const c = game.clock; if (!c) return Infinity;
+    let left = c[side];
+    if (c.since && !game.result && current().turn === side) left -= Date.now() - c.since;
+    return Math.max(0, left);
+  }
+  function clockAfterMove(side) { // side acaba de mover
+    const c = game.clock; if (!c) return;
+    if (c.since) c[side] = clockLeft(side) + c.inc;
+    c.since = Date.now(); // empieza a correr el reloj del rival (el primer movimiento de blancas no gasta tiempo)
+  }
+  const fmt = ms => { if (ms === Infinity) return '—'; const t = Math.ceil(ms / 100) / 10; if (t < 10) return t.toFixed(1).replace('.', ','); const s = Math.ceil(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+  function renderClock() {
+    const top = $('clockTop'), bot = $('clockBottom');
+    if (!game || !game.clock) { top.hidden = bot.hidden = true; return; }
+    top.hidden = bot.hidden = false;
+    const botSide = flipped ? 'b' : 'w', topSide = botSide === 'w' ? 'b' : 'w';
+    const name = side => game.human === 'both' ? (side === 'w' ? '⚪ Blancas' : '⚫ Negras') : (side === game.human ? (side === 'w' ? '⚪ Tú' : '⚫ Tú') : (side === 'w' ? '⚪ Máquina' : '⚫ Máquina'));
+    for (const [el, side] of [[top, topSide], [bot, botSide]]) {
+      const left = clockLeft(side);
+      el.querySelector('.clk-name').textContent = name(side);
+      el.querySelector('.clk-time').textContent = fmt(left);
+      el.classList.toggle('active', !game.result && !!game.clock.since && current().turn === side);
+      el.classList.toggle('low', left < 20000);
+    }
+  }
+  let lowWarned = false;
+  setInterval(() => {
+    if (!game || !game.clock) return;
+    renderClock();
+    if (game.result || !game.clock.since) return;
+    const side = current().turn, left = clockLeft(side);
+    if (left < 10000 && !lowWarned && side === game.human) { lowWarned = true; speak('Poco tiempo'); }
+    if (left <= 0) {
+      game.clock[side] = 0; game.clock.since = 0;
+      const other = side === 'w' ? 'b' : 'w', st = current();
+      const mat = Object.values(st.board).filter(p => p[0] === other && p[1] !== 'K').map(p => p[1]);
+      const canMate = mat.some(t => /[QRP]/.test(t)) || mat.length >= 2;
+      thinking = false;
+      finish(canMate ? { result: other === 'w' ? '1-0' : '0-1', why: `Tiempo agotado de ${side === 'w' ? 'blancas' : 'negras'}` } : { result: '1/2-1/2', why: 'Tiempo agotado sin material para ganar' });
+    }
+  }, 200);
+  window.addEventListener('beforeunload', () => { if (game && game.clock && game.clock.since && !game.result) { const sd = current().turn; game.clock[sd] = clockLeft(sd); game.clock.since = Date.now(); save(); } });
+
   // ---------- Nueva partida ----------
   function newGame(opts) {
     const human = opts.mode === 'amigo' ? 'both' : opts.color === 'random' ? (Math.random() < .5 ? 'w' : 'b') : opts.color;
-    game = { mode: opts.mode, level: +opts.level || 3, human, moves: [], sans: [], result: null, why: null, hints: 0, startedAt: Date.now() };
-    rebuild(); flipped = human === 'b'; selected = null; hintMarks = null; save();
+    game = { mode: opts.mode, level: +opts.level || 3, human, moves: [], sans: [], result: null, why: null, hints: 0, startedAt: Date.now(), clock: makeClock(opts.time, opts.cmin, opts.cinc) };
+    rebuild(); flipped = human === 'b'; selected = null; hintMarks = null; lowWarned = false; save();
     render(); updateControls();
     status(human === 'both' ? 'Juegan blancas. ¡Buena partida!' : human === 'w' ? 'Juegas con blancas: tu turno. ¡Suerte!' : 'Juegas con negras. La máquina empieza…');
     if (!humanTurn()) machineMove();
@@ -390,12 +450,12 @@
   form.addEventListener('submit', e => {
     e.preventDefault();
     if (game && game.moves.length && !game.result && !confirm('¿Empezar una partida nueva? La actual se perderá.')) return;
-    const fd = new FormData(form); newGame({ mode: fd.get('mode'), color: fd.get('color'), level: fd.get('level') });
-    try { localStorage.setItem('mauro_jugar_prefs', JSON.stringify({ mode: fd.get('mode'), color: fd.get('color'), level: fd.get('level') })); } catch (_) {}
+    const fd = new FormData(form); newGame({ mode: fd.get('mode'), color: fd.get('color'), level: fd.get('level'), time: fd.get('time'), cmin: fd.get('cmin'), cinc: fd.get('cinc') });
+    try { localStorage.setItem('mauro_jugar_prefs', JSON.stringify({ mode: fd.get('mode'), color: fd.get('color'), level: fd.get('level'), time: fd.get('time'), cmin: fd.get('cmin'), cinc: fd.get('cinc') })); } catch (_) {}
     $('setupWrap').open = false;
     document.querySelector('.exercise-board-shell')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
-  form.addEventListener('change', () => { const amigo = new FormData(form).get('mode') === 'amigo'; form.querySelectorAll('.only-bot').forEach(el => el.hidden = amigo); });
+  form.addEventListener('change', () => { const amigo = new FormData(form).get('mode') === 'amigo'; form.querySelectorAll('.only-bot').forEach(el => el.hidden = amigo); $('customTime').hidden = $('timeSel').value !== 'custom'; });
   // Preferencias guardadas
   try { const pr = JSON.parse(localStorage.getItem('mauro_jugar_prefs') || 'null'); if (pr) { for (const [k, v] of Object.entries(pr)) { const el = form.querySelector(`[name="${k}"][value="${v}"]`) || form.querySelector(`select[name="${k}"]`); if (el && el.type === 'radio') el.checked = true; else if (el) el.value = v; } form.dispatchEvent(new Event('change')); } } catch (_) {}
   const params = new URLSearchParams(location.search);
@@ -404,10 +464,10 @@
   // ---------- Inicio: retoma la partida guardada ----------
   let saved = null; try { saved = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (_) {}
   if (saved && Array.isArray(saved.moves) && !params.get('modo')) {
-    game = saved; rebuild(); flipped = game.human === 'b'; render(); updateControls();
+    game = saved; rebuild(); flipped = game.human === 'b'; if (game.clock && game.clock.since && !game.result) game.clock.since = Date.now(); render(); updateControls();
     if (game.result) status(`Partida terminada: ${game.why}. Pulsa «Nueva partida» para jugar otra.`);
     else { status('Partida recuperada. ' + turnText()); if (!humanTurn()) machineMove(); }
   } else {
-    const fd = new FormData(form); newGame({ mode: params.get('modo') === 'amigo' ? 'amigo' : fd.get('mode'), color: fd.get('color'), level: fd.get('level') });
+    const fd = new FormData(form); newGame({ mode: params.get('modo') === 'amigo' ? 'amigo' : fd.get('mode'), color: fd.get('color'), level: fd.get('level'), time: fd.get('time'), cmin: fd.get('cmin'), cinc: fd.get('cinc') });
   }
 })();

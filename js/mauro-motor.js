@@ -371,10 +371,11 @@
   };
   // fen: posición inicial de la partida; moves: jugadas (uci) desde ahí. Así el motor conoce
   // las posiciones anteriores y detecta repeticiones.
-  function bestMove(fen, level, moves) {
+  function bestMove(fen, level, moves, maxTime) {
     const e = new Engine(); e.load(fen);
     for (const u of (moves || [])) { const m = e.legalMoves().find(x => E.uci(x) === u); if (!m) break; e.make(m); }
-    const L = LEVELS[level] || LEVELS[3];
+    let L = LEVELS[level] || LEVELS[3];
+    if (maxTime > 0 && maxTime < L.timeMs) L = Object.assign({}, L, { timeMs: Math.max(60, maxTime) });
     const r = e.think(L);
     return r ? { uci: E.uci(r.move), score: e.side ? -r.score : r.score, depth: r.depth, nodes: r.nodes } : null;
   }
@@ -384,6 +385,6 @@
 
   // Como Web Worker: recibe { id, fen, level } y responde { id, uci, score, depth }
   if (typeof WorkerGlobalScope !== 'undefined' && root instanceof WorkerGlobalScope) {
-    root.onmessage = ev => { const { id, fen, level, moves } = ev.data; const r = bestMove(fen, level, moves); root.postMessage(Object.assign({ id }, r)); };
+    root.onmessage = ev => { const { id, fen, level, moves, maxTime } = ev.data; const r = bestMove(fen, level, moves, maxTime); root.postMessage(Object.assign({ id }, r)); };
   }
 })(typeof self !== 'undefined' ? self : globalThis);

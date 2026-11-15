@@ -96,6 +96,17 @@
   .an-graph .dot-mist{fill:#fb923c}.an-graph .dot-blun{fill:#ef4444}
   .an-help{margin:0;font-size:.85em;opacity:.8}
   .an-jump{margin-left:.4rem;background:none;border:1px solid #fb923c;color:#fdba74;border-radius:8px;padding:.15rem .5rem;cursor:pointer;font:inherit}
+  .custom-time{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .custom-time label{display:flex;flex-direction:column;gap:4px;font-size:.85em;font-weight:800}
+  .custom-time input{width:110px;min-height:40px;padding:6px 10px;border:1px solid #29415c;border-radius:10px;background:#020617;color:#f8fafc;font:inherit;font-size:1rem}
+  .clock-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0;padding:6px 12px;border:1px solid #29415c;border-radius:12px;background:#071124;color:#cbd5e1;font-weight:800}
+  .clock-bar[hidden]{display:none}
+  .clk-time{font:900 clamp(1.3rem,1rem + 1vw,2rem)/1.1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.02em;color:#e2e8f0;padding:2px 10px;border-radius:9px;background:#0f1d39;min-width:5.5ch;text-align:center}
+  .clock-bar.active{border-color:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.25)}
+  .clock-bar.active .clk-time{background:#e2e8f0;color:#04111f}
+  .clock-bar.low .clk-time{background:#7f1d1d;color:#fecaca}
+  .clock-bar.active.low .clk-time{background:#ef4444;color:#fff}
+  @media (min-width:1101px){body.mauro-exercise #clockTop,body.mauro-exercise #clockBottom{grid-column:2;grid-row:3;width:calc(50% - 6px);margin:0 0 12px}body.mauro-exercise #clockTop{justify-self:start}body.mauro-exercise #clockBottom{justify-self:end}body.mauro-exercise .exercise-action{grid-row:4!important}body.mauro-exercise .exercise-legend{grid-row:5!important}}
   .elo-note{display:block;margin-top:.35rem;opacity:.7;font-size:.85em}
 </style>
 </head>
@@ -139,12 +150,35 @@
               <option value="6">6 · Maestro</option>
             </select>
           </fieldset>
+          <fieldset>
+            <legend><label for="timeSel">Tiempo</label></legend>
+            <select id="timeSel" name="time">
+              <option value="0">Sin reloj</option>
+              <option value="1+0">1 min · Bala</option>
+              <option value="3+0">3 min · Blitz</option>
+              <option value="3+2">3 min + 2 s · Blitz</option>
+              <option value="5+0">5 min · Blitz</option>
+              <option value="5+3">5 min + 3 s · Blitz</option>
+              <option value="10+0">10 min · Rápida</option>
+              <option value="10+5">10 min + 5 s · Rápida</option>
+              <option value="15+10">15 min + 10 s · Rápida</option>
+              <option value="30+0">30 min · Clásica</option>
+              <option value="custom">⏱ Personalizado…</option>
+            </select>
+            <div class="custom-time" id="customTime" hidden>
+              <label>Minutos <input type="number" name="cmin" id="cmin" min="1" max="180" value="10" inputmode="numeric"></label>
+              <label>Incremento (s) <input type="number" name="cinc" id="cinc" min="0" max="60" value="0" inputmode="numeric"></label>
+            </div>
+            <small class="elo-note">Con incremento, cada jugada te suma esos segundos.</small>
+          </fieldset>
           <button class="main-btn primary" type="submit">▶ Empezar partida</button>
         </form>
         </details>
       </section>
       <section class="exercise-board">
+        <div class="clock-bar" id="clockTop" hidden><span class="clk-name"></span><span class="clk-time" role="timer"></span></div>
         <div class="exercise-board-shell"><div class="board" id="board" aria-label="Tablero de la partida"></div></div>
+        <div class="clock-bar" id="clockBottom" hidden><span class="clk-name"></span><span class="clk-time" role="timer"></span></div>
       </section>
       <section class="exercise-action">
         <div class="feedback" id="playStatus" role="status" aria-live="polite"></div>
@@ -188,7 +222,7 @@
     </div></div>
   </div>
   <script src="js/mauro-chess-rules.js?v=1"></script>
-  <script src="js/mauro-motor.js?v=2"></script>
-  <script defer src="js/mauro-jugar.js?v=3"></script>
+  <script src="js/mauro-motor.js?v=3"></script>
+  <script defer src="js/mauro-jugar.js?v=4"></script>
 </body>
 </html>

@@ -676,6 +676,51 @@ steps.push(
  }
 );
 
+
+/* =========================================================
+   CAMPEONES + 3 EJERCICIOS FINALES
+   «La partida de la Ópera» · Paul Morphy vs Duque de Brunswick y Conde Isouard · París 1858
+   ========================================================= */
+const OPERA='1n1Rkb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2K5 b k - 1 17';
+steps.push(
+ {
+  type:'learn',title:'Campeones · La partida de la Ópera (1858)',position:OPERA,
+  text:'Paul Morphy, el mejor jugador del mundo en su época, jugó con blancas esta partida en un palco de la Ópera de París. Ganó en solo 17 jugadas dando jaque mate con su torre. Fíjate: al terminar, ¡cada bando todavía tenía 10 piezas!',
+  audio:'Paul Morphy, el mejor jugador del mundo en su época, jugó con blancas en la Ópera de París, en mil ochocientos cincuenta y ocho. Ganó en diecisiete jugadas dando jaque mate con su torre. Al terminar, cada bando todavía tenía diez piezas.',
+  facts:[
+   ['Rey negro en e8','Recibió jaque mate','El rey negro no puede escapar: la partida terminó.','sq:e8'],
+   ['Torre en d8','Da el jaque mate','La torre blanca ataca al rey y el alfil de g5 la protege.','sq:d8,g5'],
+   ['10 contra 10','Nadie capturó todo','Para ganar no hace falta capturar todas las piezas: basta con dar jaque mate.','none'],
+   ['Blancas ganan','Morphy movió primero','Morphy jugaba con blancas, el bando que realiza el primer movimiento.','whiteArmy']
+  ],
+  mascot:'Los campeones no buscan capturar todo: buscan el rey rival.'
+ },
+ {
+  type:'challenge',phase:'campeones',exNum:1,title:'Ejercicio 1 · ¿Quién ganó?',position:OPERA,
+  question:'Morphy jugaba con las piezas blancas y dio jaque mate. ¿Qué bando ganó la partida?',
+  choices:['Las blancas','Las negras','Fue empate (tablas)'],answer:0,
+  hint1:'Gana el bando que da jaque mate.',hint2:'Morphy jugaba con blancas.',
+  success:'Correcto. Ganaron las blancas de Morphy.',
+  concept:'objetivo',difficulty:'Aplicar',xpValue:20
+ },
+ {
+  type:'challenge',phase:'campeones',exNum:2,title:'Ejercicio 2 · El rey en jaque mate',position:OPERA,
+  question:'Toca al rey que recibió jaque mate.',
+  boardChallenge:'sq:e8',
+  hint1:'Es el rey del bando que perdió.',hint2:'Búscalo en la fila de arriba, junto a la torre blanca.',
+  success:'Exacto. El rey negro de e8 recibió jaque mate: ya no tiene escapatoria.',
+  concept:'objetivo',difficulty:'Aplicar',xpValue:20
+ },
+ {
+  type:'challenge',phase:'campeones',exNum:3,title:'Ejercicio 3 · La lección del campeón',position:OPERA,
+  question:'Al terminar, cada bando tenía 10 piezas. ¿Qué nos enseña esta partida?',
+  choices:['Para ganar hay que capturar todas las piezas','Gana quien da jaque mate, aunque queden muchas piezas','Gana quien tiene más piezas al final'],answer:1,
+  hint1:'Cuenta las piezas: ¿alguien las capturó todas?',hint2:'Recuerda el objetivo del ajedrez.',
+  success:'¡Así es! El objetivo es dar jaque mate al rey rival, no capturar todas las piezas.',
+  concept:'objetivo',difficulty:'Aplicar',xpValue:20
+ }
+);
+
 /* Metadatos pedagógicos de los retos originales */
 const ADAPTIVE_META={
  'Dos jugadores':{concept:'jugadores',difficulty:'Reconocer',visual:'players',
@@ -793,11 +838,13 @@ function resolveAdaptiveStep(raw){
 }
 
 function difficultyClass(s){
+  if(s?.phase==='campeones') return 'boss';
   if(s?.phase==='boss') return 'boss';
   if(s?.phase==='lab') return 'lab';
   return '';
 }
 function phaseEyebrow(s){
+  if(s?.phase==='campeones') return '🏆 Ejercicio final';
   if(s?.phase==='lab') return '🎯 Laboratorio Mauro';
   if(s?.phase==='boss') return '👑 Boss del tema';
   return 'Reto';
@@ -889,10 +936,31 @@ const summary=document.getElementById('summary');
 const board=document.getElementById('board');
 const boardMessage=document.getElementById('boardMessage');
 
+/* Posición que muestra cada paso: s.position (ejemplos de campeones), s.pieces (posición inicial)
+   o la posición base del tema. */
+const BASE_POSITION=initial;
+let shownPositionKey=null;
+function fenToMap(fen){
+ const map={};const rows=fen.split(' ')[0].split('/');
+ rows.forEach((row,i)=>{let fi=0;for(const ch of row){if(/\d/.test(ch)){fi+=+ch;continue}
+  map[files[fi]+(8-i)]=(ch===ch.toUpperCase()?'w':'b')+ch.toUpperCase();fi++}});
+ return map;
+}
+function stepPosition(s){
+ if(s?.position) return fenToMap(s.position);
+ if(s?.pieces) return initial;
+ return BASE_POSITION;
+}
+function syncBoardPosition(s){
+ const key=s?.position||(s?.pieces?'inicial':'base');
+ if(key===shownPositionKey) return;
+ shownPositionKey=key; currentPosition=stepPosition(s); renderBoard();
+}
+let currentPosition=BASE_POSITION;
 function renderBoard(){
  board.innerHTML='';
  for(let r=8;r>=1;r--) for(let fi=0;fi<8;fi++){
-  const f=files[fi],sq=f+r,p=initial[sq];
+  const f=files[fi],sq=f+r,p=currentPosition[sq];
   const el=document.createElement('div');
   el.className='square '+(((fi+r)%2===0)?'light':'dark');
   el.dataset.square=sq; el.dataset.piece=p||'';
@@ -912,6 +980,7 @@ function handleSquare(sq,p){
   if(challenge){
     attempts++;
     let ok=false;
+    if(typeof challenge==='string'&&challenge.startsWith('sq:')) ok=challenge.slice(3).split(',').includes(sq);
     if(challenge==='king') ok=(p==='wK'||p==='bK');
     else if(challenge==='whitePiece') ok=!!p && p.startsWith('w');
     else if(challenge==='blackPiece') ok=!!p && p.startsWith('b');
@@ -964,7 +1033,7 @@ function handleSquare(sq,p){
 }
 function highlight(mode){
  document.querySelectorAll('.square').forEach(s=>s.classList.remove('glow-white','glow-black','glow-king'));
- Object.entries(initial).forEach(([sq,p])=>{
+ Object.entries(currentPosition).forEach(([sq,p])=>{
    const el=document.querySelector('[data-square="'+sq+'"]');
    if(mode==='white'&&p.startsWith('w')) el?.classList.add('glow-white');
    if(mode==='black'&&p.startsWith('b')) el?.classList.add('glow-black');
@@ -1133,6 +1202,10 @@ function highlightTheory(kind){
   stopBoardSequence();
   clearTheoryHighlights();
   if(!kind) return;
+  if(typeof kind==='string'&&kind.startsWith('sq:')){
+    kind.slice(3).split(',').forEach(q=>document.querySelector('[data-square="'+q+'"]')?.classList.add('glow-king'));
+    return;
+  }
 
   
   if(kind==='whiteArmy'){ highlight('white'); return; }
@@ -1153,7 +1226,7 @@ function highlightTheory(kind){
 if(kind==='players'){
     // Highlight both armies, using the existing team outlines.
     highlight('all');
-    Object.entries(initial).forEach(([sq,p])=>{
+    Object.entries(currentPosition).forEach(([sq,p])=>{
       const el=document.querySelector('[data-square="'+sq+'"]');
       if(!el) return;
       if(p.startsWith('w')) el.classList.add('glow-white');
@@ -1171,7 +1244,7 @@ if(kind==='players'){
 
   if(kind==='allPieces'){
     clearTheoryHighlights();
-    Object.keys(initial).forEach(sq=>{
+    Object.keys(currentPosition).forEach(sq=>{
       document.querySelector('[data-square="'+sq+'"]')?.classList.add('theory-highlight-blue');
     });
     boardMessage.innerHTML='<strong>32 piezas:</strong> dieciséis blancas y dieciséis negras.';
@@ -1318,8 +1391,10 @@ function renderStep(){
   const rawStep=steps[step];
   const s=resolveAdaptiveStep(rawStep);
   activeStepObject=s;
+  syncBoardPosition(s);
   updateMobileDuoConcepts(s);
-  if(s.board) highlight(s.board); else highlight('all');
+  if(s.position){ clearTheoryHighlights(); boardMessage.innerHTML='<strong>Posición final</strong> de la partida. Toca una pieza para escuchar su nombre.'; }
+  else if(s.board) highlight(s.board); else highlight('all');
   updateStats();
 
   if(s.type==='learn'){
@@ -1366,7 +1441,7 @@ function renderStep(){
     const phaseClass=difficultyClass(s);
     const phaseBanner=s.phase==='lab'
       ?'<div class="phase-banner">🎯 <b>Laboratorio Mauro:</b> ahora aplicas lo aprendido con menos apoyo.</div>'
-      :(s.phase==='boss'?'<div class="phase-banner boss">👑 <b>Boss:</b> demuestra dominio. Este reto comienza sin pistas.</div>':'');
+      :(s.phase==='boss'?'<div class="phase-banner boss">👑 <b>Boss:</b> demuestra dominio. Este reto comienza sin pistas.</div>':(s.phase==='campeones'?'<div class="phase-banner boss">🏆 <b>Ejercicio final '+(s.exNum||'')+' de 3:</b> aplica lo aprendido en la partida del campeón.</div>':''));
     content.innerHTML=`
     ${phaseBanner}
     <div class="adaptive-strip">
@@ -1477,14 +1552,14 @@ function showStageTransition(kind){
  content.innerHTML=isLab ? `
    <div class="stage-transition">
      <div class="stage-icon">🎯</div>
-     <div class="stage-count">Clase base completada · 15 de 21 pasos</div>
+     <div class="stage-count">Clase base completada · 15 de ${steps.length} pasos</div>
      <h2>Ahora empieza el Laboratorio Mauro</h2>
      <p>Ya aprendiste las ideas esenciales. En los próximos <b>4 retos</b> la clase ajustará la dificultad según cómo respondiste antes: reconocer, aplicar o descubrir.</p>
      <button class="stage-btn" id="startStageBtn">Iniciar Laboratorio 1 de 4 →</button>
    </div>` : `
    <div class="stage-transition boss">
      <div class="stage-icon">👑</div>
-     <div class="stage-count">Laboratorio completado · 19 de 21 pasos</div>
+     <div class="stage-count">Laboratorio completado · 19 de ${steps.length} pasos</div>
      <h2>Has llegado al Boss del Tema 1</h2>
      <p>Quedan <b>2 retos finales</b>. Empiezan sin pistas para comprobar lo que realmente recuerdas y puedes aplicar.</p>
      <button class="stage-btn" id="startStageBtn">Comenzar Boss 1 de 2 →</button>

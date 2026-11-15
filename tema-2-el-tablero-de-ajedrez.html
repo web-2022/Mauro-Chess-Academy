@@ -577,7 +577,7 @@ const steps=[
  success:'Correcto. Esa casilla pertenece al interior del tablero.'
 },
 {
- type:'learn',title:'Coloca correctamente el tablero',
+ type:'learn',title:'Coloca correctamente el tablero',pieces:true,
  text:'Antes de jugar, el tablero debe estar bien orientado. Desde el lado de cada jugador, la esquina inferior derecha debe ser una casilla clara.',
  audio:'Antes de jugar, recuerda una regla sencilla para orientar el tablero: casilla clara a la derecha.',
  board:'all',
@@ -654,6 +654,51 @@ steps.push(
   boardChallenge:'darkInterior',
   success:'Boss completado. Reconoces simultáneamente color y zona del tablero.',
   concept:'zonas',difficulty:'Descubrir',xpValue:25,noHints:true
+ }
+);
+
+
+/* =========================================================
+   CAMPEONES + 3 EJERCICIOS FINALES
+   La Inmortal · Adolf Anderssen vs Lionel Kieseritzky · Londres 1851
+   ========================================================= */
+const IMMORTAL='r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1 b - - 1 23';
+steps.push(
+ {
+  type:'learn',title:'Campeones · La Inmortal (1851)',position:IMMORTAL,
+  text:'Adolf Anderssen, ganador del primer gran torneo internacional (Londres, 1851), jugó con blancas «La Inmortal». Sacrificó las dos torres y la dama, y aun así dio jaque mate con sus piezas menores. Fíjate dónde ocurrió todo: el rey negro quedó atrapado en el borde del tablero.',
+  audio:'Adolf Anderssen jugó con blancas la Inmortal, en Londres, en mil ochocientos cincuenta y uno. Sacrificó las dos torres y la dama y dio jaque mate con sus piezas menores. El rey negro quedó atrapado en el borde del tablero.',
+  facts:[
+   ['Rey negro en d8','En el borde','El rey negro está en una casilla del borde superior. En el borde el rey tiene menos casillas para escapar.','sq:d8'],
+   ['Alfil en e7','Da jaque mate','El alfil blanco de e7 da el jaque mate. Está en una casilla oscura del interior.','sq:e7'],
+   ['Caballos en d5 y g7','Cierran la salida','Los dos caballos blancos cubren las casillas de escape del rey.','sq:d5,g7'],
+   ['Clara a la derecha','Tablero bien colocado','Mira h1: es una casilla clara. El tablero de los campeones también cumple la regla.','sq:h1']
+  ],
+  mascot:'Los campeones conocen el tablero de memoria: saben dónde es más fuerte y más débil cada pieza.'
+ },
+ {
+  type:'challenge',phase:'campeones',exNum:1,title:'Ejercicio 1 · ¿Dónde está el rey?',position:IMMORTAL,
+  question:'En la posición final de La Inmortal, toca la casilla donde está el rey negro.',
+  boardChallenge:'sq:d8',
+  hint1:'Busca la pieza más importante del ejército negro, cerca del borde superior.',hint2:'Está en la fila de arriba, junto al alfil y la torre negros.',
+  success:'Correcto. El rey negro está en d8, en el borde del tablero.',
+  concept:'zonas',difficulty:'Aplicar',xpValue:20
+ },
+ {
+  type:'challenge',phase:'campeones',exNum:2,title:'Ejercicio 2 · La zona del rey',position:IMMORTAL,
+  question:'¿En qué zona del tablero recibió jaque mate el rey negro?',
+  choices:['En una esquina','En el borde (sin ser esquina)','En el interior'],answer:1,
+  hint1:'Mira si el rey toca el contorno del tablero.',hint2:'Está en el contorno, pero no en uno de los cuatro extremos.',
+  success:'Exacto. El rey estaba en el borde: allí tiene menos casillas para escapar.',
+  concept:'zonas',difficulty:'Aplicar',xpValue:20
+ },
+ {
+  type:'challenge',phase:'campeones',exNum:3,title:'Ejercicio 3 · El color del mate',position:IMMORTAL,
+  question:'El alfil que da jaque mate está en e7. ¿De qué color es esa casilla?',
+  choices:['Clara','Oscura'],answer:1,
+  hint1:'Toca la casilla e7 en el tablero y mira su color.',hint2:'Los alfiles se quedan siempre en casillas del mismo color: este es el alfil de casillas oscuras.',
+  success:'Muy bien. e7 es una casilla oscura: el alfil de Anderssen recorrió las casillas oscuras hasta dar el mate.',
+  concept:'colores',difficulty:'Aplicar',xpValue:20
  }
 );
 
@@ -758,11 +803,13 @@ function resolveAdaptiveStep(raw){
 }
 
 function difficultyClass(s){
+  if(s?.phase==='campeones') return 'boss';
   if(s?.phase==='boss') return 'boss';
   if(s?.phase==='lab') return 'lab';
   return '';
 }
 function phaseEyebrow(s){
+  if(s?.phase==='campeones') return '🏆 Ejercicio final';
   if(s?.phase==='lab') return '🎯 Laboratorio Mauro';
   if(s?.phase==='boss') return '👑 Boss del tema';
   return 'Reto';
@@ -853,10 +900,31 @@ const summary=document.getElementById('summary');
 const board=document.getElementById('board');
 const boardMessage=document.getElementById('boardMessage');
 
+/* Posición que muestra cada paso: s.position (ejemplos de campeones), s.pieces (posición inicial)
+   o la posición base del tema. */
+const BASE_POSITION={};
+let shownPositionKey=null;
+function fenToMap(fen){
+ const map={};const rows=fen.split(' ')[0].split('/');
+ rows.forEach((row,i)=>{let fi=0;for(const ch of row){if(/\d/.test(ch)){fi+=+ch;continue}
+  map[files[fi]+(8-i)]=(ch===ch.toUpperCase()?'w':'b')+ch.toUpperCase();fi++}});
+ return map;
+}
+function stepPosition(s){
+ if(s?.position) return fenToMap(s.position);
+ if(s?.pieces) return initial;
+ return BASE_POSITION;
+}
+function syncBoardPosition(s){
+ const key=s?.position||(s?.pieces?'inicial':'base');
+ if(key===shownPositionKey) return;
+ shownPositionKey=key; currentPosition=stepPosition(s); renderBoard();
+}
+let currentPosition=BASE_POSITION;
 function renderBoard(){
  board.innerHTML='';
  for(let r=8;r>=1;r--) for(let fi=0;fi<8;fi++){
-  const f=files[fi],sq=f+r,p=initial[sq];
+  const f=files[fi],sq=f+r,p=currentPosition[sq];
   const el=document.createElement('div');
   el.className='square '+(((fi+r)%2===0)?'light':'dark');
   el.dataset.square=sq; el.dataset.piece=p||'';
@@ -876,6 +944,7 @@ function handleSquare(sq,p){
   if(challenge){
     attempts++;
     let ok=false;
+    if(typeof challenge==='string'&&challenge.startsWith('sq:')) ok=challenge.slice(3).split(',').includes(sq);
     const el=document.querySelector('[data-square="'+sq+'"]');
     const isLight=!!el?.classList.contains('light');
     const isCorner=['a1','h1','a8','h8'].includes(sq);
@@ -940,7 +1009,7 @@ function handleSquare(sq,p){
 }
 function highlight(mode){
  document.querySelectorAll('.square').forEach(s=>s.classList.remove('glow-white','glow-black','glow-king'));
- Object.entries(initial).forEach(([sq,p])=>{
+ Object.entries(currentPosition).forEach(([sq,p])=>{
    const el=document.querySelector('[data-square="'+sq+'"]');
    if(mode==='white'&&p.startsWith('w')) el?.classList.add('glow-white');
    if(mode==='black'&&p.startsWith('b')) el?.classList.add('glow-black');
@@ -1111,6 +1180,10 @@ function highlightTheory(kind){
   stopBoardSequence();
   clearTheoryHighlights();
   if(!kind) return;
+  if(typeof kind==='string'&&kind.startsWith('sq:')){
+    kind.slice(3).split(',').forEach(q=>document.querySelector('[data-square="'+q+'"]')?.classList.add('glow-king'));
+    return;
+  }
 
   
   if(kind==='whiteArmy'){ highlight('white'); return; }
@@ -1183,7 +1256,7 @@ function highlightTheory(kind){
 if(kind==='players'){
     // Highlight both armies, using the existing team outlines.
     highlight('all');
-    Object.entries(initial).forEach(([sq,p])=>{
+    Object.entries(currentPosition).forEach(([sq,p])=>{
       const el=document.querySelector('[data-square="'+sq+'"]');
       if(!el) return;
       if(p.startsWith('w')) el.classList.add('glow-white');
@@ -1201,7 +1274,7 @@ if(kind==='players'){
 
   if(kind==='allPieces'){
     clearTheoryHighlights();
-    Object.keys(initial).forEach(sq=>{
+    Object.keys(currentPosition).forEach(sq=>{
       document.querySelector('[data-square="'+sq+'"]')?.classList.add('theory-highlight-blue');
     });
     boardMessage.innerHTML='<strong>32 piezas:</strong> dieciséis blancas y dieciséis negras.';
@@ -1309,8 +1382,10 @@ function renderStep(){
   const rawStep=steps[step];
   const s=resolveAdaptiveStep(rawStep);
   activeStepObject=s;
+  syncBoardPosition(s);
   updateMobileDuoConcepts(s);
-  if(s.board) highlight(s.board); else highlight('all');
+  if(s.position){ clearTheoryHighlights(); boardMessage.innerHTML='<strong>Posición final</strong> de la partida. Toca una pieza para escuchar su nombre.'; }
+  else if(s.board) highlight(s.board); else highlight('all');
   updateStats();
 
   if(s.type==='learn'){
@@ -1357,7 +1432,7 @@ function renderStep(){
     const phaseClass=difficultyClass(s);
     const phaseBanner=s.phase==='lab'
       ?'<div class="phase-banner">🎯 <b>Laboratorio Mauro:</b> ahora aplicas lo aprendido con menos apoyo.</div>'
-      :(s.phase==='boss'?'<div class="phase-banner boss">👑 <b>Boss:</b> demuestra dominio. Este reto comienza sin pistas.</div>':'');
+      :(s.phase==='boss'?'<div class="phase-banner boss">👑 <b>Boss:</b> demuestra dominio. Este reto comienza sin pistas.</div>':(s.phase==='campeones'?'<div class="phase-banner boss">🏆 <b>Ejercicio final '+(s.exNum||'')+' de 3:</b> aplica lo aprendido en la partida del campeón.</div>':''));
     content.innerHTML=`
     ${phaseBanner}
     <div class="adaptive-strip">
@@ -1470,14 +1545,14 @@ function showStageTransition(kind){
  content.innerHTML=isLab ? `
    <div class="stage-transition">
      <div class="stage-icon">🎯</div>
-     <div class="stage-count">Clase base completada · 15 de 21 pasos</div>
+     <div class="stage-count">Clase base completada · 15 de ${steps.length} pasos</div>
      <h2>Ahora empieza el Laboratorio Mauro</h2>
      <p>Ya aprendiste las ideas esenciales. En los próximos <b>4 retos</b> la clase ajustará la dificultad según cómo respondiste antes: reconocer, aplicar o descubrir.</p>
      <button class="stage-btn" id="startStageBtn">Iniciar Laboratorio 1 de 4 →</button>
    </div>` : `
    <div class="stage-transition boss">
      <div class="stage-icon">👑</div>
-     <div class="stage-count">Laboratorio completado · 19 de 21 pasos</div>
+     <div class="stage-count">Laboratorio completado · 19 de ${steps.length} pasos</div>
      <h2>Has llegado al Boss del Tema 2</h2>
      <p>Quedan <b>2 retos finales</b>. Empiezan sin pistas para comprobar lo que realmente recuerdas y puedes aplicar.</p>
      <button class="stage-btn" id="startStageBtn">Comenzar Boss 1 de 2 →</button>
