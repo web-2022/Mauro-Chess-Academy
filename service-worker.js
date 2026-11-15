@@ -1,4 +1,4 @@
-const CACHE_NAME = "ajedrez-mauro-v224";
+const CACHE_NAME = "ajedrez-mauro-v225";
 
 /*
   ACADEMIA MAURO
@@ -129,6 +129,28 @@ self.addEventListener("fetch", event => {
   */
 
   if (request.method !== "GET") {
+    return;
+  }
+
+  /*
+    Páginas (HTML): primero Internet, para que los cambios publicados se vean
+    al instante. Sin conexión se usa la copia guardada.
+  */
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          if (response && response.status === 200 && response.type === "basic") {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(() =>
+          caches.match(request, { ignoreSearch: true })
+            .then(r => r || caches.match("./index.html"))
+        )
+    );
     return;
   }
 
