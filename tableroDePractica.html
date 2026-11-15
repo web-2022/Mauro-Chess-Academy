@@ -3579,16 +3579,30 @@
       /* Monitores grandes: el panel se divide en dos columnas
          (editor de la jugada | lista de movimientos comentados) */
       @media (min-width:1900px){
-        body:not(#v20){--v22-bs:clamp(380px,min(calc(100vh - 218px),calc(100vw - 1000px)),1250px)}
+        body:not(#v20){--v22-bs:clamp(380px,min(calc(100vh - 218px),calc(100vw - 1150px)),1250px)}
         body:not(#v20) .commented-moves .study-list,body:not(#v20) .commented-moves > div:last-child{max-height:none !important}
+        }
+      @media (min-width:2300px){
         body:not(#v20) .comment-editor-panel{display:grid !important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;column-gap:16px !important;align-items:start !important;align-content:start !important}
         body:not(#v20) .comment-editor-panel > *{grid-column:1 !important;grid-row:auto !important}
         body:not(#v20) .comment-editor-panel > .commented-moves{grid-column:2 !important;grid-row:1 / span 30 !important;margin-top:0 !important;max-height:calc(100vh - 190px) !important;overflow:auto !important}
         body:not(#v20) .comment-editor-panel > input,body:not(#v20) .comment-editor-panel > [hidden],body:not(#v20) .comment-editor-panel > .lesson-banner:not(.show){grid-row:auto !important}
       }
+      /* La caja para pegar PGN/FEN y el reproductor quedan junto al tablero,
+         a la vista sin bajar (antes quedaban debajo, fuera de la pantalla). */
+      @media (min-width:1900px){
+        body:not(#v20) .board-card{grid-template-columns:var(--v22-bs) minmax(400px,480px) !important;grid-template-areas:"toolbar toolbar" "board tools" "board fen" "info session" !important;grid-template-rows:auto auto 1fr auto !important}
+        body:not(#v20) .board-bottom-tools{grid-template-columns:1fr 1fr !important;align-self:start !important}
+        body:not(#v20) .board-bottom-tools .piece-tray{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+        body:not(#v20) .v20-fen{margin-top:0 !important;align-self:start !important;min-width:0}
+        body:not(#v20) .v20-fen .v20-fen-input{min-height:120px !important}
+        body:not(#v20) .v21-player{min-width:0}
+        body:not(#v20) .v21-player *{min-width:0}
+        body.student-mode:not(#v20) .board-card{grid-template-columns:var(--v22-bs) minmax(400px,480px) !important;grid-template-areas:"toolbar toolbar" "board fen" "info session" !important;grid-template-rows:auto 1fr auto !important}
+      }
       @media (min-width:2400px){
         body:not(#v20) .practice-layout{gap:22px !important}
-        body:not(#v20) .board-card{grid-template-columns:var(--v22-bs) 230px !important}
+        
       }
     </style>
 </head>
