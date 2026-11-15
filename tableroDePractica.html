@@ -3556,6 +3556,41 @@
       body:not(#v20) .comment-editor-panel .lesson-title-row input{background:#020617 !important;color:#fff !important}
       body.student-mode:not(#v20) .comment-editor-panel .lesson-title-row input{background:transparent !important;border-color:transparent !important;font-size:1.1rem !important}
 </style>
+    <style id="v22-ancho-completo">
+      /* ===== V22 · Usa todo el ancho en laptop, PC, monitor y ultra ancho =====
+         Tamaño del tablero = lo que permita la altura de la pantalla (se ve completo
+         sin desplazarse) y el ancho restante es para el panel de la lección. */
+      @media (min-width:1101px){
+        body:not(#v20) .page{width:calc(100% - 28px) !important;max-width:3400px !important;margin-inline:auto !important}
+        body:not(#v20){--v22-bs:clamp(380px,min(calc(100vh - 262px),calc(100vw - 740px)),1250px)}
+        body:not(#v20) .practice-layout{grid-template-columns:auto minmax(420px,1fr) !important}
+        body:not(#v20) .board-card{grid-template-columns:var(--v22-bs) 200px !important;width:auto !important;max-width:none !important}
+        body:not(#v20) .board-shell{width:var(--v22-bs) !important;max-width:none !important}
+        body.student-mode:not(#v20) .board-card{grid-template-columns:var(--v22-bs) !important}
+        /* Los accesos de archivos dejan de flotar en el margen: van dentro del panel */
+        body:not(#v20) .comment-editor-panel > .file-actions,
+        body:not(#v20) .comment-editor-panel > .v16-pgn-actions{position:static !important;inset:auto !important;width:auto !important;transform:none !important;display:grid !important;grid-template-columns:repeat(auto-fit,minmax(150px,1fr)) !important;gap:7px !important;margin:9px 0 0 !important;padding:8px 0 0 !important;border:0 !important;border-top:1px solid var(--line) !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important}
+        body:not(#v20) .comment-editor-panel > .file-actions::before,
+        body:not(#v20) .comment-editor-panel > .v16-pgn-actions::before{display:none !important;content:none !important}
+        body:not(#v20) .comment-editor-panel > .file-actions .action-btn,
+        body:not(#v20) .comment-editor-panel > .v16-pgn-actions .action-btn{min-height:42px !important}
+        body:not(#v20) .comment-editor-panel{position:static !important}
+      }
+      /* Monitores grandes: el panel se divide en dos columnas
+         (editor de la jugada | lista de movimientos comentados) */
+      @media (min-width:1900px){
+        body:not(#v20){--v22-bs:clamp(380px,min(calc(100vh - 218px),calc(100vw - 1000px)),1250px)}
+        body:not(#v20) .commented-moves .study-list,body:not(#v20) .commented-moves > div:last-child{max-height:none !important}
+        body:not(#v20) .comment-editor-panel{display:grid !important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;column-gap:16px !important;align-items:start !important;align-content:start !important}
+        body:not(#v20) .comment-editor-panel > *{grid-column:1 !important;grid-row:auto !important}
+        body:not(#v20) .comment-editor-panel > .commented-moves{grid-column:2 !important;grid-row:1 / span 30 !important;margin-top:0 !important;max-height:calc(100vh - 190px) !important;overflow:auto !important}
+        body:not(#v20) .comment-editor-panel > input,body:not(#v20) .comment-editor-panel > [hidden],body:not(#v20) .comment-editor-panel > .lesson-banner:not(.show){grid-row:auto !important}
+      }
+      @media (min-width:2400px){
+        body:not(#v20) .practice-layout{gap:22px !important}
+        body:not(#v20) .board-card{grid-template-columns:var(--v22-bs) 230px !important}
+      }
+    </style>
 </head>
 
   <body class="mauro-board-page">
