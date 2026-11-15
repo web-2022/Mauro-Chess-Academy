@@ -3357,7 +3357,7 @@
 
     </style>
   <link rel="stylesheet" href="js/mauro-ui.css?v=192">
-<link rel="stylesheet" href="js/mauro-header.css?v=194"><script defer src="js/mauro-header.js?v=194"></script><script defer src="js/mauro-ui.js?v=192"></script>
+<link rel="stylesheet" href="js/mauro-header.css?v=194"><script defer src="js/mauro-header.js?v=195"></script><script defer src="js/mauro-ui.js?v=192"></script>
 <link rel="stylesheet" href="js/mauro-responsive.css?v=192">
     <style id="v20-tablero-libre">
       /* ===== V20 · Diseño limpio y responsivo para el Tablero libre =====
@@ -3665,7 +3665,7 @@
             <label class="v20-fen-label" for="v20FenPaste">📋 Pega una partida (PGN) o una posición (FEN)</label>
             <div class="v20-fen-row">
               <textarea id="v20FenPaste" class="v20-fen-input" rows="2" spellcheck="false" autocomplete="off"
-                placeholder="Pega aquí la partida de Lichess o Chess.com (PGN) o una posición FEN, por ejemplo: 4r1k1/2q2ppp/8/8/8/8/3Q1PPP/3R2K1 w - - 0 1"></textarea>
+                placeholder="Pega aquí tu partida (PGN) o una posición FEN, por ejemplo: 4r1k1/2q2ppp/8/8/8/8/3Q1PPP/3R2K1 w - - 0 1"></textarea>
               <div class="v20-fen-buttons">
                 <button class="v20-btn v20-btn-primary" id="v20FenLoadBtn" type="button">▶ Cargar</button>
                 <button class="v20-btn" id="v20FenPasteBtn" type="button" title="Pegar desde el portapapeles">📋 Pegar</button>
@@ -5495,7 +5495,7 @@
           loadedLessonBannerEl.innerHTML=`✅ <strong>Partida cargada:</strong> ${escapeHtml(lessonTitleEl.value)}<br>${lessonMoves.length} jugadas. Usa <strong>▶ Reproducir</strong> debajo del tablero o <strong>Siguiente ▶</strong>.`;
           if(!v16LegalMode){v16LegalMode=true;v16UpdateLegalButton();}
           goToStudyStep(0);
-          say(`✓ Partida cargada: ${lessonMoves.length} jugadas${annotated?` con análisis de Lichess (${marked} errores e imprecisiones marcados)`:''}. Usa ▶ Reproducir o las flechas ← → del teclado.`,'ok');
+          say(`✓ Partida cargada: ${lessonMoves.length} jugadas${annotated?` con análisis (${marked} errores e imprecisiones marcados)`:''}. Usa ▶ Reproducir o las flechas ← → del teclado.`,'ok');
           playerEl.hidden=false;syncPlayer();
           playerEl.scrollIntoView({block:'nearest',behavior:'smooth'});
         }

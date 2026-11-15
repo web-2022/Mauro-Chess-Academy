@@ -231,7 +231,7 @@
     if (!analyzing) $('anBtn').textContent = done ? '✅ Partida analizada' : game.result ? '🔎 Analizar cada jugada' : '🔎 Analizar hasta aquí';
     if (done) $('anBtn').disabled = true;
     $('resignBtn').textContent = game.human === 'both' ? '🤝 Terminar' : '🏳 Rendirse';
-    $('playHeader').textContent = game.human === 'both' ? 'Partida entre amigos' : `Nivel ${game.level} · ${LEVEL_NAMES[game.level]} (ELO ${LEVEL_ELO[game.level]}) · juegas con ${game.human === 'w' ? 'blancas' : 'negras'}`;
+    $('playHeader').textContent = game.human === 'both' ? 'Partida entre amigos' : `Nivel ${game.level} · ${LEVEL_NAMES[game.level]} · juegas con ${game.human === 'w' ? 'blancas' : 'negras'}`;
   }
   $('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
   $('undoBtn').addEventListener('click', () => {
