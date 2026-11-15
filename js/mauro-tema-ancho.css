@@ -1,0 +1,23 @@
+/* Academia Mauro · Clases (tema-*.html) a todo el ancho en laptop, PC, monitor y ultra ancho.
+   Igual que Practicar: tablero a la izquierda tan grande como permita la pantalla,
+   y la explicación de la clase en la columna derecha. En celular y tablet no cambia nada. */
+@media (min-width:1101px){
+  :root{--tb:min(calc(100vh - 100px), calc(100vw - 520px));--tb:min(calc(100dvh - 100px), calc(100vw - 520px))}
+  body .app{width:calc(100% - 24px)!important;max-width:none!important;margin-inline:12px!important;display:grid!important;
+    grid-template-columns:var(--tb) minmax(440px,1fr)!important;grid-template-rows:auto auto auto 1fr;column-gap:14px;align-items:start}
+  body .app>.topbar{grid-column:2;grid-row:1;margin:0 0 8px!important}
+  body .app>.main{display:contents!important}
+  body .board-card{display:contents!important}
+  body .board-card .board-shell{grid-column:1;grid-row:1 / span 4;align-self:start;position:sticky!important;top:84px!important;
+    width:var(--tb)!important;max-width:none!important;margin:0!important}
+  body .board-card .board-head{grid-column:2;grid-row:2;margin:0 0 6px!important}
+  body .board-card .board-message{grid-column:2;grid-row:3;margin:0 0 8px!important}
+  body .lesson-card{grid-column:2;grid-row:4;margin-top:0!important}
+}
+@media (min-width:1700px){
+  body .lesson-card{font-size:1.12rem}
+  body .lesson-card .step-title,body .lesson-card h1,body .lesson-card h2{font-size:clamp(2.2rem,1rem + 1.3vw,3.4rem)!important}
+  body .lesson-card .step-text,body .lesson-card p{font-size:clamp(1.05rem,.6rem + .45vw,1.45rem)!important;line-height:1.55}
+  body .lesson-card button,body .lesson-card .continue-btn,body .lesson-card .primary-btn{font-size:clamp(.95rem,.6rem + .35vw,1.25rem)!important}
+  body .board-card .board-message,body .board-card .board-head{font-size:clamp(.95rem,.6rem + .3vw,1.2rem)!important}
+}

@@ -7,7 +7,7 @@ html.mh-lock,html.mh-lock body{overflow:hidden}
 /* ---------- Barra superior ---------- */
 .mauro-site-header{position:fixed;inset:0 0 auto;z-index:100;background:var(--mh-bg);border-bottom:1px solid var(--mh-line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--mh-text);font:14px/1.4 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;padding-top:env(safe-area-inset-top);transition:background .2s ease,box-shadow .2s ease}
 .mauro-site-header.is-compact{background:rgba(6,17,31,.82);box-shadow:0 10px 30px rgba(0,0,0,.35)}
-.mauro-header-inner{width:min(1280px,calc(100% - 36px));min-height:var(--mh-h);margin:auto;display:flex;align-items:center;gap:18px;transition:min-height .2s ease}
+.mauro-header-inner{width:calc(100% - 36px);min-height:var(--mh-h);margin:auto;display:flex;align-items:center;gap:18px;transition:min-height .2s ease}
 .mauro-site-header.is-compact .mauro-header-inner{min-height:var(--mh-h-compact)}
 .mauro-header-brand{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:850;color:var(--mh-text)!important;text-decoration:none!important;white-space:nowrap;min-height:44px;min-width:44px}
 .mauro-header-logo{width:44px;height:44px;flex:0 0 44px;border-radius:15px;background:linear-gradient(135deg,var(--mh-green),var(--mh-blue));color:#020617;display:grid;place-items:center;font-size:27px;box-shadow:0 8px 22px rgba(34,197,94,.22);transition:transform .2s ease,width .2s ease,height .2s ease}
