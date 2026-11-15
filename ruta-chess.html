@@ -185,7 +185,30 @@ body.text-large .topic-card{min-height:82px}
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
 <link rel="stylesheet" href="js/mauro-header.css?v=194"><script defer src="js/mauro-header.js?v=195"></script><script defer src="js/mauro-ui.js?v=192"></script>
-<link rel="stylesheet" href="js/mauro-responsive.css?v=192"></head>
+<link rel="stylesheet" href="js/mauro-responsive.css?v=192"><style id="v22-aprender-ancho">
+/* ===== Aprender a pantalla completa en laptop, PC, monitor y ultra ancho ===== */
+/* La etiqueta "Próximamente" ya aparece bajo el título: se quita la segunda que tapaba el texto */
+.topic-card.planned .mauro-access-badge.planned{display:none}
+.topic-card.planned{padding-right:11px}
+@media(min-width:1101px){
+  body .app,body.mauro-route-page > .app,body.mauro-has-header > .app{width:calc(100% - 4vw) !important;max-width:2600px !important}
+  body .topic-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr)) !important;gap:10px !important}
+  body .hero h1{font-size:clamp(2.6rem,1.2rem + 1.8vw,4.6rem)}
+  body .hero p{font-size:clamp(1rem,.7rem + .35vw,1.3rem)}
+}
+@media(min-width:1800px){
+  body .topic-card{min-height:88px;padding:12px 14px}
+  body .topic-num{width:42px;height:42px;font-size:.74rem}
+  body .topic-copy strong{font-size:.95rem}
+  body .topic-copy small{font-size:.74rem}
+  body .level-head h2,body .level-title{font-size:1.45rem}
+}
+@media(min-width:2400px){
+  body .topic-grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr)) !important}
+  body .topic-copy strong{font-size:1.05rem}
+}
+</style>
+</head>
 <body class="mauro-route-page">
 <div class="app">
 <header class="topbar">
