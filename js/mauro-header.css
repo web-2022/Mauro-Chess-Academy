@@ -163,3 +163,22 @@ body.mauro-has-header .topbar{position:relative;top:auto}
 @media (prefers-reduced-motion:reduce){
   .mauro-site-header *,.mauro-site-header,.mh-tabbar *,.mh-drawer *{transition:none!important;animation:none!important}
 }
+
+/* ---------- Instalar app ---------- */
+.mh-install-banner{position:fixed;left:10px;right:10px;bottom:calc(var(--mh-tab,64px) + 10px + env(safe-area-inset-bottom));z-index:98;display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border:1px solid rgba(56,189,248,.45);border-radius:16px;background:linear-gradient(135deg,#0b1d33,#0a2a2a);box-shadow:0 12px 30px rgba(0,0,0,.45);color:#e2e8f0;font:14px/1.25 Inter,system-ui,sans-serif;animation:mhIb .35s ease-out}
+@keyframes mhIb{from{transform:translateY(20px);opacity:0}}
+.mh-ib-logo{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#22c55e,#38bdf8);color:#04111f;font-size:22px}
+.mh-ib-text{display:flex;flex-direction:column;min-width:0;flex:1}.mh-ib-text small{opacity:.75}
+.mh-ib-go{flex:none;min-height:40px;padding:0 16px;border:0;border-radius:12px;background:linear-gradient(135deg,#22c55e,#38bdf8);color:#04111f;font:850 14px Inter,system-ui,sans-serif;cursor:pointer}
+.mh-ib-x{flex:none;width:34px;height:34px;border:0;border-radius:10px;background:transparent;color:#94a3b8;font-size:16px;cursor:pointer}
+@media (min-width:1101px){.mh-install-banner{left:auto;right:20px;bottom:20px;max-width:420px}}
+.mh-install-help{position:fixed;inset:0;z-index:1000;display:grid;place-items:end center}
+.mh-ih-backdrop{position:absolute;inset:0;background:rgba(2,6,23,.7)}
+.mh-ih-card{position:relative;width:min(520px,100%);margin:0 0 env(safe-area-inset-bottom);padding:22px 20px 20px;border-radius:22px 22px 0 0;background:#0b1a2e;border:1px solid #29415c;color:#e2e8f0;font:15px/1.45 Inter,system-ui,sans-serif}
+@media (min-width:600px){.mh-install-help{place-items:center}.mh-ih-card{border-radius:22px}}
+.mh-ih-title{margin:0 0 4px;font-size:19px;font-weight:850}.mh-ih-sub{margin:0 0 12px;opacity:.8}
+.mh-ih-card ol{margin:0 0 12px;padding-left:22px}.mh-ih-card li{margin:6px 0}
+.mh-ih-ico{display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:6px;background:#1e3a5f;font-weight:800}
+.mh-ih-note{margin:0 0 12px;padding:8px 10px;border-radius:10px;background:#3b2a0a;color:#fde68a;font-size:14px}
+.mh-ih-close{position:absolute;top:10px;right:10px;width:34px;height:34px;border:0;background:transparent;color:#94a3b8;font-size:16px;cursor:pointer}
+.mh-ih-ok{width:100%;min-height:46px;border:0;border-radius:14px;background:linear-gradient(135deg,#22c55e,#38bdf8);color:#04111f;font:850 15px Inter,system-ui,sans-serif;cursor:pointer}

@@ -212,17 +212,54 @@
   matchMedia('(min-width:1101px)').addEventListener?.('change', ev => { if (ev.matches) closeDrawer(); moveIndicator(); });
 
   // ---------- Instalar app (PWA) ----------
+  // Android/Chrome/Edge: usa el aviso nativo. iPhone/iPad (Safari) no lo tiene: se muestran los pasos.
   const installBtn = drawer.querySelector('.mh-install');
   let installEvent = null;
-  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; if (!standalone) installBtn.hidden = false; });
-  installBtn.addEventListener('click', async () => {
-    if (!installEvent) return;
-    installEvent.prompt();
-    try { await installEvent.userChoice; } catch (_) {}
-    installEvent = null; installBtn.hidden = true;
-  });
-  window.addEventListener('appinstalled', () => { installBtn.hidden = true; });
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isMobile = isIOS || /Android|Mobi/i.test(ua);
+  const DISMISS_KEY = 'mauro_install_dismissed';
+  const dismissedRecently = () => { try { return Date.now() - (+localStorage.getItem(DISMISS_KEY) || 0) < 7 * 864e5; } catch (_) { return false; } };
+  let banner = null;
+  function hideInstallUI() { installBtn.hidden = true; banner?.remove(); banner = null; }
+  function installHelp() {
+    const old = document.querySelector('.mh-install-help'); if (old) old.remove();
+    const box = document.createElement('div');
+    box.className = 'mh-install-help'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'Cómo instalar la app');
+    const steps = isIOS
+      ? ['Toca el botón <b>Compartir</b> <span class="mh-ih-ico">⬆︎</span> en la barra de Safari.', 'Baja y elige <b>«Agregar a pantalla de inicio»</b>.', 'Toca <b>Agregar</b>. ¡Listo! Abre Academia Mauro desde su icono ♞.']
+      : ['Abre el menú del navegador <span class="mh-ih-ico">⋮</span> (arriba a la derecha).', 'Elige <b>«Instalar aplicación»</b> o <b>«Agregar a pantalla principal»</b>.', 'Confirma. ¡Listo! Abre Academia Mauro desde su icono ♞.'];
+    box.innerHTML = `<div class="mh-ih-backdrop" data-x></div><div class="mh-ih-card"><button class="mh-ih-close" type="button" aria-label="Cerrar" data-x>✕</button>
+      <p class="mh-ih-title">📲 Instala Academia Mauro</p><p class="mh-ih-sub">Abre más rápido, a pantalla completa y funciona sin internet.</p>
+      <ol>${steps.map(x => `<li>${x}</li>`).join('')}</ol>${isIOS && !/Safari/.test(ua.replace(/CriOS|FxiOS|EdgiOS/, '')) ? '<p class="mh-ih-note">En iPhone hay que abrir esta página en <b>Safari</b> para poder instalarla.</p>' : ''}
+      <button class="mh-ih-ok" type="button" data-x>Entendido</button></div>`;
+    box.addEventListener('click', e => { if (e.target.closest('[data-x]')) box.remove(); });
+    document.body.append(box); box.querySelector('.mh-ih-ok').focus();
+  }
+  async function doInstall() {
+    if (installEvent) {
+      installEvent.prompt();
+      let ok = false; try { ok = (await installEvent.userChoice).outcome === 'accepted'; } catch (_) {}
+      installEvent = null; if (ok) hideInstallUI();
+    } else installHelp();
+  }
+  function showBanner() {
+    if (banner || standalone || dismissedRecently() || !isMobile) return;
+    banner = document.createElement('div'); banner.className = 'mh-install-banner'; banner.setAttribute('role', 'region'); banner.setAttribute('aria-label', 'Instalar la app');
+    banner.innerHTML = `<span class="mh-ib-logo" aria-hidden="true">♞</span><span class="mh-ib-text"><b>Instala Academia Mauro</b><small>Más rápida y funciona sin internet</small></span><button class="mh-ib-go" type="button">Instalar</button><button class="mh-ib-x" type="button" aria-label="Ahora no">✕</button>`;
+    banner.querySelector('.mh-ib-go').addEventListener('click', doInstall);
+    banner.querySelector('.mh-ib-x').addEventListener('click', () => { try { localStorage.setItem(DISMISS_KEY, Date.now()); } catch (_) {} banner.remove(); banner = null; });
+    document.body.append(banner);
+  }
+  if (!standalone) {
+    installBtn.hidden = false; // en el menú, siempre disponible mientras no esté instalada
+    window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; showBanner(); });
+    setTimeout(showBanner, 2500); // iPhone y navegadores sin aviso nativo
+  }
+  installBtn.addEventListener('click', () => { closeDrawer?.(); doInstall(); });
+  window.addEventListener('appinstalled', hideInstallUI);
+  window.MauroInstall = doInstall;
 
   // ---------- Modo compacto al bajar ----------
   let ticking = false;
