@@ -481,3 +481,27 @@
 @media(max-width:1150px){#mauroWelcome .mauro-scene{width:calc(100% + 40px);height:520px}#mauroWelcome .mauro-studio{min-height:540px}#mauroWelcome .mauro-studio .card-1{right:0}#mauroWelcome .mauro-studio .card-2{left:0}}
 @media(max-width:760px){#mauroWelcome .mauro-studio{min-height:390px}#mauroWelcome .mauro-scene{width:100%;height:370px}#mauroWelcome .mauro-scene-controls{bottom:0}}
 @media(min-width:761px){#mauroWelcome h1{font-size:clamp(3.2rem,6.2vw,6rem)}#mauroWelcome .hero-grid{grid-template-columns:minmax(0,1.07fr) minmax(0,.93fr)}}
+
+/* ===== Inicio a pantalla completa en laptop, PC, monitor y ultra ancho =====
+   El encabezado ya está fuera del hero: se quita el hueco superior y se usa el ancho. */
+@media(min-width:1101px){
+  body.mauro-home #mauroWelcome .hero{min-height:calc(100vh - 76px);min-height:calc(100svh - 76px);padding:clamp(24px,4vh,56px) 0 !important}
+  body.mauro-home #mauroWelcome .hero .container,body.mauro-home #mauroWelcome .hero-grid{width:min(2300px,calc(100% - 7vw)) !important}
+  body.mauro-home #mauroWelcome .hero-grid{gap:clamp(32px,4vw,110px)}
+  body.mauro-home #mauroWelcome h1{max-width:none}
+  body.mauro-home #mauroWelcome .hero p{font-size:clamp(1.05rem,.55rem + .55vw,1.5rem);max-width:min(900px,95%)}
+  body.mauro-home #mauroWelcome .hero-actions .btn{font-size:clamp(.95rem,.6rem + .4vw,1.3rem);padding:clamp(14px,1vw,20px) clamp(20px,1.5vw,32px)}
+  body.mauro-home #mauroWelcome .hero-proof{font-size:clamp(.9rem,.6rem + .3vw,1.15rem)}
+  body.mauro-home #mauroWelcome .eyebrow{font-size:clamp(.85rem,.6rem + .3vw,1.1rem)}
+  body.mauro-home #mauroWelcome .mauro-studio{min-height:clamp(520px,calc(100vh - 160px),1150px)}
+  body.mauro-home #mauroWelcome .mauro-scene{width:calc(100% + 60px);height:clamp(500px,calc(100vh - 170px),1130px)}
+  body.mauro-home #mauroWelcome .floating-card strong{font-size:clamp(1rem,.6rem + .45vw,1.5rem)}
+  body.mauro-home #mauroWelcome .floating-card span{font-size:clamp(.75rem,.5rem + .25vw,1rem)}
+  body.mauro-home #mauroWelcome .mauro-studio .card-1{right:0}
+  body.mauro-home #mauroWelcome .mauro-studio .card-2{left:0}
+  body.mauro-home .mauro-shell{max-width:min(2300px,calc(100% - 7vw))}
+}
+@media(min-width:1800px){
+  body.mauro-home #mauroWelcome h1{font-size:clamp(5.6rem,4.2vw,8.4rem);max-width:none}
+  body.mauro-home .mauro-shell{font-size:1.12rem}
+}
