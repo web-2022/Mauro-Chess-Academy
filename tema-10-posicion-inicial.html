@@ -1706,14 +1706,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['posicion-inicial']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema diez: ya sabes armar la posición inicial.');
+ speak('Excelente. Has completado el tema diez: ya sabes armar la posición inicial. Ya puedes pasar al tema once: el movimiento del peón.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-10-posicion-inicial.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-11-el-peon-movimiento.html'}
 
 renderBoard();
 try{
