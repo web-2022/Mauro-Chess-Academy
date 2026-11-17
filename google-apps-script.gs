@@ -36,6 +36,10 @@ const SHEETS = {
     "step","displayStep","phase","title","concept","selectedAnswer",
     "selectedSquare","hintLevel","wrongInStep"
   ],
+  Respaldo: [
+    "alumnoCode","academia","userId","displayName","topicsCompleted","totalXP",
+    "device","updatedAt","snapshot"
+  ],
   Mastery: [
     "userId","topicId","topicName","concept","correct","wrong","firstTry",
     "hints","coach","score","updatedAt"
@@ -103,6 +107,17 @@ function upsert_(sheetName,keyFields,obj){
 function handleEvent_(e){
   const now=e.timestamp || new Date().toISOString();
 
+  // Ajedrezia: respaldo completo del avance (una fila por alumno).
+  if(e.type==="backup"){
+    if(!e.alumnoCode) return;
+    upsert_("Respaldo",["alumnoCode"],{
+      alumnoCode:String(e.alumnoCode).toUpperCase(),academia:e.academia||"",userId:e.userId||"",
+      displayName:e.displayName||"",topicsCompleted:e.topicsCompleted||0,totalXP:e.totalXP||0,
+      device:e.device||"",updatedAt:now,snapshot:e.snapshot||"{}"
+    });
+    return;
+  }
+
   // Registro de actividad detallada.
   append_("Actividad", e);
 
@@ -160,8 +175,28 @@ function doPost(request){
   }
 }
 
-function doGet(){
-  return ContentService
-    .createTextOutput(JSON.stringify({ok:true,service:"Academia Mauro Analytics"}))
-    .setMimeType(ContentService.MimeType.JSON);
+function doGet(request){
+  const p=(request && request.parameter) || {};
+  if(p.action==="load" && p.code){
+    const sh=ensureSheet_("Respaldo");
+    const headers=SHEETS.Respaldo;
+    const last=sh.getLastRow();
+    const code=String(p.code).trim().toUpperCase();
+    if(last>1){
+      const values=sh.getRange(2,1,last-1,headers.length).getValues();
+      for(let r=0;r<values.length;r++){
+        if(String(values[r][0]).toUpperCase()===code){
+          const row={}; headers.forEach((h,i)=>row[h]=values[r][i]);
+          return json_({ok:true,found:true,academia:row.academia,displayName:row.displayName,
+            updatedAt:row.updatedAt,snapshot:row.snapshot});
+        }
+      }
+    }
+    return json_({ok:true,found:false});
+  }
+  return json_({ok:true,service:"Ajedrezia · Academia Mauro"});
+}
+
+function json_(obj){
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }

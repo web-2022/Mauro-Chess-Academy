@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi avance en la nube | Ajedrezia</title>
+<meta name="theme-color" content="#1E5A43">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="js/mauro-header.css?v=196"><script defer src="js/mauro-header.js?v=197"></script>
+<style>
+body{margin:0;background:#F6F3EC;color:#1B1F24;font-family:Inter,system-ui,sans-serif;line-height:1.55}
+main{max-width:720px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:clamp(28px,5vw,40px);margin:0 0 8px}
+.lead{color:#474D55;margin:0 0 24px}
+.card{background:#fff;border:1px solid #E2DCCD;border-radius:16px;padding:24px;margin-bottom:18px}
+.card h2{margin:0 0 8px;font-size:20px}
+.code{font-family:ui-monospace,Menlo,monospace;font-size:clamp(28px,7vw,40px);font-weight:700;letter-spacing:.08em;color:#1E5A43;margin:8px 0 14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button,.btn{font:inherit;font-weight:600;padding:13px 20px;border-radius:12px;border:2px solid #1B1F24;background:#fff;color:#1B1F24;cursor:pointer;min-height:48px}
+button.primary{background:#1E5A43;border-color:#1E5A43;color:#fff}
+input{font:inherit;padding:12px 14px;border:1px solid #CFC7B5;border-radius:10px;min-height:48px;text-transform:uppercase;flex:1;min-width:180px}
+.msg{margin:12px 0 0;font-weight:600}
+.ok{color:#1E5A43}.bad{color:#9A3412}
+small{color:#5B616A}
+</style>
+</head>
+<body>
+<div id="mauroSharedHeader"></div>
+<main>
+<h1>Mi avance en la nube</h1>
+<p class="lead">Tu avance se guarda en este dispositivo y se respalda automáticamente en la nube. Con tu código puedes recuperarlo en otro celular o computadora.</p>
+
+<section class="card">
+<h2>Tu código de alumno</h2>
+<p class="code" id="miCodigo">—</p>
+<div class="row"><button type="button" id="copiar">Copiar código</button><button type="button" class="primary" id="guardar">Guardar ahora</button></div>
+<p class="msg" id="msgGuardar" aria-live="polite"></p>
+<small id="ultimo"></small>
+<p><small>Anótalo o envíalo a tu profesor. No compartas tu código con otros alumnos: quien lo tenga puede ver tu avance.</small></p>
+</section>
+
+<section class="card">
+<h2>¿Ya tienes un código?</h2>
+<p style="margin:0 0 12px;color:#474D55">Escríbelo para traer tu avance a este dispositivo. No se pierde nada de lo que ya tienes aquí.</p>
+<form class="row" id="formRecuperar">
+<label for="codigoIn" style="position:absolute;left:-9999px">Código de alumno</label>
+<input id="codigoIn" placeholder="Ej.: MAU-7K3P9Q" autocomplete="off">
+<button type="submit" class="primary">Recuperar avance</button>
+</form>
+<p class="msg" id="msgRecuperar" aria-live="polite"></p>
+</section>
+
+<p><a href="ruta-chess.html#mi-progreso">← Volver a mis clases</a></p>
+</main>
+<script src="js/ajedrezia-sync.js?v=1"></script>
+<script>
+(function(){
+  var S=window.AjedreziaSync;
+  function pint(){document.getElementById('miCodigo').textContent=S.code();var l=S.lastSync();document.getElementById('ultimo').textContent=l?('Último respaldo: '+new Date(l).toLocaleString('es-PE')):'Aún no se ha hecho el primer respaldo.';}
+  pint();
+  document.getElementById('copiar').onclick=function(){var c=S.code();(navigator.clipboard?navigator.clipboard.writeText(c):Promise.reject()).then(function(){document.getElementById('msgGuardar').textContent='Código copiado.';}).catch(function(){document.getElementById('msgGuardar').textContent='Tu código es '+c;});};
+  document.getElementById('guardar').onclick=function(){var m=document.getElementById('msgGuardar');m.className='msg';m.textContent='Guardando…';S.push(true).then(function(ok){m.className='msg '+(ok?'ok':'bad');m.textContent=ok?'Avance guardado en la nube.':'No se pudo guardar. Revisa tu internet e inténtalo de nuevo.';pint();});};
+  document.getElementById('formRecuperar').onsubmit=function(e){e.preventDefault();var m=document.getElementById('msgRecuperar');m.className='msg';m.textContent='Buscando…';S.restore(document.getElementById('codigoIn').value).then(function(r){m.className='msg '+(r.ok?'ok':'bad');m.textContent=r.ok?(r.msg+' Se actualizaron '+r.n+' registros.'):r.msg;pint();});};
+})();
+</script>
+</body>
+</html>
