@@ -574,16 +574,16 @@ const steps=[
  success:'Correcto. El caballo llega a f3.'
 },
 {
- type:'learn',title:'El color con matemáticas',
- text:'Truco: convierte la letra en número (a=1, b=2… h=8) y súmale el número de la fila. Si el resultado es par, la casilla es oscura; si es impar, es clara. Ejemplo: a1 → 1+1 = 2, par → oscura.',
- audio:'Truco: convierte la letra en número, a igual uno, b igual dos, hasta h igual ocho, y súmale el número de la fila. Si el resultado es par, la casilla es oscura; si es impar, es clara.',
+ type:'learn',title:'El color de una casilla',
+ text:'No hace falta contar. Memoriza unas casillas ancla: a1 es oscura y h1 es clara (clara a la derecha); d4 y e5 son oscuras, e4 y d5 son claras. Desde un ancla: si te mueves en diagonal, el color se mantiene; si te mueves una casilla en línea recta, el color cambia.',
+ audio:'No hace falta contar. Memoriza unas casillas ancla: a1 es oscura y h1 es clara. En el centro, d4 y e5 son oscuras, y e4 y d5 son claras. Desde un ancla: si te mueves en diagonal, el color se mantiene; si te mueves una casilla en línea recta, el color cambia.',
  facts:[
-  ['a1 → 1+1=2','Par → oscura','La esquina a1 es oscura.','sq:a1'],
-  ['h1 → 8+1=9','Impar → clara','La esquina h1 es clara: «clara a la derecha».','sq:h1'],
-  ['e4 → 5+4=9','Impar → clara','La casilla e4 es clara.','sq:e4'],
-  ['d4 → 4+4=8','Par → oscura','La casilla d4 es oscura.','sq:d4']
+  ['Anclas','a1 oscura · h1 clara','Las esquinas de abajo: «clara a la derecha».','sq:a1,h1'],
+  ['El centro','d4 · e5 oscuras','e4 y d5 son claras; d4 y e5, oscuras.','sq:d4,e4,d5,e5'],
+  ['En diagonal','Mismo color','c3 está en diagonal con a1, b2 y d4: también es oscura.','diag:a1h8'],
+  ['En línea recta','Cambia el color','De d4 (oscura) a d5 (clara): un paso recto cambia el color.','sq:d4,d5']
  ],
- mascot:'Así sabrás el color de una casilla sin mirar el tablero.'
+ mascot:'La dama en su color: la dama blanca empieza en d1, casilla clara, y la negra en d8, casilla oscura.'
 },
 {
  type:'challenge',title:'Misión base · Encuentra g5',
@@ -619,13 +619,13 @@ steps.push(
  },
  {
   type:'challenge',phase:'lab',title:'Laboratorio · Color sin mirar',
-  question:'Usa el truco de la suma: ¿de qué color es la casilla c3? (c = 3)',
+  question:'c3 está en la misma diagonal que a1, b2 y d4. ¿De qué color es c3?',
   choices:['Clara','Oscura'],answer:1,
-  hint1:'Suma 3 + 3.',hint2:'6 es par → oscura.',
-  success:'Correcto. 3 + 3 = 6, par: c3 es oscura.',
+  hint1:'Recuerda el color de a1.',hint2:'En diagonal el color no cambia: a1 es oscura.',
+  success:'Correcto. c3 está en la gran diagonal oscura a1–h8: es oscura.',
   concept:'color',difficulty:'Aplicar',xpValue:15,
-  easyVariant:{question:'Usa el truco: ¿de qué color es a1? (1 + 1)',choices:['Clara','Oscura'],answer:1,success:'Correcto. 1 + 1 = 2, par: a1 es oscura.'},
-  hardVariant:{question:'Sin mirar el tablero: ¿de qué color es g7? (g = 7)',choices:['Clara','Oscura'],answer:1,success:'Correcto. 7 + 7 = 14, par: g7 es oscura.'}
+  easyVariant:{question:'¿De qué color es la casilla a1?',choices:['Clara','Oscura'],answer:1,success:'Correcto. a1 es oscura: «clara a la derecha», así que la izquierda es oscura.'},
+  hardVariant:{question:'e4 es clara. Si te mueves una casilla en línea recta hasta e5, ¿de qué color es e5?',choices:['Clara','Oscura'],answer:1,success:'Correcto. Un paso en línea recta cambia el color: e5 es oscura.'}
  },
  {
   type:'challenge',phase:'lab',title:'Laboratorio · La dama negra',
@@ -713,7 +713,7 @@ const ADAPTIVE_META={
  'Misión base · Encuentra g5':{concept:'encontrar',difficulty:'Reconocer',visual:'column:g',coach:'Ubica la columna g y sube hasta la fila 5.'},
  'Laboratorio · Casilla exacta':{concept:'encontrar',difficulty:'Aplicar',visual:'column:b',coach:'Primero la letra, después el número, y busca el cruce.'},
  'Laboratorio · Nombra la casilla':{concept:'nombrar',difficulty:'Aplicar',visual:'column:f',coach:'Se escribe la letra y luego el número.'},
- 'Laboratorio · Color sin mirar':{concept:'color',difficulty:'Aplicar',visual:'sq:c3',coach:'Convierte la letra en número y suma: par es oscura, impar es clara.'},
+ 'Laboratorio · Color sin mirar':{concept:'color',difficulty:'Aplicar',visual:'diag:a1h8',coach:'Busca un ancla conocida: en diagonal el color se mantiene; un paso recto lo cambia.'},
  'Laboratorio · La dama negra':{concept:'importantes',difficulty:'Aplicar',visual:'sq:d1,d8',coach:'Las damas empiezan en la columna d.'},
  'Boss · Escribe la coordenada':{concept:'nombrar',difficulty:'Descubrir',visual:'column:h',coach:'Letra y luego número.'},
  'Boss · Misión final':{concept:'encontrar',difficulty:'Descubrir',visual:'column:c',coach:'Ubica la columna c y sube hasta la fila 6.'}
@@ -724,7 +724,7 @@ const ALT_EXAMPLES={
  'Cómo encontrar una casilla':'Pon un dedo en la letra de abajo y otro en el número de la izquierda. Muévelos hacia el tablero: donde se encuentran está la casilla.',
  'Casillas importantes':'Igual que en una ciudad hay plazas conocidas por todos, en el tablero hay casillas que todos los jugadores conocen: las esquinas y el centro.',
  'Las jugadas se escriben con coordenadas':'Escribir una jugada es como mandar una dirección: quién va (la pieza) y a dónde va (la casilla).',
- 'El color con matemáticas':'Es como saber si un número es par o impar: suma columna y fila; par significa oscura, impar significa clara.'
+ 'El color de una casilla':'Como un piso de baldosas: si caminas por las esquinas (en diagonal) pisas siempre el mismo color; si das un paso recto, cambias de color.'
 };
 
 
