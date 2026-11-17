@@ -1781,14 +1781,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['el-alfil']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema catorce: ya dominas el alfil.');
+ speak('Excelente. Has completado el tema catorce: ya dominas el alfil. Ya puedes pasar al tema quince: la dama.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-14-el-alfil.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-15-la-dama.html'}
 
 renderBoard();
 try{
