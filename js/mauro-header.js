@@ -14,6 +14,25 @@
   document.querySelectorAll('nav.top-nav,.brand-header-kids').forEach(n => n.remove());
   document.body.classList.add('mauro-has-header');
 
+  // ---------- Academia (marca) ----------
+  // Cada academia de Ajedrezia muestra su propio nombre. Se elige con ?academia=slug
+  // (se recuerda en este dispositivo). Por defecto: Academia Mauro.
+  const ACADEMIAS = window.AJEDREZIA_ACADEMIAS || {
+    mauro: { nombre: 'Academia Mauro', sub: 'AJEDREZ & ESTRATEGIA' },
+    ajedrezia: { nombre: 'Ajedrezia', sub: 'APRENDE AJEDREZ' }
+  };
+  let acSlug = 'mauro';
+  try {
+    const q = new URLSearchParams(location.search).get('academia');
+    if (q && ACADEMIAS[q]) localStorage.setItem('az_academia', q);
+    const g = localStorage.getItem('az_academia');
+    if (g && ACADEMIAS[g]) acSlug = g;
+  } catch (e) {}
+  const AC = Object.assign({ slug: acSlug }, ACADEMIAS[acSlug]);
+  window.ACADEMIA = AC;
+  const fillAcademia = () => document.querySelectorAll('[data-academia-nombre]').forEach(el => { el.textContent = AC.nombre; });
+  fillAcademia(); document.addEventListener('DOMContentLoaded', fillAcademia);
+
   // ---------- Datos ----------
   const current = decodeURIComponent(location.pathname.split('/').pop()) || 'index.html';
   const SECTIONS = [
@@ -62,7 +81,7 @@
     if (s.id !== 'practice') return link;
     return `<div class="mh-has-mega">${link}<button class="mh-mega-toggle" type="button" aria-label="Ver entrenamientos" aria-expanded="false" aria-controls="mhMega"><span aria-hidden="true">▾</span></button>
       <div class="mh-mega" id="mhMega" role="menu" aria-label="Entrenamientos">
-        <div class="mh-mega-head"><strong>Entrena con Mauro</strong><a href="practica.html">Ver todo →</a></div>
+        <div class="mh-mega-head"><strong>Entrenamientos</strong><a href="practica.html">Ver todo →</a></div>
         <div class="mh-mega-grid">${TRAININGS.map(t => trainingItem(t, 'mh-mega-item')).join('')}</div>
       </div></div>`;
   }).join('');
@@ -74,7 +93,7 @@
   header.dataset.mauroNavigation = '';
   header.setAttribute('aria-label', 'Navegación principal');
   header.innerHTML = `<div class="mauro-header-inner">
-    <a class="mauro-header-brand" href="index.html" aria-label="Academia Mauro · Inicio"><span class="mauro-header-logo" aria-hidden="true">♞</span><span>Academia Mauro<small>AJEDREZ & ESTRATEGIA</small></span></a>
+    <a class="mauro-header-brand" href="index.html" aria-label="${AC.nombre} · Inicio"><span class="mauro-header-logo" aria-hidden="true">♞</span><span>${AC.nombre}<small>${AC.sub}</small></span></a>
     <div class="mauro-header-links" id="mauroHeaderLinks">${desktopLinks}<span class="mh-indicator" aria-hidden="true"></span></div>
     <div class="mh-chips">${chips}</div>
     <a class="mauro-header-cta" href="${CTA.url}"><span class="mh-cta-long">${CTA.label}</span><span class="mh-cta-short">${CTA.short}</span></a>
@@ -97,7 +116,7 @@
   drawer.hidden = true;
   drawer.innerHTML = `<div class="mh-drawer-backdrop" data-close></div>
     <div class="mh-drawer-panel" tabindex="-1">
-      <div class="mh-drawer-head"><span class="mauro-header-logo" aria-hidden="true">♞</span><strong>Academia Mauro</strong><button class="mh-drawer-close" type="button" aria-label="Cerrar menú" data-close>✕</button></div>
+      <div class="mh-drawer-head"><span class="mauro-header-logo" aria-hidden="true">♞</span><strong>${AC.nombre}</strong><button class="mh-drawer-close" type="button" aria-label="Cerrar menú" data-close>✕</button></div>
       <div class="mh-drawer-chips">${chips}</div>
       <p class="mh-drawer-title">Navegación</p>
       <div class="mh-drawer-sections">${SECTIONS.map(s => `<a class="mh-drawer-link" href="${s.url}"${cur(s.id)}>${s.label}</a>`).join('')}</div>
@@ -228,10 +247,10 @@
     const box = document.createElement('div');
     box.className = 'mh-install-help'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'Cómo instalar la app');
     const steps = isIOS
-      ? ['Toca el botón <b>Compartir</b> <span class="mh-ih-ico">⬆︎</span> en la barra de Safari.', 'Baja y elige <b>«Agregar a pantalla de inicio»</b>.', 'Toca <b>Agregar</b>. ¡Listo! Abre Academia Mauro desde su icono ♞.']
-      : ['Abre el menú del navegador <span class="mh-ih-ico">⋮</span> (arriba a la derecha).', 'Elige <b>«Instalar aplicación»</b> o <b>«Agregar a pantalla principal»</b>.', 'Confirma. ¡Listo! Abre Academia Mauro desde su icono ♞.'];
+      ? ['Toca el botón <b>Compartir</b> <span class="mh-ih-ico">⬆︎</span> en la barra de Safari.', 'Baja y elige <b>«Agregar a pantalla de inicio»</b>.', 'Toca <b>Agregar</b>. ¡Listo! Abre ' + AC.nombre + ' desde su icono ♞.']
+      : ['Abre el menú del navegador <span class="mh-ih-ico">⋮</span> (arriba a la derecha).', 'Elige <b>«Instalar aplicación»</b> o <b>«Agregar a pantalla principal»</b>.', 'Confirma. ¡Listo! Abre ' + AC.nombre + ' desde su icono ♞.'];
     box.innerHTML = `<div class="mh-ih-backdrop" data-x></div><div class="mh-ih-card"><button class="mh-ih-close" type="button" aria-label="Cerrar" data-x>✕</button>
-      <p class="mh-ih-title">📲 Instala Academia Mauro</p><p class="mh-ih-sub">Abre más rápido, a pantalla completa y funciona sin internet.</p>
+      <p class="mh-ih-title">📲 Instala ${AC.nombre}</p><p class="mh-ih-sub">Abre más rápido, a pantalla completa y funciona sin internet.</p>
       <ol>${steps.map(x => `<li>${x}</li>`).join('')}</ol>${isIOS && !/Safari/.test(ua.replace(/CriOS|FxiOS|EdgiOS/, '')) ? '<p class="mh-ih-note">En iPhone hay que abrir esta página en <b>Safari</b> para poder instalarla.</p>' : ''}
       <button class="mh-ih-ok" type="button" data-x>Entendido</button></div>`;
     box.addEventListener('click', e => { if (e.target.closest('[data-x]')) box.remove(); });
@@ -247,7 +266,7 @@
   function showBanner() {
     if (banner || standalone || dismissedRecently() || !isMobile) return;
     banner = document.createElement('div'); banner.className = 'mh-install-banner'; banner.setAttribute('role', 'region'); banner.setAttribute('aria-label', 'Instalar la app');
-    banner.innerHTML = `<span class="mh-ib-logo" aria-hidden="true">♞</span><span class="mh-ib-text"><b>Instala Academia Mauro</b><small>Más rápida y funciona sin internet</small></span><button class="mh-ib-go" type="button">Instalar</button><button class="mh-ib-x" type="button" aria-label="Ahora no">✕</button>`;
+    banner.innerHTML = `<span class="mh-ib-logo" aria-hidden="true">♞</span><span class="mh-ib-text"><b>Instala ${AC.nombre}</b><small>Más rápida y funciona sin internet</small></span><button class="mh-ib-go" type="button">Instalar</button><button class="mh-ib-x" type="button" aria-label="Ahora no">✕</button>`;
     banner.querySelector('.mh-ib-go').addEventListener('click', doInstall);
     banner.querySelector('.mh-ib-x').addEventListener('click', () => { try { localStorage.setItem(DISMISS_KEY, Date.now()); } catch (_) {} banner.remove(); banner = null; });
     document.body.append(banner);

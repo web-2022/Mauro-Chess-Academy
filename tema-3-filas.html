@@ -6,20 +6,20 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Filas del tablero de ajedrez: aprende del 1 al 8 | Academia Mauro</title>
-<meta name="description" content="Aprende qué son las filas del tablero de ajedrez: líneas horizontales numeradas del 1 al 8, con ejercicios adaptativos, Laboratorio Mauro y Boss.">
+<title>Filas del tablero de ajedrez: aprende del 1 al 8 | Ajedrezia</title>
+<meta name="description" content="Aprende qué son las filas del tablero de ajedrez: líneas horizontales numeradas del 1 al 8, con ejercicios adaptativos, Laboratorio y Boss.">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="author" content="Academia Mauro">
+<meta name="author" content="Ajedrezia">
 <link rel="canonical" href="https://web-2022.github.io/Mauro-Chess-Academy/tema-3-filas.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_PE">
-<meta property="og:site_name" content="Academia Mauro">
-<meta property="og:title" content="Filas del tablero de ajedrez: aprende del 1 al 8 | Academia Mauro">
+<meta property="og:site_name" content="Ajedrezia">
+<meta property="og:title" content="Filas del tablero de ajedrez: aprende del 1 al 8 | Ajedrezia">
 <meta property="og:description" content="Lección adaptativa para reconocer filas horizontales, numerarlas del 1 al 8 y encontrarlas directamente en el tablero.">
 <meta property="og:url" content="https://web-2022.github.io/Mauro-Chess-Academy/tema-3-filas.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Filas del tablero de ajedrez | Academia Mauro">
-<meta name="twitter:description" content="Aprende las filas del tablero con clase adaptativa, Laboratorio Mauro, Boss y dominio por conceptos.">
+<meta name="twitter:title" content="Filas del tablero de ajedrez | Ajedrezia">
+<meta name="twitter:description" content="Aprende las filas del tablero con clase adaptativa, Laboratorio, Boss y dominio por conceptos.">
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -37,7 +37,7 @@
   "educationalLevel":"Principiante",
   "isAccessibleForFree":true,
   "about":{"@type":"Thing","name":"Filas del tablero de ajedrez"},
-  "provider":{"@type":"Organization","name":"Academia Mauro","url":"https://web-2022.github.io/Mauro-Chess-Academy/"}
+  "provider":{"@type":"Organization","name":"Ajedrezia","url":"https://web-2022.github.io/Mauro-Chess-Academy/"}
 }
 </script>
 <style>
@@ -377,21 +377,21 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
 .stage-transition .stage-btn{min-height:46px;padding:10px 18px;border:0;border-radius:12px;background:linear-gradient(90deg,var(--green),var(--blue));color:#03111d;font-weight:900;cursor:pointer}
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
-<link rel="stylesheet" href="js/mauro-header.css?v=196"><script defer src="js/mauro-header.js?v=196"></script><script defer src="js/mauro-ui.js?v=197"></script>
+<link rel="stylesheet" href="js/mauro-header.css?v=196"><script defer src="js/mauro-header.js?v=197"></script><script defer src="js/mauro-ui.js?v=197"></script>
 <link rel="stylesheet" href="js/mauro-responsive.css?v=192"><link rel="stylesheet" href="js/mauro-tema-ancho.css?v=2"></head>
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="logo" aria-label="Academia Mauro">
+    <div class="logo" aria-label="Academia">
       <div class="logo-mark">♞</div>
-      <div class="logo-copy"><strong>Academia Mauro</strong><small>Ajedrez & estrategia</small></div>
+      <div class="logo-copy"><strong data-academia-nombre>Academia Mauro</strong><small>Ajedrez & estrategia</small></div>
     </div>
     <nav class="top-nav" aria-label="Navegación principal">
       <a class="top-nav-btn home" href="index.html" title="Volver al inicio">⌂ Inicio</a>
       <a class="top-nav-btn route" href="ruta-chess.html" title="Abrir la ruta completa de aprendizaje">🗺 Ruta de Aprendizaje</a>
     </nav>
     <div class="lesson-progress">
-      <div class="progress-label"><span id="stepLabel">Mauro · Tema 3 · Paso 1 de 21</span><span id="pctLabel">0%</span></div>
+      <div class="progress-label"><span id="stepLabel">Tema 3 · Paso 1 de 21</span><span id="pctLabel">0%</span></div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     </div>
     <div class="stats">
@@ -759,7 +759,7 @@ function difficultyClass(s){
   return '';
 }
 function phaseEyebrow(s){
-  if(s?.phase==='lab') return '🎯 Laboratorio Mauro';
+  if(s?.phase==='lab') return '🎯 Laboratorio';
   if(s?.phase==='boss') return '👑 Boss del tema';
   return 'Reto';
 }
@@ -838,7 +838,7 @@ function renderMasterySummary(){
     return '<div class="mastery-row"><div><div class="mastery-label">'+label+'</div><div class="mastery-track"><div class="mastery-fill" style="width:'+score+'%"></div></div></div><div class="mastery-score">'+score+'%</div></div>';
   }).join('');
   panel.innerHTML='<h3>🧠 Tu dominio del Tema 3</h3>'+rows+
-    '<div class="mastery-note">El porcentaje considera aciertos, errores, pistas y si necesitaste ayuda de Mauro. En esta primera versión se guarda localmente en este dispositivo.</div>';
+    '<div class="mastery-note">El porcentaje considera aciertos, errores, pistas y si necesitaste ayuda. En esta primera versión se guarda localmente en este dispositivo.</div>';
   const actions=summary.querySelector('.bottom-actions');
   if(actions) summary.insertBefore(panel,actions); else summary.appendChild(panel);
 }
@@ -1278,7 +1278,7 @@ function updateStats(){
  const pct=Math.round(step/steps.length*100);
  document.getElementById('progressFill').style.width=pct+'%';
  document.getElementById('pctLabel').textContent=pct+'%';
- document.getElementById('stepLabel').textContent='Mauro · Tema 3 · Paso '+Math.min(step+1,steps.length)+' de '+steps.length;
+ document.getElementById('stepLabel').textContent='Tema 3 · Paso '+Math.min(step+1,steps.length)+' de '+steps.length;
 }
 
 function toast(t){
@@ -1370,7 +1370,7 @@ function renderStep(){
     const phase=phaseEyebrow(s);
     const phaseClass=difficultyClass(s);
     const phaseBanner=s.phase==='lab'
-      ?'<div class="phase-banner">🎯 <b>Laboratorio Mauro:</b> ahora aplicas lo aprendido con menos apoyo.</div>'
+      ?'<div class="phase-banner">🎯 <b>Laboratorio:</b> ahora aplicas lo aprendido con menos apoyo.</div>'
       :(s.phase==='boss'?'<div class="phase-banner boss">👑 <b>Boss:</b> demuestra dominio. Este reto comienza sin pistas.</div>':'');
     content.innerHTML=`
     ${phaseBanner}
@@ -1396,14 +1396,14 @@ function renderStep(){
     </div>
     <div class="bottom-actions">
       <button class="continue-btn" id="backBtn">← Retroceder</button>
-      <button class="continue-btn primary" id="nextBtn" disabled>${step===14?'Ir al Laboratorio Mauro 🎯 →':(step===18?'Ir al Boss 👑 →':'Continuar →')}</button>
+      <button class="continue-btn primary" id="nextBtn" disabled>${step===14?'Ir al Laboratorio 🎯 →':(step===18?'Ir al Boss 👑 →':'Continuar →')}</button>
     </div>`;
     document.getElementById('questionAudio').onclick=()=>speak(s.question);
     const hintBtn=document.getElementById('hintBtn');
     if(hintBtn) hintBtn.onclick=()=>showHint(s);
     document.getElementById('backBtn').onclick=previousStep;
     document.getElementById('nextBtn').onclick=nextStep;
-    if(step===14) document.getElementById('nextBtn').textContent='Ir al Laboratorio Mauro 🎯 →';
+    if(step===14) document.getElementById('nextBtn').textContent='Ir al Laboratorio 🎯 →';
     if(step===18) document.getElementById('nextBtn').textContent='Ir al Boss 👑 →';
     if(s.choices){
       document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answerChoice(btn,s));
@@ -1485,7 +1485,7 @@ function showStageTransition(kind){
    <div class="stage-transition">
      <div class="stage-icon">🎯</div>
      <div class="stage-count">Clase base completada · 15 de 21 pasos</div>
-     <h2>Ahora empieza el Laboratorio Mauro</h2>
+     <h2>Ahora empieza el Laboratorio</h2>
      <p>Ya aprendiste las ideas esenciales. En los próximos <b>4 retos</b> la clase ajustará la dificultad según cómo respondiste antes: reconocer, aplicar o descubrir.</p>
      <button class="stage-btn" id="startStageBtn">Iniciar Laboratorio 1 de 4 →</button>
    </div>` : `
@@ -1518,7 +1518,7 @@ function finish(){
  step=steps.length;
  document.getElementById('progressFill').style.width='100%';
  document.getElementById('pctLabel').textContent='100%';
- document.getElementById('stepLabel').textContent='Mauro · Tema 3 · Completado';
+ document.getElementById('stepLabel').textContent='Tema 3 · Completado';
  xp+=20;updateStats();
  content.style.display='none';summary.classList.add('show');
  document.getElementById('finalXp').textContent=xp;
