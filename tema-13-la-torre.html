@@ -1765,14 +1765,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['la-torre']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema trece: ya dominas la torre.');
+ speak('Excelente. Has completado el tema trece: ya dominas la torre. Ya puedes pasar al tema catorce: el alfil.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-13-la-torre.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-14-el-alfil.html'}
 
 renderBoard();
 try{
