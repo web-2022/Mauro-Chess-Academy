@@ -6,7 +6,7 @@
     for(const [url,label] of links){const a=document.createElement('a');a.href=url;a.textContent=label;if(url===current)a.setAttribute('aria-current','page');nav.append(a);}
     const slot=document.getElementById('mauroNav');const old=document.querySelector('nav.top-nav');
     if(document.querySelector('[data-mauro-navigation]')){}else if(slot)slot.append(nav);else if(old){nav.classList.add('top-nav');old.replaceWith(nav);}else{const header=document.querySelector('header');if(header)header.after(nav);else document.body.prepend(nav);}
-    if(/^tema-[1-4]-/.test(current)){
+    if(/^tema-\d+-/.test(current)){
       try{localStorage.setItem('mauro_learning_last_v1',current);}catch(_){}
       const main=document.querySelector('main.main'),content=document.getElementById('lessonContent');
       const tb=document.querySelector('.app > .topbar')||document.querySelector('.topbar');
