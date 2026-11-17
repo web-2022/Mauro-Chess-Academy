@@ -1,7 +1,7 @@
 window.MAURO_CONFIG = Object.freeze({
   appName: "Academia Mauro",
   appVersion: "2.0.0",
-  curriculumSize: 293,
+  curriculumSize: 395,
   topic: {
     id: 1,
     slug: "que-es-el-ajedrez",
