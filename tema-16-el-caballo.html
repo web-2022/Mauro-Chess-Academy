@@ -1785,14 +1785,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['el-caballo']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema dieciséis: ya dominas el caballo.');
+ speak('Excelente. Has completado el tema dieciséis: ya dominas el caballo. Ya puedes pasar al tema diecisiete: el rey.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-16-el-caballo.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-17-el-rey.html'}
 
 renderBoard();
 try{
