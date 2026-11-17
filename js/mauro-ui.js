@@ -11,7 +11,7 @@
       const main=document.querySelector('main.main'),content=document.getElementById('lessonContent');
       const tb=document.querySelector('.app > .topbar')||document.querySelector('.topbar');
       if(tb&&!document.querySelector('.tema-links')){const nav=document.createElement('nav');nav.className='tema-links';nav.setAttribute('aria-label','Accesos de la clase');
-        nav.innerHTML='<a href="ruta-chess.html#mauroCurriculum" title="Volver a la lista de temas">📚 Temas</a><a href="ruta-chess.html#mi-progreso" title="Ver el resumen de tu avance">📈 Mi progreso</a>';
+        nav.innerHTML='<a href="ruta-chess.html?desde='+encodeURIComponent(current)+'#mauroCurriculum" title="Volver a la lista de temas">📚 Temas</a><a href="ruta-chess.html#mi-progreso" title="Ver el resumen de tu avance">📈 Mi progreso</a>';
         tb.append(nav);
         const st=document.createElement('style');st.textContent='.tema-links{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.tema-links a{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:4px 11px;border:1px solid rgba(56,189,248,.45);border-radius:10px;background:#0f1d39;color:#e0f2fe!important;font:800 .78rem/1.1 system-ui,sans-serif;text-decoration:none!important;white-space:nowrap}.tema-links a:hover{border-color:#38bdf8;background:#13284a}@media(min-width:1700px){.tema-links a{font-size:.95rem;min-height:38px;padding:6px 14px}}';
         document.head.append(st);}

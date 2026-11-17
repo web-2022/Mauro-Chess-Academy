@@ -184,7 +184,7 @@ body.text-large .topic-card{min-height:82px}
 
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
-<link rel="stylesheet" href="js/mauro-header.css?v=196"><script defer src="js/mauro-header.js?v=196"></script><script defer src="js/mauro-ui.js?v=195"></script>
+<link rel="stylesheet" href="js/mauro-header.css?v=196"><script defer src="js/mauro-header.js?v=196"></script><script defer src="js/mauro-ui.js?v=196"></script>
 <link rel="stylesheet" href="js/mauro-responsive.css?v=192"><style id="v22-aprender-ancho">
 /* ===== Aprender a pantalla completa en laptop, PC, monitor y ultra ancho ===== */
 /* La etiqueta "Próximamente" ya aparece bajo el título: se quita la segunda que tapaba el texto */
@@ -595,5 +595,26 @@ window.addEventListener('storage',refreshRouteProgress);
       }
 
     </script>
+<style id="v23-desde-tema">
+.topic-card.from-here{position:relative;z-index:2;border-color:#38bdf8!important;box-shadow:0 0 0 3px rgba(56,189,248,.55),0 0 26px 6px rgba(56,189,248,.45)!important;animation:fromHere 1.6s ease-in-out 3}
+.topic-card.from-here::before{content:"Estabas aquí";position:absolute;top:-11px;left:12px;padding:1px 8px;border-radius:999px;background:#38bdf8;color:#04111f;font:900 .62rem/1.5 system-ui,sans-serif;letter-spacing:.02em}
+@keyframes fromHere{0%,100%{box-shadow:0 0 0 3px rgba(56,189,248,.55),0 0 26px 6px rgba(56,189,248,.45)}50%{box-shadow:0 0 0 5px rgba(56,189,248,.9),0 0 40px 14px rgba(56,189,248,.6)}}
+</style>
+<script>
+/* Al volver desde un tema (ruta-chess.html?desde=tema-x.html) se centra la pantalla en ese tema y se resalta. */
+(function(){
+  var desde=new URLSearchParams(location.search).get('desde'); if(!desde) return;
+  var tries=0;
+  (function find(){
+    var card=document.querySelector('.topic-card[data-filename="'+desde.replace(/"/g,'')+'"]')||document.querySelector('.topic-card[href="'+desde.replace(/"/g,'')+'"]');
+    if(!card){ if(++tries<40) return setTimeout(find,100); return; }
+    var body=card.closest('.level-body');
+    if(body && getComputedStyle(body).display==='none'){ var t=body.closest('.level-section')&&body.closest('.level-section').querySelector('.toggle-level'); if(t) t.click(); }
+    card.classList.add('from-here');
+    setTimeout(function(){ card.scrollIntoView({block:'center',behavior:'smooth'}); },150);
+    try{ history.replaceState(null,'',location.pathname+location.hash); }catch(e){}
+  })();
+})();
+</script>
 </body>
 </html>
