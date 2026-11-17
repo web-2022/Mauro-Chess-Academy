@@ -1689,14 +1689,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['flanco-de-rey-y-flanco-de-dama']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema siete sobre los flancos del tablero.');
+ speak('Excelente. Has completado el tema siete sobre los flancos del tablero. Ya puedes pasar al tema ocho sobre el centro.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-7-flanco-de-rey-y-flanco-de-dama.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-8-el-centro-del-tablero.html'}
 
 renderBoard();
 try{
