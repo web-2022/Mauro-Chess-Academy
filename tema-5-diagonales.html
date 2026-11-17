@@ -431,7 +431,7 @@ button:focus-visible{outline:3px solid rgba(56,189,248,.45);outline-offset:2px}
           <div class="result-box"><b id="finalAttempts">0</b><span>intentos</span></div>
           <div class="result-box"><b>100%</b><span>tema completado</span></div>
         </div>
-        <div class="mascot"><div class="mascot-icon">♞</div><p>¡Excelente! En el siguiente tema aprenderás las diagonales del tablero y cómo reconocerlas visualmente.</p></div>
+        <div class="mascot"><div class="mascot-icon">♞</div><p>¡Excelente! En el siguiente tema aprenderás las coordenadas: el nombre de cada casilla del tablero.</p></div>
 <div class="bottom-actions">
           <button class="continue-btn" onclick="restartLesson()">↻ Repetir tema</button>
           <button class="continue-btn primary" onclick="goNext()">Pasar al siguiente tema →</button>
@@ -1687,14 +1687,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['diagonales']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema cinco sobre las diagonales.');
+ speak('Excelente. Has completado el tema cinco sobre las diagonales. Ya puedes pasar al tema seis sobre las coordenadas.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-5-diagonales.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-6-coordenadas.html'}
 
 renderBoard();
 try{
