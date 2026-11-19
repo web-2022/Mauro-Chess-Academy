@@ -208,6 +208,17 @@ body.text-large .topic-card{min-height:82px}
   body .topic-copy strong{font-size:1.05rem}
 }
 </style>
+<style>
+.az-cloud{margin:14px 0 4px;padding:12px 14px;border-radius:14px;background:rgba(30,90,67,.08);border:1px solid rgba(30,90,67,.25);font-size:.95em}
+.az-cloud-top{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center}
+.az-cloud-code b{font-family:ui-monospace,Menlo,monospace;letter-spacing:.05em}
+.az-cloud button{font:inherit;font-weight:600;border:1px solid currentColor;background:transparent;color:inherit;border-radius:8px;padding:6px 12px;cursor:pointer;min-height:36px}
+.az-cloud-rec{margin-top:8px}.az-cloud-rec summary{cursor:pointer;font-weight:600}
+.az-cloud-rec form{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.az-cloud-rec input{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,.25);text-transform:uppercase;flex:1;min-width:160px;min-height:40px}
+.az-cloud-rec p{margin:6px 0 0;font-weight:600}
+.az-sr{position:absolute;left:-9999px}
+</style>
 </head>
 <body class="mauro-route-page">
 <div class="app">
@@ -230,7 +241,12 @@ body.text-large .topic-card{min-height:82px}
     <h2 id="learningTitle">¿Qué es el ajedrez?</h2>
     <p id="learningStep">Empieza tu primera clase.</p>
     <p class="lp-welcome" id="learningWelcome">Tu avance se guarda en este navegador y dispositivo.</p>
-    <p class="lp-welcome"><a href="mi-avance.html">☁️ Respaldo en la nube · ver mi código</a></p>
+    <div class="az-cloud" id="azCloud">
+      <div class="az-cloud-top"><span>☁️ <b id="azEstado">Respaldo en la nube</b></span><span class="az-cloud-code">Tu código: <b id="azCodigo">—</b> <button type="button" id="azCopiar">Copiar</button></span></div>
+      <details class="az-cloud-rec"><summary>¿Estudias en otro dispositivo? Recupera tu avance con tu código</summary>
+        <form id="azRecuperar"><label for="azCodIn" class="az-sr">Código de alumno</label><input id="azCodIn" placeholder="Ej.: MAU-7K3P9Q" autocomplete="off"><button type="submit">Recuperar</button></form>
+        <p id="azMsg" aria-live="polite"></p></details>
+    </div>
     <div class="lp-actions"><a class="btn primary" id="learningContinue" href="tema-1-que-es-el-ajedrez.html">Continuar aprendiendo →</a><a class="btn" href="practica.html">Practicar lo aprendido</a></div>
   </div>
   <div class="lp-stats">
@@ -619,5 +635,14 @@ window.addEventListener('storage',refreshRouteProgress);
 })();
 </script>
 <script src="js/ajedrezia-sync.js?v=1" defer></script>
+<script>
+window.addEventListener('load',function(){var S=window.AjedreziaSync;if(!S)return;
+function hace(t){if(!t)return'aún sin respaldo';var m=Math.round((Date.now()-new Date(t))/60000);return m<1?'hace un momento':m<60?'hace '+m+' min':m<1440?'hace '+Math.round(m/60)+' h':new Date(t).toLocaleDateString('es-PE');}
+function pint(){document.getElementById('azCodigo').textContent=S.code();var l=S.lastSync();document.getElementById('azEstado').textContent=l?('Guardado en la nube '+hace(l)):'Respaldo en la nube: aún sin guardar';}
+pint();S.push(false).then(pint);
+document.getElementById('azCopiar').onclick=function(){var c=S.code(),b=this;(navigator.clipboard?navigator.clipboard.writeText(c):Promise.reject()).then(function(){b.textContent='¡Copiado!';setTimeout(function(){b.textContent='Copiar';},1500);}).catch(function(){alert('Tu código es '+c);});};
+document.getElementById('azRecuperar').onsubmit=function(e){e.preventDefault();var m=document.getElementById('azMsg');m.textContent='Buscando…';S.restore(document.getElementById('azCodIn').value).then(function(r){m.textContent=r.ok?'✅ Avance recuperado. Actualizando…':'❌ '+r.msg;pint();if(r.ok)setTimeout(function(){location.reload();},1200);});};
+});
+</script>
 </body>
 </html>
