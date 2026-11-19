@@ -183,3 +183,6 @@ body.mauro-has-header .topbar{position:relative;top:auto}
 .mh-ih-close{position:absolute;top:10px;right:10px;width:34px;height:34px;border:0;background:transparent;color:#94a3b8;font-size:16px;cursor:pointer}
 .mh-ih-ok{width:100%;min-height:46px;border:0;border-radius:14px;background:linear-gradient(135deg,#22c55e,#38bdf8);color:#04111f;font:850 15px Inter,system-ui,sans-serif;cursor:pointer}
 #mauroQuickInstall,body.mauro-has-header #mauroInstallBtn{display:none!important}
+
+/* Color de la academia (Ajedrezia) */
+.az-con-color .mauro-header-logo{background:var(--az-academia)!important;color:#fff!important}

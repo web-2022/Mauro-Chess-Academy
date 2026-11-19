@@ -21,17 +21,50 @@
     mauro: { nombre: 'Academia Mauro', sub: 'AJEDREZ & ESTRATEGIA' },
     ajedrezia: { nombre: 'Ajedrezia', sub: 'APRENDE AJEDREZ' }
   };
+  // Academias de profesores: sus datos (nombre, color, prefijo, estado) se leen de la hoja
+  // «Academias» de Google Sheets y se guardan en este dispositivo para que cargue al instante.
+  const AZ_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMII06Sm70qSjqKVxKuE27Y42U3O43tol2Ze6XnuCWqXDYh37EC7TxQgmc6Xx4mpRcvQ/exec';
+  const okSlug = v => /^[a-z0-9][a-z0-9-]{0,40}$/.test(String(v || ''));
   let acSlug = 'mauro';
   try {
-    const q = new URLSearchParams(location.search).get('academia');
-    if (q && ACADEMIAS[q]) localStorage.setItem('az_academia', q);
+    const q = (new URLSearchParams(location.search).get('academia') || '').toLowerCase();
+    if (okSlug(q)) localStorage.setItem('az_academia', q);
     const g = localStorage.getItem('az_academia');
-    if (g && ACADEMIAS[g]) acSlug = g;
+    if (okSlug(g)) acSlug = g;
   } catch (e) {}
-  const AC = Object.assign({ slug: acSlug }, ACADEMIAS[acSlug]);
+  const cacheKey = 'az_academia_datos_' + acSlug;
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(cacheKey) || 'null'); } catch (e) {}
+  const AC = Object.assign({ slug: acSlug, sub: 'AJEDREZ & ESTRATEGIA' },
+    ACADEMIAS[acSlug] || (cached ? { nombre: cached.nombre, sub: 'AJEDREZ CON AJEDREZIA', color: cached.color, prefijo: cached.prefijo, estado: cached.estado, vencimiento: cached.vencimiento } : { nombre: 'Ajedrezia', sub: 'APRENDE AJEDREZ' }));
   window.ACADEMIA = AC;
-  const fillAcademia = () => document.querySelectorAll('[data-academia-nombre]').forEach(el => { el.textContent = AC.nombre; });
+  const applyColor = () => { if (AC.color && /^#[0-9a-f]{6}$/i.test(AC.color)) document.documentElement.style.setProperty('--az-academia', AC.color); document.documentElement.classList.toggle('az-con-color', !!AC.color); };
+  const fillAcademia = () => { document.querySelectorAll('[data-academia-nombre]').forEach(el => { el.textContent = AC.nombre; }); document.querySelectorAll('[data-academia-sub]').forEach(el => { el.textContent = AC.sub; }); applyColor(); avisoVencida(); };
+  function avisoVencida() {
+    if (ACADEMIAS[AC.slug] || !AC.estado || document.getElementById('azAvisoAcademia')) return;
+    const venc = AC.vencimiento ? new Date(AC.vencimiento) : null;
+    const inactiva = AC.estado !== 'Activa' || (venc && !isNaN(venc) && venc < new Date());
+    if (!inactiva || !document.body) return;
+    const d = document.createElement('div'); d.id = 'azAvisoAcademia';
+    d.style.cssText = 'background:#FBEBD2;color:#7A4A0B;padding:10px 16px;text-align:center;font:600 14px/1.4 Inter,system-ui,sans-serif';
+    d.textContent = 'El acceso de ' + AC.nombre + ' no está activo. Pide a tu profesor que lo renueve; mientras tanto puedes seguir practicando.';
+    document.body.prepend(d);
+  }
   fillAcademia(); document.addEventListener('DOMContentLoaded', fillAcademia);
+  if (!ACADEMIAS[acSlug] && navigator.onLine !== false) {
+    fetch(AZ_ENDPOINT + '?action=academia&slug=' + encodeURIComponent(acSlug), { cache: 'no-store' })
+      .then(r => r.json()).then(j => {
+        if (!j || !j.ok) return;
+        if (!j.found) { // academia inexistente: se vuelve a la marca por defecto
+          try { localStorage.removeItem(cacheKey); localStorage.setItem('az_academia', 'mauro'); } catch (e) {}
+          return;
+        }
+        const datos = { nombre: j.nombre || 'Ajedrezia', color: j.color || '', prefijo: j.prefijo || '', estado: j.estado || '', vencimiento: j.vencimiento || '' };
+        try { localStorage.setItem(cacheKey, JSON.stringify(datos)); } catch (e) {}
+        Object.assign(AC, datos, { sub: 'AJEDREZ CON AJEDREZIA' });
+        fillAcademia();
+      }).catch(() => {});
+  }
 
   // ---------- Datos ----------
   const current = decodeURIComponent(location.pathname.split('/').pop()) || 'index.html';
@@ -93,7 +126,7 @@
   header.dataset.mauroNavigation = '';
   header.setAttribute('aria-label', 'Navegación principal');
   header.innerHTML = `<div class="mauro-header-inner">
-    <a class="mauro-header-brand" href="index.html" aria-label="${AC.nombre} · Inicio"><span class="mauro-header-logo" aria-hidden="true">♞</span><span>${AC.nombre}<small>${AC.sub}</small></span></a>
+    <a class="mauro-header-brand" href="index.html" aria-label="${AC.nombre} · Inicio"><span class="mauro-header-logo" aria-hidden="true">♞</span><span><span data-academia-nombre>${AC.nombre}</span><small data-academia-sub>${AC.sub}</small></span></a>
     <div class="mauro-header-links" id="mauroHeaderLinks">${desktopLinks}<span class="mh-indicator" aria-hidden="true"></span></div>
     <div class="mh-chips">${chips}</div>
     <a class="mauro-header-cta" href="${CTA.url}"><span class="mh-cta-long">${CTA.label}</span><span class="mh-cta-short">${CTA.short}</span></a>
@@ -116,7 +149,7 @@
   drawer.hidden = true;
   drawer.innerHTML = `<div class="mh-drawer-backdrop" data-close></div>
     <div class="mh-drawer-panel" tabindex="-1">
-      <div class="mh-drawer-head"><span class="mauro-header-logo" aria-hidden="true">♞</span><strong>${AC.nombre}</strong><button class="mh-drawer-close" type="button" aria-label="Cerrar menú" data-close>✕</button></div>
+      <div class="mh-drawer-head"><span class="mauro-header-logo" aria-hidden="true">♞</span><strong data-academia-nombre>${AC.nombre}</strong><button class="mh-drawer-close" type="button" aria-label="Cerrar menú" data-close>✕</button></div>
       <div class="mh-drawer-chips">${chips}</div>
       <p class="mh-drawer-title">Navegación</p>
       <div class="mh-drawer-sections">${SECTIONS.map(s => `<a class="mh-drawer-link" href="${s.url}"${cur(s.id)}>${s.label}</a>`).join('')}</div>

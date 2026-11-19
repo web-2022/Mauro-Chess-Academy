@@ -17,7 +17,8 @@
     const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let s = ''; const r = (window.crypto && crypto.getRandomValues) ? crypto.getRandomValues(new Uint8Array(6)) : Array.from({ length: 6 }, () => Math.random() * 256);
     for (let i = 0; i < 6; i++) s += abc[r[i] % abc.length];
-    return academia().slice(0, 3).toUpperCase() + '-' + s;
+    const pre = (window.ACADEMIA && window.ACADEMIA.prefijo) || academia().replace(/[^a-z]/gi, '').slice(0, 3).toUpperCase() || 'AJE';
+    return pre + '-' + s;
   }
   function code() {
     let c = null; try { c = localStorage.getItem(K_CODE); } catch (_) {}
