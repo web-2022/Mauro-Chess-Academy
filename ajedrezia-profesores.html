@@ -72,20 +72,29 @@
 <label>Tu correo<input name="correo" type="email" required></label>
 <label>Número aproximado de alumnos<input name="alumnos" type="number" min="1"></label>
 <label>Plan de interés<input name="plan" id="planInput" placeholder="Inicial, Profesor o Academia"></label>
-<button class="btn btn-verde" type="submit">Enviar solicitud</button>
-<p class="aviso" id="aviso">¡Gracias! Se abrirá tu correo con la solicitud lista para enviar.</p>
+<label>Color principal de tu academia<input name="color" type="color" value="#1E5A43" style="height:48px;padding:4px"></label>
+<label>Mensaje (opcional)<input name="mensaje" placeholder="Cuéntanos sobre tu academia"></label>
+<button class="btn btn-verde" type="submit" id="btnEnviar">Enviar solicitud</button>
+<p class="aviso" id="aviso" aria-live="polite"></p>
 </form>
 </div></section>
 </main>
 <footer class="az-foot"><div class="wrap"><span>Ajedrezia · un proyecto de MVG Learning</span><span>Uso libre para aprender · uso comercial con licencia</span></div></footer>
 <script>
-// Correo que recibe las solicitudes (cámbialo por el tuyo). Más adelante se conectará al Google Sheet.
-var AZ_CORREO='CORREO@EJEMPLO.COM';
+var AZ_ENDPOINT='https://script.google.com/macros/s/AKfycbwMII06Sm70qSjqKVxKuE27Y42U3O43tol2Ze6XnuCWqXDYh37EC7TxQgmc6Xx4mpRcvQ/exec';
 document.querySelectorAll('[data-plan]').forEach(function(a){a.addEventListener('click',function(){document.getElementById('planInput').value=a.dataset.plan;});});
-document.getElementById('formSolicitud').addEventListener('submit',function(e){e.preventDefault();var f=new FormData(e.target),t='';
-f.forEach(function(v,k){t+=k+': '+v+'\n';});
-document.getElementById('aviso').style.display='block';
-location.href='mailto:'+AZ_CORREO+'?subject='+encodeURIComponent('Solicitud de academia Ajedrezia')+'&body='+encodeURIComponent(t);});
+document.getElementById('formSolicitud').addEventListener('submit',function(e){
+  e.preventDefault();var f=new FormData(e.target),ev={type:'solicitud_academia',timestamp:new Date().toISOString()};
+  f.forEach(function(v,k){ev[k]=String(v).trim();});
+  var av=document.getElementById('aviso'),bt=document.getElementById('btnEnviar');
+  bt.disabled=true;bt.textContent='Enviando…';
+  fetch(AZ_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({source:'Ajedrezia',events:[ev]})})
+   .then(function(r){return r.json();}).then(function(j){if(!j||!j.ok)throw 0;
+     av.style.display='block';av.textContent='¡Gracias, '+(ev.nombre||'profesor')+'! Recibimos tu solicitud. Te escribiremos a '+ev.correo+' con el enlace de tu academia.';
+     e.target.reset();bt.textContent='Solicitud enviada';})
+   .catch(function(){av.style.display='block';av.style.background='#FBEBD2';av.style.color='#7A4A0B';
+     av.textContent='No pudimos enviar la solicitud. Revisa tu conexión e inténtalo de nuevo.';bt.disabled=false;bt.textContent='Enviar solicitud';});
+});
 </script>
 </body>
 </html>

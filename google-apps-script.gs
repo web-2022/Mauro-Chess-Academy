@@ -40,6 +40,10 @@ const SHEETS = {
     "alumnoCode","academia","userId","displayName","topicsCompleted","totalXP",
     "device","updatedAt","snapshot"
   ],
+  Academias: [
+    "slug","academia","profesor","correo","alumnos","plan","color","estado","activar",
+    "clave","prefijo","enlace","vencimiento","fechaSolicitud","fechaActivacion","observaciones"
+  ],
   Mastery: [
     "userId","topicId","topicName","concept","correct","wrong","firstTry",
     "hints","coach","score","updatedAt"
@@ -106,6 +110,12 @@ function upsert_(sheetName,keyFields,obj){
 
 function handleEvent_(e){
   const now=e.timestamp || new Date().toISOString();
+
+  // Ajedrezia: solicitud de un profesor para crear su academia.
+  if(e.type==="solicitud_academia"){
+    nuevaSolicitud_(e);
+    return;
+  }
 
   // Ajedrezia: respaldo completo del avance (una fila por alumno).
   if(e.type==="backup"){
@@ -194,9 +204,100 @@ function doGet(request){
     }
     return json_({ok:true,found:false});
   }
+  if(p.action==="academia" && p.slug){
+    const a=buscarAcademia_(p.slug);
+    if(!a) return json_({ok:true,found:false});
+    return json_({ok:true,found:true,slug:a.slug,nombre:a.academia,color:a.color,prefijo:a.prefijo,
+      estado:a.estado,vencimiento:a.vencimiento});
+  }
   return json_({ok:true,service:"Ajedrezia · Academia Mauro"});
 }
 
 function json_(obj){
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+
+/* =====================================================
+   AJEDREZIA · ACADEMIAS DE PROFESORES
+   1) Ejecuta setupAcademias() una vez (crea la pestaña y las casillas).
+   2) Las solicitudes del formulario «Para profesores» llegan como «Pendiente».
+   3) Marca la casilla «activar» de una fila y luego usa el menú
+      Ajedrezia → «Activar academias marcadas».
+===================================================== */
+
+const URL_SITIO = "https://web-2022.github.io/Mauro-Chess-Academy/";
+const DIAS_PILOTO = 30;
+
+function setupAcademias(){
+  const sh=ensureSheet_("Academias");
+  const col=SHEETS.Academias.indexOf("activar")+1;
+  sh.getRange(2,col,999,1).insertCheckboxes();
+  return "Pestaña Academias lista.";
+}
+
+function onOpen(){
+  try{
+    SpreadsheetApp.getUi().createMenu("Ajedrezia")
+      .addItem("Activar academias marcadas","activarAcademias")
+      .addItem("Preparar pestaña Academias","setupAcademias")
+      .addToUi();
+  }catch(err){}
+}
+
+function slugify_(t){
+  return String(t||"academia").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/^academia\s+(de\s+)?/,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,24) || "academia";
+}
+
+function filasAcademias_(){
+  const sh=ensureSheet_("Academias");
+  const H=SHEETS.Academias, last=sh.getLastRow();
+  if(last<2) return {sh,H,rows:[]};
+  const values=sh.getRange(2,1,last-1,H.length).getValues();
+  return {sh,H,rows:values.map((v,i)=>{const o={_row:i+2};H.forEach((h,j)=>o[h]=v[j]);return o;})};
+}
+
+function buscarAcademia_(slug){
+  slug=String(slug).toLowerCase();
+  return filasAcademias_().rows.find(r=>String(r.slug).toLowerCase()===slug)||null;
+}
+
+function nuevaSolicitud_(e){
+  const {sh,H,rows}=filasAcademias_();
+  let base=slugify_(e.academia), slug=base, n=2;
+  const usados=new Set(rows.map(r=>String(r.slug)).concat(["mauro","ajedrezia"]));
+  while(usados.has(slug)) slug=base+"-"+(n++);
+  const fila={slug,academia:e.academia||"",profesor:e.nombre||"",correo:e.correo||"",
+    alumnos:e.alumnos||"",plan:e.plan||"",color:e.color||"#1E5A43",estado:"Pendiente",
+    activar:false,fechaSolicitud:new Date(),observaciones:e.mensaje||""};
+  sh.appendRow(rowFrom_(H,fila));
+  sh.getRange(sh.getLastRow(),H.indexOf("activar")+1).insertCheckboxes();
+}
+
+function codigo_(n){
+  const abc="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";
+  for(let i=0;i<n;i++) s+=abc[Math.floor(Math.random()*abc.length)];
+  return s;
+}
+
+function activarAcademias(){
+  const {sh,H,rows}=filasAcademias_();
+  const prefijos=new Set(rows.map(r=>String(r.prefijo)).filter(Boolean).concat(["MAU","AJE"]));
+  let activadas=0;
+  rows.forEach(r=>{
+    if(r.activar!==true || r.estado==="Activa") return;
+    let pre=String(r.slug).replace(/[^a-z]/g,"").slice(0,3).toUpperCase()||"ACA";
+    while(prefijos.has(pre)) pre=pre.slice(0,2)+codigo_(1);
+    prefijos.add(pre);
+    const venc=new Date(); venc.setDate(venc.getDate()+DIAS_PILOTO);
+    const upd={clave:r.clave||("PROF-"+codigo_(6)),prefijo:pre,
+      enlace:URL_SITIO+"ajedrezia.html?academia="+r.slug,vencimiento:venc,
+      fechaActivacion:new Date(),estado:"Activa"};
+    Object.keys(upd).forEach(k=>sh.getRange(r._row,H.indexOf(k)+1).setValue(upd[k]));
+    activadas++;
+  });
+  return activadas+" academia(s) activada(s).";
 }
