@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel del profesor · Ajedrezia</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1E5A43">
+<link rel="icon" href="img/ajedrezia-logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/ajedrezia.css?v=1">
+<style>
+.pn-top{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin:32px 0 20px}
+.pn-top h1{margin:0;font-size:clamp(28px,4vw,40px)}
+.pn-top p{margin:4px 0 0;color:var(--gris)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
+.stats .card b{display:block;font-family:'DM Serif Display',serif;font-weight:400;font-size:36px;line-height:1.1}
+.stats .card span{color:var(--gris);font-size:15px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.tools input{flex:1;min-width:200px;padding:12px 14px;border:1px solid #CFC7B5;border-radius:10px;font:inherit;background:#fff}
+.tabla{overflow-x:auto;background:#fff;border:1px solid var(--linea);border-radius:16px}
+.tabla table{width:100%;border-collapse:collapse;min-width:760px}
+.tabla th{text-align:left;font-size:13px;color:var(--gris2);padding:12px 14px;border-bottom:1px solid var(--linea);white-space:nowrap}
+.tabla th button{all:unset;cursor:pointer;font-weight:700}
+.tabla td{padding:12px 14px;border-top:1px solid #F0EBDF;vertical-align:top;font-size:15px}
+.tabla tr.fila{cursor:pointer}.tabla tr.fila:hover td{background:#FAF7F0}
+.cod{font-family:ui-monospace,Menlo,monospace;font-weight:700}
+.inactivo{color:#9A3412;font-weight:600}
+.detalle td{background:#FAF7F0}
+.detalle ul{margin:6px 0 0;padding-left:18px}
+.login{max-width:440px;margin:56px auto}
+.login form{display:grid;gap:14px}
+.login label{display:grid;gap:6px;font-weight:600;font-size:15px}
+.login input{padding:12px 14px;border:1px solid #CFC7B5;border-radius:10px;font:inherit;font-weight:400;background:#fff}
+.error{color:#9A3412;font-weight:600;margin:0}
+.vacio{padding:28px;text-align:center;color:var(--gris)}
+</style>
+</head>
+<body>
+<header class="az-head"><div class="az-nav">
+<a class="az-brand" href="ajedrezia.html"><img src="img/ajedrezia-logo.svg" alt="">Ajedrezia</a>
+<div class="az-links"><a href="ajedrezia-profesores.html">Para profesores</a><a href="ruta-chess.html">Ver el curso</a></div>
+<button class="btn btn-borde" type="button" id="salir" hidden style="padding:9px 16px;font-size:15px">Salir</button>
+</div></header>
+<main class="wrap">
+
+<section class="login card" id="vistaLogin">
+<h1 class="serif" style="margin:0 0 6px;font-size:34px">Panel del profesor</h1>
+<p style="margin:0 0 18px;color:var(--gris)">Entra con el identificador de tu academia y tu clave de profesor.</p>
+<form id="formLogin">
+<label>Identificador de la academia<input id="inSlug" placeholder="Ej.: juan-perez" autocomplete="username" required></label>
+<label>Clave de profesor<input id="inClave" type="password" placeholder="PROF-XXXXXX" autocomplete="current-password" required></label>
+<button class="btn btn-verde" type="submit" id="btnEntrar">Entrar</button>
+<p class="error" id="errLogin" aria-live="polite"></p>
+</form>
+</section>
+
+<section id="vistaPanel" hidden>
+<div class="pn-top">
+<div><h1 class="serif" id="pnNombre">—</h1><p id="pnInfo"></p></div>
+<div class="acciones"><button class="btn btn-borde" type="button" id="btnActualizar">Actualizar</button><button class="btn btn-verde" type="button" id="btnCsv">Descargar Excel (CSV)</button></div>
+</div>
+<div class="stats">
+<div class="card"><b id="stAlumnos">0</b><span>alumnos</span></div>
+<div class="card"><b id="stActivos">0</b><span>activos en los últimos 7 días</span></div>
+<div class="card"><b id="stTemas">0</b><span>temas completados en promedio</span></div>
+<div class="card"><b id="stAlertas">0</b><span>alumnos con puntos débiles</span></div>
+</div>
+<p class="card" style="margin:0 0 16px;padding:14px 18px"><b>Enlace para tus alumnos:</b> <a id="pnEnlace" href="#"></a> <button class="btn btn-borde" type="button" id="btnCopiarEnlace" style="padding:6px 12px;font-size:14px;margin-left:6px">Copiar</button></p>
+<div class="tools"><label for="buscar" style="position:absolute;left:-9999px">Buscar alumno</label><input id="buscar" placeholder="Buscar por código o nombre"></div>
+<div class="tabla"><table>
+<thead><tr>
+<th><button data-ord="codigo">Alumno</button></th>
+<th><button data-ord="temaActual">Va en</button></th>
+<th><button data-ord="temas">Completados</button></th>
+<th><button data-ord="xp">XP</button></th>
+<th><button data-ord="debiles">Puntos débiles</button></th>
+<th><button data-ord="actualizado">Última actividad</button></th>
+</tr></thead>
+<tbody id="cuerpo"></tbody>
+</table></div>
+<p style="color:var(--gris2);font-size:14px">Toca un alumno para ver su detalle. Los datos se actualizan cuando el alumno usa el curso con internet.</p>
+</section>
+</main>
+<footer class="az-foot"><div class="wrap"><span>Ajedrezia · un proyecto de MVG Learning</span><span>Panel del profesor · versión piloto</span></div></footer>
+
+<script src="js/mauro-catalog.js?v=202"></script>
+<script>
+(function(){
+var ENDPOINT='https://script.google.com/macros/s/AKfycbwMII06Sm70qSjqKVxKuE27Y42U3O43tol2Ze6XnuCWqXDYh37EC7TxQgmc6Xx4mpRcvQ/exec';
+var TEMAS={};(window.MauroCatalog||[]).forEach(function(m){(m.topics||[]).forEach(function(t){TEMAS[t.id]=t.title;});});
+var CONCEPTOS={movimiento:'Movimiento',capturar:'Capturas',jaque:'Jaque',mate:'Mates',actividad:'Actividad de las piezas',oposicion:'Oposición',color:'Color de casillas',horquilla:'Horquilla',doble:'Doble ataque',apertura:'Apertura',columnas:'Columnas abiertas',reglas:'Reglas',atacar:'Ataque y defensa',negras:'Jugar con negras'};
+var datos=null,orden={k:'actualizado',dir:-1},abiertos={};
+var $=function(id){return document.getElementById(id);};
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function tema(n){return n?(n+' · '+(TEMAS[n]||'Tema '+n)):'—';}
+function concepto(c){return CONCEPTOS[c]||String(c).replace(/[-_]/g,' ').replace(/^./,function(x){return x.toUpperCase();});}
+function fecha(f){if(!f)return'—';var d=new Date(f);if(isNaN(d))return'—';var dias=Math.floor((Date.now()-d)/864e5);return dias<=0?'Hoy':dias===1?'Ayer':dias<7?'Hace '+dias+' días':d.toLocaleDateString('es-PE');}
+function sesion(){try{return JSON.parse(sessionStorage.getItem('az_panel')||'null');}catch(e){return null;}}
+
+function cargar(slug,clave){
+  $('btnEntrar').disabled=true;$('errLogin').textContent='';
+  return fetch(ENDPOINT+'?action=panel&slug='+encodeURIComponent(slug)+'&clave='+encodeURIComponent(clave),{cache:'no-store'})
+  .then(function(r){return r.json();}).then(function(j){
+    $('btnEntrar').disabled=false;
+    if(!j||!j.ok){$('errLogin').textContent=(j&&j.error)||'No se pudo entrar.';$('vistaLogin').hidden=false;$('vistaPanel').hidden=true;return;}
+    try{sessionStorage.setItem('az_panel',JSON.stringify({slug:slug,clave:clave}));}catch(e){}
+    datos=j;mostrar();
+  }).catch(function(){$('btnEntrar').disabled=false;$('errLogin').textContent='No se pudo conectar. Revisa tu internet.';});
+}
+
+function mostrar(){
+  var a=datos.academia,al=datos.alumnos;
+  $('vistaLogin').hidden=true;$('vistaPanel').hidden=false;$('salir').hidden=false;
+  $('pnNombre').textContent=a.nombre;
+  var v=a.vencimiento?new Date(a.vencimiento):null;
+  $('pnInfo').innerHTML='Profesor: '+esc(a.profesor)+' · Plan '+esc(a.plan||'—')+' · '+(a.estado==='Activa'&&(!v||v>new Date())?'Activa'+(v?' hasta el '+v.toLocaleDateString('es-PE'):''):'<span class="inactivo">Acceso vencido o inactivo</span>');
+  var link=location.href.split('panel.html')[0]+'ajedrezia.html?academia='+a.slug;
+  $('pnEnlace').textContent=link;$('pnEnlace').href=link;
+  $('stAlumnos').textContent=al.length;
+  $('stActivos').textContent=al.filter(function(x){return x.actualizado&&(Date.now()-new Date(x.actualizado))<7*864e5;}).length;
+  $('stTemas').textContent=al.length?(Math.round(al.reduce(function(s,x){return s+(+x.temas||0);},0)/al.length*10)/10):0;
+  $('stAlertas').textContent=al.filter(function(x){return x.debiles&&x.debiles.length;}).length;
+  pintar();
+}
+
+function pintar(){
+  var q=$('buscar').value.trim().toLowerCase();
+  var lista=datos.alumnos.filter(function(x){return !q||String(x.codigo).toLowerCase().indexOf(q)>=0||String(x.nombre).toLowerCase().indexOf(q)>=0;});
+  lista.sort(function(a,b){var k=orden.k,x=a[k],y=b[k];
+    if(k==='debiles'){x=(a.debiles||[]).length;y=(b.debiles||[]).length;}
+    if(k==='actualizado'){x=new Date(x||0).getTime();y=new Date(y||0).getTime();}
+    return (x>y?1:x<y?-1:0)*orden.dir;});
+  if(!lista.length){$('cuerpo').innerHTML='<tr><td colspan="6" class="vacio">'+(datos.alumnos.length?'Ningún alumno coincide con la búsqueda.':'Aún no hay alumnos. Comparte tu enlace: cada alumno aparecerá aquí después de su primera clase.')+'</td></tr>';return;}
+  $('cuerpo').innerHTML=lista.map(function(x){
+    var deb=(x.debiles||[]);
+    var fila='<tr class="fila" data-cod="'+esc(x.codigo)+'" tabindex="0"><td><span class="cod">'+esc(x.codigo)+'</span>'+(x.nombre?'<br><small>'+esc(x.nombre)+'</small>':'')+'</td>'+
+      '<td>'+esc(tema(x.temaActual))+(x.pasoActual?'<br><small>paso '+x.pasoActual+'</small>':'')+'</td>'+
+      '<td>'+esc(x.temas)+'</td><td>'+esc(x.xp)+'</td>'+
+      '<td>'+(deb.length?deb.slice(0,2).map(function(d){return '<span class="pill">'+esc(concepto(d.concepto))+'</span>';}).join(' '):'<span class="pill ok">Sin alertas</span>')+'</td>'+
+      '<td>'+esc(fecha(x.actualizado))+'</td></tr>';
+    if(abiertos[x.codigo]){
+      fila+='<tr class="detalle"><td colspan="6"><b>Temas completados:</b> '+((x.completados||[]).length?x.completados.map(function(n){return esc(tema(n));}).join(', '):'ninguno todavía')+
+        '<br><b>Puntos débiles:</b>'+(deb.length?'<ul>'+deb.map(function(d){return '<li>'+esc(concepto(d.concepto))+' (tema '+d.tema+') · '+d.score+'% de aciertos</li>';}).join('')+'</ul>':' ninguno')+
+        '<br><small>Dispositivo: '+esc(x.dispositivo||'—')+'</small></td></tr>';
+    }
+    return fila;}).join('');
+}
+
+$('formLogin').onsubmit=function(e){e.preventDefault();cargar($('inSlug').value.trim().toLowerCase(),$('inClave').value.trim());};
+$('btnActualizar').onclick=function(){var s=sesion();if(s)cargar(s.slug,s.clave);};
+$('salir').onclick=function(){try{sessionStorage.removeItem('az_panel');}catch(e){}location.reload();};
+$('buscar').oninput=pintar;
+document.querySelectorAll('[data-ord]').forEach(function(b){b.onclick=function(){var k=b.dataset.ord;orden=orden.k===k?{k:k,dir:-orden.dir}:{k:k,dir:-1};pintar();};});
+$('cuerpo').addEventListener('click',function(e){var tr=e.target.closest('tr.fila');if(!tr)return;var c=tr.dataset.cod;abiertos[c]=!abiertos[c];pintar();});
+$('cuerpo').addEventListener('keydown',function(e){if(e.key==='Enter'){var tr=e.target.closest('tr.fila');if(tr)tr.click();}});
+$('btnCopiarEnlace').onclick=function(){var t=$('pnEnlace').textContent,b=this;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='¡Copiado!';setTimeout(function(){b.textContent='Copiar';},1500);}).catch(function(){prompt('Copia el enlace:',t);});};
+$('btnCsv').onclick=function(){
+  var filas=[['Codigo','Nombre','Tema actual','Paso','Temas completados','XP','Puntos debiles','Ultima actividad']];
+  datos.alumnos.forEach(function(x){filas.push([x.codigo,x.nombre,tema(x.temaActual),x.pasoActual||'',x.temas,x.xp,(x.debiles||[]).map(function(d){return concepto(d.concepto)+' (T'+d.tema+')';}).join('; '),x.actualizado?new Date(x.actualizado).toLocaleString('es-PE'):'']);});
+  var csv='﻿'+filas.map(function(f){return f.map(function(c){return '"'+String(c==null?'':c).replace(/"/g,'""')+'"';}).join(';');}).join('\r\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='alumnos-'+datos.academia.slug+'.csv';a.click();
+};
+var q=new URLSearchParams(location.search).get('academia');if(q)$('inSlug').value=q;
+var s=sesion();if(s){$('inSlug').value=s.slug;cargar(s.slug,s.clave);}
+})();
+</script>
+</body>
+</html>

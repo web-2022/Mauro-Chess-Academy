@@ -204,6 +204,9 @@ function doGet(request){
     }
     return json_({ok:true,found:false});
   }
+  if(p.action==="panel" && p.slug && p.clave){
+    return json_(panelProfesor_(p.slug,p.clave));
+  }
   if(p.action==="academia" && p.slug){
     const a=buscarAcademia_(p.slug);
     if(!a) return json_({ok:true,found:false});
@@ -300,4 +303,56 @@ function activarAcademias(){
     activadas++;
   });
   return activadas+" academia(s) activada(s).";
+}
+
+
+/* =====================================================
+   AJEDREZIA · PANEL DEL PROFESOR (solo lectura)
+   panel.html pide ?action=panel&slug=...&clave=PROF-...
+===================================================== */
+function panelProfesor_(slug,clave){
+  const a=buscarAcademia_(slug);
+  if(!a || String(a.clave).trim()==="" || String(a.clave).trim().toUpperCase()!==String(clave).trim().toUpperCase()){
+    return {ok:false,error:"Academia o clave incorrecta."};
+  }
+  const sh=ensureSheet_("Respaldo"), H=SHEETS.Respaldo, last=sh.getLastRow();
+  const alumnos=[];
+  if(last>1){
+    sh.getRange(2,1,last-1,H.length).getValues().forEach(v=>{
+      const r={}; H.forEach((h,i)=>r[h]=v[i]);
+      if(String(r.academia).toLowerCase()!==String(a.slug).toLowerCase()) return;
+      let snap={}; try{ snap=JSON.parse(r.snapshot||"{}"); }catch(err){}
+      const res=resumenAlumno_(snap);
+      alumnos.push({codigo:r.alumnoCode,nombre:r.displayName||"",temas:r.topicsCompleted||0,xp:r.totalXP||0,
+        dispositivo:r.device||"",actualizado:r.updatedAt,temaActual:res.temaActual,pasoActual:res.pasoActual,
+        completados:res.completados,debiles:res.debiles});
+    });
+  }
+  return {ok:true,academia:{slug:a.slug,nombre:a.academia,profesor:a.profesor,plan:a.plan,estado:a.estado,
+    vencimiento:a.vencimiento,color:a.color},alumnos};
+}
+
+function resumenAlumno_(snap){
+  const completados=[], debiles=[];
+  let temaActual=0, pasoActual=0;
+  Object.keys(snap).forEach(k=>{
+    let v=null; try{ v=JSON.parse(snap[k]); }catch(err){ return; }
+    let m=k.match(/^mauro_chess_topic(\d+)_v1$/);
+    if(m && v && v.completed) completados.push(+m[1]);
+    m=k.match(/^mauro_lesson_resume_(\d+)_v1$/);
+    if(m && v && !v.completed && +m[1]>=temaActual){ temaActual=+m[1]; pasoActual=(+v.step||0)+1; }
+    m=k.match(/^mauro_chess_topic(\d+)_adaptive_v1$/);
+    if(m && v && v.concepts){
+      Object.keys(v.concepts).forEach(c=>{
+        const x=v.concepts[c]||{}, ok=+x.correct||0, mal=+x.wrong||0, pistas=+x.hints||0;
+        const total=ok+mal; if(total<2) return;
+        const score=ok/(total+pistas*0.5);
+        if(score<0.6) debiles.push({tema:+m[1],concepto:c,score:Math.round(score*100)});
+      });
+    }
+  });
+  completados.sort((a,b)=>a-b);
+  if(!temaActual) temaActual=(completados.length?Math.max.apply(null,completados):0)+1;
+  debiles.sort((a,b)=>a.score-b.score);
+  return {temaActual,pasoActual,completados,debiles:debiles.slice(0,5)};
 }
