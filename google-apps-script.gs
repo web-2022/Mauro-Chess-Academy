@@ -42,7 +42,8 @@ const SHEETS = {
   ],
   Academias: [
     "slug","academia","profesor","correo","alumnos","plan","color","estado","activar",
-    "clave","prefijo","enlace","vencimiento","fechaSolicitud","fechaActivacion","observaciones"
+    "clave","prefijo","enlace","vencimiento","fechaSolicitud","fechaActivacion","observaciones",
+    "bienvenida","avisoVencimiento"
   ],
   Mastery: [
     "userId","topicId","topicName","concept","correct","wrong","firstTry",
@@ -234,6 +235,7 @@ const DIAS_PILOTO = 30;
 
 function setupAcademias(){
   const sh=ensureSheet_("Academias");
+  encabezadosAcademias_();
   const col=SHEETS.Academias.indexOf("activar")+1;
   sh.getRange(2,col,999,1).insertCheckboxes();
   return "Pestaña Academias lista.";
@@ -243,6 +245,9 @@ function onOpen(){
   try{
     SpreadsheetApp.getUi().createMenu("Ajedrezia")
       .addItem("Activar academias marcadas","activarAcademias")
+      .addItem("Reenviar bienvenida a las filas marcadas","reenviarBienvenida")
+      .addItem("Revisar vencimientos ahora","revisarVencimientos")
+      .addItem("Activar revisión diaria de vencimientos","crearDisparadorDiario")
       .addItem("Preparar pestaña Academias","setupAcademias")
       .addToUi();
   }catch(err){}
@@ -255,7 +260,13 @@ function slugify_(t){
     .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,24) || "academia";
 }
 
+function encabezadosAcademias_(){
+  const sh=ensureSheet_("Academias"), H=SHEETS.Academias;
+  sh.getRange(1,1,1,H.length).setValues([H]).setFontWeight("bold");
+}
+
 function filasAcademias_(){
+  encabezadosAcademias_();
   const sh=ensureSheet_("Academias");
   const H=SHEETS.Academias, last=sh.getLastRow();
   if(last<2) return {sh,H,rows:[]};
@@ -301,6 +312,7 @@ function activarAcademias(){
       fechaActivacion:new Date(),estado:"Activa"};
     Object.keys(upd).forEach(k=>sh.getRange(r._row,H.indexOf(k)+1).setValue(upd[k]));
     activadas++;
+    if(enviarBienvenida_(Object.assign({},r,upd))) sh.getRange(r._row,H.indexOf("bienvenida")+1).setValue(new Date());
   });
   return activadas+" academia(s) activada(s).";
 }
@@ -355,4 +367,84 @@ function resumenAlumno_(snap){
   if(!temaActual) temaActual=(completados.length?Math.max.apply(null,completados):0)+1;
   debiles.sort((a,b)=>a.score-b.score);
   return {temaActual,pasoActual,completados,debiles:debiles.slice(0,5)};
+}
+
+
+/* =====================================================
+   AJEDREZIA · CORREOS AUTOMÁTICOS
+   - Bienvenida al activar una academia (enlace, clave y panel).
+   - Aviso 5 días antes del vencimiento y el día que vence (estado → «Vencida»).
+   Ejecuta una vez «Activar revisión diaria de vencimientos» desde el menú Ajedrezia.
+===================================================== */
+const DIAS_AVISO = 5;
+const REMITENTE = "Ajedrezia";
+
+function fechaTxt_(d){ return Utilities.formatDate(new Date(d), "America/Lima", "dd/MM/yyyy"); }
+
+function correoHtml_(titulo, cuerpo){
+  return '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#1B1F24">'+
+    '<div style="background:#1E5A43;color:#fff;padding:18px 22px;border-radius:12px 12px 0 0;font-size:22px"><b>Ajedrezia</b></div>'+
+    '<div style="border:1px solid #E2DCCD;border-top:0;padding:22px;border-radius:0 0 12px 12px">'+
+    '<h2 style="margin:0 0 12px;font-size:20px">'+titulo+'</h2>'+cuerpo+
+    '<p style="color:#5B616A;font-size:13px;margin-top:24px">Ajedrezia · un proyecto de MVG Learning</p></div></div>';
+}
+
+function enviarBienvenida_(a){
+  if(!a.correo) return false;
+  const panel=URL_SITIO+"panel.html?academia="+a.slug;
+  const cuerpo='<p>Hola '+(a.profesor||"")+',</p><p>¡Tu academia <b>'+a.academia+'</b> ya está activa en Ajedrezia!</p>'+
+    '<p><b>1. Enlace para tus alumnos</b><br><a href="'+a.enlace+'">'+a.enlace+'</a><br>Compártelo por WhatsApp o en tu web. Cada alumno verá el curso con el nombre de tu academia.</p>'+
+    '<p><b>2. Tu panel de profesor</b><br><a href="'+panel+'">'+panel+'</a><br>Identificador: <b>'+a.slug+'</b><br>Clave: <b>'+a.clave+'</b><br>No compartas tu clave con tus alumnos.</p>'+
+    '<p><b>3. Tu plan</b><br>'+(a.plan||"Piloto")+' · activo hasta el <b>'+fechaTxt_(a.vencimiento)+'</b>.</p>'+
+    '<p>Si tienes dudas, responde a este correo.</p>';
+  try{
+    MailApp.sendEmail({to:a.correo,subject:"Tu academia "+a.academia+" ya está activa en Ajedrezia",
+      htmlBody:correoHtml_("¡Bienvenido a Ajedrezia!",cuerpo),name:REMITENTE});
+    return true;
+  }catch(err){ return false; }
+}
+
+function reenviarBienvenida(){
+  const {sh,H,rows}=filasAcademias_(); let n=0;
+  rows.forEach(r=>{
+    if(r.activar===true && r.estado==="Activa" && enviarBienvenida_(r)){
+      sh.getRange(r._row,H.indexOf("bienvenida")+1).setValue(new Date()); n++;
+    }
+  });
+  return n+" correo(s) de bienvenida enviados.";
+}
+
+function revisarVencimientos(){
+  const {sh,H,rows}=filasAcademias_();
+  const hoy=new Date(); hoy.setHours(0,0,0,0);
+  let n=0;
+  rows.forEach(r=>{
+    if(!r.vencimiento || !r.correo || (r.estado!=="Activa" && r.estado!=="Vencida")) return;
+    const v=new Date(r.vencimiento); v.setHours(0,0,0,0);
+    const dias=Math.round((v-hoy)/864e5);
+    const ya=String(r.avisoVencimiento||"");
+    let tipo=null;
+    if(dias<=0 && r.estado==="Activa") tipo="vencida";
+    else if(dias>0 && dias<=DIAS_AVISO && ya.indexOf("previo:"+fechaTxt_(v))<0) tipo="previo";
+    if(!tipo) return;
+    const panel=URL_SITIO+"panel.html?academia="+r.slug;
+    const cuerpo= tipo==="previo"
+      ? '<p>Hola '+(r.profesor||"")+',</p><p>El plan de <b>'+r.academia+'</b> vence el <b>'+fechaTxt_(v)+'</b> (en '+dias+' día'+(dias===1?'':'s')+').</p><p>Para que tus alumnos no pierdan el acceso, renueva tu plan respondiendo a este correo.</p><p><a href="'+panel+'">Ver mi panel</a></p>'
+      : '<p>Hola '+(r.profesor||"")+',</p><p>El plan de <b>'+r.academia+'</b> venció el <b>'+fechaTxt_(v)+'</b>. Tus alumnos verán un aviso hasta que lo renueves. Su avance no se pierde.</p><p>Responde a este correo para renovarlo.</p>';
+    try{
+      MailApp.sendEmail({to:r.correo,
+        subject: tipo==="previo" ? "Tu plan de Ajedrezia vence pronto" : "Tu plan de Ajedrezia venció",
+        htmlBody:correoHtml_(tipo==="previo"?"Tu plan vence pronto":"Tu plan venció",cuerpo),name:REMITENTE});
+      if(tipo==="vencida") sh.getRange(r._row,H.indexOf("estado")+1).setValue("Vencida");
+      sh.getRange(r._row,H.indexOf("avisoVencimiento")+1).setValue(tipo+":"+fechaTxt_(v)+" "+ya);
+      n++;
+    }catch(err){}
+  });
+  return n+" aviso(s) enviados.";
+}
+
+function crearDisparadorDiario(){
+  ScriptApp.getProjectTriggers().forEach(t=>{ if(t.getHandlerFunction()==="revisarVencimientos") ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger("revisarVencimientos").timeBased().everyDays(1).atHour(8).create();
+  return "Revisión diaria activada (8 a. m.).";
 }
