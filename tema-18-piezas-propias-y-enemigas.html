@@ -1805,14 +1805,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['piezas-propias-y-enemigas']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema dieciocho: ya distingues piezas propias y enemigas y proteges tus piezas colgadas.');
+ speak('Excelente. Has completado el tema dieciocho: ya distingues piezas propias y enemigas y proteges tus piezas colgadas. Ya puedes pasar al tema diecinueve: casillas ocupadas y libres.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-18-piezas-propias-y-enemigas.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-19-casillas-ocupadas-y-libres.html'}
 
 renderBoard();
 try{
