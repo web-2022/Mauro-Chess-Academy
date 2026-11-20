@@ -1,4 +1,4 @@
-const CACHE_NAME = "ajedrez-mauro-v261";
+const CACHE_NAME = "ajedrez-mauro-v262";
 
 /*
   ACADEMIA MAURO

@@ -467,7 +467,7 @@ const steps=[
  type:'learn',title:'¿Qué piezas me pueden capturar?',
  text:'Después de cada jugada del rival, pregúntate qué piezas tuyas están atacadas. Una pieza atacada y sin defensa (colgada) está en peligro. También está en peligro si la ataca una pieza más barata que ella, aunque esté defendida.',
  audio:'Después de cada jugada del rival, pregúntate qué piezas tuyas están atacadas. Están en peligro si no tienen defensa o si las ataca una pieza más barata.',
- position:'2r3k1/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Torre negra en c8',
+ position:'2r4k/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Torre negra en c8',
  facts:[
   ['Atacante','Torre c8','Mira toda la columna c.','column:c'],
   ['Atacada','Alfil c4','Sin defensa: está colgado.','sq:c4'],
@@ -478,7 +478,7 @@ const steps=[
 {
  type:'challenge',title:'Toca tu pieza atacada',
  question:'Juegas con blancas. Toca la pieza tuya que el rival puede capturar.',
- position:'2r3k1/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Juegas con blancas',
+ position:'2r4k/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Juegas con blancas',
  boardChallenge:'sq:c4',
  hint1:'Sigue la columna de la torre negra.',hint2:'c4.',
  success:'¡Correcto! El alfil de c4 está atacado y sin defensa.'
@@ -487,7 +487,7 @@ const steps=[
  type:'learn',title:'Cuatro formas de salvar una pieza',
  text:'Cuando una pieza tuya está atacada tienes cuatro defensas: 1) moverla a una casilla segura, 2) defenderla con otra pieza, 3) tapar el ataque poniendo una pieza en medio, o 4) capturar al atacante. Elige la que te deje mejor.',
  audio:'Para salvar una pieza atacada tienes cuatro formas: moverla, defenderla, tapar el ataque o capturar al atacante.',
- position:'2r3k1/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Alfil c4 atacado',
+ position:'2r4k/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Alfil c4 atacado',
  facts:[
   ['1 · Mover','A una casilla segura','Por ejemplo, Ad3 o Ab3.','sq:d3,b3'],
   ['2 · Defender','Con otra pieza','Una pieza propia que vigile c4.','sq:c4'],
@@ -499,9 +499,9 @@ const steps=[
 {
  type:'challenge',title:'Mueve a una casilla segura',
  question:'Salva el alfil: muévelo a una casilla donde nadie lo ataque.',
- position:'2r3k1/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Alfil c4 atacado',
- boardChallenge:'move:c4:d5,e6,d3,e2,f1,b5,a6,b3,a2',
- hint1:'Sal de la columna c.',hint2:'Cuidado con f7: está junto al rey negro.',
+ position:'2r4k/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Alfil c4 atacado',
+ boardChallenge:'move:c4:d5,e6,f7,d3,e2,f1,b5,a6,b3,a2',
+ hint1:'Sal de la columna c.',hint2:'Por ejemplo, Ad3 o Ab3.',
  success:'¡Muy bien! El alfil ya no está en peligro.'
 },
 {
@@ -583,7 +583,7 @@ steps.push(
   hint1:'Recorre los saltos del caballo de c6.',hint2:'b4 y d4.',
   success:'Correcto. El caballo ataca tu alfil de b4 y tu caballo de d4: ¡una horquilla!',
   concept:'atacadas',difficulty:'Aplicar',xpValue:15,
-  easyVariant:{question:'Toca tu pieza atacada por la torre negra.',position:'2r3k1/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Torre negra c8',boardChallenge:'sq:c4',success:'Correcto.'},
+  easyVariant:{question:'Toca tu pieza atacada por la torre negra.',position:'2r4k/8/8/8/2B5/5N2/6PP/6K1 w - - 0 1',positionLabel:'Torre negra c8',boardChallenge:'sq:c4',success:'Correcto.'},
   hardVariant:{question:'¿Cuántas piezas tuyas ataca el caballo de c6?',position:'r5k1/8/2n5/8/1B1N4/8/5PPP/6K1 w - - 0 1',positionLabel:'Caballo negro c6',choices:['2','1','0'],answer:0,success:'Correcto: el alfil de b4 y el caballo de d4.'}
  },
  {

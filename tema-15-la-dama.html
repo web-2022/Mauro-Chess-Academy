@@ -644,8 +644,8 @@ steps.push(
  {
   type:'challenge',phase:'boss',title:'Boss · Mate final',
   question:'Sin pistas: da jaque mate en una jugada con la dama.',
-  position:'7k/8/6K1/8/8/8/8/7Q w - - 0 1',positionLabel:'Rey negro en h8, rey blanco en g6',
-  boardChallenge:'move:h1:h7,a8',
+  position:'7k/4Q3/6K1/8/8/8/8/8 w - - 0 1',positionLabel:'Rey negro en h8, rey blanco en g6',
+  boardChallenge:'move:e7:h7,g7,f8,e8,d8',
   success:'¡Boss completado! Jaque mate con la dama apoyada por el rey.',
   concept:'mate',difficulty:'Descubrir',xpValue:25,noHints:true
  }
@@ -685,7 +685,7 @@ steps.push(
  },
  {
   type:'challenge',phase:'campeones',exNum:3,title:'Ejercicio 3 · A ciegas',
-  question:'🙈 A ciegas. Rey negro en h8, rey blanco en g6 y dama blanca en h1. Las blancas juegan Dh7. ¿Qué pasa?',
+  question:'🙈 A ciegas. Rey negro en h8, rey blanco en g6 y dama blanca en e7. Las blancas juegan Dh7. ¿Qué pasa?',
   choices:['Es jaque mate: el rey g6 protege a la dama','El rey negro captura la dama','Es ahogado'],answer:0,
   why:['Correcto: la dama da jaque desde h7, el rey no puede capturarla porque está defendida por el rey de g6, y g8 y g7 están cubiertas.','No puede: la dama está defendida por el rey blanco.','Hay jaque, así que no es ahogado.'],
   hint1:'¿Quién defiende a la dama en h7?',hint2:'El rey de g6.',
