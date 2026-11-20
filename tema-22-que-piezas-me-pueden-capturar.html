@@ -1781,14 +1781,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['que-piezas-me-pueden-capturar']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema veintidós: ya sabes detectar tus piezas atacadas y salvarlas.');
+ speak('Excelente. Has completado el tema veintidós: ya sabes detectar tus piezas atacadas y salvarlas. Ya puedes pasar al tema veintitrés: el valor de las piezas.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-22-que-piezas-me-pueden-capturar.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-23-valor-basico-de-las-piezas.html'}
 
 renderBoard();
 try{
