@@ -1768,14 +1768,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['jaque-mate']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema veinticinco y todo el módulo uno. Ya sabes dar jaque mate.');
+ speak('Excelente. Has completado el tema veinticinco y todo el módulo uno. Ya sabes dar jaque mate. Ya puedes empezar el módulo dos con el tema veintiséis: defenderse del jaque.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-25-jaque-mate.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-26-defenderse-del-jaque.html'}
 
 renderBoard();
 try{
