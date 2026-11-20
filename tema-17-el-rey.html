@@ -1800,14 +1800,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['el-rey']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema diecisiete: ya dominas el rey y conoces las seis piezas.');
+ speak('Excelente. Has completado el tema diecisiete: ya dominas el rey y conoces las seis piezas. Ya puedes pasar al tema dieciocho: piezas propias y enemigas.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-17-el-rey.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-18-piezas-propias-y-enemigas.html'}
 
 renderBoard();
 try{
