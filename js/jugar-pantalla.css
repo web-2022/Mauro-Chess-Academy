@@ -42,3 +42,95 @@
   body[data-exercise="jugar"] .exercise-board-shell{grid-row:4;justify-self:center}
   body[data-exercise="jugar"] .exercise-action{grid-row:5}
 }
+
+/* Panel derecho sin desplazar la página: cada bloque se encoge y solo listas largas tienen su propio scroll */
+@media (min-width:768px){
+  body[data-exercise="jugar"] .exercise-action{display:flex!important;flex-direction:column;gap:8px;overflow:hidden!important}
+  body[data-exercise="jugar"] .exercise-action>*{flex:none;margin:0!important}
+  body[data-exercise="jugar"] #moveList{flex:0 1 auto;min-height:52px;overflow:auto}
+  body[data-exercise="jugar"] #viewNote,body[data-exercise="jugar"] #varBox{flex:0 1 auto;min-height:56px;overflow:auto}
+  body[data-exercise="jugar"] #anSummary{flex:0 1 auto;min-height:0;overflow:auto}
+  /* Análisis: pestañas Jugadas / Resumen */
+  body.an-on[data-exercise="jugar"] .an-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .an-tabs button{min-height:40px;border-radius:10px;border:1px solid #365777;background:#0b1730;color:#cbd5e1;font:800 .95em system-ui,sans-serif;cursor:pointer}
+  .an-tabs button[aria-selected="true"]{background:linear-gradient(135deg,#22c55e,#38bdf8);color:#03121c;border-color:transparent}
+  body.an-on[data-exercise="jugar"] #playStatus,body.an-on[data-exercise="jugar"] #playTools,body.an-on[data-exercise="jugar"] .captured,body.an-on[data-exercise="jugar"] .exercise-tip{display:none!important}
+  body.an-on[data-exercise="jugar"]:not(.an-tab-sum) #anSummary,body.an-on[data-exercise="jugar"]:not(.an-tab-sum) #anTools,body.an-on[data-exercise="jugar"]:not(.an-tab-sum) #anProgress{display:none!important}
+  body.an-on.an-tab-sum[data-exercise="jugar"] .nav-row,body.an-on.an-tab-sum[data-exercise="jugar"] #moveList,body.an-on.an-tab-sum[data-exercise="jugar"] #viewNote,body.an-on.an-tab-sum[data-exercise="jugar"] #varBox{display:none!important}
+  body.an-on.an-tab-sum[data-exercise="jugar"] #anSummary{flex:1 1 auto}
+  body.an-on[data-exercise="jugar"] .exercise-intro h1{display:none}
+  body.an-on[data-exercise="jugar"] .setup-wrap{margin-top:0}
+  body.an-on[data-exercise="jugar"] .eval-badge{margin:0}
+  body.an-on[data-exercise="jugar"] .nav-row{margin:0;max-width:none}
+}
+/* Monitores muy anchos: jugadas a la izquierda y resumen a la derecha, sin pestañas */
+@media (min-width:1700px){
+  body.an-on[data-exercise="jugar"] .an-tabs{display:none!important}
+  body.an-on[data-exercise="jugar"] .exercise-action{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr) minmax(0,1.3fr) auto;column-gap:16px;row-gap:8px}
+  body.an-on[data-exercise="jugar"] #evalBadge{grid-column:1;grid-row:1}
+  body.an-on[data-exercise="jugar"] #openingLine{grid-column:1;grid-row:2}
+  body.an-on[data-exercise="jugar"] .nav-row{grid-column:1;grid-row:3;display:grid!important}
+  body.an-on[data-exercise="jugar"] #moveList{grid-column:1;grid-row:4;display:flex!important}
+  body.an-on[data-exercise="jugar"] #viewNote{grid-column:1;grid-row:5}
+  body.an-on[data-exercise="jugar"] #varBox{grid-column:1;grid-row:5}
+  body.an-on[data-exercise="jugar"]:not(.an-x) #anSummary{grid-column:2;grid-row:1 / 6;display:block!important;overflow:auto}
+  body.an-on[data-exercise="jugar"]:not(.an-x) #anTools{grid-column:2;grid-row:6;display:flex!important;align-self:end}
+  body.an-on[data-exercise="jugar"] #anProgress{display:none!important}
+}
+
+/* Análisis compacto: «Nueva partida» sube a la barra superior y todo se ajusta a la altura */
+@media (min-width:768px){
+  body.an-on[data-exercise="jugar"] .exercise-status{display:none!important}
+  body.an-on[data-exercise="jugar"] .exercise-intro{grid-row:1!important;justify-self:end;align-self:start;z-index:2;background:none!important;border:0!important;box-shadow:none!important;padding:6px 8px!important;max-width:100%}
+  body.an-on[data-exercise="jugar"] .exercise-intro .setup-wrap>summary{min-height:38px!important;padding:6px 12px!important;font-size:.9em!important}
+  body.an-on[data-exercise="jugar"] .exercise-intro .setup-wrap[open]{background:#0b1730;border:1px solid #29415c;border-radius:14px;padding:8px}
+  body.an-on[data-exercise="jugar"] .eval-badge{padding:4px 10px;gap:4px 10px}
+  body.an-on[data-exercise="jugar"] .eval-badge .eb-num{font-size:1.1em;padding:1px 8px}
+  body.an-on[data-exercise="jugar"] .opening-line{font-size:.85em;margin:0;gap:2px 14px}
+  body.an-on[data-exercise="jugar"] .an-tabs button{min-height:36px}
+  body.an-on[data-exercise="jugar"] .nav-row .rv-btn{min-height:38px!important}
+  body.an-on[data-exercise="jugar"] .var-head{margin:0 0 4px;font-size:.92em}
+  body.an-on[data-exercise="jugar"] .var-box{padding:8px 10px;margin:0}
+  body.an-on[data-exercise="jugar"] .an-summary{margin:0;padding:10px;font-size:.88em}
+  body.an-on[data-exercise="jugar"] .an-summary .an-row{margin:.1rem 0}
+  body.an-on[data-exercise="jugar"] .an-graph{height:90px!important;margin:.35rem 0 .2rem}
+  body.an-on[data-exercise="jugar"] .an-help{font-size:.8em}
+  body.an-on[data-exercise="jugar"] .an-tip{margin:.35rem 0;padding:6px 10px}
+  body.an-on.an-tab-sum[data-exercise="jugar"] .eval-badge{display:none!important}
+}
+@media (min-width:1700px){body.an-on[data-exercise="jugar"] .an-graph{height:clamp(90px,11vh,150px)!important}body.an-on[data-exercise="jugar"] .an-summary{font-size:clamp(.85em,.4vw + .3em,1em)}}
+
+@media (min-width:768px){
+  body.in-var[data-exercise="jugar"] #viewNote{display:none!important}
+  body.an-on[data-exercise="jugar"] #moveList{flex:0 4 auto}
+  body.an-on[data-exercise="jugar"] #varBox{flex:0 1 auto}
+  body.an-on[data-exercise="jugar"] .var-verdict p{font-size:.85em;margin:1px 0}
+  body.an-on[data-exercise="jugar"] .var-verdict{gap:4px;margin-top:4px}
+  body.an-on[data-exercise="jugar"] .var-cmp{margin:4px 0 0;font-size:.92em}
+  body.an-on[data-exercise="jugar"] .var-tools{margin-top:6px;gap:6px}
+  body.an-on[data-exercise="jugar"] .var-tools .main-btn{min-height:34px!important;padding:4px 10px!important;font-size:.85em!important}
+}
+@media (min-width:768px) and (max-width:1699px){
+  body.an-on[data-exercise="jugar"] .an-help,body.an-on[data-exercise="jugar"] .an-jump{display:none}
+  body.an-on[data-exercise="jugar"] .an-graph{height:80px!important}
+  body.an-on[data-exercise="jugar"] .an-title{font-size:.95em;margin:0 0 .3rem}
+}
+@media (min-width:768px) and (max-width:1100px) and (orientation:portrait){
+  body.an-on[data-exercise="jugar"]{--exb:min(calc(100vw - 24px), calc(100dvh - var(--top) - var(--bot) - 560px))}
+}
+
+body[data-exercise="jugar"] #anSummary p,body[data-exercise="jugar"] #varBox p,body[data-exercise="jugar"] #openingLine{font-size:inherit!important}
+body[data-exercise="jugar"] #varBox{font-size:clamp(14px,.35vw + 10px,19px)}
+body[data-exercise="jugar"] #openingLine{font-size:clamp(13px,.3vw + 9px,18px)!important}
+body[data-exercise="jugar"] #varBox .var-verdict p{font-size:.88em!important}
+@media (min-width:768px){
+  body.an-on[data-exercise="jugar"] #anBtn{display:none!important}
+  body.an-on.an-tab-sum[data-exercise="jugar"] #anSummary{order:5}
+  body.an-on.an-tab-sum[data-exercise="jugar"] #anTools{order:6;margin:0!important;gap:6px}
+  body.an-on[data-exercise="jugar"] #anTools .main-btn{min-height:36px!important;padding:4px 12px!important;font-size:.88em!important}
+}
+@media (min-width:768px) and (max-width:1100px){
+  body.an-on[data-exercise="jugar"] .exercise-progress{display:none!important}
+  body.an-on[data-exercise="jugar"] .exercise-intro{justify-self:stretch;padding:0!important}
+  body.an-on[data-exercise="jugar"] .exercise-intro .setup-wrap>summary{width:100%;justify-content:center}
+}

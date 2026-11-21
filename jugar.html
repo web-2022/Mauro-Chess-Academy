@@ -212,8 +212,22 @@
   .var-cmp{margin:6px 0 0;font-weight:700;color:#e2e8f0}
   .var-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
   .var-tools .main-btn{min-height:40px!important;padding:6px 12px!important;font-size:.9em!important}
+
+  /* Variantes guardadas, veredicto y aperturas */
+  .ml-var{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px;padding:2px 6px;border-radius:10px;background:rgba(167,139,250,.1);color:#c4b5fd;font-weight:800}
+  .ml-var.open{outline:2px dashed #a78bfa}
+  .ml-var .rv-move{min-height:28px!important;padding:2px 7px!important;font-size:.85em!important}
+  .var-mv{cursor:pointer}
+  .var-verdict{display:grid;gap:8px;margin-top:8px}
+  .var-verdict b{display:block;color:#e2e8f0;margin-bottom:2px}
+  .var-verdict p{margin:2px 0;font-size:.92em;line-height:1.35}
+  .vv-good{color:#bbf7d0}.vv-bad{color:#fecaca}
+  .opening-line{display:flex;flex-wrap:wrap;gap:4px 16px;margin:4px 0;font-size:.92em;color:#e2e8f0}
+  .opening-line[hidden]{display:none}
+  .opening-line b{color:#fde68a}
+  .an-tabs{display:none}
 </style>
-<link rel="stylesheet" href="js/jugar-pantalla.css?v=1">
+<link rel="stylesheet" href="js/jugar-pantalla.css?v=7">
 </head>
 <body class="mauro-exercise" data-exercise="jugar">
   <div class="app">
@@ -329,8 +343,9 @@
   </div>
   <script src="js/mauro-chess-rules.js?v=1"></script>
   <script src="js/mauro-explica.js?v=2"></script>
+  <script src="js/mauro-aperturas.js?v=1"></script>
   <script src="js/mauro-motor.js?v=4"></script>
-  <script defer src="js/mauro-jugar.js?v=10"></script>
+  <script defer src="js/mauro-jugar.js?v=14"></script>
 <script src="js/ajedrezia-sync.js?v=2" defer></script>
 </body>
 </html>

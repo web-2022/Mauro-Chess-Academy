@@ -96,7 +96,7 @@
     const st = variation ? varCur() : positions[viewAt];
     const live = variation ? true : viewAt === positions.length - 1;
     const targets = selected && (live || varMode()) ? C.legalFrom(st, selected).map(m => m.to) : [];
-    const lastU = variation && variation.moves.length ? variation.moves[variation.moves.length - 1] : viewAt > 0 && !variation ? game.moves[viewAt - 1] : null;
+    const lastU = variation && varView ? variation.moves[varView - 1] : viewAt > 0 && !variation ? game.moves[viewAt - 1] : null;
     const kingInCheck = C.inCheck(st) ? C.kingSquare(st.board, st.turn) : null;
     boardEl.replaceChildren();
     for (let ri = 0; ri < 8; ri++) for (let fi = 0; fi < 8; fi++) {
@@ -117,7 +117,8 @@
       d.addEventListener('click', () => onSquare(s));
       boardEl.append(d);
     }
-    renderMoves(); renderCaptured(); renderClock(); renderVariation();
+    document.body.classList.toggle('in-var', !!variation);
+    renderMoves(); renderCaptured(); renderClock(); renderVariation(); renderOpening();
     if (!analyzing) renderAnalysisLazy();
     updateCursor();
   }
@@ -209,10 +210,18 @@
     game.evals[i] = v; save();
     if (my === evalSeq || viewAt === i) showEval(viewAt);
   }
-  // ---------- Variantes durante el análisis: prueba otras jugadas y se reevalúan ----------
-  let variation = null; // { base, moves:[uci], sans:[], pos:[estado...], ev:[cp], q:[calidad], best:[uci] }
+  // ---------- Variantes durante el análisis: se guardan en la partida y se reevalúan ----------
+  let variation = null, varView = 0; // variante abierta y cuántas de sus jugadas se ven
   const varMode = () => !!variation || (!!an() && (!!game.result || viewAt !== positions.length - 1));
-  const varCur = () => variation && variation.pos.length ? variation.pos[variation.pos.length - 1] : positions[viewAt];
+  function varPos(v) { // posiciones de la variante (no se guardan en localStorage)
+    if (!v.pos || v.pos.length !== v.moves.length) {
+      let st = positions[v.base]; const out = [];
+      for (const u of v.moves) { const m = C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); if (!m) break; st = C.apply(st, m, (u[4] || 'q').toUpperCase()); out.push(st); }
+      Object.defineProperty(v, 'pos', { value: out, writable: true, enumerable: false, configurable: true });
+    }
+    return v.pos;
+  }
+  const varCur = () => variation && varView ? varPos(variation)[varView - 1] : variation ? positions[variation.base] : positions[viewAt];
   function onVarSquare(s) {
     const st = varCur(), p = st.board[s];
     if (selected && s !== selected && !(p && C.color(p) === st.turn)) {
@@ -223,39 +232,75 @@
     if (p && C.color(p) === st.turn) { selected = s === selected ? null : s; render(); return; }
     selected = null; render();
   }
-  async function evalVarAt(j) { // j = índice dentro de la variante (0 = posición base)
-    const v = variation; const st = j === 0 ? positions[v.base] : v.pos[j - 1];
+  async function evalVarAt(v, j) { // j = jugadas de la variante ya hechas (0 = posición base)
+    const st = j === 0 ? positions[v.base] : varPos(v)[j - 1];
     const t = terminalEval(st); if (t !== null) return { score: t, uci: null };
     const r = await engine(START, game.moves.slice(0, v.base).concat(v.moves.slice(0, j)), 'an');
     return { score: r && r.score != null ? (Math.abs(r.score) > 50000 ? Math.sign(r.score) * 1000 : r.score) : 0, uci: r ? r.uci : null };
   }
+  function openVar(v, k) { variation = v; varView = k; viewAt = v.base; selected = null; bestMarks = null; render(); }
   async function playVar(u) {
-    if (!variation) { const a = an(); variation = { base: viewAt, moves: [], sans: [], pos: [], ev: [], q: [], best: [], ev0: a ? a.ev[viewAt] : null, best0: a ? a.best[viewAt] : null }; }
-    const v = variation, st = varCur(), m = C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); if (!m) return;
-    v.sans.push(C.san(st, m)); v.moves.push(u); v.pos.push(C.apply(st, m, (u[4] || 'q').toUpperCase()));
-    const j = v.moves.length; v.ev[j - 1] = null; v.q[j - 1] = null;
-    selected = null; render();
-    if (v.ev0 == null) { const r0 = await evalVarAt(0); v.ev0 = r0.score; v.best0 = r0.uci; }
-    const r = await evalVarAt(j); if (variation !== v || v.moves.length < j) return;
+    game.variations = game.variations || [];
+    if (!variation) {
+      const base = viewAt;
+      // ¿ya existe una variante desde aquí con esa jugada? se reutiliza
+      const ex = game.variations.find(x => x.base === base && x.moves[0] && x.moves[0].slice(0, 4) === u.slice(0, 4));
+      if (ex) return openVar(ex, 1);
+      if (game.moves[base] && game.moves[base].slice(0, 4) === u.slice(0, 4)) return goTo(base + 1); // es la jugada de la partida
+      const a = an();
+      variation = { base, moves: [], sans: [], ev: [], q: [], best: [], loss: [], bestSan: [], ev0: a ? a.ev[base] : null, best0: a ? a.best[base] : null };
+      game.variations.push(variation); varView = 0;
+    }
+    const v = variation;
+    if (varView < v.moves.length) {
+      if (v.moves[varView].slice(0, 4) === u.slice(0, 4)) { varView++; render(); return; } // misma jugada: avanza
+      ['moves', 'sans', 'ev', 'q', 'best', 'loss', 'bestSan'].forEach(k => v[k].length = varView); v.pos && (v.pos.length = varView); // nueva rama: recorta
+    }
+    const st = varCur(), m = C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); if (!m) return;
+    v.sans.push(C.san(st, m)); v.moves.push(u); varPos(v).push(C.apply(st, m, (u[4] || 'q').toUpperCase()));
+    const j = v.moves.length; varView = j; v.ev[j - 1] = null; v.q[j - 1] = null;
+    selected = null; save(); render();
+    if (v.ev0 == null) { const r0 = await evalVarAt(v, 0); v.ev0 = r0.score; v.best0 = r0.uci; }
+    const r = await evalVarAt(v, j); if (v.moves.length < j || v.moves[j - 1] !== u) return;
     v.ev[j - 1] = r.score; v.best[j - 1] = r.uci;
     const before = j === 1 ? v.ev0 : v.ev[j - 2], bestU = j === 1 ? v.best0 : v.best[j - 2];
     const sg = st.turn === 'w' ? 1 : -1, l = Math.max(0, (cp(before) - cp(r.score)) * sg), wl = Math.max(0, winPct(cp(before) * sg) - winPct(cp(r.score) * sg));
     const same = bestU && bestU.slice(0, 4) === u.slice(0, 4);
     v.q[j - 1] = same || l < 15 ? 'best' : (wl < 6 || l < 50) ? 'good' : (wl < 12 || l < 100) ? 'inacc' : (wl < 22 || l < 250) ? 'mist' : 'blun';
-    v.loss = v.loss || []; v.loss[j - 1] = l; v.bestSan = v.bestSan || []; v.bestSan[j - 1] = !same && bestU ? sanFrom(j === 1 ? positions[v.base] : v.pos[j - 2], bestU) : null;
-    render();
-    const Q = QUAL[v.q[j - 1]], et = evalText(r.score);
-    speak(`${spokenSan(v.sans[j - 1])}. ${Q.name}. Evaluación: ${et.word}.${v.bestSan[j - 1] && /mist|blun|inacc/.test(v.q[j - 1]) ? ' Mejor era ' + spokenSan(v.bestSan[j - 1]) + '.' : ''}`);
+    v.loss[j - 1] = l; v.bestSan[j - 1] = !same && bestU ? sanFrom(st, bestU) : null;
+    save(); render();
+    if (variation === v && varView === j) {
+      const Q = QUAL[v.q[j - 1]], et = evalText(r.score);
+      speak(`${spokenSan(v.sans[j - 1])}. ${Q.name}. Evaluación: ${et.word}.${v.bestSan[j - 1] && /mist|blun|inacc/.test(v.q[j - 1]) ? ' Mejor era ' + spokenSan(v.bestSan[j - 1]) + '.' : ''}`);
+    }
   }
   function sanFrom(st, u) { const m = u && C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); return m ? C.san(st, m) : null; }
   function showVarEval() {
     const el = $('evalBadge'), v = variation; if (!el || !v) return;
-    const j = v.moves.length, val = j ? v.ev[j - 1] : v.ev0;
+    const j = varView, val = j ? v.ev[j - 1] : v.ev0;
     if (val == null) { el.hidden = false; el.className = 'eval-badge ev-eq'; el.innerHTML = '<span class="eb-label">🧪 Variante</span><span class="eb-word">Evaluando…</span>'; return; }
     const t = evalText(val); el.hidden = false; el.className = 'eval-badge ' + t.cls;
     el.innerHTML = '<span class="eb-label"></span><span class="eb-num"></span><span class="eb-word"></span>';
-    el.querySelector('.eb-label').textContent = '🧪 Variante' + (j ? ` tras ${v.sans[j - 1]}` : '');
+    el.querySelector('.eb-label').textContent = '🧪 Variante' + (j ? ` tras ${v.sans[j - 1]}` : ' (posición de partida)');
     el.querySelector('.eb-num').textContent = t.s; el.querySelector('.eb-word').textContent = t.word;
+  }
+  const plyLabel = ply => Math.floor(ply / 2) + 1 + (ply % 2 ? '...' : '.');
+  // Explicación de la variante: lo bueno y lo malo para cada bando
+  function varVerdict(v) {
+    const me = game.human === 'both' ? null : game.human, out = { w: [], b: [] };
+    const ps = varPos(v);
+    v.moves.forEach((u, k) => {
+      const q = v.q[k]; if (!q) return;
+      const before = k === 0 ? positions[v.base] : ps[k - 1], side = before.turn;
+      let idea = ''; try { const r = window.MauroExplica && window.MauroExplica.ideas(before, u, Math.ceil((v.base + k + 1) / 2)); if (r && r.list[0]) idea = r.list[0]; } catch (_) {}
+      const good = q === 'best' || q === 'good';
+      let t = `${QUAL[q].icon} ${v.sans[k]}: ${good ? 'buena' : QUAL[q].name.toLowerCase()}${idea ? ' — ' + idea : ''}.`;
+      if (!good) t += ` Pierde unos ${(Math.min(v.loss[k], 1000) / 100).toFixed(1).replace('.', ',')} peones${v.bestSan[k] ? '; mejor era ' + v.bestSan[k] : ''}.`;
+      out[side].push({ t, good, last: k >= v.moves.length - 2 });
+    });
+    const name = c => me ? (c === me ? 'Para ti' : 'Para tu oponente') : c === 'w' ? 'Para las blancas' : 'Para las negras';
+    const sum = c => { const l = out[c]; if (!l.length) return null; const g = l.filter(x => x.good).length; return { title: `${c === 'w' ? '⚪' : '⚫'} ${name(c)}: ${g} buena${g === 1 ? '' : 's'}, ${l.length - g} con problemas`, lines: l }; };
+    return [sum(me && me === 'b' ? 'b' : 'w'), sum(me && me === 'b' ? 'w' : 'b')].filter(Boolean);
   }
   function renderVariation() {
     let box = $('varBox');
@@ -263,45 +308,63 @@
     const show = varMode() && !analyzing;
     box.hidden = !show; if (!show) return;
     box.replaceChildren();
-    const v = variation, baseNo = v ? v.base : viewAt;
+    const v = variation;
     const head = document.createElement('p'); head.className = 'var-head';
-    head.innerHTML = v ? `<b>🧪 Variante</b> desde ${baseNo ? 'la jugada ' + Math.ceil(baseNo / 2) + (baseNo % 2 ? '.' : '...') + ' ' + game.sans[baseNo - 1] : 'el inicio'}` : '<b>🧪 Prueba otra jugada:</b> mueve una pieza en el tablero y el análisis se recalcula.';
+    if (!v) { head.innerHTML = '<b>🧪</b> Mueve una pieza para probar una variante (se guarda en las jugadas).'; box.append(head); return; }
+    head.innerHTML = `<b>🧪 Variante</b> en lugar de ${game.sans[v.base] ? plyLabel(v.base) + ' ' + game.sans[v.base] : 'la jugada siguiente'}`;
     box.append(head);
-    if (v && v.moves.length) {
+    if (v.moves.length) {
       const line = document.createElement('div'); line.className = 'var-line';
       v.sans.forEach((sn, k) => {
-        const ply = baseNo + k; // índice de media jugada
-        if (k === 0 || ply % 2 === 0) { const n = document.createElement('span'); n.className = 'ml-num'; n.textContent = Math.floor(ply / 2) + 1 + (ply % 2 ? '...' : '.'); line.append(n); }
-        const q = v.q[k], ev = v.ev[k], b = document.createElement('span'); b.className = 'rv-move var-mv' + (q ? ' q-' + q : '');
-        if (q) { const ic = document.createElement('span'); ic.className = 'mv-ic'; ic.textContent = QUAL[q].icon; b.append(ic); }
-        b.append(Object.assign(document.createElement('span'), { className: 'mv-san', textContent: sn }));
-        const e = document.createElement('span'); e.className = 'mv-ev ' + (ev == null ? '' : evalText(ev).cls); e.textContent = ev == null ? '…' : fmtEval(cp(ev)).replace('Blancas dan mate', '#+').replace('Negras dan mate', '#−'); b.append(e);
-        line.append(b);
+        const ply = v.base + k;
+        if (k === 0 || ply % 2 === 0) { const n = document.createElement('span'); n.className = 'ml-num'; n.textContent = plyLabel(ply); line.append(n); }
+        line.append(varChip(v, k));
       });
       box.append(line);
-      const k = v.moves.length - 1, q = v.q[k];
-      if (q) {
-        const c = document.createElement('p'); c.className = 'var-note q-' + q;
-        c.textContent = `${QUAL[q].icon} ${v.sans[k]}: ${QUAL[q].name}.` + (v.loss[k] >= 50 ? ` Pierde unos ${(Math.min(v.loss[k], 1000) / 100).toFixed(1).replace('.', ',')} peones.` : '') + (v.bestSan[k] && q !== 'best' ? ` Mejor era ${v.bestSan[k]}.` : '');
-        box.append(c);
-      }
-      // compara con la partida real
       const a = an(), real = a && a.ev[v.base + 1];
       if (real != null && v.ev[0] != null && game.sans[v.base]) {
         const side = positions[v.base].turn === 'w' ? 1 : -1, diff = (cp(v.ev[0]) - cp(real)) * side;
         const cmp = document.createElement('p'); cmp.className = 'var-cmp';
-        cmp.textContent = Math.abs(diff) < 20 ? `Comparado con ${game.sans[v.base]} de la partida: valen casi lo mismo.` : diff > 0 ? `✅ ${v.sans[0]} es mejor que ${game.sans[v.base]} de la partida (+${(diff / 100).toFixed(1).replace('.', ',')}).` : `❌ ${v.sans[0]} es peor que ${game.sans[v.base]} de la partida (−${(-diff / 100).toFixed(1).replace('.', ',')}).`;
+        cmp.textContent = Math.abs(diff) < 20 ? `${v.sans[0]} y ${game.sans[v.base]} (partida) valen casi lo mismo.` : diff > 0 ? `✅ ${v.sans[0]} es mejor que ${game.sans[v.base]} de la partida (+${(Math.min(diff, 1000) / 100).toFixed(1).replace('.', ',')}).` : `❌ ${v.sans[0]} es peor que ${game.sans[v.base]} de la partida (−${(Math.min(-diff, 1000) / 100).toFixed(1).replace('.', ',')}).`;
         box.append(cmp);
       }
+      const vd = document.createElement('div'); vd.className = 'var-verdict';
+      varVerdict(v).forEach(g => {
+        const d = document.createElement('div'); const h = document.createElement('b'); h.textContent = g.title; d.append(h);
+        g.lines.forEach(x => { if (x.good && !x.last) return; const p = document.createElement('p'); p.className = x.good ? 'vv-good' : 'vv-bad'; p.textContent = x.t; d.append(p); });
+        vd.append(d);
+      });
+      if (vd.childElementCount) box.append(vd);
     }
     const tools = document.createElement('div'); tools.className = 'var-tools';
     const mk = (t, f, dis) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'main-btn'; b.textContent = t; b.disabled = !!dis; b.addEventListener('click', f); tools.append(b); };
-    if (v) {
-      mk('🤖 Mejor respuesta', async () => { const j = v.moves.length, u = j ? v.best[j - 1] : v.best0; if (u) playVar(u); }, !(v.moves.length ? v.best[v.moves.length - 1] : v.best0));
-      mk('↶ Quitar jugada', () => { v.moves.pop(); v.sans.pop(); v.pos.pop(); v.ev.pop(); v.q.pop(); v.best.pop(); if (!v.moves.length) variation = null; selected = null; render(); });
-      mk('↩ Volver a la partida', () => { const b = v.base; variation = null; goTo(b); });
-    }
+    const nextBest = varView ? v.best[varView - 1] : v.best0;
+    mk('🤖 Mejor respuesta', () => nextBest && playVar(nextBest), !nextBest);
+    mk('◀', () => { if (varView > 0) { varView--; render(); } else goTo(v.base); }, false);
+    mk('▶', () => { if (varView < v.moves.length) { varView++; render(); } }, varView >= v.moves.length);
+    mk('🗑 Borrar variante', () => { game.variations = (game.variations || []).filter(x => x !== v); save(); const b = v.base; variation = null; goTo(b); });
+    mk('↩ Volver a la partida', () => { const b = v.base; variation = null; goTo(b); });
     box.append(tools);
+  }
+  function varChip(v, k, inList) {
+    const q = v.q[k], ev = v.ev[k], b = document.createElement('button'); b.type = 'button';
+    b.className = 'rv-move var-mv' + (q ? ' q-' + q : '') + (variation === v && varView === k + 1 ? ' active' : '');
+    if (q) { const ic = document.createElement('span'); ic.className = 'mv-ic'; ic.textContent = QUAL[q].icon; b.append(ic); }
+    b.append(Object.assign(document.createElement('span'), { className: 'mv-san', textContent: (inList && (k === 0 || (v.base + k) % 2 === 0) ? plyLabel(v.base + k) + ' ' : '') + v.sans[k] }));
+    const e = document.createElement('span'); e.className = 'mv-ev ' + (ev == null ? '' : evalText(ev).cls); e.textContent = ev == null ? '…' : fmtEval(cp(ev)).replace('Blancas dan mate', '#+').replace('Negras dan mate', '#−'); b.append(e);
+    b.addEventListener('click', () => openVar(v, k + 1));
+    return b;
+  }
+  // Aperturas de cada bando
+  function renderOpening() {
+    let el = $('openingLine');
+    if (!el) { el = document.createElement('p'); el.id = 'openingLine'; el.className = 'opening-line'; $('evalBadge').after(el); }
+    const o = window.MauroAperturas ? window.MauroAperturas.detect(game.sans) : null;
+    el.hidden = !o || (!o.w && !o.b); if (el.hidden) return;
+    const me = game.human, lab = c => me === 'both' ? (c === 'w' ? 'Blancas' : 'Negras') : me === c ? 'Tu apertura' : 'Tu oponente';
+    el.replaceChildren();
+    const mkp = (c, t) => { if (!t) return; const s = document.createElement('span'); s.innerHTML = `<b>📖 ${lab(c)} (${c === 'w' ? '⚪' : '⚫'}):</b> `; s.append(t); el.append(s); };
+    mkp('w', o.w); mkp('b', o.b);
   }
   function turnText() {
     const st = current(); const check = C.inCheck(st) ? ' · ¡Jaque!' : '';
@@ -324,6 +387,11 @@
       if (ev != null) { const e = document.createElement('span'); e.className = 'mv-ev ' + evalText(ev).cls; e.textContent = fmtEval(cp(ev)).replace('Blancas dan mate', '#+').replace('Negras dan mate', '#−'); b.append(e); }
       b.title = (q ? QUAL[q].name + ' · ' : '') + (ev != null ? 'Evaluación ' + fmtEval(cp(ev)) : '');
       b.addEventListener('click', () => goTo(i + 1)); list.append(b);
+      (game.variations || []).filter(v => v.base === i && v.moves.length).forEach(v => {
+        const w = document.createElement('span'); w.className = 'ml-var' + (variation === v ? ' open' : ''); w.append('( ');
+        v.sans.forEach((_, k) => w.append(varChip(v, k, true)));
+        w.append(' )'); list.append(w);
+      });
     });
     if (game.result) { const r = document.createElement('span'); r.className = 'ml-result'; r.textContent = game.result === '1/2-1/2' ? '½-½' : game.result; list.append(r); }
     // Desplaza solo la lista de jugadas (no la página: en el celular el tablero no debe moverse)
@@ -342,7 +410,7 @@
   }
   let lastSay = '', lastSaidAt = -1;
   function goTo(i) {
-    viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; variation = null; if (bestMarks && bestMarks.at !== viewAt) bestMarks = null; render();
+    viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; variation = null; varView = 0; if (bestMarks && bestMarks.at !== viewAt) bestMarks = null; render();
     // Modo análisis: al pasar a cada jugada se explica en voz alta automáticamente
     if (an() && viewAt > 0 && lastSay && lastSaidAt !== viewAt) { lastSaidAt = viewAt; speak(lastSay); }
     else if (an() && viewAt === 0) { lastSaidAt = 0; try { (window.MauroVoice?.stop || (() => speechSynthesis.cancel()))(); } catch (_) {} }
@@ -372,6 +440,13 @@
     $('resignBtn').disabled = !live || thinking || analyzing || !game.moves.length;
     const done = !!an();
     document.body.classList.toggle('an-review', done && !!game.result);
+    document.body.classList.toggle('an-on', done);
+    if (done && !$('anTabs')) {
+      const t = document.createElement('div'); t.id = 'anTabs'; t.className = 'an-tabs'; t.setAttribute('role', 'tablist');
+      t.innerHTML = '<button type="button" role="tab" data-tab="moves" aria-selected="true">📋 Jugadas y variantes</button><button type="button" role="tab" data-tab="sum" aria-selected="false">📈 Resumen y gráfica</button>';
+      t.addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (!b) return; const sum = b.dataset.tab === 'sum'; document.body.classList.toggle('an-tab-sum', sum); t.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b))); if (sum) updateCursor(); });
+      document.querySelector('.exercise-action').prepend(t);
+    }
     $('anBtn').disabled = thinking || analyzing || !game.moves.length || (!game.result && game.human !== 'both' && !humanTurn());
     if (!analyzing) $('anBtn').textContent = done ? '✅ Partida analizada' : game.result ? '🔎 Analizar cada jugada' : '🔎 Analizar hasta aquí';
     if (done) $('anBtn').disabled = true;
@@ -384,7 +459,7 @@
     game.result = null; game.why = null;
     let n = 1;
     if (game.human !== 'both') { n = current().turn === game.human ? 2 : 1; } // deshace tu jugada y la de la máquina
-    game.moves = game.moves.slice(0, Math.max(0, game.moves.length - n)); rebuild(); save();
+    game.moves = game.moves.slice(0, Math.max(0, game.moves.length - n)); game.variations = (game.variations || []).filter(v => v.base < game.moves.length); variation = null; rebuild(); save();
     hintMarks = null; selected = null; render(); status(turnText()); updateControls();
     if (!humanTurn()) machineMove();
   });
