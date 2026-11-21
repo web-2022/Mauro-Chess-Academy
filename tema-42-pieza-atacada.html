@@ -1753,14 +1753,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['pieza-atacada']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema cuarenta y dos: ya sabes salvar una pieza atacada.');
+ speak('Excelente. Has completado el tema cuarenta y dos: ya sabes salvar una pieza atacada. Ya puedes pasar al tema cuarenta y tres.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-42-pieza-atacada.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-43-pieza-defendida.html'}
 
 renderBoard();
 try{
