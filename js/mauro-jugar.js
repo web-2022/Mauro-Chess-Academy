@@ -952,6 +952,7 @@
   let saved = null; try { saved = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (_) {}
   if (params.get('maestro') && window.MauroMaestros && loadMaster(params.get('maestro'))) { /* partida de maestro */ }
   else if (params.get('sala')) joinOnline(params.get('sala'));
+  else if (params.get('nivel') && /^[1-6]$/.test(params.get('nivel'))) { $('levelSel').value = params.get('nivel'); form.querySelector('[name="mode"][value="maquina"]').checked = true; form.dispatchEvent(new Event('change')); newGame({ mode: 'maquina', color: 'w', level: params.get('nivel'), time: '0' }); status(`¡Tu primera partida! Nivel ${params.get('nivel')}: juegas con blancas. Centro, desarrollo y enroque. ¡Suerte!`, 'good'); }
   else if (saved && Array.isArray(saved.moves) && !params.get('modo')) {
     game = saved; rebuild(); flipped = game.human === 'b'; if (game.clock && game.clock.since && !game.result) game.clock.since = Date.now(); render(); updateControls();
     if (game.result) status(`Partida terminada: ${game.why}. Pulsa «Nueva partida» para jugar otra.`);
