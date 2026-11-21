@@ -196,6 +196,22 @@
   .an-tip{margin:.5rem 0;padding:8px 12px;border-left:4px solid #a78bfa;background:rgba(167,139,250,.1);border-radius:8px}
   .an-see-best{margin-top:6px;border-radius:8px;padding:4px 10px;cursor:pointer;font:800 .9em system-ui,sans-serif;border:1px solid #22c55e;background:#052e16;color:#86efac}
   .sq.an-best-sq{box-shadow:inset 0 0 0 5px #22c55e,inset 0 0 24px rgba(34,197,94,.7)}
+
+  /* Valor en la gráfica y variantes */
+  .an-gwrap{position:relative}
+  .an-gval{position:absolute;z-index:2;pointer-events:none;white-space:nowrap;padding:3px 8px;border-radius:8px;font:900 .82em system-ui,sans-serif;background:#0c4a6e;color:#e0f2fe;border:2px solid #38bdf8;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+  .an-gval.ev-w{background:#f8fafc;color:#0f172a}.an-gval.ev-b{background:#020617;color:#f8fafc}
+  .an-gval.q-mist,.an-gval.q-blun{border-color:#ef4444}
+  .var-box{margin:10px 0;padding:10px 12px;border:2px dashed #a78bfa;border-radius:12px;background:rgba(167,139,250,.08)}
+  .var-box[hidden]{display:none}
+  .var-head{margin:0 0 6px;color:#ddd6fe}
+  .var-line{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .var-mv{display:inline-flex;align-items:center;gap:5px;cursor:default}
+  .var-note{margin:8px 0 0;font-weight:800}
+  .var-note.q-best,.var-note.q-good{color:#86efac}.var-note.q-inacc{color:#fde047}.var-note.q-mist,.var-note.q-blun{color:#fca5a5}
+  .var-cmp{margin:6px 0 0;font-weight:700;color:#e2e8f0}
+  .var-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .var-tools .main-btn{min-height:40px!important;padding:6px 12px!important;font-size:.9em!important}
 </style>
 <link rel="stylesheet" href="js/jugar-pantalla.css?v=1">
 </head>
@@ -314,7 +330,7 @@
   <script src="js/mauro-chess-rules.js?v=1"></script>
   <script src="js/mauro-explica.js?v=2"></script>
   <script src="js/mauro-motor.js?v=4"></script>
-  <script defer src="js/mauro-jugar.js?v=9"></script>
+  <script defer src="js/mauro-jugar.js?v=10"></script>
 <script src="js/ajedrezia-sync.js?v=2" defer></script>
 </body>
 </html>

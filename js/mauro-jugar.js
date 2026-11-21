@@ -92,11 +92,11 @@
 
   // ---------- Tablero ----------
   function render() {
-    try { showEval(viewAt); } catch (_) {}
-    const st = positions[viewAt];
-    const live = viewAt === positions.length - 1;
-    const targets = selected && live ? C.legalFrom(st, selected).map(m => m.to) : [];
-    const lastU = viewAt > 0 ? game.moves[viewAt - 1] : null;
+    try { variation ? showVarEval() : showEval(viewAt); } catch (_) {}
+    const st = variation ? varCur() : positions[viewAt];
+    const live = variation ? true : viewAt === positions.length - 1;
+    const targets = selected && (live || varMode()) ? C.legalFrom(st, selected).map(m => m.to) : [];
+    const lastU = variation && variation.moves.length ? variation.moves[variation.moves.length - 1] : viewAt > 0 && !variation ? game.moves[viewAt - 1] : null;
     const kingInCheck = C.inCheck(st) ? C.kingSquare(st.board, st.turn) : null;
     boardEl.replaceChildren();
     for (let ri = 0; ri < 8; ri++) for (let fi = 0; fi < 8; fi++) {
@@ -117,13 +117,14 @@
       d.addEventListener('click', () => onSquare(s));
       boardEl.append(d);
     }
-    renderMoves(); renderCaptured(); renderClock();
+    renderMoves(); renderCaptured(); renderClock(); renderVariation();
     if (!analyzing) renderAnalysisLazy();
     updateCursor();
   }
   let lastAnKey = null;
   function renderAnalysisLazy() { const k = an() ? key() : null; if (k !== lastAnKey) { lastAnKey = k; renderAnalysis(); } }
   function onSquare(s) {
+    if (!thinking && !analyzing && varMode()) return onVarSquare(s);
     if (thinking || analyzing || game.result || !humanTurn()) return;
     if (viewAt !== positions.length - 1) { goTo(positions.length - 1); return; }
     const st = current(), p = st.board[s];
@@ -208,6 +209,100 @@
     game.evals[i] = v; save();
     if (my === evalSeq || viewAt === i) showEval(viewAt);
   }
+  // ---------- Variantes durante el análisis: prueba otras jugadas y se reevalúan ----------
+  let variation = null; // { base, moves:[uci], sans:[], pos:[estado...], ev:[cp], q:[calidad], best:[uci] }
+  const varMode = () => !!variation || (!!an() && (!!game.result || viewAt !== positions.length - 1));
+  const varCur = () => variation && variation.pos.length ? variation.pos[variation.pos.length - 1] : positions[viewAt];
+  function onVarSquare(s) {
+    const st = varCur(), p = st.board[s];
+    if (selected && s !== selected && !(p && C.color(p) === st.turn)) {
+      const ms = C.legalFrom(st, selected).filter(m => m.to === s); const from = selected; selected = null;
+      if (!ms.length) { render(); return; }
+      return playVar(from + s + (ms[0].promotion ? 'q' : ''));
+    }
+    if (p && C.color(p) === st.turn) { selected = s === selected ? null : s; render(); return; }
+    selected = null; render();
+  }
+  async function evalVarAt(j) { // j = índice dentro de la variante (0 = posición base)
+    const v = variation; const st = j === 0 ? positions[v.base] : v.pos[j - 1];
+    const t = terminalEval(st); if (t !== null) return { score: t, uci: null };
+    const r = await engine(START, game.moves.slice(0, v.base).concat(v.moves.slice(0, j)), 'an');
+    return { score: r && r.score != null ? (Math.abs(r.score) > 50000 ? Math.sign(r.score) * 1000 : r.score) : 0, uci: r ? r.uci : null };
+  }
+  async function playVar(u) {
+    if (!variation) { const a = an(); variation = { base: viewAt, moves: [], sans: [], pos: [], ev: [], q: [], best: [], ev0: a ? a.ev[viewAt] : null, best0: a ? a.best[viewAt] : null }; }
+    const v = variation, st = varCur(), m = C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); if (!m) return;
+    v.sans.push(C.san(st, m)); v.moves.push(u); v.pos.push(C.apply(st, m, (u[4] || 'q').toUpperCase()));
+    const j = v.moves.length; v.ev[j - 1] = null; v.q[j - 1] = null;
+    selected = null; render();
+    if (v.ev0 == null) { const r0 = await evalVarAt(0); v.ev0 = r0.score; v.best0 = r0.uci; }
+    const r = await evalVarAt(j); if (variation !== v || v.moves.length < j) return;
+    v.ev[j - 1] = r.score; v.best[j - 1] = r.uci;
+    const before = j === 1 ? v.ev0 : v.ev[j - 2], bestU = j === 1 ? v.best0 : v.best[j - 2];
+    const sg = st.turn === 'w' ? 1 : -1, l = Math.max(0, (cp(before) - cp(r.score)) * sg), wl = Math.max(0, winPct(cp(before) * sg) - winPct(cp(r.score) * sg));
+    const same = bestU && bestU.slice(0, 4) === u.slice(0, 4);
+    v.q[j - 1] = same || l < 15 ? 'best' : (wl < 6 || l < 50) ? 'good' : (wl < 12 || l < 100) ? 'inacc' : (wl < 22 || l < 250) ? 'mist' : 'blun';
+    v.loss = v.loss || []; v.loss[j - 1] = l; v.bestSan = v.bestSan || []; v.bestSan[j - 1] = !same && bestU ? sanFrom(j === 1 ? positions[v.base] : v.pos[j - 2], bestU) : null;
+    render();
+    const Q = QUAL[v.q[j - 1]], et = evalText(r.score);
+    speak(`${spokenSan(v.sans[j - 1])}. ${Q.name}. Evaluación: ${et.word}.${v.bestSan[j - 1] && /mist|blun|inacc/.test(v.q[j - 1]) ? ' Mejor era ' + spokenSan(v.bestSan[j - 1]) + '.' : ''}`);
+  }
+  function sanFrom(st, u) { const m = u && C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); return m ? C.san(st, m) : null; }
+  function showVarEval() {
+    const el = $('evalBadge'), v = variation; if (!el || !v) return;
+    const j = v.moves.length, val = j ? v.ev[j - 1] : v.ev0;
+    if (val == null) { el.hidden = false; el.className = 'eval-badge ev-eq'; el.innerHTML = '<span class="eb-label">🧪 Variante</span><span class="eb-word">Evaluando…</span>'; return; }
+    const t = evalText(val); el.hidden = false; el.className = 'eval-badge ' + t.cls;
+    el.innerHTML = '<span class="eb-label"></span><span class="eb-num"></span><span class="eb-word"></span>';
+    el.querySelector('.eb-label').textContent = '🧪 Variante' + (j ? ` tras ${v.sans[j - 1]}` : '');
+    el.querySelector('.eb-num').textContent = t.s; el.querySelector('.eb-word').textContent = t.word;
+  }
+  function renderVariation() {
+    let box = $('varBox');
+    if (!box) { box = document.createElement('div'); box.id = 'varBox'; box.className = 'var-box'; $('moveList').after(box); }
+    const show = varMode() && !analyzing;
+    box.hidden = !show; if (!show) return;
+    box.replaceChildren();
+    const v = variation, baseNo = v ? v.base : viewAt;
+    const head = document.createElement('p'); head.className = 'var-head';
+    head.innerHTML = v ? `<b>🧪 Variante</b> desde ${baseNo ? 'la jugada ' + Math.ceil(baseNo / 2) + (baseNo % 2 ? '.' : '...') + ' ' + game.sans[baseNo - 1] : 'el inicio'}` : '<b>🧪 Prueba otra jugada:</b> mueve una pieza en el tablero y el análisis se recalcula.';
+    box.append(head);
+    if (v && v.moves.length) {
+      const line = document.createElement('div'); line.className = 'var-line';
+      v.sans.forEach((sn, k) => {
+        const ply = baseNo + k; // índice de media jugada
+        if (k === 0 || ply % 2 === 0) { const n = document.createElement('span'); n.className = 'ml-num'; n.textContent = Math.floor(ply / 2) + 1 + (ply % 2 ? '...' : '.'); line.append(n); }
+        const q = v.q[k], ev = v.ev[k], b = document.createElement('span'); b.className = 'rv-move var-mv' + (q ? ' q-' + q : '');
+        if (q) { const ic = document.createElement('span'); ic.className = 'mv-ic'; ic.textContent = QUAL[q].icon; b.append(ic); }
+        b.append(Object.assign(document.createElement('span'), { className: 'mv-san', textContent: sn }));
+        const e = document.createElement('span'); e.className = 'mv-ev ' + (ev == null ? '' : evalText(ev).cls); e.textContent = ev == null ? '…' : fmtEval(cp(ev)).replace('Blancas dan mate', '#+').replace('Negras dan mate', '#−'); b.append(e);
+        line.append(b);
+      });
+      box.append(line);
+      const k = v.moves.length - 1, q = v.q[k];
+      if (q) {
+        const c = document.createElement('p'); c.className = 'var-note q-' + q;
+        c.textContent = `${QUAL[q].icon} ${v.sans[k]}: ${QUAL[q].name}.` + (v.loss[k] >= 50 ? ` Pierde unos ${(Math.min(v.loss[k], 1000) / 100).toFixed(1).replace('.', ',')} peones.` : '') + (v.bestSan[k] && q !== 'best' ? ` Mejor era ${v.bestSan[k]}.` : '');
+        box.append(c);
+      }
+      // compara con la partida real
+      const a = an(), real = a && a.ev[v.base + 1];
+      if (real != null && v.ev[0] != null && game.sans[v.base]) {
+        const side = positions[v.base].turn === 'w' ? 1 : -1, diff = (cp(v.ev[0]) - cp(real)) * side;
+        const cmp = document.createElement('p'); cmp.className = 'var-cmp';
+        cmp.textContent = Math.abs(diff) < 20 ? `Comparado con ${game.sans[v.base]} de la partida: valen casi lo mismo.` : diff > 0 ? `✅ ${v.sans[0]} es mejor que ${game.sans[v.base]} de la partida (+${(diff / 100).toFixed(1).replace('.', ',')}).` : `❌ ${v.sans[0]} es peor que ${game.sans[v.base]} de la partida (−${(-diff / 100).toFixed(1).replace('.', ',')}).`;
+        box.append(cmp);
+      }
+    }
+    const tools = document.createElement('div'); tools.className = 'var-tools';
+    const mk = (t, f, dis) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'main-btn'; b.textContent = t; b.disabled = !!dis; b.addEventListener('click', f); tools.append(b); };
+    if (v) {
+      mk('🤖 Mejor respuesta', async () => { const j = v.moves.length, u = j ? v.best[j - 1] : v.best0; if (u) playVar(u); }, !(v.moves.length ? v.best[v.moves.length - 1] : v.best0));
+      mk('↶ Quitar jugada', () => { v.moves.pop(); v.sans.pop(); v.pos.pop(); v.ev.pop(); v.q.pop(); v.best.pop(); if (!v.moves.length) variation = null; selected = null; render(); });
+      mk('↩ Volver a la partida', () => { const b = v.base; variation = null; goTo(b); });
+    }
+    box.append(tools);
+  }
   function turnText() {
     const st = current(); const check = C.inCheck(st) ? ' · ¡Jaque!' : '';
     if (game.human === 'both') return `Juegan ${st.turn === 'w' ? 'blancas' : 'negras'}${check}`;
@@ -247,7 +342,7 @@
   }
   let lastSay = '', lastSaidAt = -1;
   function goTo(i) {
-    viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; if (bestMarks && bestMarks.at !== viewAt) bestMarks = null; render();
+    viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; variation = null; if (bestMarks && bestMarks.at !== viewAt) bestMarks = null; render();
     // Modo análisis: al pasar a cada jugada se explica en voz alta automáticamente
     if (an() && viewAt > 0 && lastSay && lastSaidAt !== viewAt) { lastSaidAt = viewAt; speak(lastSay); }
     else if (an() && viewAt === 0) { lastSaidAt = 0; try { (window.MauroVoice?.stop || (() => speechSynthesis.cancel()))(); } catch (_) {} }
@@ -465,7 +560,7 @@
     const phRow = phaseStats.map((p, i) => `<span class="an-ph"><b>${PH[i]}</b> ${p.pct == null ? '—' : p.pct + '% buenas'}${p.err ? ` · <em>${p.err} error${p.err > 1 ? 'es' : ''}</em>` : ''}</span>`).join('');
     box.innerHTML = `<p class="an-title">🔎 Análisis de la partida <small>(precisión, mejores jugadas y errores)</small></p>${row('w', wl)}${row('b', bl)}
       <div class="an-row an-acpl"><b>Pérdida media</b><span>⚪ ${acpl('w')} · ⚫ ${acpl('b')} <small>centésimas de peón por jugada (menos es mejor)</small></span></div>
-      <svg class="an-graph" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Gráfica de la evaluación a lo largo de la partida"><rect width="${W}" height="${H / 2}" class="g-w"/><rect y="${H / 2}" width="${W}" height="${H / 2}" class="g-b"/><line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" class="g-mid"/><polyline points="0,${H / 2} ${pts} ${W},${H / 2}" class="g-fill"/><polyline points="${pts}" class="g-line"/>${dots}<line id="anCursor" x1="0" x2="0" y1="0" y2="${H}" class="g-cursor"/><circle id="anCursorDot" r="5" class="g-cdot"/></svg>
+      <div class="an-gwrap"><span class="an-gval" id="anGval"></span><svg class="an-graph" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Gráfica de la evaluación a lo largo de la partida"><rect width="${W}" height="${H / 2}" class="g-w"/><rect y="${H / 2}" width="${W}" height="${H / 2}" class="g-b"/><line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" class="g-mid"/><polyline points="0,${H / 2} ${pts} ${W},${H / 2}" class="g-fill"/><polyline points="${pts}" class="g-line"/>${dots}<line id="anCursor" x1="0" x2="0" y1="0" y2="${H}" class="g-cursor"/><circle id="anCursorDot" r="5" class="g-cdot"/></svg></div>
       <p class="an-help">Arriba de la línea media: ventaja blanca. La línea celeste marca la jugada que estás viendo; toca la gráfica para saltar.</p>
       <div class="an-phases">${me ? '<small>Tus jugadas por fase:</small>' : ''}${phRow}</div>
       ${key3.length ? `<div class="an-keys"><b>⚡ Momentos clave:</b> ${key3.map(([l, i]) => `<button type="button" class="an-key q-${a.q[i]}" data-go="${i + 1}">${Math.ceil((i + 1) / 2)}${i % 2 ? '...' : '.'} ${game.sans[i]} <small>−${(Math.min(l, 1000) / 100).toFixed(1).replace('.', ',')}</small></button>`).join('')}</div>` : ''}
@@ -482,6 +577,16 @@
     const W = 600, H = 120, n = a.ev.length - 1 || 1, x = (viewAt / n * W).toFixed(1);
     l.setAttribute('x1', x); l.setAttribute('x2', x);
     d.setAttribute('cx', x); d.setAttribute('cy', (H / 2 - (winPct(cp(a.ev[viewAt])) - 50) / 50 * (H / 2)).toFixed(1));
+    const g = document.getElementById('anGval');
+    if (g) {
+      const val = a.ev[viewAt], t = evalText(val), q = viewAt ? a.q[viewAt - 1] : null, pct = viewAt / n * 100;
+      g.className = 'an-gval ' + t.cls + (q ? ' q-' + q : '');
+      g.textContent = (viewAt ? `${Math.ceil(viewAt / 2)}${viewAt % 2 ? '.' : '...'} ${game.sans[viewAt - 1]} ${q ? QUAL[q].icon + ' ' : ''}` : 'Inicio ') + fmtEval(cp(val));
+      const yPct = (0.5 - (winPct(cp(val)) - 50) / 100) * 100;
+      g.style.left = Math.min(Math.max(pct, 0), 100) + '%';
+      g.style.top = (yPct > 50 ? yPct - 30 : yPct + 8) + '%';
+      g.style.transform = pct > 70 ? 'translateX(-100%) translateX(-8px)' : 'translateX(8px)';
+    }
   }
   $('anBtn').addEventListener('click', analyze);
 
