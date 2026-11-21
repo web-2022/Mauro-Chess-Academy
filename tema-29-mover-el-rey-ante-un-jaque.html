@@ -1751,14 +1751,14 @@ function finish(){
  try{ routeProgress=JSON.parse(localStorage.getItem('mauroChessProgressV1')||'{}')||{}; }catch(e){}
  routeProgress['mover-el-rey-ante-un-jaque']={completed:true,date:today,xp:xp,attempts:attempts,streak:streak};
  try{ localStorage.setItem('mauroChessProgressV1',JSON.stringify(routeProgress)); }catch(e){}
- speak('Excelente. Has completado el tema veintinueve: ya sabes mover el rey a una casilla segura.');
+ speak('Excelente. Has completado el tema veintinueve: ya sabes mover el rey a una casilla segura. Ya puedes pasar al tema treinta.');
  successBuzz();
 }
 
 
 
 function restartLesson(){stopBoardSequence();step=0;xp=0;attempts=0;summary.classList.remove('show');renderStep();window.scrollTo({top:0,behavior:'smooth'})}
-function goNext(){window.location.href='ruta-chess.html?desde=tema-29-mover-el-rey-ante-un-jaque.html#mauroCurriculum'}
+function goNext(){window.location.href='tema-30-ahogado.html'}
 
 renderBoard();
 try{
