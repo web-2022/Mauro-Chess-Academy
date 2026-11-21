@@ -154,5 +154,46 @@
     return parts.join(' ');
   }
 
-  global.MauroExplica = { ideas, hint, review, threatsAgainst };
+
+  /** Plan general de un bando en la posición: desarrollo, enroque, centro, rey rival, peones pasados y columnas. */
+  function sidePlan(st, c) {
+    const B = st.board, them = opp(c), hr = c === 'w' ? '1' : '8', out = [];
+    const find = t => Object.keys(B).filter(s => B[s] === c + t);
+    const ks = find('K')[0], eks = Object.keys(B).find(s => B[s] === them + 'K');
+    const endgame = pieceCount(B) <= 4;
+    const md = material(B, c) - material(B, them);
+    const undeveloped = ['b', 'c', 'f', 'g'].map(f => f + hr).filter(s => B[s] && B[s][0] === c && /[NB]/.test(B[s][1]));
+    const castled = ks && ['g' + hr, 'c' + hr, 'b' + hr, 'h' + hr].includes(ks);
+    const kingCenter = ks && ['d', 'e', 'f'].includes(ks[0]) && ks[1] === hr;
+    const eHr = them === 'w' ? '1' : '8';
+    const enemyCenter = eks && ['d', 'e', 'f'].includes(eks[0]) && !endgame;
+    const enemyCanCastle = them === 'w' ? /[KQ]/.test(st.castling || '') : /[kq]/.test(st.castling || '');
+    const centerPawns = CENTER.filter(s => B[s] === c + 'P').length;
+    const passed = Object.keys(B).filter(s => B[s] === c + 'P' && (() => {
+      const f = 'abcdefgh'.indexOf(s[0]), r = +s[1], dir = c === 'w' ? 1 : -1;
+      for (let rr = r + dir; rr >= 1 && rr <= 8; rr += dir) for (const df of [-1, 0, 1]) { const ff = 'abcdefgh'[f + df]; if (ff && B[ff + rr] === them + 'P') return false; }
+      return true; })());
+    const openFile = 'abcdefgh'.split('').find(f => ![1,2,3,4,5,6,7,8].some(r => B[f + r] && B[f + r][1] === 'P') && find('R').length && !find('R').some(s => s[0] === f));
+    if (Math.abs(md) >= 3 && !endgame) out.push(md > 0 ? 'cambiar piezas para simplificar y aprovechar el material de más' : 'evitar cambios y buscar complicaciones, porque tiene menos material');
+    if (endgame) {
+      if (passed.length) out.push(`empujar el peón pasado de ${passed[0]} con ayuda del rey`);
+      else out.push('activar el rey y llevarlo hacia los peones');
+    } else {
+      if (undeveloped.length >= 2) out.push(`terminar el desarrollo (faltan piezas en ${join(undeveloped)})`);
+      if (!castled && kingCenter) out.push('enrocar para poner al rey a salvo');
+      if (enemyCenter && !enemyCanCastle && (eks[1] === eHr || eks[1] === (them === 'w' ? '2' : '7'))) out.unshift('abrir el centro y atacar al rey rival, que ya no puede enrocar');
+      else if (centerPawns === 0 && undeveloped.length < 3) out.push('disputar el centro con un peón');
+      if (passed.length && out.length < 2) out.push(`apoyar el peón pasado de ${passed[0]}`);
+      if (openFile && out.length < 2) out.push(`llevar una torre a la columna abierta ${openFile}`);
+      if (!out.length) out.push('mejorar la peor pieza y buscar una debilidad del rival');
+    }
+    return out.slice(0, 2);
+  }
+  /** Planes de ambos bandos. */
+  function plans(st) {
+    const j = l => l.join('; después, ');
+    return { w: j(sidePlan(st, 'w')), b: j(sidePlan(st, 'b')) };
+  }
+
+  global.MauroExplica = { ideas, hint, review, threatsAgainst, plans };
 })(typeof window !== 'undefined' ? window : globalThis);

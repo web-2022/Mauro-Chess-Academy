@@ -92,6 +92,7 @@
 
   // ---------- Tablero ----------
   function render() {
+    try { showEval(viewAt); } catch (_) {}
     const st = positions[viewAt];
     const live = viewAt === positions.length - 1;
     const targets = selected && live ? C.legalFrom(st, selected).map(m => m.to) : [];
@@ -161,6 +162,7 @@
     status(turnText());
     updateControls();
     if (!humanTurn()) machineMove();
+    liveEval();
   }
   async function machineMove() {
     thinking = true; updateControls();
@@ -174,6 +176,35 @@
     if (myGame !== game || game.moves.length !== n) return; // se reinició o deshizo mientras pensaba
     thinking = false;
     if (r && r.uci) playMove(r.uci); else updateControls();
+  }
+  // Evaluación después de cada jugada (desde el punto de vista de las blancas)
+  let evalSeq = 0;
+  function evalText(c) {
+    const s = fmtEval(cp(c)), a = Math.abs(cp(c));
+    const who = c > 0 ? 'las blancas' : 'las negras';
+    const word = a >= 1000 ? 'mate a la vista' : a < 30 ? 'posición igualada' : a < 100 ? `ligera ventaja de ${who}` : a < 250 ? `ventaja clara de ${who}` : `ventaja decisiva de ${who}`;
+    return { s, word, cls: a < 30 ? 'ev-eq' : c > 0 ? 'ev-w' : 'ev-b' };
+  }
+  function showEval(i) {
+    const el = $('evalBadge'); if (!el) return;
+    const v = game.evals && game.evals[i];
+    if (i === 0 || v == null) { el.hidden = true; return; }
+    const t = evalText(v), num = Math.ceil(i / 2) + (i % 2 ? '. ' : '... ');
+    el.hidden = false; el.className = 'eval-badge ' + t.cls;
+    el.innerHTML = '<span class="eb-label"></span><span class="eb-num"></span><span class="eb-word"></span>';
+    el.querySelector('.eb-label').textContent = `Evaluación tras ${num}${game.sans[i - 1]}`;
+    el.querySelector('.eb-num').textContent = t.s; el.querySelector('.eb-word').textContent = t.word;
+    el.classList.remove('ev-flash'); void el.offsetWidth; el.classList.add('ev-flash');
+  }
+  async function liveEval() {
+    const i = game.moves.length, k = key(), my = ++evalSeq;
+    if (!i) return showEval(0);
+    game.evals = game.evals || [];
+    const t = terminalEval(positions[i]);
+    let v = t;
+    if (v === null) { const r = await engine(START, game.moves.slice(0, i), 'an', 500); if (!r || key().indexOf(k) !== 0) return; v = r.score != null ? (Math.abs(r.score) > 50000 ? Math.sign(r.score) * 1000 : r.score) : 0; }
+    game.evals[i] = v; save();
+    if (my === evalSeq || viewAt === i) showEval(viewAt);
   }
   function turnText() {
     const st = current(); const check = C.inCheck(st) ? ' · ¡Jaque!' : '';
@@ -208,7 +239,13 @@
   function renderNavButtons() {
     document.querySelectorAll('[data-nav]').forEach(b => { const a = b.dataset.nav; b.disabled = (a === 'start' || a === 'prev') ? viewAt === 0 : viewAt === positions.length - 1; });
   }
-  function goTo(i) { viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; render(); }
+  let lastSay = '', lastSaidAt = -1;
+  function goTo(i) {
+    viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; render();
+    // Modo análisis: al pasar a cada jugada se explica en voz alta automáticamente
+    if (an() && viewAt > 0 && lastSay && lastSaidAt !== viewAt) { lastSaidAt = viewAt; speak(lastSay); }
+    else if (an() && viewAt === 0) { lastSaidAt = 0; try { (window.MauroVoice?.stop || (() => speechSynthesis.cancel()))(); } catch (_) {} }
+  }
   document.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => ({ start: () => goTo(0), prev: () => goTo(viewAt - 1), next: () => goTo(viewAt + 1), end: () => goTo(positions.length - 1) })[b.dataset.nav]()));
   document.addEventListener('keydown', e => {
     if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '') || !$('promoDialog').hidden) return;
@@ -268,11 +305,19 @@
     const sanH = m ? C.san(st, m) : '', showSan = sanH && sanH.replace(/[+#]/, '') !== r.uci.slice(2, 4);
     let text = `Pista: mueve ${fem ? 'la' : 'el'} ${NAME[piece[1]]} de ${r.uci.slice(0, 2)} a ${r.uci.slice(2, 4)}${showSan ? ' (' + sanH + ')' : ''}.`;
     try { if (window.MauroExplica) text += ' ' + window.MauroExplica.hint(st, r.uci, Math.ceil((game.moves.length + 1) / 2)); } catch (_) {}
-    showHint(text); render(); updateControls();
+    let plansTxt = null;
+    try { if (window.MauroExplica?.plans) plansTxt = window.MauroExplica.plans(st); } catch (_) {}
+    showHint(text, plansTxt); render(); updateControls();
   });
-  function showHint(text) {
+  function showHint(text, pl) {
     const el = $('playStatus'); el.className = 'feedback hint'; el.replaceChildren();
     const msg = document.createElement('span'); msg.className = 'hint-text'; msg.textContent = '💡 ' + text;
+    if (pl) {
+      const box = document.createElement('span'); box.className = 'hint-plans';
+      box.innerHTML = '<span class="hp-w"><b>⚪ Plan de las blancas:</b> </span><span class="hp-b"><b>⚫ Plan de las negras:</b> </span>';
+      box.querySelector('.hp-w').append(pl.w + '.'); box.querySelector('.hp-b').append(pl.b + '.');
+      msg.append(box); text += ` Plan de las blancas: ${pl.w}. Plan de las negras: ${pl.b}.`;
+    }
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'hint-audio'; btn.textContent = '🔊'; btn.title = 'Escuchar la pista'; btn.setAttribute('aria-label', 'Escuchar la pista otra vez');
     const say = () => speakAlways(text.replace(/\b([a-h])([1-8])\b/g, '$1 $2').replace(/ \([^)]*\)/, ''));
     btn.addEventListener('click', say); el.append(msg, btn); say();
@@ -325,6 +370,7 @@
     }
     const avg = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : null;
     game.analysis = { key: k, done: true, ev, best, q, loss, acc: { w: avg(acc.w), b: avg(acc.b) } };
+    game.evals = ev.slice();
     save(); analyzing = false; bar.hidden = true;
     render(); renderAnalysis(); updateControls();
     document.body.classList.toggle('an-review', true);
@@ -363,8 +409,10 @@
       const ex = window.MauroExplica ? window.MauroExplica.review(positions[i - 1], game.moves[i - 1], a.best[i - 1], a.best[i], q, Math.ceil(i / 2)) : '';
       if (ex) txt += ' ' + ex;
     } catch (_) {}
-    el.append(document.createTextNode(txt + ` Evaluación: ${fmtEval(cp(a.ev[i]))}.`));
-    const say = `${Q.name}. ${num.replace('...', ', negras,').replace('. ', '. ')}${spokenSan(game.sans[i - 1])}.${speakify(txt)}`;
+    el.append(document.createTextNode(txt + ' '));
+    const et = evalText(a.ev[i]); const mk = document.createElement('mark'); mk.className = 'an-eval ' + et.cls; mk.textContent = `Evaluación: ${et.s} · ${et.word}`; el.append(mk);
+    const say = `${Q.name}. ${num.replace('...', ', negras,').replace('. ', '. ')}${spokenSan(game.sans[i - 1])}.${speakify(txt)} Evaluación: ${et.word}.`;
+    lastSay = say;
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'an-audio'; btn.textContent = '🔊';
     btn.title = 'Escuchar la explicación'; btn.setAttribute('aria-label', 'Escuchar la explicación de esta jugada');
     btn.addEventListener('click', () => speakAlways(say));

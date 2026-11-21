@@ -153,6 +153,22 @@
     .exercise-action>.play-tools .main-btn{font-size:.66rem!important;min-height:32px!important}
   }
   .elo-note{display:block;margin-top:.35rem;opacity:.7;font-size:.85em}
+
+  /* Evaluación destacada tras cada jugada */
+  .eval-badge{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:8px 0;padding:8px 14px;border-radius:12px;border:2px solid #365777;background:#0b1730;font-weight:800}
+  .eval-badge[hidden]{display:none}
+  .eval-badge .eb-label{color:#94a3b8;font-size:.85em;font-weight:700}
+  .eval-badge .eb-num{font-size:1.35em;font-weight:900;padding:2px 10px;border-radius:8px}
+  .eval-badge .eb-word{color:#e2e8f0}
+  .eval-badge.ev-w{border-color:#e2e8f0}.eval-badge.ev-w .eb-num{background:#f8fafc;color:#0f172a}
+  .eval-badge.ev-b{border-color:#64748b}.eval-badge.ev-b .eb-num{background:#020617;color:#f8fafc;border:1px solid #64748b}
+  .eval-badge.ev-eq{border-color:#38bdf8}.eval-badge.ev-eq .eb-num{background:#0c4a6e;color:#e0f2fe}
+  .eval-badge.ev-flash{animation:evFlash .9s ease}
+  @keyframes evFlash{0%{box-shadow:0 0 0 0 rgba(56,189,248,.8)}100%{box-shadow:0 0 0 12px rgba(56,189,248,0)}}
+  mark.an-eval{display:inline-block;margin-top:4px;padding:2px 10px;border-radius:8px;font-weight:900;background:#0c4a6e;color:#e0f2fe}
+  mark.an-eval.ev-w{background:#f8fafc;color:#0f172a}mark.an-eval.ev-b{background:#020617;color:#f8fafc;border:1px solid #64748b}
+  .hint-plans{display:grid;gap:4px;margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(15,23,42,.6);border:1px solid #365777}
+  .hint-plans b{color:#c4b5fd}
 </style>
 <link rel="stylesheet" href="js/jugar-pantalla.css?v=1">
 </head>
@@ -228,6 +244,7 @@
       </section>
       <section class="exercise-action">
         <div class="feedback" id="playStatus" role="status" aria-live="polite"></div>
+        <div class="eval-badge" id="evalBadge" hidden aria-live="polite"></div>
         <div class="play-tools" id="playTools">
           <button class="main-btn" type="button" id="hintBtn">💡 Pista</button>
           <button class="main-btn" type="button" id="undoBtn">↶ Deshacer</button>
@@ -268,9 +285,9 @@
     </div></div>
   </div>
   <script src="js/mauro-chess-rules.js?v=1"></script>
-  <script src="js/mauro-explica.js?v=1"></script>
+  <script src="js/mauro-explica.js?v=2"></script>
   <script src="js/mauro-motor.js?v=3"></script>
-  <script defer src="js/mauro-jugar.js?v=6"></script>
+  <script defer src="js/mauro-jugar.js?v=7"></script>
 <script src="js/ajedrezia-sync.js?v=2" defer></script>
 </body>
 </html>
