@@ -249,6 +249,11 @@
   .ol-invite{display:flex;flex-wrap:wrap;gap:8px}
   .ol-wa{background:#16a34a!important;color:#fff!important}
   .ol-err{color:#fca5a5}
+
+  @media (max-width:767px){
+    .nav-row.nav-top{display:grid!important;grid-template-columns:repeat(4,1fr);gap:6px;max-width:none;margin:0 0 6px!important}
+    .nav-row.nav-top .rv-btn{min-height:40px!important;font-size:18px}
+  }
 </style>
 <link rel="stylesheet" href="js/jugar-pantalla.css?v=8">
 </head>
@@ -371,7 +376,7 @@
   <script src="js/mauro-pgn.js?v=1"></script>
   <script src="js/mauro-maestros.js?v=1"></script>
   <script src="js/mauro-motor.js?v=4"></script>
-  <script defer src="js/mauro-jugar.js?v=16"></script>
+  <script defer src="js/mauro-jugar.js?v=17"></script>
 <script src="js/ajedrezia-sync.js?v=2" defer></script>
 </body>
 </html>

@@ -938,6 +938,16 @@
   const params = new URLSearchParams(location.search);
   if (params.get('modo') === 'amigo' || params.get('modo') === 'online') { form.querySelector(`[name="mode"][value="${params.get('modo')}"]`).checked = true; form.dispatchEvent(new Event('change')); if (params.get('modo') === 'online') $('setupWrap').open = true; }
 
+  // En celular, los botones ⏮ ◀ ▶ ⏭ van justo encima del tablero
+  (function placeNav() {
+    const nav = document.querySelector('.nav-row'), action = document.querySelector('.exercise-action'), shell = document.querySelector('.exercise-board-shell');
+    if (!nav || !action || !shell) return;
+    const home = document.createComment('nav-home'); nav.before(home);
+    const mq = window.matchMedia('(max-width:767px)');
+    const apply = () => { if (mq.matches) { shell.before(nav); nav.classList.add('nav-top'); } else { home.after(nav); nav.classList.remove('nav-top'); } };
+    mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply); apply();
+  })();
+
   // ---------- Inicio: retoma la partida guardada ----------
   let saved = null; try { saved = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (_) {}
   if (params.get('maestro') && window.MauroMaestros && loadMaster(params.get('maestro'))) { /* partida de maestro */ }
