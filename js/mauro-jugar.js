@@ -18,7 +18,7 @@
     return new Promise(resolve => {
       const id = ++reqId; pending.set(id, resolve);
       try {
-        if (!worker) { worker = new Worker('js/mauro-motor.js?v=3'); worker.onmessage = ev => { const r = pending.get(ev.data.id); pending.delete(ev.data.id); r && r(ev.data); }; }
+        if (!worker) { worker = new Worker('js/mauro-motor.js?v=4'); worker.onmessage = ev => { const r = pending.get(ev.data.id); pending.delete(ev.data.id); r && r(ev.data); }; }
         worker.postMessage({ id, fen, moves, level, maxTime });
       } catch (_) { // sin Workers: se calcula en la página
         setTimeout(() => { pending.delete(id); resolve(window.MauroMotor.bestMove(fen, level, moves, maxTime)); }, 30);
@@ -30,7 +30,7 @@
   let game = null;          // { mode, level, human: 'w'|'b'|'both', moves:[uci], sans:[], result, hints }
   let positions = [];       // estados de reglas tras cada jugada (0 = inicio)
   let analyzing = false;
-  let viewAt = 0, selected = null, thinking = false, flipped = false, hintMarks = null, promoPending = null;
+  let viewAt = 0, selected = null, thinking = false, flipped = false, hintMarks = null, promoPending = null, bestMarks = null;
 
   function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(game)); } catch (_) {} }
   function rebuild() {
@@ -109,6 +109,7 @@
       if (s === selected) d.classList.add('drill-selected');
       if (targets.includes(s)) d.classList.add(p ? 'drill-capture' : 'drill-target');
       if (hintMarks && live && (s === hintMarks[0] || s === hintMarks[1])) d.classList.add('drill-hint');
+      if (bestMarks && bestMarks.at === viewAt && bestMarks.sq.includes(s)) d.classList.add('an-best-sq');
       if (p) { const img = document.createElement('img'); img.src = `pieces-tema/${p}.png`; img.alt = NAME[p[1]] + (p[0] === 'w' ? ' blanco' : ' negro'); img.className = 'mp-libre mp-' + p; img.draggable = false; d.append(img); }
       if (ri === 7) { const c = document.createElement('span'); c.className = 'square-file'; c.textContent = C.FILES[f]; d.append(c); }
       if (fi === 0) { const c = document.createElement('span'); c.className = 'square-rank'; c.textContent = r; d.append(c); }
@@ -118,6 +119,7 @@
     }
     renderMoves(); renderCaptured(); renderClock();
     if (!analyzing) renderAnalysisLazy();
+    updateCursor();
   }
   let lastAnKey = null;
   function renderAnalysisLazy() { const k = an() ? key() : null; if (k !== lastAnKey) { lastAnKey = k; renderAnalysis(); } }
@@ -220,8 +222,12 @@
     game.sans.forEach((san, i) => {
       if (i % 2 === 0) { const n = document.createElement('span'); n.className = 'ml-num'; n.textContent = (i / 2 + 1) + '.'; list.append(n); }
       const b = document.createElement('button'); b.type = 'button'; const q = an() ? an().q[i] : null;
-      b.className = 'rv-move ' + (i % 2 ? 'b' : 'w') + (viewAt === i + 1 ? ' active' : '') + (q ? ' q-' + q : ''); b.textContent = san + (q ? QUAL[q].sym : '');
-      if (q) b.title = QUAL[q].name;
+      b.className = 'rv-move ' + (i % 2 ? 'b' : 'w') + (viewAt === i + 1 ? ' active' : '') + (q ? ' q-' + q : '');
+      if (q) { const ic = document.createElement('span'); ic.className = 'mv-ic'; ic.textContent = QUAL[q].icon; ic.setAttribute('aria-hidden', 'true'); b.append(ic); }
+      const sn = document.createElement('span'); sn.className = 'mv-san'; sn.textContent = san; b.append(sn);
+      const ev = game.evals && game.evals[i + 1];
+      if (ev != null) { const e = document.createElement('span'); e.className = 'mv-ev ' + evalText(ev).cls; e.textContent = fmtEval(cp(ev)).replace('Blancas dan mate', '#+').replace('Negras dan mate', '#−'); b.append(e); }
+      b.title = (q ? QUAL[q].name + ' · ' : '') + (ev != null ? 'Evaluación ' + fmtEval(cp(ev)) : '');
       b.addEventListener('click', () => goTo(i + 1)); list.append(b);
     });
     if (game.result) { const r = document.createElement('span'); r.className = 'ml-result'; r.textContent = game.result === '1/2-1/2' ? '½-½' : game.result; list.append(r); }
@@ -241,7 +247,7 @@
   }
   let lastSay = '', lastSaidAt = -1;
   function goTo(i) {
-    viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; render();
+    viewAt = Math.max(0, Math.min(positions.length - 1, i)); selected = null; if (bestMarks && bestMarks.at !== viewAt) bestMarks = null; render();
     // Modo análisis: al pasar a cada jugada se explica en voz alta automáticamente
     if (an() && viewAt > 0 && lastSay && lastSaidAt !== viewAt) { lastSaidAt = viewAt; speak(lastSay); }
     else if (an() && viewAt === 0) { lastSaidAt = 0; try { (window.MauroVoice?.stop || (() => speechSynthesis.cancel()))(); } catch (_) {} }
@@ -417,6 +423,13 @@
     btn.title = 'Escuchar la explicación'; btn.setAttribute('aria-label', 'Escuchar la explicación de esta jugada');
     btn.addEventListener('click', () => speakAlways(say));
     b.append(' ', btn);
+    const bu = a.best[i - 1], bsan = bu && q !== 'best' ? sanOf(i - 1, bu) : null;
+    if (bsan) {
+      const vb = document.createElement('button'); vb.type = 'button'; vb.className = 'an-see-best'; vb.textContent = `👁 Ver la mejor: ${bsan}`;
+      vb.title = 'Muestra en el tablero la posición anterior con la mejor jugada marcada';
+      vb.addEventListener('click', () => { bestMarks = { at: i - 1, sq: [bu.slice(0, 2), bu.slice(2, 4)] }; lastSaidAt = i - 1; goTo(i - 1); status(`👁 Mejor era ${bsan}: mira las casillas marcadas en verde. Pulsa ▶ para volver a tu jugada.`, 'good'); speak(`Mejor era ${spokenSan(bsan)}.`); });
+      el.append(document.createElement('br'), vb);
+    }
     return el;
   }
   function renderAnalysis() {
@@ -425,16 +438,50 @@
     const count = (side, q) => a.q.filter((x, i) => x === q && positions[i].turn === side).length;
     const row = (side, label) => `<div class="an-row"><b>${label}</b><span class="an-acc">${a.acc[side] ?? '—'}%</span><span class="q-best">★ ${count(side, 'best')}</span><span class="q-inacc">?! ${count(side, 'inacc')}</span><span class="q-mist">? ${count(side, 'mist')}</span><span class="q-blun">?? ${count(side, 'blun')}</span></div>`;
     const wl = game.human === 'w' ? '⚪ Tú' : game.human === 'b' ? '⚪ Máquina' : '⚪ Blancas', bl = game.human === 'b' ? '⚫ Tú' : game.human === 'w' ? '⚫ Máquina' : '⚫ Negras';
-    // gráfica de evaluación
-    const W = 300, H = 60, n = a.ev.length - 1 || 1;
+    // gráfica de evaluación (con línea de la jugada actual)
+    const W = 600, H = 120, n = a.ev.length - 1 || 1;
     const y = c => (H / 2 - (winPct(cp(c)) - 50) / 50 * (H / 2)).toFixed(1);
     const pts = a.ev.map((c, i) => `${(i / n * W).toFixed(1)},${y(c)}`).join(' ');
-    const dots = a.q.map((q, i) => (q === 'mist' || q === 'blun') ? `<circle cx="${((i + 1) / n * W).toFixed(1)}" cy="${y(a.ev[i + 1])}" r="3.5" class="dot-${q}"/>` : '').join('');
+    const dots = a.q.map((q, i) => (q === 'inacc' || q === 'mist' || q === 'blun') ? `<circle cx="${((i + 1) / n * W).toFixed(1)}" cy="${y(a.ev[i + 1])}" r="${q === 'inacc' ? 4 : 6}" class="dot-${q}"><title>${Math.ceil((i + 1) / 2)}${i % 2 ? '...' : '.'} ${game.sans[i]} · ${QUAL[q].name}</title></circle>` : '').join('');
+    // Indicadores para mejorar: pérdida media, precisión por fase, momentos clave y consejo
+    const sideOf = i => positions[i].turn;
+    const acpl = side => { const l = a.loss.filter((_, i) => sideOf(i) === side); return l.length ? Math.round(l.reduce((x, y) => x + Math.min(y, 1000), 0) / l.length) : 0; };
+    const N = a.q.length, phaseOf = i => i < 20 ? 0 : (Object.values(positions[i].board).filter(p => p[1] !== 'K' && p[1] !== 'P').length <= 6 ? 2 : 1);
+    const me = game.human === 'both' ? null : game.human;
+    const phaseStats = [0, 1, 2].map(ph => { const idx = a.q.map((q, i) => i).filter(i => phaseOf(i) === ph && (!me || sideOf(i) === me)); const err = idx.filter(i => a.q[i] === 'mist' || a.q[i] === 'blun').length; const good = idx.filter(i => a.q[i] === 'best' || a.q[i] === 'good').length; return { n: idx.length, err, pct: idx.length ? Math.round(100 * good / idx.length) : null }; });
+    const PH = ['Apertura', 'Medio juego', 'Final'];
+    const key3 = a.loss.map((l, i) => [l, i]).filter(([l, i]) => l >= 100 && (!me || sideOf(i) === me)).sort((x, y) => y[0] - x[0]).slice(0, 3).sort((x, y) => x[1] - y[1]);
+    const worst = phaseStats.map((p, ph) => [p.err, ph]).sort((x, y) => y[0] - x[0])[0];
+    const blunders = a.q.filter((q, i) => q === 'blun' && (!me || sideOf(i) === me)).length;
+    const TIP = [
+      ['Tus errores llegaron en la apertura: repasa desarrollo, centro y enroque.', 'tema-73-para-que-sirve-la-apertura.html', 'Módulo 4: construir una partida'],
+      ['Tus errores llegaron en el medio juego: antes de mover, revisa jaques, capturas y amenazas.', 'tema-72-metodo-inicial-mira-piensa-comprueba-mueve.html', 'Método Mira → Piensa → Comprueba → Mueve'],
+      ['Tus errores llegaron en el final: practica la actividad del rey y los peones pasados.', 'tema-166-por-que-estudiar-finales.html', 'Módulo 8: finales']
+    ];
+    let tip = '';
+    if (blunders) tip = `<p class="an-tip">🎯 <b>Consejo:</b> cometiste ${blunders} error${blunders > 1 ? 'es' : ''} grave${blunders > 1 ? 's' : ''}. Antes de cada jugada pregúntate: <i>¿qué piezas mías quedan atacadas después de mover?</i> ${worst && worst[0] ? TIP[worst[1]][0] : ''}</p>`;
+    else if (worst && worst[0]) tip = `<p class="an-tip">🎯 <b>Consejo:</b> ${TIP[worst[1]][0]}</p>`;
+    else tip = '<p class="an-tip">🎯 <b>Consejo:</b> ¡sin errores! Sube un nivel a la máquina para seguir creciendo.</p>';
+    const phRow = phaseStats.map((p, i) => `<span class="an-ph"><b>${PH[i]}</b> ${p.pct == null ? '—' : p.pct + '% buenas'}${p.err ? ` · <em>${p.err} error${p.err > 1 ? 'es' : ''}</em>` : ''}</span>`).join('');
     box.innerHTML = `<p class="an-title">🔎 Análisis de la partida <small>(precisión, mejores jugadas y errores)</small></p>${row('w', wl)}${row('b', bl)}
-      <svg class="an-graph" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Gráfica de la evaluación a lo largo de la partida"><rect width="${W}" height="${H / 2}" class="g-w"/><rect y="${H / 2}" width="${W}" height="${H / 2}" class="g-b"/><polyline points="0,${H / 2} ${pts} ${W},${H / 2}" class="g-fill"/><polyline points="${pts}" class="g-line"/>${dots}</svg>
-      <p class="an-help">Arriba de la línea media: ventaja blanca. Toca la gráfica para ir a esa jugada. ${firstMistake() ? '<button type="button" class="an-jump">Ver mi primer error</button>' : ''}</p>`;
+      <div class="an-row an-acpl"><b>Pérdida media</b><span>⚪ ${acpl('w')} · ⚫ ${acpl('b')} <small>centésimas de peón por jugada (menos es mejor)</small></span></div>
+      <svg class="an-graph" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Gráfica de la evaluación a lo largo de la partida"><rect width="${W}" height="${H / 2}" class="g-w"/><rect y="${H / 2}" width="${W}" height="${H / 2}" class="g-b"/><line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" class="g-mid"/><polyline points="0,${H / 2} ${pts} ${W},${H / 2}" class="g-fill"/><polyline points="${pts}" class="g-line"/>${dots}<line id="anCursor" x1="0" x2="0" y1="0" y2="${H}" class="g-cursor"/><circle id="anCursorDot" r="5" class="g-cdot"/></svg>
+      <p class="an-help">Arriba de la línea media: ventaja blanca. La línea celeste marca la jugada que estás viendo; toca la gráfica para saltar.</p>
+      <div class="an-phases">${me ? '<small>Tus jugadas por fase:</small>' : ''}${phRow}</div>
+      ${key3.length ? `<div class="an-keys"><b>⚡ Momentos clave:</b> ${key3.map(([l, i]) => `<button type="button" class="an-key q-${a.q[i]}" data-go="${i + 1}">${Math.ceil((i + 1) / 2)}${i % 2 ? '...' : '.'} ${game.sans[i]} <small>−${(Math.min(l, 1000) / 100).toFixed(1).replace('.', ',')}</small></button>`).join('')}</div>` : ''}
+      ${tip}
+      ${firstMistake() ? '<button type="button" class="an-jump">Ver mi primer error</button>' : ''}`;
+    box.dataset.n = n;
     box.querySelector('svg').addEventListener('click', e => { const r = e.currentTarget.getBoundingClientRect(); goTo(Math.round((e.clientX - r.left) / r.width * n)); });
     box.querySelector('.an-jump')?.addEventListener('click', () => goTo(firstMistake()));
+    box.querySelectorAll('[data-go]').forEach(k => k.addEventListener('click', () => goTo(+k.dataset.go)));
+    updateCursor();
+  }
+  function updateCursor() {
+    const a = an(), l = document.getElementById('anCursor'), d = document.getElementById('anCursorDot'); if (!a || !l) return;
+    const W = 600, H = 120, n = a.ev.length - 1 || 1, x = (viewAt / n * W).toFixed(1);
+    l.setAttribute('x1', x); l.setAttribute('x2', x);
+    d.setAttribute('cx', x); d.setAttribute('cy', (H / 2 - (winPct(cp(a.ev[viewAt])) - 50) / 50 * (H / 2)).toFixed(1));
   }
   $('anBtn').addEventListener('click', analyze);
 

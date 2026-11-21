@@ -326,7 +326,7 @@
     this.nodes = 0; this.stop = false; this.deadline = Date.now() + opts.timeMs; this.killers = []; this.history.fill(0);
     const root = this.legalMoves();
     if (!root.length) return null;
-    if (root.length === 1) return { move: root[0], score: 0, depth: 0 };
+    if (root.length === 1 && !opts.evaluate) return { move: root[0], score: 0, depth: 0 }; // en análisis también se evalúa la jugada única
     let best = root[0], bestScore = -INF, depthDone = 0, scores = new Map();
     for (let d = 1; d <= opts.maxDepth; d++) {
       let alpha = -INF, curBest = 0, curScore = -INF; const cur = new Map();
@@ -367,7 +367,7 @@
     4: { name: 'Avanzado', timeMs: 1000, maxDepth: 64, noise: 0 },
     5: { name: 'Experto', timeMs: 2500, maxDepth: 64, noise: 0 },
     6: { name: 'Maestro', timeMs: 5000, maxDepth: 64, noise: 0 },
-    an: { name: 'Análisis', timeMs: 400, maxDepth: 64, noise: 0 }
+    an: { name: 'Análisis', timeMs: 400, maxDepth: 64, noise: 0, evaluate: true }
   };
   // fen: posición inicial de la partida; moves: jugadas (uci) desde ahí. Así el motor conoce
   // las posiciones anteriores y detecta repeticiones.

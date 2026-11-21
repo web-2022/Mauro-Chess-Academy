@@ -169,6 +169,33 @@
   mark.an-eval.ev-w{background:#f8fafc;color:#0f172a}mark.an-eval.ev-b{background:#020617;color:#f8fafc;border:1px solid #64748b}
   .hint-plans{display:grid;gap:4px;margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(15,23,42,.6);border:1px solid #365777}
   .hint-plans b{color:#c4b5fd}
+
+  /* Botones de jugada con icono, valoración y colores */
+  .move-list .rv-move{display:inline-flex;align-items:center;gap:5px}
+  .rv-move .mv-ic{font-weight:900;font-size:.85em}
+  .rv-move .mv-ev{font-size:.72em;font-weight:800;padding:1px 5px;border-radius:6px;background:#0c4a6e;color:#e0f2fe}
+  .rv-move .mv-ev.ev-w{background:#f1f5f9;color:#0f172a}.rv-move .mv-ev.ev-b{background:#020617;color:#f8fafc;border:1px solid #475569}
+  .rv-move.q-best .mv-ic{color:#5eead4}.rv-move.q-good .mv-ic{color:#86efac}.rv-move.q-good{border-color:#22c55e}
+  .rv-move.q-inacc .mv-ic{color:#fde047}
+  .rv-move.q-mist{border-color:#ef4444;background:#450a0a;color:#fecaca}.rv-move.q-mist .mv-ic{color:#fca5a5}
+  .rv-move.q-blun{border-color:#dc2626;background:#7f1d1d;color:#fff}.rv-move.q-blun .mv-ic{color:#fff}
+  .rv-move.active{outline:3px solid #38bdf8;outline-offset:1px}
+  .rv-move.q-mist.active,.rv-move.q-blun.active{background:#b91c1c;color:#fff}
+  /* Gráfica y nuevos indicadores */
+  .an-graph{height:110px!important}
+  .an-graph .g-mid{stroke:#64748b;stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+  .an-graph .g-cursor{stroke:#38bdf8;stroke-width:2;vector-effect:non-scaling-stroke}
+  .an-graph .g-cdot{fill:#38bdf8;stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke}
+  .an-graph .dot-inacc{fill:#facc15}
+  .an-acpl small{opacity:.75;font-weight:400}
+  .an-phases{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:.5rem 0;font-size:.92em}
+  .an-ph em{color:#fca5a5;font-style:normal;font-weight:800}
+  .an-keys{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:.5rem 0}
+  .an-key{border-radius:8px;padding:4px 10px;cursor:pointer;font:700 .9em system-ui,sans-serif;border:1px solid #ef4444;background:#450a0a;color:#fecaca}
+  .an-key.q-blun{background:#7f1d1d;color:#fff}
+  .an-tip{margin:.5rem 0;padding:8px 12px;border-left:4px solid #a78bfa;background:rgba(167,139,250,.1);border-radius:8px}
+  .an-see-best{margin-top:6px;border-radius:8px;padding:4px 10px;cursor:pointer;font:800 .9em system-ui,sans-serif;border:1px solid #22c55e;background:#052e16;color:#86efac}
+  .sq.an-best-sq{box-shadow:inset 0 0 0 5px #22c55e,inset 0 0 24px rgba(34,197,94,.7)}
 </style>
 <link rel="stylesheet" href="js/jugar-pantalla.css?v=1">
 </head>
@@ -286,8 +313,8 @@
   </div>
   <script src="js/mauro-chess-rules.js?v=1"></script>
   <script src="js/mauro-explica.js?v=2"></script>
-  <script src="js/mauro-motor.js?v=3"></script>
-  <script defer src="js/mauro-jugar.js?v=7"></script>
+  <script src="js/mauro-motor.js?v=4"></script>
+  <script defer src="js/mauro-jugar.js?v=9"></script>
 <script src="js/ajedrezia-sync.js?v=2" defer></script>
 </body>
 </html>
