@@ -1,0 +1,44 @@
+/* Jugar y analizar sin desplazar la página en tablet, laptop, PC y pantallas ultra grandes.
+   La página queda fija a la altura de la pantalla: el tablero se ve completo y el panel de
+   jugadas/análisis tiene su propio desplazamiento interno. En celular no cambia nada. */
+@media (min-width:768px){
+  body[data-exercise="jugar"]{--top:65px;--bot:64px;--clk:0px;height:100vh;height:100dvh;overflow:hidden!important;padding-bottom:0!important;margin:0!important}
+  body[data-exercise="jugar"]:has(#clockTop:not([hidden])){--clk:52px}
+  body[data-exercise="jugar"] .app{position:fixed!important;top:calc(var(--top) + 8px);bottom:calc(var(--bot) + 8px + env(safe-area-inset-bottom,0px));left:12px;right:12px;width:auto!important;max-width:none!important;margin:0!important;min-height:0!important;height:auto!important;display:grid!important;column-gap:14px;row-gap:8px;overflow:hidden}
+  body[data-exercise="jugar"] .exercise-layout,body[data-exercise="jugar"] .exercise-board{display:contents!important}
+  body[data-exercise="jugar"] .exercise-progress,body[data-exercise="jugar"] .exercise-intro{margin:0!important}
+  body[data-exercise="jugar"] .exercise-intro{padding:12px 16px!important;overflow:auto;max-height:60vh;max-height:60dvh}
+  body[data-exercise="jugar"] .exercise-board-shell{margin:0!important;position:static!important;width:var(--exb)!important;max-width:none!important;align-self:start}
+  body[data-exercise="jugar"] .exercise-action{min-height:0;max-height:100%;align-self:stretch;overflow:auto;overscroll-behavior:contain;margin:0!important;padding:14px 16px!important}
+  body[data-exercise="jugar"] .clock-bar{margin:0!important;width:calc(50% - 4px)!important;box-sizing:border-box}
+  body[data-exercise="jugar"] #clockTop{justify-self:start}
+  body[data-exercise="jugar"] #clockBottom{justify-self:end}
+  body[data-exercise="jugar"] .exercise-kicker,body[data-exercise="jugar"] .exercise-intro > p{display:none!important}
+  body[data-exercise="jugar"] .exercise-intro h1{font-size:clamp(20px,1vw + 12px,34px)!important;margin:0!important;line-height:1.15}
+  body[data-exercise="jugar"] .setup-wrap{margin-top:8px}
+  body[data-exercise="jugar"] .move-list{max-height:none}
+  body[data-exercise="jugar"] .exercise-tip{display:none}
+}
+@media (min-width:1101px){body[data-exercise="jugar"]{--top:77px;--bot:0px}}
+
+/* Horizontal (laptop, PC, tablet acostada): tablero a la izquierda, todo lo demás a la derecha */
+@media (min-width:1101px),(min-width:900px) and (orientation:landscape){
+  body[data-exercise="jugar"]{--exb:min(calc(100vh - var(--top) - var(--bot) - 16px), calc(100vw - 420px));--exb:min(calc(100dvh - var(--top) - var(--bot) - 16px), calc(100vw - 420px))}
+  body[data-exercise="jugar"] .app{grid-template-columns:var(--exb) minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr)}
+  body[data-exercise="jugar"] .exercise-board-shell{grid-column:1;grid-row:1 / -1}
+  body[data-exercise="jugar"] .exercise-progress{grid-column:2;grid-row:1}
+  body[data-exercise="jugar"] .exercise-intro{grid-column:2;grid-row:2}
+  body[data-exercise="jugar"] .clock-bar{grid-column:2;grid-row:3}
+  body[data-exercise="jugar"] .exercise-action{grid-column:2;grid-row:4}
+}
+
+/* Vertical (tablet de pie): tablero arriba y panel con desplazamiento propio abajo */
+@media (min-width:768px) and (max-width:1100px) and (orientation:portrait){
+  body[data-exercise="jugar"]{--exb:min(calc(100vw - 24px), calc(100vh - var(--top) - var(--bot) - var(--clk) - 470px));--exb:min(calc(100vw - 24px), calc(100dvh - var(--top) - var(--bot) - var(--clk) - 470px))}
+  body[data-exercise="jugar"] .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto minmax(0,1fr)}
+  body[data-exercise="jugar"] .exercise-progress{grid-row:1;padding-top:8px!important;padding-bottom:8px!important}
+  body[data-exercise="jugar"] .exercise-intro{grid-row:2}
+  body[data-exercise="jugar"] .clock-bar{grid-row:3}
+  body[data-exercise="jugar"] .exercise-board-shell{grid-row:4;justify-self:center}
+  body[data-exercise="jugar"] .exercise-action{grid-row:5}
+}
