@@ -214,7 +214,77 @@ function doGet(request){
     return json_({ok:true,found:true,slug:a.slug,nombre:a.academia,color:a.color,prefijo:a.prefijo,
       estado:a.estado,vencimiento:a.vencimiento});
   }
+  if(String(p.action||"").indexOf("online_")===0){
+    return json_(online_(p));
+  }
   return json_({ok:true,service:"Ajedrezia · Academia Mauro"});
+}
+
+/* =====================================================
+   AJEDREZIA · PARTIDAS EN LÍNEA
+   Una fila por sala en la pestaña «Online» (se crea sola).
+   Acciones (GET): online_create, online_join, online_get, online_move, online_end
+===================================================== */
+const ONLINE_HEADERS=["room","white","black","moves","result","why","createdAt","updatedAt","joined"];
+function onlineSheet_(){
+  const ss=SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sh=ss.getSheetByName("Online");
+  if(!sh){ sh=ss.insertSheet("Online"); sh.getRange(1,1,1,ONLINE_HEADERS.length).setValues([ONLINE_HEADERS]); sh.setFrozenRows(1); }
+  return sh;
+}
+function onlineFind_(sh,room){
+  const last=sh.getLastRow(); if(last<2) return null;
+  const vals=sh.getRange(2,1,last-1,ONLINE_HEADERS.length).getValues();
+  for(let i=vals.length-1;i>=0;i--){ if(String(vals[i][0])===room){ const o={_row:i+2}; ONLINE_HEADERS.forEach((h,k)=>o[h]=vals[i][k]); return o; } }
+  return null;
+}
+function onlineSave_(sh,o){
+  o.updatedAt=new Date();
+  sh.getRange(o._row,1,1,ONLINE_HEADERS.length).setValues([ONLINE_HEADERS.map(h=>o[h]===undefined?"":o[h])]);
+}
+function onlineOut_(o,extra){
+  return Object.assign({ok:true,room:o.room,white:o.white,black:o.black,moves:String(o.moves||""),result:o.result||"",why:o.why||"",joined:!!o.joined},extra||{});
+}
+function online_(p){
+  const room=String(p.room||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8);
+  if(!room) return {ok:false,error:"sala"};
+  const lock=LockService.getScriptLock(); lock.waitLock(10000);
+  try{
+    const sh=onlineSheet_(); let o=onlineFind_(sh,room);
+    const name=String(p.name||"").slice(0,40);
+    if(p.action==="online_create"){
+      if(o) return onlineOut_(o,{color:p.color});
+      const row=sh.getLastRow()+1;
+      o={_row:row,room:room,white:p.color==="w"?(name||"Jugador 1"):"",black:p.color==="b"?(name||"Jugador 1"):"",moves:"",result:"",why:"",createdAt:new Date(),joined:""};
+      onlineSave_(sh,o); return onlineOut_(o,{color:p.color});
+    }
+    if(!o) return {ok:false,error:"La sala no existe"};
+    if(p.action==="online_join"){
+      let color=p.color;
+      if(color!=="w" && color!=="b"){
+        if(!o.white){ color="w"; o.white=name||"Jugador 2"; }
+        else if(!o.black){ color="b"; o.black=name||"Jugador 2"; }
+        else color="none";
+        if(color!=="none"){ o.joined="si"; onlineSave_(sh,o); }
+      }
+      return onlineOut_(o,{color:color});
+    }
+    if(p.action==="online_get") return onlineOut_(o);
+    if(p.action==="online_move"){
+      const list=String(o.moves||"").split(" ").filter(String);
+      const ply=Number(p.ply);
+      if(o.result || ply!==list.length+1) return onlineOut_(o,{ok:false,error:"desfase"});
+      const turn=list.length%2===0?"w":"b";
+      if(p.color!==turn) return onlineOut_(o,{ok:false,error:"turno"});
+      list.push(String(p.uci||"").slice(0,5)); o.moves=list.join(" "); onlineSave_(sh,o);
+      return onlineOut_(o);
+    }
+    if(p.action==="online_end"){
+      if(!o.result){ o.result=String(p.result||""); o.why=String(p.why||"").slice(0,80); onlineSave_(sh,o); }
+      return onlineOut_(o);
+    }
+    return {ok:false,error:"accion"};
+  } finally { lock.releaseLock(); }
 }
 
 function json_(obj){

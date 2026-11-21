@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partidas de campeones y grandes maestros · Ajedrezia</title>
+  <meta name="description" content="Partidas inmortales de campeones del mundo y grandes maestros agrupadas por apertura y variante. Recórrelas jugada a jugada y analízalas con la máquina.">
+  <link rel="canonical" href="https://web-2022.github.io/Mauro-Chess-Academy/partidas-maestros.html">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <meta name="theme-color" content="#06111f">
+  <link rel="stylesheet" href="js/mauro-ui.css?v=192">
+  <link rel="stylesheet" href="js/mauro-header.css?v=197"><script defer src="js/mauro-header.js?v=199"></script><script defer src="js/mauro-ui.js?v=197"></script>
+  <link rel="stylesheet" href="js/mauro-responsive.css?v=192">
+  <style>
+    body{margin:0;background:#06111f;color:#e5e7eb;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+    .pm{width:min(1200px,calc(100% - 24px));margin:90px auto 90px}
+    .pm-hero{padding:22px;border:1px solid #29415c;border-radius:18px;background:linear-gradient(135deg,#0b1730,#0f2742)}
+    .pm-hero h1{margin:6px 0 8px;font-size:clamp(26px,2.2vw + 14px,44px)}
+    .pm-hero p{margin:0;color:#cbd5e1;font-size:clamp(15px,.4vw + 12px,19px);line-height:1.5}
+    .pm-kicker{color:#86efac;font-weight:900;letter-spacing:.08em;font-size:13px}
+    .pm-tools{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+    .pm-tools input{flex:1 1 260px;min-height:46px;padding:8px 14px;border-radius:12px;border:1px solid #365777;background:#020617;color:#f8fafc;font:16px system-ui,sans-serif}
+    .pm-chip{min-height:46px;padding:8px 14px;border-radius:12px;border:1px solid #365777;background:#132b45;color:#eef6ff;font-weight:800;cursor:pointer}
+    .pm-chip[aria-pressed="true"]{background:linear-gradient(135deg,#22c55e,#38bdf8);color:#03121c;border-color:transparent}
+    .pm-family{margin:22px 0 8px;font-size:clamp(18px,.6vw + 14px,24px);color:#bae6fd}
+    .pm-opening{margin:12px 0 8px;color:#fde68a;font-size:clamp(15px,.4vw + 12px,19px)}
+    .pm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+    .pm-card{display:grid;gap:8px;padding:14px;border:1px solid #29415c;border-radius:16px;background:#0b1730}
+    .pm-card h3{margin:0;font-size:1.05em;line-height:1.3}
+    .pm-meta{color:#94a3b8;font-size:.9em}
+    .pm-var{justify-self:start;display:inline-block;padding:2px 10px;border-radius:999px;background:#132b45;color:#bae6fd;font-weight:800;font-size:.85em}
+    .pm-idea{margin:0;color:#cbd5e1;line-height:1.45;font-size:.95em}
+    .pm-res{font-weight:900;color:#fde68a}
+    .pm-go{justify-self:start;display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border-radius:12px;background:linear-gradient(135deg,#22c55e,#38bdf8);color:#03121c;font-weight:900;text-decoration:none}
+    .pm-go:focus-visible,.pm-chip:focus-visible{outline:3px solid #6ee7ff;outline-offset:2px}
+    .pm-empty{color:#94a3b8}
+    .pm-note{margin-top:22px;color:#94a3b8;font-size:.9em}
+  </style>
+</head>
+<body>
+  <main class="pm">
+    <section class="pm-hero">
+      <span class="pm-kicker">PRACTICAR · PARTIDAS MAGISTRALES</span>
+      <h1>🏆 Partidas de campeones y grandes maestros</h1>
+      <p>Las partidas más famosas de la historia, agrupadas por apertura y variante. Ábrelas en el tablero, recórrelas jugada a jugada, pide a la máquina que las analice, prueba tus propias variantes y escribe tus notas.</p>
+    </section>
+    <div class="pm-tools" role="search">
+      <input id="pmSearch" type="search" placeholder="Buscar por jugador, apertura o año…" aria-label="Buscar partidas">
+      <button type="button" class="pm-chip" data-f="all" aria-pressed="true">Todas</button>
+      <button type="button" class="pm-chip" data-f="champ" aria-pressed="false">👑 Campeones del mundo</button>
+    </div>
+    <div id="pmList"></div>
+    <p class="pm-note">Cada partida fue verificada jugada por jugada con el motor de reglas. Para estudiar otra partida, en «Jugar» abre «📂 Mis partidas» y pega su PGN.</p>
+  </main>
+  <script src="js/mauro-maestros.js?v=1"></script>
+  <script>
+  (function () {
+    const list = document.getElementById('pmList'), q = document.getElementById('pmSearch');
+    let filter = 'all';
+    const champ = g => /campeón del mundo/.test(g.white + g.black);
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    function render() {
+      const term = q.value.trim().toLowerCase();
+      const games = window.MauroMaestros.filter(g => (filter === 'all' || champ(g)) && (!term || [g.white, g.black, g.opening, g.variant, g.event, g.year, g.family].join(' ').toLowerCase().includes(term)));
+      list.replaceChildren();
+      if (!games.length) { list.innerHTML = '<p class="pm-empty">No hay partidas con ese filtro.</p>'; return; }
+      const fams = [...new Set(games.map(g => g.family))];
+      fams.forEach(f => {
+        const h = document.createElement('h2'); h.className = 'pm-family'; h.textContent = f; list.append(h);
+        const ops = [...new Set(games.filter(g => g.family === f).map(g => g.opening))];
+        ops.forEach(o => {
+          const h3 = document.createElement('h3'); h3.className = 'pm-opening'; h3.textContent = '📖 ' + o; list.append(h3);
+          const grid = document.createElement('div'); grid.className = 'pm-grid';
+          games.filter(g => g.family === f && g.opening === o).forEach(g => {
+            const c = document.createElement('article'); c.className = 'pm-card';
+            c.innerHTML = `<span class="pm-var">${esc(g.variant)}</span><h3>⚪ ${esc(g.white)}<br>⚫ ${esc(g.black)}</h3><span class="pm-meta">${esc(g.event)} · ${g.year} · <span class="pm-res">${g.result}</span> · ${Math.ceil(g.pgn.split(/\s+/).filter(t => !/^\d+\./.test(t)).length / 2)} jugadas</span><p class="pm-idea">${esc(g.idea)}</p><a class="pm-go" href="jugar.html?maestro=${encodeURIComponent(g.id)}">▶ Ver y analizar</a>`;
+            grid.append(c);
+          });
+          list.append(grid);
+        });
+      });
+    }
+    q.addEventListener('input', render);
+    document.querySelectorAll('.pm-chip').forEach(b => b.addEventListener('click', () => { filter = b.dataset.f; document.querySelectorAll('.pm-chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); render(); }));
+    render();
+  })();
+  </script>
+</body>
+</html>

@@ -292,7 +292,7 @@ a.train{text-decoration:none!important;color:var(--text)!important}
 }
 </style>
 <link rel="stylesheet" href="js/mauro-ui.css?v=192">
-<link rel="stylesheet" href="js/mauro-header.css?v=197"><script defer src="js/mauro-header.js?v=198"></script><script defer src="js/mauro-ui.js?v=197"></script>
+<link rel="stylesheet" href="js/mauro-header.css?v=197"><script defer src="js/mauro-header.js?v=199"></script><script defer src="js/mauro-ui.js?v=197"></script>
 <link rel="stylesheet" href="js/mauro-responsive.css?v=192">
 </head>
 <body>
@@ -386,6 +386,18 @@ a.train{text-decoration:none!important;color:var(--text)!important}
       steps: ['Túrnense para mover.', 'Gira el tablero cuando quieran.', 'Copien el PGN para estudiar la partida.'],
       board: '<strong>1. e4 e5</strong>: la apertura más clásica. ¡Empiecen la partida!',
       mascot: 'Jugar con otras personas te enseña a pensar en las ideas de tu rival.' },
+    { id: 'online', cat: 'play', icon: '🌐', name: 'Jugar en línea', sub: 'Invita a un amigo por WhatsApp o correo', href: 'jugar.html?modo=online', rounds: 'Partida completa',
+      fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R', marks: { f3: 'preview-from', e5: 'preview-goal' },
+      text: 'Crea una sala, envía el enlace por WhatsApp o correo y juega con tu amigo desde su propio celular o computadora.',
+      steps: ['Elige «En línea» y tu color.', 'Envía la invitación.', 'Al terminar, analicen la partida.'],
+      board: '<strong>2. Cf3</strong>: tu rival responde desde su casa. ¡Cada uno en su dispositivo!',
+      mascot: 'Jugar con personas reales te prepara para los torneos.' },
+    { id: 'masters', cat: 'play', icon: '🏆', name: 'Partidas de maestros', sub: 'Campeones del mundo agrupados por apertura', href: 'partidas-maestros.html', rounds: 'Estudio',
+      fen: '1n1Rkb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2K5', marks: { d8: 'preview-goal', g5: 'preview-from', e8: 'glow-king' },
+      text: 'Estudia las partidas más famosas de la historia: Morphy, Steinitz, Fischer, Kasparov… agrupadas por apertura y variante, con análisis de la máquina.',
+      steps: ['Elige una apertura.', 'Recorre la partida jugada a jugada.', 'Analízala y escribe tus notas.'],
+      board: '<strong>Td8#</strong>: el mate final de la Partida de la Ópera de Morphy (1858).',
+      mascot: 'Los campeones aprendieron estudiando a los campeones que vinieron antes.' },
     { id: 'daily', cat: 'daily', icon: '🔥', name: 'Táctica del día', sub: 'Un reto nuevo cada día', href: 'tactica-del-dia.html', rounds: '1 reto',
       fen: 'q3k3/8/8/1N6/8/8/8/4K3', marks: { b5: 'preview-from', c7: 'preview-goal', e8: 'glow-king', a8: 'preview-trap' },
       text: 'Cada día Mauro te propone un problema distinto: mates, dobles ataques y golpes tácticos. Resuélvelo para mantener tu racha.',

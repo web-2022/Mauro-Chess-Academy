@@ -73,10 +73,11 @@
     const draw = end.result === '1/2-1/2';
     let msg;
     if (game.human === 'both') msg = draw ? `🤝 Tablas · ${end.why}` : `🏁 ${end.why} · ganan ${end.result === '1-0' ? 'blancas' : 'negras'}`;
-    else msg = draw ? `🤝 Tablas por ${end.why.toLowerCase()}.` : youWin ? `🏆 ¡Ganaste! ${end.why}.` : `${end.why}. Esta vez ganó la máquina. ¡Revisa la partida y vuelve a intentarlo!`;
+    else msg = draw ? `🤝 Tablas por ${end.why.toLowerCase()}.` : youWin ? `🏆 ¡Ganaste! ${end.why}.` : `${end.why}. Esta vez ganó ${game.mode === 'online' ? 'tu rival' : 'la máquina'}. ¡Revisa la partida y vuelve a intentarlo!`;
     status(msg, draw ? '' : youWin || game.human === 'both' ? 'good' : 'bad');
     speak(draw ? 'Tablas' : youWin ? '¡Ganaste! Jaque mate.' : end.why);
-    if (game.human !== 'both') recordResult(youWin ? 1 : 0);
+    if (game.human !== 'both' && game.mode !== 'online') recordResult(youWin ? 1 : 0);
+    if (game.mode === 'online' && !end.fromServer) onlineCall('online_end', { result: end.result, why: end.why });
     updateControls();
   }
   function recordResult(won) {
@@ -118,7 +119,7 @@
       boardEl.append(d);
     }
     document.body.classList.toggle('in-var', !!variation);
-    renderMoves(); renderCaptured(); renderClock(); renderVariation(); renderOpening();
+    renderMoves(); renderCaptured(); renderClock(); renderVariation(); renderOpening(); renderUserNote();
     if (!analyzing) renderAnalysisLazy();
     updateCursor();
   }
@@ -149,7 +150,7 @@
     if (!b) return; $('promoDialog').hidden = true; const u = promoPending + b.dataset.promo; promoPending = null; playMove(u);
   });
 
-  function playMove(u) {
+  function playMove(u, fromNet) {
     const st = current(); const m = C.legalMoves(st).find(x => x.from + x.to === u.slice(0, 4)); if (!m) return;
     const san = C.san(st, m); // SAN antes de mover (incluye + o #)
     clockAfterMove(st.turn);
@@ -161,11 +162,12 @@
     viewAt = positions.length - 1; selected = null; hintMarks = null; save();
     const end = checkEnd();
     render();
-    if (end) return finish(end);
+    if (end) { if (game.mode === 'online' && !fromNet) onlinePush(); return finish(end); }
     if (C.inCheck(current())) speak('Jaque');
     status(turnText());
     updateControls();
-    if (!humanTurn()) machineMove();
+    if (game.mode === 'online') { if (!fromNet) onlinePush(); }
+    else if (!humanTurn()) machineMove();
     liveEval();
   }
   async function machineMove() {
@@ -212,7 +214,7 @@
   }
   // ---------- Variantes durante el análisis: se guardan en la partida y se reevalúan ----------
   let variation = null, varView = 0; // variante abierta y cuántas de sus jugadas se ven
-  const varMode = () => !!variation || (!!an() && (!!game.result || viewAt !== positions.length - 1));
+  const varMode = () => !!variation || ((!!an() || game.mode === 'maestro' || game.mode === 'estudio') && (!!game.result || viewAt !== positions.length - 1));
   function varPos(v) { // posiciones de la variante (no se guardan en localStorage)
     if (!v.pos || v.pos.length !== v.moves.length) {
       let st = positions[v.base]; const out = [];
@@ -361,7 +363,7 @@
     if (!el) { el = document.createElement('p'); el.id = 'openingLine'; el.className = 'opening-line'; $('evalBadge').after(el); }
     const o = window.MauroAperturas ? window.MauroAperturas.detect(game.sans) : null;
     el.hidden = !o || (!o.w && !o.b); if (el.hidden) return;
-    const me = game.human, lab = c => me === 'both' ? (c === 'w' ? 'Blancas' : 'Negras') : me === c ? 'Tu apertura' : 'Tu oponente';
+    const me = game.human, lab = c => game.master ? (c === 'w' ? game.master.white : game.master.black).replace(/ \(.*\)/, '') : me === 'both' || me === 'none' ? (c === 'w' ? 'Blancas' : 'Negras') : me === c ? 'Tu apertura' : 'Tu oponente';
     el.replaceChildren();
     const mkp = (c, t) => { if (!t) return; const s = document.createElement('span'); s.innerHTML = `<b>📖 ${lab(c)} (${c === 'w' ? '⚪' : '⚫'}):</b> `; s.append(t); el.append(s); };
     mkp('w', o.w); mkp('b', o.b);
@@ -385,7 +387,8 @@
       const sn = document.createElement('span'); sn.className = 'mv-san'; sn.textContent = san; b.append(sn);
       const ev = game.evals && game.evals[i + 1];
       if (ev != null) { const e = document.createElement('span'); e.className = 'mv-ev ' + evalText(ev).cls; e.textContent = fmtEval(cp(ev)).replace('Blancas dan mate', '#+').replace('Negras dan mate', '#−'); b.append(e); }
-      b.title = (q ? QUAL[q].name + ' · ' : '') + (ev != null ? 'Evaluación ' + fmtEval(cp(ev)) : '');
+      if (game.notes && game.notes[i + 1]) { const nt = document.createElement('span'); nt.className = 'mv-note'; nt.textContent = '📝'; b.append(nt); }
+      b.title = (q ? QUAL[q].name + ' · ' : '') + (ev != null ? 'Evaluación ' + fmtEval(cp(ev)) : '') + (game.notes && game.notes[i + 1] ? ' · Nota: ' + game.notes[i + 1] : '');
       b.addEventListener('click', () => goTo(i + 1)); list.append(b);
       (game.variations || []).filter(v => v.base === i && v.moves.length).forEach(v => {
         const w = document.createElement('span'); w.className = 'ml-var' + (variation === v ? ' open' : ''); w.append('( ');
@@ -435,22 +438,24 @@
   // ---------- Controles ----------
   function updateControls() {
     const live = !game.result;
-    $('hintBtn').disabled = !live || thinking || analyzing || !humanTurn();
-    $('undoBtn').disabled = thinking || analyzing || !game.moves.length || (game.human !== 'both' && game.moves.length < (game.human === 'w' ? 1 : 2) && !game.result);
+    $('hintBtn').disabled = !live || thinking || analyzing || !humanTurn() || game.mode === 'online';
+    $('undoBtn').disabled = game.mode === 'online' || game.mode === 'maestro' || thinking || analyzing || !game.moves.length || (game.human !== 'both' && game.moves.length < (game.human === 'w' ? 1 : 2) && !game.result);
     $('resignBtn').disabled = !live || thinking || analyzing || !game.moves.length;
     const done = !!an();
     document.body.classList.toggle('an-review', done && !!game.result);
     document.body.classList.toggle('an-on', done);
     if (done && !$('anTabs')) {
       const t = document.createElement('div'); t.id = 'anTabs'; t.className = 'an-tabs'; t.setAttribute('role', 'tablist');
-      t.innerHTML = '<button type="button" role="tab" data-tab="moves" aria-selected="true">📋 Jugadas y variantes</button><button type="button" role="tab" data-tab="sum" aria-selected="false">📈 Resumen y gráfica</button>';
-      t.addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (!b) return; const sum = b.dataset.tab === 'sum'; document.body.classList.toggle('an-tab-sum', sum); t.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b))); if (sum) updateCursor(); });
+      t.innerHTML = '<button type="button" role="tab" data-tab="moves" aria-selected="true">📋 Jugadas y variantes</button><button type="button" role="tab" data-tab="sum" aria-selected="false">📈 Resumen y gráfica</button><button type="button" class="tab-act" data-act="save" title="Guardar partida (con análisis, notas y variantes)" aria-label="Guardar partida">💾</button><button type="button" class="tab-act" data-act="lib" title="Mis partidas" aria-label="Mis partidas">📂</button>';
+      t.addEventListener('click', e => { const ac = e.target.closest('[data-act]'); if (ac) return ac.dataset.act === 'save' ? saveToLibrary() : openLibrary(); const b = e.target.closest('[data-tab]'); if (!b) return; const sum = b.dataset.tab === 'sum'; document.body.classList.toggle('an-tab-sum', sum); t.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b))); if (sum) updateCursor(); });
       document.querySelector('.exercise-action').prepend(t);
     }
     $('anBtn').disabled = thinking || analyzing || !game.moves.length || (!game.result && game.human !== 'both' && !humanTurn());
     if (!analyzing) $('anBtn').textContent = done ? '✅ Partida analizada' : game.result ? '🔎 Analizar cada jugada' : '🔎 Analizar hasta aquí';
     if (done) $('anBtn').disabled = true;
     $('resignBtn').textContent = game.human === 'both' ? '🤝 Terminar' : '🏳 Rendirse';
+    if (game.mode === 'maestro' && game.master) { $('playHeader').textContent = `📚 ${game.master.white.replace(/ \(.*\)/, '')} – ${game.master.black.replace(/ \(.*\)/, '')} · ${game.master.event}, ${game.master.year}`; return; }
+    if (game.mode === 'online') { $('playHeader').textContent = `🌐 En línea · sala ${game.room} · juegas con ${game.human === 'w' ? 'blancas' : game.human === 'b' ? 'negras' : '(espectador)'}`; $('resignBtn').textContent = '🏳 Rendirse'; return; }
     $('playHeader').textContent = game.human === 'both' ? 'Partida entre amigos' + (game.clock ? ' · ⏱ ' + game.clock.label : '') : `Nivel ${game.level} · ${LEVEL_NAMES[game.level]} · juegas con ${game.human === 'w' ? 'blancas' : 'negras'}${game.clock ? ' · ⏱ ' + game.clock.label : ''}`;
   }
   $('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
@@ -466,6 +471,7 @@
   $('resignBtn').addEventListener('click', () => {
     if (game.result || !game.moves.length) return;
     if (game.human === 'both') return finish({ result: '1/2-1/2', why: 'Acuerdo' });
+    if (game.mode === 'online') { if (!confirm('¿Seguro que quieres rendirte?')) return; return finish({ result: game.human === 'w' ? '0-1' : '1-0', why: (game.human === 'w' ? 'Blancas' : 'Negras') + ' se rinden' }); }
     if (!confirm('¿Seguro que quieres rendirte?')) return;
     finish({ result: game.human === 'w' ? '0-1' : '1-0', why: 'Te rendiste' });
   });
@@ -588,7 +594,7 @@
     el.append(document.createTextNode(txt + ' '));
     const et = evalText(a.ev[i]); const mk = document.createElement('mark'); mk.className = 'an-eval ' + et.cls; mk.textContent = `Evaluación: ${et.s} · ${et.word}`; el.append(mk);
     const say = `${Q.name}. ${num.replace('...', ', negras,').replace('. ', '. ')}${spokenSan(game.sans[i - 1])}.${speakify(txt)} Evaluación: ${et.word}.`;
-    lastSay = say;
+    lastSay = say + (game.notes && game.notes[i] ? ` Tu nota: ${game.notes[i]}.` : '');
     const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'an-audio'; btn.textContent = '🔊';
     btn.title = 'Escuchar la explicación'; btn.setAttribute('aria-label', 'Escuchar la explicación de esta jugada');
     btn.addEventListener('click', () => speakAlways(say));
@@ -669,10 +675,12 @@
   function pgn() {
     const d = new Date(), date = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
     const me = 'Alumno', bot = `Máquina (nivel ${game.level} · ${LEVEL_NAMES[game.level]})`;
-    const white = game.human === 'both' ? 'Blancas' : game.human === 'w' ? me : bot, black = game.human === 'both' ? 'Negras' : game.human === 'b' ? me : bot;
+    let white = game.human === 'both' ? 'Blancas' : game.human === 'w' ? me : bot, black = game.human === 'both' ? 'Negras' : game.human === 'b' ? me : bot;
+    if (game.master) { white = game.master.white; black = game.master.black; }
+    if (game.mode === 'online') { white = game.names?.w || 'Blancas'; black = game.names?.b || 'Negras'; }
     // SAN en inglés (estándar PGN)
     const en = s => s.replace(/^R/, 'K').replace(/^D/, 'Q').replace(/^T/, 'R').replace(/^A/, 'B').replace(/^C/, 'N').replace(/=D/, '=Q').replace(/=T/, '=R').replace(/=A/, '=B').replace(/=C/, '=N');
-    const a = an(); let body = ''; game.sans.forEach((s, i) => { if (i % 2 === 0) body += `${i / 2 + 1}. `; body += en(s) + (a ? QUAL[a.q[i]].sym : '') + ' '; });
+    const a = an(); let body = ''; game.sans.forEach((s, i) => { if (i % 2 === 0) body += `${i / 2 + 1}. `; body += en(s) + (a ? QUAL[a.q[i]].sym : '') + ' ' + (game.notes && game.notes[i + 1] ? `{${game.notes[i + 1].replace(/[{}]/g, '')}} ` : ''); });
     const res = game.result || '*';
     return `[Event "Partida de práctica"]\n[Site "https://web-2022.github.io/Mauro-Chess-Academy/jugar.html"]\n[Date "${date}"]\n[White "${white}"]\n[Black "${black}"]\n[Result "${res}"]\n${game.clock ? `[TimeControl "${game.clock.base / 1000}+${game.clock.inc / 1000}"]\n` : ''}${game.why ? `[Termination "${game.why}"]\n` : ''}\n${body}${res}\n`;
   }
@@ -736,8 +744,177 @@
   }, 200);
   window.addEventListener('beforeunload', () => { if (game && game.clock && game.clock.since && !game.result) { const sd = current().turn; game.clock[sd] = clockLeft(sd); game.clock.since = Date.now(); save(); } });
 
+
+  // ---------- Notas del alumno en cada jugada ----------
+  function renderUserNote() {
+    let box = $('userNote');
+    if (!box) {
+      box = document.createElement('div'); box.id = 'userNote'; box.className = 'user-note';
+      box.innerHTML = '<label for="userNoteText">✍️ Tu nota sobre esta jugada</label><textarea id="userNoteText" rows="2" maxlength="600" placeholder="Escribe lo que pensabas, tu plan o lo que aprendiste…"></textarea>';
+      $('viewNote').after(box);
+      let t = null;
+      box.querySelector('textarea').addEventListener('input', e => {
+        const i = +box.dataset.at; if (!i) return; game.notes = game.notes || {};
+        const v = e.target.value.trim(); if (v) game.notes[i] = v; else delete game.notes[i];
+        clearTimeout(t); t = setTimeout(() => { save(); renderMoves(); }, 500);
+      });
+    }
+    const show = !variation && viewAt > 0 && (!!an() || !!game.result || game.mode === 'maestro');
+    box.hidden = !show; if (!show) return;
+    if (+box.dataset.at !== viewAt) { box.dataset.at = viewAt; box.querySelector('textarea').value = (game.notes && game.notes[viewAt]) || ''; box.querySelector('label').textContent = `✍️ Tu nota sobre ${plyLabel(viewAt - 1)} ${game.sans[viewAt - 1]}`; }
+  }
+
+  // ---------- Biblioteca: guardar y cargar partidas ----------
+  const LIB_KEY = 'mauro_jugar_biblioteca_v1';
+  const libRead = () => { try { return JSON.parse(localStorage.getItem(LIB_KEY) || '[]'); } catch (_) { return []; } };
+  const libWrite = l => { try { localStorage.setItem(LIB_KEY, JSON.stringify(l)); return true; } catch (_) { alert('No hay espacio para guardar más partidas. Borra alguna de «Mis partidas».'); return false; } };
+  function defaultName() {
+    const o = window.MauroAperturas ? window.MauroAperturas.detect(game.sans) : {};
+    const d = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'short' });
+    const who = game.master ? `${game.master.white.replace(/ \(.*\)/, '')} – ${game.master.black.replace(/ \(.*\)/, '')}` : game.mode === 'online' ? 'Partida en línea' : game.human === 'both' ? 'Partida entre amigos' : `Vs. máquina nivel ${game.level}`;
+    return `${who} · ${o.b || o.w || 'Apertura'} · ${d}`;
+  }
+  function saveToLibrary() {
+    if (!game.moves.length) return status('Todavía no hay jugadas para guardar.', '');
+    const name = prompt('Nombre para esta partida:', game.libName || defaultName()); if (name == null) return;
+    const l = libRead(), id = game.libId || 'p' + Date.now().toString(36);
+    const copy = JSON.parse(JSON.stringify(game)); copy.libId = id; copy.libName = name.trim() || defaultName();
+    const item = { id, name: copy.libName, date: new Date().toISOString(), result: game.result || '*', moves: game.moves.length, analyzed: !!an(), notes: Object.keys(game.notes || {}).length, vars: (game.variations || []).length, game: copy };
+    const k = l.findIndex(x => x.id === id); if (k >= 0) l[k] = item; else l.unshift(item);
+    if (libWrite(l.slice(0, 60))) { game.libId = id; game.libName = copy.libName; save(); status(`💾 Guardada en «Mis partidas»: ${copy.libName}.`, 'good'); }
+  }
+  function loadGame(g, msg) {
+    stopOnline(); game = g; game.libId = g.libId; rebuild(); variation = null; varView = 0; flipped = game.human === 'b';
+    viewAt = game.mode === 'maestro' ? 0 : positions.length - 1; selected = null; hintMarks = null; bestMarks = null; save(); lastAnKey = null;
+    const t = $('anTabs'); if (t) t.remove(); document.body.classList.remove('an-tab-sum');
+    render(); updateControls(); status(msg || 'Partida cargada.', 'good');
+    if (an()) { renderAnalysis(); }
+  }
+  function openLibrary() {
+    let dlg = $('libDialog');
+    if (!dlg) {
+      dlg = document.createElement('div'); dlg.id = 'libDialog'; dlg.className = 'lib-dialog'; dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-modal', 'true');
+      dlg.innerHTML = `<div class="lib-card"><div class="lib-head"><b>📂 Mis partidas</b><button type="button" class="lib-x" aria-label="Cerrar">✕</button></div>
+        <div class="lib-list"></div>
+        <details class="lib-pgn"><summary>📥 Cargar una partida desde PGN</summary><textarea rows="5" placeholder="Pega aquí el PGN (por ejemplo: 1. e4 e5 2. Nf3 Nc6 …)"></textarea><button type="button" class="main-btn lib-import">Cargar PGN</button></details>
+        <a class="main-btn lib-masters" href="partidas-maestros.html">🏆 Partidas de campeones y grandes maestros</a></div>`;
+      document.body.append(dlg);
+      dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('.lib-x')) dlg.hidden = true; });
+      dlg.querySelector('.lib-import').addEventListener('click', () => {
+        const r = window.MauroPGN.parse(dlg.querySelector('.lib-pgn textarea').value);
+        if (r.error && !r.moves.length) return alert(r.error);
+        const h = r.headers, res = /^(1-0|0-1|1\/2-1\/2)$/.test(h.Result || '') ? h.Result : null;
+        const g = { mode: 'estudio', level: 3, human: 'both', moves: r.moves, sans: [], result: res, why: res ? 'Partida importada' : null, hints: 0, startedAt: Date.now(), clock: null,
+          master: h.White || h.Black ? { white: h.White || 'Blancas', black: h.Black || 'Negras', event: h.Event || 'Partida importada', year: (h.Date || '').slice(0, 4) } : null };
+        if (g.master) g.mode = 'maestro';
+        dlg.hidden = true; loadGame(g, r.error ? `Partida cargada hasta donde fue posible. ${r.error}` : `📥 PGN cargado (${r.moves.length} jugadas). Usa ▶ para recorrerla o pulsa «Analizar».`);
+      });
+    }
+    const list = dlg.querySelector('.lib-list'), l = libRead(); list.replaceChildren();
+    if (!l.length) list.innerHTML = '<p class="lib-empty">Aún no guardaste partidas. Usa «💾 Guardar partida» después de jugar o analizar.</p>';
+    l.forEach(it => {
+      const row = document.createElement('div'); row.className = 'lib-row';
+      const d = new Date(it.date).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
+      row.innerHTML = `<div class="lib-info"><b></b><small>${d} · ${it.result === '*' ? 'en curso' : it.result} · ${Math.ceil(it.moves / 2)} jugadas${it.analyzed ? ' · 🔎 analizada' : ''}${it.notes ? ' · 📝 ' + it.notes : ''}${it.vars ? ' · 🧪 ' + it.vars : ''}</small></div><button type="button" class="main-btn lib-load">Cargar</button><button type="button" class="main-btn lib-del" aria-label="Borrar">🗑</button>`;
+      row.querySelector('b').textContent = it.name;
+      row.querySelector('.lib-load').addEventListener('click', () => {
+        if (game && game.moves.length && !game.result && game.mode !== 'maestro' && !confirm('¿Cargar esta partida? La partida actual sin terminar se perderá si no la guardaste.')) return;
+        dlg.hidden = true; loadGame(JSON.parse(JSON.stringify(it.game)), `📂 Cargada: ${it.name}`);
+      });
+      row.querySelector('.lib-del').addEventListener('click', () => { if (!confirm(`¿Borrar «${it.name}»?`)) return; libWrite(libRead().filter(x => x.id !== it.id)); openLibrary(); });
+      list.append(row);
+    });
+    dlg.hidden = false;
+  }
+  (function addLibButtons() {
+    const tools = $('anTools'); if (!tools) return;
+    const sv = document.createElement('button'); sv.type = 'button'; sv.className = 'main-btn'; sv.id = 'saveBtn'; sv.textContent = '💾 Guardar partida'; sv.addEventListener('click', saveToLibrary);
+    const op = document.createElement('button'); op.type = 'button'; op.className = 'main-btn'; op.id = 'libBtn'; op.textContent = '📂 Mis partidas'; op.addEventListener('click', openLibrary);
+    tools.prepend(sv, op);
+  })();
+
+  // ---------- Partidas de maestros ----------
+  function loadMaster(id) {
+    const m = (window.MauroMaestros || []).find(x => x.id === id); if (!m) return false;
+    const r = window.MauroPGN.parse(m.pgn);
+    const g = { mode: 'maestro', level: 3, human: 'both', moves: r.moves, sans: [], result: m.result, why: `${m.event}, ${m.year}`, hints: 0, startedAt: Date.now(), clock: null, master: { white: m.white, black: m.black, event: m.event, year: m.year, opening: m.opening, variant: m.variant, idea: m.idea, id: m.id } };
+    loadGame(g, `📚 ${m.opening} · ${m.variant}. ${m.idea} Usa ▶ para recorrerla y pulsa «🔎 Analizar» para que la máquina la comente.`);
+    return true;
+  }
+
+  // ---------- Partida en línea (invitación por WhatsApp o correo) ----------
+  const SERVER = (window.MAURO_CONFIG && window.MAURO_CONFIG.googleSheetsWebAppUrl) || 'https://script.google.com/macros/s/AKfycbwMII06Sm70qSjqKVxKuE27Y42U3O43tol2Ze6XnuCWqXDYh37EC7TxQgmc6Xx4mpRcvQ/exec';
+  let pollTimer = null, pushing = false;
+  const myName = () => { try { return (JSON.parse(localStorage.getItem('mauro_chess_profile_v1') || '{}').displayName) || ''; } catch (_) { return ''; } };
+  function onlineCall(action, params) {
+    if (!game || !game.room) return Promise.resolve(null);
+    const q = new URLSearchParams(Object.assign({ action, room: game.room }, params || {}));
+    return fetch(SERVER + '?' + q.toString(), { cache: 'no-store' }).then(r => r.json()).catch(() => null);
+  }
+  function stopOnline() { if (pollTimer) clearInterval(pollTimer); pollTimer = null; const b = $('onlineBox'); if (b) b.hidden = true; }
+  function onlinePush() {
+    const ply = game.moves.length, u = game.moves[ply - 1]; pushing = true;
+    onlineCall('online_move', { ply, uci: u, color: game.human }).then(r => { pushing = false; if (r && r.ok === false && r.moves != null) syncFrom(r); });
+  }
+  function syncFrom(r) {
+    if (!r || !r.ok) return;
+    game.names = { w: r.white || 'Blancas', b: r.black || 'Negras' };
+    const net = String(r.moves || '').split(' ').filter(Boolean);
+    const mine = game.moves;
+    // el servidor manda: si difiere, se rehace la partida con sus jugadas
+    if (net.length < mine.length || net.some((u, i) => i < mine.length && u !== mine[i])) { game.moves = net.slice(); rebuild(); render(); }
+    for (let i = game.moves.length; i < net.length; i++) { const wasEnd = game.result; playMove(net[i], true); if (wasEnd) break; }
+    if (r.result && !game.result) finish({ result: r.result, why: r.why || 'Partida terminada', fromServer: true });
+    renderOnlineBox(r);
+  }
+  function startPolling() {
+    if (pollTimer) clearInterval(pollTimer);
+    const tick = () => { if (!game || game.mode !== 'online' || pushing) return; onlineCall('online_get').then(r => { if (r && r.ok) syncFrom(r); else renderOnlineBox(null, r); }); };
+    tick(); pollTimer = setInterval(tick, 2500);
+  }
+  function inviteLink() { return location.origin + location.pathname + '?sala=' + game.room; }
+  function renderOnlineBox(r, err) {
+    let box = $('onlineBox');
+    if (!box) { box = document.createElement('div'); box.id = 'onlineBox'; box.className = 'online-box'; $('playStatus').after(box); }
+    if (!game || game.mode !== 'online') { box.hidden = true; return; }
+    box.hidden = false;
+    const link = inviteLink(), waiting = r && !r.joined;
+    const txt = `♟ ¡Juguemos ajedrez! Te reto a una partida en Ajedrezia. Entra aquí: ${link}`;
+    box.innerHTML = `<div class="ol-row"><b>🌐 Sala ${game.room}</b><span class="ol-state">${err ? '⚠️ Sin conexión con el servidor' : waiting ? '⏳ Esperando a tu rival…' : r ? '🟢 Rival conectado' : 'Conectando…'}</span></div>
+      ${waiting || !r ? `<div class="ol-invite"><a class="main-btn ol-wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">📱 Invitar por WhatsApp</a><a class="main-btn ol-mail" href="mailto:?subject=${encodeURIComponent('Te reto a una partida de ajedrez')}&body=${encodeURIComponent(txt)}">✉️ Invitar por correo</a><button type="button" class="main-btn ol-copy">🔗 Copiar enlace</button></div>` : ''}
+      ${r ? `<small class="ol-names">⚪ ${esc(r.white || '—')} vs ⚫ ${esc(r.black || '—')}</small>` : ''}
+      ${err && err.ok === undefined ? '' : err ? `<small class="ol-err">El servidor aún no tiene el modo en línea: actualiza el Apps Script (ver instrucciones).</small>` : ''}`;
+    box.querySelector('.ol-copy')?.addEventListener('click', () => { navigator.clipboard?.writeText(link).then(() => status('🔗 Enlace copiado: envíaselo a tu rival.', 'good')).catch(() => prompt('Copia este enlace:', link)); });
+  }
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  function newOnline(color) {
+    const room = Math.random().toString(36).slice(2, 8).toUpperCase();
+    const human = color === 'random' ? (Math.random() < .5 ? 'w' : 'b') : color;
+    game = { mode: 'online', room, level: 3, human, moves: [], sans: [], result: null, why: null, hints: 0, startedAt: Date.now(), clock: null, names: {} };
+    try { localStorage.setItem('mauro_online_' + room, human); } catch (_) {}
+    rebuild(); flipped = human === 'b'; selected = null; save(); render(); updateControls();
+    status('🌐 Sala creada. Invita a tu rival por WhatsApp o correo; la partida empieza cuando entre.', 'good');
+    renderOnlineBox(null);
+    onlineCall('online_create', { color: human, name: myName() || 'Jugador 1' }).then(r => { if (!r || !r.ok) renderOnlineBox(null, r || { ok: false }); startPolling(); });
+  }
+  function joinOnline(room) {
+    room = String(room).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+    let mine = null; try { mine = localStorage.getItem('mauro_online_' + room); } catch (_) {}
+    game = { mode: 'online', room, level: 3, human: mine || 'none', moves: [], sans: [], result: null, why: null, hints: 0, startedAt: Date.now(), clock: null, names: {} };
+    rebuild(); render(); status('🌐 Entrando a la sala ' + room + '…');
+    onlineCall('online_join', { name: myName() || 'Jugador 2', color: mine || '' }).then(r => {
+      if (!r || !r.ok) { status('⚠️ No se pudo entrar a la sala. Revisa el enlace o tu conexión.', 'bad'); renderOnlineBox(null, r || { ok: false }); return; }
+      game.human = r.color || 'none'; try { if (r.color) localStorage.setItem('mauro_online_' + room, r.color); } catch (_) {}
+      flipped = game.human === 'b'; save(); updateControls(); syncFrom(r);
+      status(game.human === 'none' ? '👀 La sala está llena: miras la partida como espectador.' : `🌐 ¡Conectado! Juegas con ${game.human === 'w' ? 'blancas' : 'negras'}.`, 'good');
+      startPolling();
+    });
+  }
+
   // ---------- Nueva partida ----------
   function newGame(opts) {
+    stopOnline();
+    if (opts.mode === 'online') return newOnline(opts.color);
     const human = opts.mode === 'amigo' ? 'both' : opts.color === 'random' ? (Math.random() < .5 ? 'w' : 'b') : opts.color;
     game = { mode: opts.mode, level: +opts.level || 3, human, moves: [], sans: [], result: null, why: null, hints: 0, startedAt: Date.now(), clock: makeClock(opts.time, opts.cmin, opts.cinc) };
     rebuild(); flipped = human === 'b'; selected = null; hintMarks = null; lowWarned = false; save();
@@ -749,24 +926,29 @@
   form.addEventListener('submit', e => {
     e.preventDefault();
     if (game && game.moves.length && !game.result && !confirm('¿Empezar una partida nueva? La actual se perderá.')) return;
-    const fd = new FormData(form); newGame({ mode: fd.get('mode'), color: fd.get('color'), level: fd.get('level'), time: fd.get('time'), cmin: fd.get('cmin'), cinc: fd.get('cinc') });
+    const fd = new FormData(form); if (fd.get('mode') === 'online' && game && game.mode === 'online' && !game.result && !confirm('¿Crear otra sala? Dejarás la partida en línea actual.')) return;
+    newGame({ mode: fd.get('mode'), color: fd.get('color'), level: fd.get('level'), time: fd.get('time'), cmin: fd.get('cmin'), cinc: fd.get('cinc') });
     try { localStorage.setItem('mauro_jugar_prefs', JSON.stringify({ mode: fd.get('mode'), color: fd.get('color'), level: fd.get('level'), time: fd.get('time'), cmin: fd.get('cmin'), cinc: fd.get('cinc') })); } catch (_) {}
     $('setupWrap').open = false;
     document.querySelector('.exercise-board-shell')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
-  form.addEventListener('change', () => { const amigo = new FormData(form).get('mode') === 'amigo'; form.querySelectorAll('.only-bot').forEach(el => el.hidden = amigo); $('customTime').hidden = $('timeSel').value !== 'custom'; });
+  form.addEventListener('change', () => { const md = new FormData(form).get('mode'), amigo = md === 'amigo'; form.querySelectorAll('.only-bot').forEach(el => el.hidden = amigo); form.querySelectorAll('.not-online').forEach(el => { if (md === 'online') el.hidden = true; else if (!el.classList.contains('only-bot')) el.hidden = false; }); $('customTime').hidden = $('timeSel').value !== 'custom'; });
   // Preferencias guardadas
   try { const pr = JSON.parse(localStorage.getItem('mauro_jugar_prefs') || 'null'); if (pr) { for (const [k, v] of Object.entries(pr)) { const el = form.querySelector(`[name="${k}"][value="${v}"]`) || form.querySelector(`select[name="${k}"]`); if (el && el.type === 'radio') el.checked = true; else if (el) el.value = v; } form.dispatchEvent(new Event('change')); } } catch (_) {}
   const params = new URLSearchParams(location.search);
-  if (params.get('modo') === 'amigo') { form.querySelector('[name="mode"][value="amigo"]').checked = true; form.dispatchEvent(new Event('change')); }
+  if (params.get('modo') === 'amigo' || params.get('modo') === 'online') { form.querySelector(`[name="mode"][value="${params.get('modo')}"]`).checked = true; form.dispatchEvent(new Event('change')); if (params.get('modo') === 'online') $('setupWrap').open = true; }
 
   // ---------- Inicio: retoma la partida guardada ----------
   let saved = null; try { saved = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (_) {}
-  if (saved && Array.isArray(saved.moves) && !params.get('modo')) {
+  if (params.get('maestro') && window.MauroMaestros && loadMaster(params.get('maestro'))) { /* partida de maestro */ }
+  else if (params.get('sala')) joinOnline(params.get('sala'));
+  else if (saved && Array.isArray(saved.moves) && !params.get('modo')) {
     game = saved; rebuild(); flipped = game.human === 'b'; if (game.clock && game.clock.since && !game.result) game.clock.since = Date.now(); render(); updateControls();
     if (game.result) status(`Partida terminada: ${game.why}. Pulsa «Nueva partida» para jugar otra.`);
+    else if (game.mode === 'online') { status('🌐 Partida en línea recuperada.'); startPolling(); }
+    else if (game.mode === 'maestro' || game.mode === 'estudio') status('📚 Partida de estudio recuperada.');
     else { status('Partida recuperada. ' + turnText()); if (!humanTurn()) machineMove(); }
   } else {
-    const fd = new FormData(form); newGame({ mode: params.get('modo') === 'amigo' ? 'amigo' : fd.get('mode'), color: fd.get('color'), level: fd.get('level'), time: fd.get('time'), cmin: fd.get('cmin'), cinc: fd.get('cinc') });
+    const fd = new FormData(form); newGame({ mode: params.get('modo') === 'amigo' ? 'amigo' : fd.get('mode') === 'online' ? 'maquina' : fd.get('mode'), color: fd.get('color'), level: fd.get('level'), time: fd.get('time'), cmin: fd.get('cmin'), cinc: fd.get('cinc') });
   }
 })();

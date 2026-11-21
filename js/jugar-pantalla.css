@@ -51,7 +51,7 @@
   body[data-exercise="jugar"] #viewNote,body[data-exercise="jugar"] #varBox{flex:0 1 auto;min-height:56px;overflow:auto}
   body[data-exercise="jugar"] #anSummary{flex:0 1 auto;min-height:0;overflow:auto}
   /* Análisis: pestañas Jugadas / Resumen */
-  body.an-on[data-exercise="jugar"] .an-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  body.an-on[data-exercise="jugar"] .an-tabs{display:grid;grid-template-columns:1fr 1fr 44px 44px;gap:6px}
   .an-tabs button{min-height:40px;border-radius:10px;border:1px solid #365777;background:#0b1730;color:#cbd5e1;font:800 .95em system-ui,sans-serif;cursor:pointer}
   .an-tabs button[aria-selected="true"]{background:linear-gradient(135deg,#22c55e,#38bdf8);color:#03121c;border-color:transparent}
   body.an-on[data-exercise="jugar"] #playStatus,body.an-on[data-exercise="jugar"] #playTools,body.an-on[data-exercise="jugar"] .captured,body.an-on[data-exercise="jugar"] .exercise-tip{display:none!important}
@@ -66,6 +66,7 @@
 /* Monitores muy anchos: jugadas a la izquierda y resumen a la derecha, sin pestañas */
 @media (min-width:1700px){
   body.an-on[data-exercise="jugar"] .an-tabs{display:none!important}
+  body.an-on[data-exercise="jugar"]:not(.an-x) #anTools #saveBtn,body.an-on[data-exercise="jugar"]:not(.an-x) #anTools #libBtn{display:inline-flex!important}
   body.an-on[data-exercise="jugar"] .exercise-action{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr) minmax(0,1.3fr) auto;column-gap:16px;row-gap:8px}
   body.an-on[data-exercise="jugar"] #evalBadge{grid-column:1;grid-row:1}
   body.an-on[data-exercise="jugar"] #openingLine{grid-column:1;grid-row:2}
