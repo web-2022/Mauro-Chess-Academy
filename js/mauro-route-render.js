@@ -28,6 +28,7 @@
       if (topic.star) { const b = document.createElement('span'); b.className = 'topic-star'; b.textContent = '★'; b.title = 'Tema nuevo o ampliado'; card.querySelector('strong').append(' ', b); }
       section.querySelector('.topic-grid').append(card);
     }
+    if (level.exam) { const ex = document.createElement('a'); ex.className = 'topic-card exam-card'; ex.href = level.exam.url; ex.innerHTML = '<span class="topic-num">📝</span><span class="topic-copy"><strong></strong><small>Diagnóstico + visualización a ciegas</small></span><span class="topic-arrow">→</span>'; ex.querySelector('strong').textContent = level.exam.title; section.querySelector('.topic-grid').append(ex); }
     root.append(section);
   }
   document.addEventListener('DOMContentLoaded', () => {const progressBar=document.querySelector('.route-progress');if(progressBar)root.before(progressBar);}, {once:true});
